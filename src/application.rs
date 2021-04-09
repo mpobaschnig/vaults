@@ -1,5 +1,5 @@
 use crate::config;
-use crate::window::ExampleApplicationWindow;
+use crate::window::VApplicationWindow;
 use gio::ApplicationFlags;
 use glib::clone;
 use glib::WeakRef;
@@ -15,7 +15,7 @@ mod imp {
 
     #[derive(Debug, Default)]
     pub struct ExampleApplication {
-        pub window: OnceCell<WeakRef<ExampleApplicationWindow>>,
+        pub window: OnceCell<WeakRef<VApplicationWindow>>,
     }
 
     #[glib::object_subclass]
@@ -42,7 +42,7 @@ mod imp {
             app.set_resource_base_path(Some("/org/gnome/gitlab/mpobaschnig/Vaults/"));
             app.setup_css();
 
-            let window = ExampleApplicationWindow::new(app);
+            let window = VApplicationWindow::new(app);
             self.window
                 .set(window.downgrade())
                 .expect("Window already set.");
@@ -76,21 +76,25 @@ impl ExampleApplication {
         .expect("Application initialization failed...")
     }
 
-    fn get_main_window(&self) -> ExampleApplicationWindow {
+    fn get_main_window(&self) -> VApplicationWindow {
         let priv_ = imp::ExampleApplication::from_instance(self);
         priv_.window.get().unwrap().upgrade().unwrap()
     }
 
     fn setup_gactions(&self) {
-        // Quit
         action!(
             self,
-            "quit",
+            "add_new_vault",
             clone!(@weak self as app => move |_, _| {
-                // This is needed to trigger the delete event
-                // and saving the window state
-                app.get_main_window().close();
-                app.quit();
+                app.add_new_vault();
+            })
+        );
+
+        action!(
+            self,
+            "import_vault",
+            clone!(@weak self as app => move |_, _| {
+                app.import_vault();
             })
         );
 
@@ -120,6 +124,18 @@ impl ExampleApplication {
                 gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
             );
         }
+    }
+
+    fn add_new_vault(&self) {
+        println!("Add new vault submenu button clicked!");
+    }
+
+    fn import_vault(&self) {
+        println!("Import vault submenu button clicked");
+    }
+
+    fn refresh_button_clicked(&self) {
+        println!("Refresh button clicked!");
     }
 
     fn show_about_dialog(&self) {

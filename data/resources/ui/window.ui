@@ -1,40 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <menu id="primary_menu">
-    <section>
-      <item>
-        <attribute name="label" translatable="yes">_Preferences</attribute>
-        <attribute name="action">app.preferences</attribute>
-      </item>
-      <item>
-        <attribute name="label" translatable="yes">_Keyboard Shortcuts</attribute>
-        <attribute name="action">win.show-help-overlay</attribute>
-      </item>
-      <item>
-        <attribute name="label" translatable="yes">_About GTK Rust Template</attribute>
-        <attribute name="action">app.about</attribute>
-      </item>
-    </section>
-  </menu>
-  <template class="ExampleApplicationWindow" parent="GtkApplicationWindow">
-    <property name="default-width">600</property>
-    <property name="default-height">400</property>
-    <child type="titlebar">
-      <object class="GtkHeaderBar" id="headerbar">
-        <child type="end">
-          <object class="GtkMenuButton" id="appmenu_button">
-            <property name="icon-name">open-menu-symbolic</property>
-            <property name="menu-model">primary_menu</property>
+  <template class="VApplicationWindow" parent="AdwApplicationWindow">
+    <property name="width_request">350</property>
+    <child>
+      <object class="AdwSqueezer" id="window_squeezer">
+        <property name="orientation">vertical</property>
+        <property name="transition_type">crossfade</property>
+        <property name="interpolate_size">True</property>
+        <child>
+          <object class="GtkBox">
+            <property name="width_request">350</property>
+            <property name="height_request">175</property>
+            <property name="orientation">vertical</property>
+            <child>
+              <object class="AdwHeaderBar" id="headerbar">
+                <child>
+                  <object class="GtkMenuButton" id="add_menu_button">
+                    <property name="icon_name">list-add-symbolic</property>
+                    <property name="menu_model">add_menu</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="refresh_button">
+                    <property name="icon_name">view-refresh-symbolic</property>
+                  </object>
+                </child>
+                <child type="end">
+                  <object class="GtkMenuButton" id="about_menu_button">
+                    <property name="icon_name">open-menu-symbolic</property>
+                    <property name="menu_model">menu</property>
+                  </object>
+                </child>
+                <style>
+                  <class name="titlebar"/>
+                </style>
+              </object>
+            </child>
           </object>
         </child>
       </object>
     </child>
-    <child>
-      <object class="GtkLabel" id="label">
-        <property name="label" translatable="yes">Hello world!</property>
-        <style>
-          <class name="title-header"/>
-        </style>
-      </object>
-    </child>
   </template>
+  <menu id="add_menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_Add New Vault</attribute>
+        <attribute name="action">app.add_new_vault</attribute>
+      </item>
+      <item>
+        <attribute name="label" translatable="yes">_Import Vault</attribute>
+        <attribute name="action">app.import_vault</attribute>
+      </item>
+    </section>
+  </menu>
+  <menu id="menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_About Vaults</attribute>
+        <attribute name="action">app.about</attribute>
+      </item>
+    </section>
+  </menu>
 </interface>

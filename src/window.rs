@@ -1,5 +1,7 @@
 use crate::application::ExampleApplication;
 use crate::config::{APP_ID, PROFILE};
+use adw::subclass::prelude::*;
+use glib::clone;
 use glib::signal::Inhibit;
 use gtk::subclass::prelude::*;
 use gtk::{self, prelude::*};
@@ -11,21 +13,24 @@ mod imp {
 
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/org/gnome/gitlab/mpobaschnig/Vaults/window.ui")]
-    pub struct ExampleApplicationWindow {
+    pub struct VApplicationWindow {
         #[template_child]
-        pub headerbar: TemplateChild<gtk::HeaderBar>,
+        pub headerbar: TemplateChild<adw::HeaderBar>,
+        #[template_child]
+        pub refresh_button: TemplateChild<gtk::Button>,
         pub settings: gio::Settings,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ExampleApplicationWindow {
-        const NAME: &'static str = "ExampleApplicationWindow";
-        type Type = super::ExampleApplicationWindow;
-        type ParentType = gtk::ApplicationWindow;
+    impl ObjectSubclass for VApplicationWindow {
+        const NAME: &'static str = "VApplicationWindow";
+        type Type = super::VApplicationWindow;
+        type ParentType = adw::ApplicationWindow;
 
         fn new() -> Self {
             Self {
                 headerbar: TemplateChild::default(),
+                refresh_button: TemplateChild::default(),
                 settings: gio::Settings::new(APP_ID),
             }
         }
@@ -40,14 +45,9 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for ExampleApplicationWindow {
+    impl ObjectImpl for VApplicationWindow {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-
-            let builder =
-                gtk::Builder::from_resource("/org/gnome/gitlab/mpobaschnig/Vaults/shortcuts.ui");
-            let shortcuts = builder.get_object("shortcuts").unwrap();
-            obj.set_help_overlay(Some(&shortcuts));
 
             // Devel Profile
             if PROFILE == "Devel" {
@@ -56,11 +56,13 @@ mod imp {
 
             // load latest window state
             obj.load_window_size();
+
+            obj.setup_connect_handlers();
         }
     }
 
-    impl WidgetImpl for ExampleApplicationWindow {}
-    impl WindowImpl for ExampleApplicationWindow {
+    impl WidgetImpl for VApplicationWindow {}
+    impl WindowImpl for VApplicationWindow {
         // save window state on delete event
         fn close_request(&self, obj: &Self::Type) -> Inhibit {
             if let Err(err) = obj.save_window_size() {
@@ -70,18 +72,18 @@ mod imp {
         }
     }
 
-    impl ApplicationWindowImpl for ExampleApplicationWindow {}
+    impl ApplicationWindowImpl for VApplicationWindow {}
+    impl AdwApplicationWindowImpl for VApplicationWindow {}
 }
 
 glib::wrapper! {
-    pub struct ExampleApplicationWindow(ObjectSubclass<imp::ExampleApplicationWindow>)
-        @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow, @implements gio::ActionMap, gio::ActionGroup;
+    pub struct VApplicationWindow(ObjectSubclass<imp::VApplicationWindow>)
+        @extends gtk::Widget, gtk::Window, adw::ApplicationWindow, @implements gio::ActionMap, gio::ActionGroup;
 }
 
-impl ExampleApplicationWindow {
+impl VApplicationWindow {
     pub fn new(app: &ExampleApplication) -> Self {
-        let window: Self =
-            glib::Object::new(&[]).expect("Failed to create ExampleApplicationWindow");
+        let window: Self = glib::Object::new(&[]).expect("Failed to create VApplicationWindow");
         window.set_application(Some(app));
 
         // Set icons for shell
@@ -91,7 +93,7 @@ impl ExampleApplicationWindow {
     }
 
     pub fn save_window_size(&self) -> Result<(), glib::BoolError> {
-        let settings = &imp::ExampleApplicationWindow::from_instance(self).settings;
+        let settings = &imp::VApplicationWindow::from_instance(self).settings;
 
         let size = self.get_default_size();
 
@@ -104,7 +106,7 @@ impl ExampleApplicationWindow {
     }
 
     fn load_window_size(&self) {
-        let settings = &imp::ExampleApplicationWindow::from_instance(self).settings;
+        let settings = &imp::VApplicationWindow::from_instance(self).settings;
 
         let width = settings.get_int("window-width");
         let height = settings.get_int("window-height");
@@ -115,5 +117,19 @@ impl ExampleApplicationWindow {
         if is_maximized {
             self.maximize();
         }
+    }
+
+    fn setup_connect_handlers(&self) {
+        let self_ = imp::VApplicationWindow::from_instance(self);
+
+        self_
+            .refresh_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.refresh_button_clicked();
+            }));
+    }
+
+    fn refresh_button_clicked(&self) {
+        println!("Refresh button clicked!");
     }
 }

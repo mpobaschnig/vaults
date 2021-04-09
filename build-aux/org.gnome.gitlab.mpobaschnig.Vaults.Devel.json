@@ -28,6 +28,27 @@
     },
     "modules": [
         {
+            "name": "libadwaita",
+            "builddir": true,
+            "buildsystem": "meson",
+            "config-opts": [
+                "-Dprofiling=false",
+                "-Dintrospection=enabled",
+                "-Dgtk_doc=false",
+                "-Dtests=false",
+                "-Dexamples=false",
+                "-Dvapi=false",
+                "-Dglade_catalog=disabled"
+            ],
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/GNOME/libadwaita",
+                    "commit": "a12ac7ad8b95569ab3671870a7e37444441824fb"
+                }
+            ]
+        },
+        {
             "name": "vaults",
             "buildsystem": "meson",
             "run-tests": true,
