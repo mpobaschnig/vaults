@@ -54,23 +54,12 @@ mod imp {
                 obj.get_style_context().add_class("devel");
             }
 
-            // load latest window state
-            obj.load_window_size();
-
             obj.setup_connect_handlers();
         }
     }
 
     impl WidgetImpl for VApplicationWindow {}
-    impl WindowImpl for VApplicationWindow {
-        // save window state on delete event
-        fn close_request(&self, obj: &Self::Type) -> Inhibit {
-            if let Err(err) = obj.save_window_size() {
-                warn!("Failed to save window state, {}", &err);
-            }
-            Inhibit(false)
-        }
-    }
+    impl WindowImpl for VApplicationWindow {}
 
     impl ApplicationWindowImpl for VApplicationWindow {}
     impl AdwApplicationWindowImpl for VApplicationWindow {}
@@ -90,33 +79,6 @@ impl VApplicationWindow {
         gtk::Window::set_default_icon_name(APP_ID);
 
         window
-    }
-
-    pub fn save_window_size(&self) -> Result<(), glib::BoolError> {
-        let settings = &imp::VApplicationWindow::from_instance(self).settings;
-
-        let size = self.get_default_size();
-
-        settings.set_int("window-width", size.0)?;
-        settings.set_int("window-height", size.1)?;
-
-        settings.set_boolean("is-maximized", self.is_maximized())?;
-
-        Ok(())
-    }
-
-    fn load_window_size(&self) {
-        let settings = &imp::VApplicationWindow::from_instance(self).settings;
-
-        let width = settings.get_int("window-width");
-        let height = settings.get_int("window-height");
-        let is_maximized = settings.get_boolean("is-maximized");
-
-        self.set_default_size(width, height);
-
-        if is_maximized {
-            self.maximize();
-        }
     }
 
     fn setup_connect_handlers(&self) {
