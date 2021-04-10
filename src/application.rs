@@ -14,24 +14,24 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default)]
-    pub struct ExampleApplication {
+    pub struct VApplication {
         pub window: OnceCell<WeakRef<VApplicationWindow>>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for ExampleApplication {
-        const NAME: &'static str = "ExampleApplication";
-        type Type = super::ExampleApplication;
+    impl ObjectSubclass for VApplication {
+        const NAME: &'static str = "VApplication";
+        type Type = super::VApplication;
         type ParentType = gtk::Application;
     }
 
-    impl ObjectImpl for ExampleApplication {}
+    impl ObjectImpl for VApplication {}
 
-    impl gio::subclass::prelude::ApplicationImpl for ExampleApplication {
+    impl gio::subclass::prelude::ApplicationImpl for VApplication {
         fn activate(&self, app: &Self::Type) {
-            debug!("GtkApplication<ExampleApplication>::activate");
+            debug!("GtkApplication<VApplication>::activate");
 
-            let priv_ = ExampleApplication::from_instance(app);
+            let priv_ = VApplication::from_instance(app);
             if let Some(window) = priv_.window.get() {
                 let window = window.upgrade().unwrap();
                 window.show();
@@ -54,20 +54,20 @@ mod imp {
         }
 
         fn startup(&self, app: &Self::Type) {
-            debug!("GtkApplication<ExampleApplication>::startup");
+            debug!("GtkApplication<VApplication>::startup");
             self.parent_startup(app);
         }
     }
 
-    impl GtkApplicationImpl for ExampleApplication {}
+    impl GtkApplicationImpl for VApplication {}
 }
 
 glib::wrapper! {
-    pub struct ExampleApplication(ObjectSubclass<imp::ExampleApplication>)
+    pub struct VApplication(ObjectSubclass<imp::VApplication>)
         @extends gio::Application, gtk::Application, @implements gio::ActionMap, gio::ActionGroup;
 }
 
-impl ExampleApplication {
+impl VApplication {
     pub fn new() -> Self {
         glib::Object::new(&[
             ("application-id", &Some(config::APP_ID)),
@@ -77,7 +77,7 @@ impl ExampleApplication {
     }
 
     fn get_main_window(&self) -> VApplicationWindow {
-        let priv_ = imp::ExampleApplication::from_instance(self);
+        let priv_ = imp::VApplication::from_instance(self);
         priv_.window.get().unwrap().upgrade().unwrap()
     }
 

@@ -3,7 +3,7 @@ mod application;
 mod config;
 mod window;
 
-use application::ExampleApplication;
+use application::VApplication;
 use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 use gettextrs::*;
 use gtk::gio;
@@ -14,6 +14,7 @@ fn main() {
 
     // Prepare i18n
     setlocale(LocaleCategory::LcAll, "");
+
     bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
     textdomain(GETTEXT_PACKAGE);
 
@@ -25,6 +26,6 @@ fn main() {
     let res = gio::Resource::load(RESOURCES_FILE).expect("Could not load gresource file");
     gio::resources_register(&res);
 
-    let app = ExampleApplication::new();
+    let app = VApplication::new();
     app.run();
 }

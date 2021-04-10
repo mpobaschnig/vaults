@@ -1,4 +1,4 @@
-use crate::application::ExampleApplication;
+use crate::application::VApplication;
 use crate::config::{APP_ID, PROFILE};
 use adw::subclass::prelude::*;
 use glib::clone;
@@ -82,7 +82,7 @@ glib::wrapper! {
 }
 
 impl VApplicationWindow {
-    pub fn new(app: &ExampleApplication) -> Self {
+    pub fn new(app: &VApplication) -> Self {
         let window: Self = glib::Object::new(&[]).expect("Failed to create VApplicationWindow");
         window.set_application(Some(app));
 
