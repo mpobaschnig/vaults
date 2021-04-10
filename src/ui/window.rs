@@ -1,10 +1,28 @@
 use crate::application::VApplication;
 use crate::config::{APP_ID, PROFILE};
+use crate::ui::pages::*;
 use adw::subclass::prelude::*;
-use glib::clone;
+use glib::{clone, GEnum, ParamSpec, ToValue};
 use gtk::subclass::prelude::*;
 use gtk::{self, prelude::*};
 use gtk::{gio, glib, CompositeTemplate};
+use log::*;
+use once_cell::sync::Lazy;
+use std::cell::RefCell;
+
+#[derive(Copy, Debug, Clone, PartialEq, GEnum)]
+#[repr(u32)]
+#[genum(type_name = "VVView")]
+pub enum VView {
+    Start,
+    Vaults,
+}
+
+impl Default for VView {
+    fn default() -> Self {
+        VView::Start
+    }
+}
 
 mod imp {
     use super::*;
@@ -13,10 +31,20 @@ mod imp {
     #[template(resource = "/com/gitlab/mpobaschnig/Vaults/window.ui")]
     pub struct ApplicationWindow {
         #[template_child]
+        pub window_leaflet: TemplateChild<adw::Leaflet>,
+        #[template_child]
+        pub start_page: TemplateChild<VStartPage>,
+        #[template_child]
+        pub vaults_page: TemplateChild<VVaultsPage>,
+
+        #[template_child]
         pub headerbar: TemplateChild<adw::HeaderBar>,
         #[template_child]
         pub refresh_button: TemplateChild<gtk::Button>,
+
         pub settings: gio::Settings,
+
+        pub view: RefCell<VView>,
     }
 
     #[glib::object_subclass]
@@ -27,9 +55,13 @@ mod imp {
 
         fn new() -> Self {
             Self {
+                window_leaflet: TemplateChild::default(),
+                start_page: TemplateChild::default(),
+                vaults_page: TemplateChild::default(),
                 headerbar: TemplateChild::default(),
                 refresh_button: TemplateChild::default(),
                 settings: gio::Settings::new(APP_ID),
+                view: RefCell::new(VView::Start),
             }
         }
 
@@ -47,12 +79,50 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
-            // Devel Profile
             if PROFILE == "Devel" {
                 obj.get_style_context().add_class("devel");
             }
 
             obj.setup_connect_handlers();
+        }
+
+        fn properties() -> &'static [ParamSpec] {
+            static PROPERTIES: Lazy<Vec<ParamSpec>> = Lazy::new(|| {
+                vec![ParamSpec::enum_(
+                    "view",
+                    "View",
+                    "View",
+                    VView::static_type(),
+                    VView::default() as i32,
+                    glib::ParamFlags::READWRITE,
+                )]
+            });
+
+            PROPERTIES.as_ref()
+        }
+
+        fn get_property(&self, _obj: &Self::Type, _id: usize, pspec: &ParamSpec) -> glib::Value {
+            match pspec.get_name() {
+                "view" => self.view.borrow().to_value(),
+                _ => unimplemented!(),
+            }
+        }
+
+        fn set_property(
+            &self,
+            obj: &Self::Type,
+            _id: usize,
+            value: &glib::Value,
+            pspec: &ParamSpec,
+        ) {
+            match pspec.get_name() {
+                "view" => {
+                    let view = value.get().unwrap();
+                    *self.view.borrow_mut() = view.unwrap();
+                    obj.update_view();
+                }
+                _ => unimplemented!(),
+            }
         }
     }
 
@@ -91,5 +161,30 @@ impl ApplicationWindow {
 
     fn refresh_button_clicked(&self) {
         println!("Refresh button clicked!");
+    }
+
+    fn update_view(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+        let view = *self_.view.borrow();
+        debug!("Set view to {:?}", view);
+
+        println!("HEllo");
+        // Show requested view / page
+        match view {
+            VView::Start => {
+                self_
+                    .window_leaflet
+                    .set_visible_child(&self_.start_page.get());
+            }
+            VView::Vaults => {
+                self_
+                    .window_leaflet
+                    .set_visible_child(&self_.vaults_page.get());
+            }
+        }
+    }
+
+    pub fn set_view(&self, view: VView) {
+        self.set_property("view", &view).unwrap()
     }
 }

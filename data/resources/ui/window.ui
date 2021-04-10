@@ -35,6 +35,33 @@
                 </style>
               </object>
             </child>
+            <child>
+              <object class="GtkOverlay" id="overlay">
+                <child>
+                  <object class="AdwFlap" id="window_flap">
+                    <property name="reveal-flap">False</property>
+                    <property name="locked">True</property>
+                    <property name="flap-position">end</property>
+                    <property name="vexpand">True</property>
+                    <property name="separator">
+                      <object class="GtkSeparator"/>
+                    </property>
+                    <child>
+                      <object class="AdwLeaflet" id="window_leaflet">
+                        <property name="can_unfold">False</property>
+                        <property name="hexpand">True</property>
+                        <child>
+                          <object class="VStartPage" id="start_page"/>
+                        </child>
+                        <child>
+                          <object class="VVaultsPage" id="vaults_page"/>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
           </object>
         </child>
       </object>

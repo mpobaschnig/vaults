@@ -19,10 +19,16 @@ run_command(
 )
 
 sources = files(
+  'ui/pages/mod.rs',
+  'ui/pages/start_page.rs',
+  'ui/pages/vaults_page.rs',
+
+  'ui/mod.rs',
+  'ui/window.rs',
+
   'application.rs',
   'config.rs',
   'main.rs',
-  'window.rs',
 )
 
 custom_target(

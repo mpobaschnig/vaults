@@ -1,7 +1,8 @@
 mod application;
 #[rustfmt::skip]
 mod config;
-mod window;
+
+mod ui;
 
 use application::VApplication;
 use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};

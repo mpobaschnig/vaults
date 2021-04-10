@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="VVaultsPage" parent="AdwBin">
+    <child>
+      <object class="GtkScrolledWindow" id="scrolledwindow">
+        <property name="hscrollbar_policy">never</property>
+        <child>
+          <object class="GtkViewport">
+            <property name="vexpand">True</property>
+            <property name="hexpand">True</property>
+            <property name="scroll-to-focus">True</property>
+            <child>
+              <object class="AdwClamp">
+                <property name="maximum_size">1600</property>
+                <property name="margin_top">12</property>
+                <property name="margin_bottom">12</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="label" translatable="yes">_Here should be vault rows...</property>
+                    <attributes>
+                      <attribute name="font-desc" value="Cantarell Bold 12"/>
+                    </attributes>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

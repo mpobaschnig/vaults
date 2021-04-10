@@ -1,5 +1,5 @@
 use crate::config;
-use crate::window::ApplicationWindow;
+use crate::ui::{ApplicationWindow, VView};
 use gio::ApplicationFlags;
 use glib::clone;
 use glib::WeakRef;
@@ -9,13 +9,14 @@ use gtk::{gdk, gio, glib};
 use gtk_macros::action;
 use log::{debug, info};
 use once_cell::sync::OnceCell;
+use std::cell::RefCell;
 
 mod imp {
     use super::*;
 
     #[derive(Debug, Default)]
     pub struct VApplication {
-        pub window: OnceCell<WeakRef<ApplicationWindow>>,
+        pub window: RefCell<Option<ApplicationWindow>>,
     }
 
     #[glib::object_subclass]
@@ -31,10 +32,7 @@ mod imp {
         fn activate(&self, app: &Self::Type) {
             debug!("GtkApplication<VApplication>::activate");
 
-            let priv_ = VApplication::from_instance(app);
-            if let Some(window) = priv_.window.get() {
-                let window = window.upgrade().unwrap();
-                window.show();
+            if let Some(ref window) = *self.window.borrow() {
                 window.present();
                 return;
             }
@@ -43,14 +41,13 @@ mod imp {
             app.setup_css();
 
             let window = ApplicationWindow::new(app);
-            self.window
-                .set(window.downgrade())
-                .expect("Window already set.");
+
+            window.present();
+
+            self.window.replace(Some(window));
 
             app.setup_gactions();
             app.setup_accels();
-
-            app.get_main_window().present();
         }
 
         fn startup(&self, app: &Self::Type) {
@@ -74,11 +71,6 @@ impl VApplication {
             ("flags", &ApplicationFlags::empty()),
         ])
         .expect("Application initialization failed...")
-    }
-
-    fn get_main_window(&self) -> ApplicationWindow {
-        let priv_ = imp::VApplication::from_instance(self);
-        priv_.window.get().unwrap().upgrade().unwrap()
     }
 
     fn setup_gactions(&self) {
@@ -146,7 +138,7 @@ impl VApplication {
             .license_type(gtk::License::Gpl30)
             .website("https://gitlab.com/mpobaschnig/Vaults")
             .version(config::VERSION)
-            .transient_for(&self.get_main_window())
+            .transient_for(&self.get_active_window().unwrap())
             .modal(true)
             .authors(vec!["Martin Pobaschnig".into()])
             .artists(vec!["Martin Pobaschnig".into()])
