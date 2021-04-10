@@ -9,9 +9,9 @@ flatpak:
     - flatpak
   variables:
     BUNDLE: "vaults-nightly.flatpak"
-    MANIFEST_PATH: "build-aux/org.gitlab.mpobaschnig.Vaults.Devel.json"
+    MANIFEST_PATH: "build-aux/com.gitlab.mpobaschnig.Vaults.Devel.json"
     FLATPAK_MODULE: "vaults"
-    APP_ID: "org.gitlab.mpobaschnig.Vaults.Devel"
+    APP_ID: "com.gitlab.mpobaschnig.Vaults.Devel"
     RUNTIME_REPO: "https://nightly.gnome.org/gnome-nightly.flatpakrepo"
   script:
     - >
