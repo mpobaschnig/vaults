@@ -2,11 +2,9 @@ use crate::application::VApplication;
 use crate::config::{APP_ID, PROFILE};
 use adw::subclass::prelude::*;
 use glib::clone;
-use glib::signal::Inhibit;
 use gtk::subclass::prelude::*;
 use gtk::{self, prelude::*};
 use gtk::{gio, glib, CompositeTemplate};
-use log::warn;
 
 mod imp {
     use super::*;
