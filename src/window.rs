@@ -11,7 +11,7 @@ mod imp {
 
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/com/gitlab/mpobaschnig/Vaults/window.ui")]
-    pub struct VApplicationWindow {
+    pub struct ApplicationWindow {
         #[template_child]
         pub headerbar: TemplateChild<adw::HeaderBar>,
         #[template_child]
@@ -20,9 +20,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for VApplicationWindow {
-        const NAME: &'static str = "VApplicationWindow";
-        type Type = super::VApplicationWindow;
+    impl ObjectSubclass for ApplicationWindow {
+        const NAME: &'static str = "ApplicationWindow";
+        type Type = super::ApplicationWindow;
         type ParentType = adw::ApplicationWindow;
 
         fn new() -> Self {
@@ -43,7 +43,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for VApplicationWindow {
+    impl ObjectImpl for ApplicationWindow {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
@@ -56,21 +56,21 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for VApplicationWindow {}
-    impl WindowImpl for VApplicationWindow {}
+    impl WidgetImpl for ApplicationWindow {}
+    impl WindowImpl for ApplicationWindow {}
 
-    impl ApplicationWindowImpl for VApplicationWindow {}
-    impl AdwApplicationWindowImpl for VApplicationWindow {}
+    impl ApplicationWindowImpl for ApplicationWindow {}
+    impl AdwApplicationWindowImpl for ApplicationWindow {}
 }
 
 glib::wrapper! {
-    pub struct VApplicationWindow(ObjectSubclass<imp::VApplicationWindow>)
+    pub struct ApplicationWindow(ObjectSubclass<imp::ApplicationWindow>)
         @extends gtk::Widget, gtk::Window, adw::ApplicationWindow, @implements gio::ActionMap, gio::ActionGroup;
 }
 
-impl VApplicationWindow {
+impl ApplicationWindow {
     pub fn new(app: &VApplication) -> Self {
-        let window: Self = glib::Object::new(&[]).expect("Failed to create VApplicationWindow");
+        let window: Self = glib::Object::new(&[]).expect("Failed to create ApplicationWindow");
         window.set_application(Some(app));
 
         // Set icons for shell
@@ -80,7 +80,7 @@ impl VApplicationWindow {
     }
 
     fn setup_connect_handlers(&self) {
-        let self_ = imp::VApplicationWindow::from_instance(self);
+        let self_ = imp::ApplicationWindow::from_instance(self);
 
         self_
             .refresh_button

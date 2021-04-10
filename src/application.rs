@@ -1,5 +1,5 @@
 use crate::config;
-use crate::window::VApplicationWindow;
+use crate::window::ApplicationWindow;
 use gio::ApplicationFlags;
 use glib::clone;
 use glib::WeakRef;
@@ -15,7 +15,7 @@ mod imp {
 
     #[derive(Debug, Default)]
     pub struct VApplication {
-        pub window: OnceCell<WeakRef<VApplicationWindow>>,
+        pub window: OnceCell<WeakRef<ApplicationWindow>>,
     }
 
     #[glib::object_subclass]
@@ -42,7 +42,7 @@ mod imp {
             app.set_resource_base_path(Some("/com/gitlab/mpobaschnig/Vaults/"));
             app.setup_css();
 
-            let window = VApplicationWindow::new(app);
+            let window = ApplicationWindow::new(app);
             self.window
                 .set(window.downgrade())
                 .expect("Window already set.");
@@ -76,7 +76,7 @@ impl VApplication {
         .expect("Application initialization failed...")
     }
 
-    fn get_main_window(&self) -> VApplicationWindow {
+    fn get_main_window(&self) -> ApplicationWindow {
         let priv_ = imp::VApplication::from_instance(self);
         priv_.window.get().unwrap().upgrade().unwrap()
     }
