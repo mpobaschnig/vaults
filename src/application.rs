@@ -144,7 +144,7 @@ impl VApplication {
             .program_name("Vaults")
             .logo_icon_name(config::APP_ID)
             .license_type(gtk::License::Gpl30)
-            .website("https://gitlab.gnome.org/mpobaschnig/Vaults/")
+            .website("https://gitlab.com/mpobaschnig/Vaults")
             .version(config::VERSION)
             .transient_for(&self.get_main_window())
             .modal(true)
