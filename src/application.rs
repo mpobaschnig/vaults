@@ -134,6 +134,7 @@ impl VApplication {
         println!("Import vault submenu button clicked");
     }
 
+    #[allow(dead_code)]
     fn refresh_button_clicked(&self) {
         println!("Refresh button clicked!");
     }
