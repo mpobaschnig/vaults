@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="VApplicationWindow" parent="AdwApplicationWindow">
-    <property name="width_request">480</property>
-    <property name="height_request">320</property>
     <child>
       <object class="AdwSqueezer" id="window_squeezer">
         <property name="orientation">vertical</property>
