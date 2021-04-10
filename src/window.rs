@@ -10,7 +10,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/org/gnome/gitlab/mpobaschnig/Vaults/window.ui")]
+    #[template(resource = "/com/gitlab/mpobaschnig/Vaults/window.ui")]
     pub struct VApplicationWindow {
         #[template_child]
         pub headerbar: TemplateChild<adw::HeaderBar>,

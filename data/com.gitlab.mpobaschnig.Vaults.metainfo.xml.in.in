@@ -11,12 +11,12 @@
   </description>
   <screenshots>
     <screenshot type="default">
-      <image>https://gitlab.gnome.org/mpobaschnig/Vaults/raw/master/data/resources/screenshots/screenshot1.png</image>
+      <image>https://gitlab.com/mpobaschnig/Vaults/raw/master/data/resources/screenshots/screenshot1.png</image>
       <caption>Main Window</caption>
     </screenshot>
   </screenshots>
-  <url type="homepage">https://gitlab.gnome.org/mpobaschnig/Vaults</url>
-  <url type="bugtracker">https://gitlab.gnome.org/mpobaschnig/Vaults/issues</url>
+  <url type="homepage">https://gitlab.com/mpobaschnig/Vaults</url>
+  <url type="bugtracker">https://gitlab.com/mpobaschnig/Vaults/issues</url>
   <content_rating type="oars-1.0" />
   <releases>
     <release version="0.0.1" date="2019-07-11" />

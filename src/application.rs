@@ -39,7 +39,7 @@ mod imp {
                 return;
             }
 
-            app.set_resource_base_path(Some("/org/gnome/gitlab/mpobaschnig/Vaults/"));
+            app.set_resource_base_path(Some("/com/gitlab/mpobaschnig/Vaults/"));
             app.setup_css();
 
             let window = VApplicationWindow::new(app);
@@ -116,7 +116,7 @@ impl VApplication {
 
     fn setup_css(&self) {
         let provider = gtk::CssProvider::new();
-        provider.load_from_resource("/org/gnome/gitlab/mpobaschnig/Vaults/style.css");
+        provider.load_from_resource("/com/gitlab/mpobaschnig/Vaults/style.css");
         if let Some(display) = gdk::Display::get_default() {
             gtk::StyleContext::add_provider_for_display(
                 &display,
