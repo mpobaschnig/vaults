@@ -17,7 +17,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use adw::subclass::prelude::*;
+use adw::{subclass::prelude::*, ActionRowExt};
+use gettextrs::gettext;
 use gtk::{self, prelude::*};
 use gtk::{glib, CompositeTemplate};
 use gtk::{glib::clone, subclass::prelude::*};
@@ -36,6 +37,8 @@ mod imp {
         pub vault_name_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub backend_type_combo_box_text: TemplateChild<gtk::ComboBoxText>,
+        #[template_child]
+        pub password_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
         pub password_entry: TemplateChild<gtk::Entry>,
         #[template_child]
@@ -62,6 +65,7 @@ mod imp {
                 add_new_vault_button: TemplateChild::default(),
                 vault_name_entry: TemplateChild::default(),
                 backend_type_combo_box_text: TemplateChild::default(),
+                password_action_row: TemplateChild::default(),
                 password_entry: TemplateChild::default(),
                 password_confirm_entry: TemplateChild::default(),
                 encrypted_data_directory_entry: TemplateChild::default(),
@@ -142,25 +146,25 @@ impl AddNewVaultDialog {
         self_
             .vault_name_entry
             .connect_property_text_notify(clone!(@weak self as obj => move |_| {
-                obj.enable_add_button_if_entries_not_empty();
+                obj.check_add_button_enable_conditions();
             }));
 
         self_
             .password_entry
             .connect_property_text_notify(clone!(@weak self as obj => move |_| {
-                obj.enable_add_button_if_entries_not_empty();
+                obj.check_add_button_enable_conditions();
             }));
 
         self_.password_confirm_entry.connect_property_text_notify(
             clone!(@weak self as obj => move |_| {
-                obj.enable_add_button_if_entries_not_empty();
+                obj.check_add_button_enable_conditions();
             }),
         );
 
         self_
             .encrypted_data_directory_entry
             .connect_property_text_notify(clone!(@weak self as obj => move |_| {
-                obj.enable_add_button_if_entries_not_empty();
+                obj.check_add_button_enable_conditions();
             }));
 
         self_.encrypted_data_directory_button.connect_clicked(
@@ -171,7 +175,7 @@ impl AddNewVaultDialog {
 
         self_.mount_directory_entry.connect_property_text_notify(
             clone!(@weak self as obj => move |_| {
-                obj.enable_add_button_if_entries_not_empty();
+                obj.check_add_button_enable_conditions();
             }),
         );
 
@@ -182,7 +186,7 @@ impl AddNewVaultDialog {
             }));
     }
 
-    fn enable_add_button_if_entries_not_empty(&self) {
+    fn check_add_button_enable_conditions(&self) {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
         let vault_name = self_.vault_name_entry.get_text();
@@ -197,9 +201,18 @@ impl AddNewVaultDialog {
             && !encrypted_data_directory.is_empty()
             && !mount_directory.is_empty()
         {
-            self_.add_new_vault_button.set_sensitive(true);
+            if password.eq(&confirm_password) {
+                self_.add_new_vault_button.set_sensitive(true);
+                self_.password_action_row.set_subtitle(Some(""));
+            } else {
+                self_.add_new_vault_button.set_sensitive(false);
+                self_
+                    .password_action_row
+                    .set_subtitle(Some(&gettext("Passwords are not equal!")));
+            }
         } else {
             self_.add_new_vault_button.set_sensitive(false);
+            self_.password_action_row.set_subtitle(Some(""));
         }
     }
 }

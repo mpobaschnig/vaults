@@ -88,7 +88,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="AdwActionRow">
+                  <object class="AdwActionRow" id="password_action_row">
                     <property name="title" translatable="yes">Password</property>
                     <child>
                       <object class="GtkEntry" id="password_entry">
