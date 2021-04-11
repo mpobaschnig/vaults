@@ -19,6 +19,10 @@ run_command(
 )
 
 sources = files(
+  'backend/cryfs.rs',
+  'backend/gocryptfs.rs',
+  'backend/mod.rs',
+
   'ui/pages/mod.rs',
   'ui/pages/start_page.rs',
   'ui/pages/vaults_page.rs',
@@ -30,6 +34,7 @@ sources = files(
   'application.rs',
   'config.rs',
   'main.rs',
+  'vault.rs',
 )
 
 custom_target(

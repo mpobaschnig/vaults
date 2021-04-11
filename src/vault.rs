@@ -1,4 +1,4 @@
-// mod.rs
+// vaults.rs
 //
 // Copyright 2021 Martin Pobaschnig <mpobaschnig@posteo.de>
 //
@@ -17,5 +17,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-pub mod backend;
-pub mod pages;
+pub struct Vault {
+    pub name: String,
+    pub backend_type: String,
+    pub encrypted_data_directory: String,
+    pub mount_directory: String,
+}

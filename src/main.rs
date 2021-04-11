@@ -20,8 +20,13 @@
 mod application;
 #[rustfmt::skip]
 mod config;
+mod vault;
 
+mod backend;
 mod ui;
+
+#[macro_use]
+extern crate quick_error;
 
 use application::VApplication;
 use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
