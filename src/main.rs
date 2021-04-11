@@ -35,8 +35,13 @@ fn main() {
     // Prepare i18n
     setlocale(LocaleCategory::LcAll, "");
 
-    bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR);
-    textdomain(GETTEXT_PACKAGE);
+    if let Err(e) = bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR) {
+        log::warn!("Could not bind text domain: {}", e);
+    }
+
+    if let Err(e) = textdomain(GETTEXT_PACKAGE) {
+        log::warn!("Could not set text domain: {}", e);
+    }
 
     gtk::glib::set_application_name("Vaults");
     gtk::glib::set_prgname(Some("vaults"));
