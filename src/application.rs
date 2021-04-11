@@ -18,7 +18,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::config;
-use crate::ui::{ApplicationWindow, VView};
+use crate::ui::{AddNewVaultDialog, ApplicationWindow};
 use gio::ApplicationFlags;
 use glib::clone;
 use glib::WeakRef;
@@ -139,6 +139,10 @@ impl VApplication {
 
     fn add_new_vault(&self) {
         println!("Add new vault submenu button clicked!");
+        let window = &self.get_active_window().unwrap();
+        let dialog = AddNewVaultDialog::new(&window);
+        dialog.set_transient_for(Some(window));
+        dialog.present();
     }
 
     fn import_vault(&self) {

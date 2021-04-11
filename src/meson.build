@@ -23,6 +23,7 @@ sources = files(
   'ui/pages/start_page.rs',
   'ui/pages/vaults_page.rs',
 
+  'ui/add_new_vault_dialog.rs',
   'ui/mod.rs',
   'ui/window.rs',
 

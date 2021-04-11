@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0"/>
+  <requires lib="libadwaita" version="1.0"/>
+  <template class="AddNewVaultDialog" parent="GtkDialog">
+    <property name="default-height">400</property>
+    <property name="default-width">460</property>
+    <property name="use-header-bar">1</property>
+    <property name="modal">1</property>
+    <property name="destroy-with-parent">1</property>
+    <child type="titlebar">
+      <object class="GtkHeaderBar">
+        <property name="title-widget">
+          <object class="AdwWindowTitle">
+            <property name="title" translatable="yes">Add New Vault</property>
+          </object>
+        </property>
+        <property name="show-title-buttons">False</property>
+        <child>
+          <object class="GtkButton" id="cancel_button">
+            <property name="label" translatable="yes">_Cancel</property>
+            <property name="use_underline">True</property>
+          </object>
+        </child>
+        <child type="end">
+          <object class="GtkButton" id="add_new_vault_button">
+            <property name="label" translatable="yes">_Add</property>
+            <property name="use_underline">True</property>
+            <property name="sensitive">False</property>
+            <style>
+              <class name="suggested-action"/>
+            </style>
+          </object>
+        </child>
+      </object>
+    </child>
+    <child>
+      <object class="GtkScrolledWindow">
+        <property name="propagate-natural-height">1</property>
+        <child>
+          <object class="AdwClamp">
+            <property name="valign">center</property>
+            <property name="halign">center</property>
+            <property name="vexpand">True</property>
+            <property name="hexpand">True</property>
+            <property name="margin-start">12</property>
+            <property name="margin-end">12</property>
+            <property name="margin-top">12</property>
+            <property name="margin-bottom">12</property>
+            <child>
+              <object class="GtkListBox" id="vaults_list_box">
+                <property name="selection-mode">none</property>
+                <property name="margin-start">12</property>
+                <property name="margin-end">12</property>
+                <property name="margin-top">12</property>
+                <property name="margin-bottom">12</property>
+                <style>
+                  <class name="content"/>
+                </style>
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">Vault Name</property>
+                    <child>
+                      <object class="GtkEntry" id="vault_name_entry">
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">Backend Type</property>
+                    <child>
+                      <object class="GtkComboBoxText" id="backend_type_combo_box_text">
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                        <items>
+                          <item translatable="yes" id="cryfs">cryfs</item>
+                          <item translatable="yes" id="gocryptfs">gocryptfs</item>
+                        </items>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">Password</property>
+                    <child>
+                      <object class="GtkEntry" id="password_entry">
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="visibility">False</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">Confirm Password</property>
+                    <child>
+                      <object class="GtkEntry" id="password_confirm_entry">
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="visibility">False</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">Encrypted Data Directory</property>
+                    <child>
+                      <object class="GtkEntry" id="encrypted_data_directory_entry">
+                        <property name="margin-start">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="encrypted_data_directory_button">
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="icon_name">document-open-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwActionRow">
+                    <property name="title" translatable="yes">Mount Directory</property>
+                    <child>
+                      <object class="GtkEntry" id="mount_directory_entry">
+                        <property name="margin-start">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkButton" id="mount_directory_button">
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="icon_name">document-open-symbolic</property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>
