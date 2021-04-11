@@ -139,9 +139,39 @@ impl AddNewVaultDialog {
                 println!("Add New Vault button clicked!");
             }));
 
+        self_
+            .vault_name_entry
+            .connect_property_text_notify(clone!(@weak self as obj => move |_| {
+                obj.enable_add_button_if_entries_not_empty();
+            }));
+
+        self_
+            .password_entry
+            .connect_property_text_notify(clone!(@weak self as obj => move |_| {
+                obj.enable_add_button_if_entries_not_empty();
+            }));
+
+        self_.password_confirm_entry.connect_property_text_notify(
+            clone!(@weak self as obj => move |_| {
+                obj.enable_add_button_if_entries_not_empty();
+            }),
+        );
+
+        self_
+            .encrypted_data_directory_entry
+            .connect_property_text_notify(clone!(@weak self as obj => move |_| {
+                obj.enable_add_button_if_entries_not_empty();
+            }));
+
         self_.encrypted_data_directory_button.connect_clicked(
             clone!(@weak self as obj => move |_| {
                 println!("Encrypted Data Directory button clicked!");
+            }),
+        );
+
+        self_.mount_directory_entry.connect_property_text_notify(
+            clone!(@weak self as obj => move |_| {
+                obj.enable_add_button_if_entries_not_empty();
             }),
         );
 
@@ -150,5 +180,26 @@ impl AddNewVaultDialog {
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 println!("Mount Directory button clicked!");
             }));
+    }
+
+    fn enable_add_button_if_entries_not_empty(&self) {
+        let self_ = imp::AddNewVaultDialog::from_instance(self);
+
+        let vault_name = self_.vault_name_entry.get_text();
+        let password = self_.password_entry.get_text();
+        let confirm_password = self_.password_confirm_entry.get_text();
+        let encrypted_data_directory = self_.encrypted_data_directory_entry.get_text();
+        let mount_directory = self_.mount_directory_entry.get_text();
+
+        if !vault_name.is_empty()
+            && !password.is_empty()
+            && !confirm_password.is_empty()
+            && !encrypted_data_directory.is_empty()
+            && !mount_directory.is_empty()
+        {
+            self_.add_new_vault_button.set_sensitive(true);
+        } else {
+            self_.add_new_vault_button.set_sensitive(false);
+        }
     }
 }
