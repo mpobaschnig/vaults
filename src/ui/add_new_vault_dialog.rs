@@ -211,8 +211,14 @@ impl AddNewVaultDialog {
                     .set_subtitle(Some(&gettext("Passwords are not equal!")));
             }
         } else {
+            if password.eq(&confirm_password) {
+                self_.password_action_row.set_subtitle(Some(""));
+            } else {
+                self_
+                    .password_action_row
+                    .set_subtitle(Some(&gettext("Passwords are not equal!")));
+            }
             self_.add_new_vault_button.set_sensitive(false);
-            self_.password_action_row.set_subtitle(Some(""));
         }
     }
 }
