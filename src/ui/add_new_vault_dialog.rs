@@ -87,7 +87,6 @@ mod imp {
     impl ObjectImpl for AddNewVaultDialog {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-            obj.connect_handlers();
             obj.setup_actions();
             obj.setup_signals();
         }
@@ -111,19 +110,6 @@ impl AddNewVaultDialog {
         dialog.set_transient_for(Some(parent));
 
         dialog
-    }
-
-    fn connect_handlers(&self) {
-        //self.connect_response(Self::handle_response);
-    }
-
-    fn handle_response(&self, id: gtk::ResponseType) {
-        match id {
-            gtk::ResponseType::Ok => {}
-            _ => {
-                self.destroy();
-            }
-        }
     }
 
     fn setup_actions(&self) {}
