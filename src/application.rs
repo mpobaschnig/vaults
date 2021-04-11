@@ -142,7 +142,17 @@ impl VApplication {
         let window = &self.get_active_window().unwrap();
         let dialog = AddNewVaultDialog::new(&window);
         dialog.set_transient_for(Some(window));
-        dialog.present();
+        dialog.connect_response(|dialog, id| match id {
+            gtk::ResponseType::Ok => {
+                let entries = dialog.get_entry_values();
+                dialog.destroy();
+            }
+            _ => {
+                dialog.destroy();
+            }
+        });
+
+        dialog.show();
     }
 
     fn import_vault(&self) {

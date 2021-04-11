@@ -114,7 +114,7 @@ impl AddNewVaultDialog {
     }
 
     fn connect_handlers(&self) {
-        self.connect_response(Self::handle_response);
+        //self.connect_response(Self::handle_response);
     }
 
     fn handle_response(&self, id: gtk::ResponseType) {
@@ -134,13 +134,13 @@ impl AddNewVaultDialog {
         self_
             .cancel_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.destroy();
+                obj.response(gtk::ResponseType::Cancel);
             }));
 
         self_
             .add_new_vault_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
-                println!("Add New Vault button clicked!");
+                obj.response(gtk::ResponseType::Ok);
             }));
 
         self_
@@ -220,5 +220,30 @@ impl AddNewVaultDialog {
             }
             self_.add_new_vault_button.set_sensitive(false);
         }
+    }
+
+    pub fn get_entry_values(&self) -> (String, String, String, String, String) {
+        let self_ = imp::AddNewVaultDialog::from_instance(self);
+
+        let vault_name = String::from(self_.vault_name_entry.get_text().as_str());
+        let backend_type = String::from(
+            self_
+                .backend_type_combo_box_text
+                .get_active_text()
+                .unwrap()
+                .as_str(),
+        );
+        let password = String::from(self_.password_entry.get_text().as_str());
+        let encrypted_data_directory =
+            String::from(self_.encrypted_data_directory_entry.get_text().as_str());
+        let mount_directory = String::from(self_.mount_directory_entry.get_text().as_str());
+
+        (
+            vault_name,
+            backend_type,
+            password,
+            encrypted_data_directory,
+            mount_directory,
+        )
     }
 }
