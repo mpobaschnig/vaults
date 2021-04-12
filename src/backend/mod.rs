@@ -21,6 +21,13 @@ pub mod cryfs;
 pub mod gocryptfs;
 
 use crate::vault::Vault;
+use once_cell::sync::Lazy;
+use std::string::String;
+use std::sync::Mutex;
+use strum::IntoEnumIterator;
+use strum_macros::EnumIter;
+
+pub static AVAILABLE_BACKENDS: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(vec![]));
 
 quick_error! {
     #[derive(Debug)]
@@ -29,21 +36,73 @@ quick_error! {
     }
 }
 
-pub trait Backend {
+#[derive(Debug, EnumIter, strum_macros::ToString)]
+pub enum Backend {
+    Cryfs,
+    Gocryptfs,
+}
+
+impl Backend {
     fn is_available(&self) -> bool {
-        log::error!("function is_available not implemented!");
-        false
+        match &self {
+            Backend::Cryfs => {
+                return cryfs::is_available();
+            }
+            Backend::Gocryptfs => {
+                return gocryptfs::is_available();
+            }
+        }
     }
-    fn create(&self, _vault: Vault) -> Result<(), BackendError> {
-        log::error!("function create not implemented!");
-        Err(BackendError::NotImplemented)
+
+    pub fn init(&self, vault: &Vault) -> Result<(), BackendError> {
+        match &self {
+            Backend::Cryfs => {
+                return cryfs::init(vault);
+            }
+            Backend::Gocryptfs => {
+                return gocryptfs::init(vault);
+            }
+        }
     }
-    fn open(&self, _vault: Vault) -> Result<(), BackendError> {
-        log::error!("function open not implemented!");
-        Err(BackendError::NotImplemented)
+
+    pub fn open(&self, vault: &Vault) -> Result<(), BackendError> {
+        match &self {
+            Backend::Cryfs => {
+                return cryfs::open(vault);
+            }
+            Backend::Gocryptfs => {
+                return gocryptfs::open(vault);
+            }
+        }
     }
-    fn close(&self, _vault: Vault) -> Result<(), BackendError> {
-        log::error!("function close not implemented!");
-        Err(BackendError::NotImplemented)
+
+    pub fn close(&self, vault: &Vault) -> Result<(), BackendError> {
+        match &self {
+            Backend::Cryfs => {
+                return cryfs::close(vault);
+            }
+            Backend::Gocryptfs => {
+                return gocryptfs::close(vault);
+            }
+        }
+    }
+}
+
+pub fn probe_backends() {
+    let available_backends_res = AVAILABLE_BACKENDS.lock();
+    match available_backends_res {
+        Ok(mut available_backends) => {
+            available_backends.clear();
+            for backend_enum in Backend::iter() {
+                if backend_enum.is_available() {
+                    let backend = backend_enum.to_string();
+                    log::info!("Found backend: {}", backend);
+                    available_backends.push(backend);
+                }
+            }
+        }
+        Err(e) => {
+            log::error!("Failed to aquire mutex lock of AVAILABLE_BACKENDS: {}", e);
+        }
     }
 }

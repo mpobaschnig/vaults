@@ -19,28 +19,20 @@
 
 use crate::vault::Vault;
 
-use super::Backend;
+use super::BackendError;
 
-pub struct Gocryptfs {}
+pub fn is_available() -> bool {
+    false
+}
 
-impl Backend for Gocryptfs {
-    fn is_available(&self) -> bool {
-        log::error!("function is_available not implemented!");
-        false
-    }
+pub fn init(vault: &Vault) -> Result<(), BackendError> {
+    Err(BackendError::NotImplemented)
+}
 
-    fn create(&self, _vault: Vault) -> Result<(), super::BackendError> {
-        log::error!("function create not implemented!");
-        Err(super::BackendError::NotImplemented)
-    }
+pub fn open(vault: &Vault) -> Result<(), BackendError> {
+    Err(BackendError::NotImplemented)
+}
 
-    fn open(&self, _vault: Vault) -> Result<(), super::BackendError> {
-        log::error!("function open not implemented!");
-        Err(super::BackendError::NotImplemented)
-    }
-
-    fn close(&self, _vault: Vault) -> Result<(), super::BackendError> {
-        log::error!("function close not implemented!");
-        Err(super::BackendError::NotImplemented)
-    }
+pub fn close(vault: &Vault) -> Result<(), BackendError> {
+    Err(BackendError::NotImplemented)
 }

@@ -991,6 +991,8 @@ dependencies = [
  "once_cell",
  "pretty_env_logger",
  "quick-error 2.0.0",
+ "strum",
+ "strum_macros",
 ]
 
 [[package]]

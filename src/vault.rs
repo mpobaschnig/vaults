@@ -17,13 +17,25 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use std::rc::Rc;
-
-use crate::backend::Backend;
+use crate::backend::*;
 
 pub struct Vault {
     pub name: String,
-    pub backend_type: Rc<dyn Backend>,
+    pub backend: Backend,
     pub encrypted_data_directory: String,
     pub mount_directory: String,
+}
+
+impl Vault {
+    pub fn init(&self) -> Result<(), BackendError> {
+        return self.backend.init(self);
+    }
+
+    pub fn open(&self, _vault: Vault) -> Result<(), BackendError> {
+        return self.backend.open(self);
+    }
+
+    pub fn close(&self, _vault: Vault) -> Result<(), BackendError> {
+        return self.backend.close(self);
+    }
 }

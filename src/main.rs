@@ -48,6 +48,8 @@ fn main() {
         log::warn!("Could not set text domain: {}", e);
     }
 
+    backend::probe_backends();
+
     gtk::glib::set_application_name("Vaults");
     gtk::glib::set_prgname(Some("vaults"));
 
