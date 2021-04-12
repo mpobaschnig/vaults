@@ -178,16 +178,13 @@ impl ApplicationWindow {
             }));
     }
 
-    fn refresh_button_clicked(&self) {
-        println!("Refresh button clicked!");
-    }
+    fn refresh_button_clicked(&self) {}
 
     fn update_view(&self) {
         let self_ = imp::ApplicationWindow::from_instance(self);
         let view = *self_.view.borrow();
         debug!("Set view to {:?}", view);
 
-        println!("HEllo");
         // Show requested view / page
         match view {
             VView::Start => {

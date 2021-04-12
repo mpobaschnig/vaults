@@ -137,7 +137,6 @@ impl VApplication {
     }
 
     fn add_new_vault(&self) {
-        println!("Add new vault submenu button clicked!");
         let window = &self.get_active_window().unwrap();
         let dialog = AddNewVaultDialog::new(&window);
         dialog.set_transient_for(Some(window));
@@ -193,11 +192,6 @@ impl VApplication {
         });
 
         dialog.show();
-    }
-
-    #[allow(dead_code)]
-    fn refresh_button_clicked(&self) {
-        println!("Refresh button clicked!");
     }
 
     fn show_about_dialog(&self) {
