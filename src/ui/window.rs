@@ -17,11 +17,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use crate::application::VApplication;
 use crate::config::{APP_ID, PROFILE};
 use crate::ui::pages::*;
 use crate::ui::{AddNewVaultDialog, ImportVaultDialog};
 use crate::user_config;
+use crate::{application::VApplication, user_config::VAULTS};
 
 use adw::subclass::prelude::*;
 use glib::{clone, GEnum, ParamSpec, ToValue};
@@ -169,6 +169,17 @@ impl ApplicationWindow {
 
         // Set icons for shell
         gtk::Window::set_default_icon_name(APP_ID);
+
+        match VAULTS.lock() {
+            Ok(v) => {
+                if !v.vault.is_empty() {
+                    window.set_view(VView::Vaults);
+                }
+            }
+            Err(e) => {
+                log::error!("Failed to aquire mutex lock of VAULTS: {}", e);
+            }
+        }
 
         window
     }
