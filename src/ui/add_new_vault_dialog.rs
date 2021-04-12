@@ -17,13 +17,18 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use std::str::FromStr;
+
 use adw::{subclass::prelude::*, ActionRowExt};
 use gettextrs::gettext;
 use gtk::{self, prelude::*};
 use gtk::{glib, CompositeTemplate};
 use gtk::{glib::clone, subclass::prelude::*};
 
-use crate::backend::AVAILABLE_BACKENDS;
+use crate::{
+    backend::{Backend, AVAILABLE_BACKENDS},
+    vault::Vault,
+};
 
 mod imp {
     use super::*;
@@ -235,6 +240,26 @@ impl AddNewVaultDialog {
             encrypted_data_directory,
             mount_directory,
         )
+    }
+
+    pub fn get_vault(&self) -> Vault {
+        let self_ = imp::AddNewVaultDialog::from_instance(self);
+
+        Vault {
+            name: String::from(self_.password_entry.get_text().as_str()),
+            backend: Backend::from_str(
+                self_
+                    .backend_type_combo_box_text
+                    .get_active_text()
+                    .unwrap()
+                    .as_str(),
+            )
+            .unwrap(),
+            encrypted_data_directory: String::from(
+                self_.encrypted_data_directory_entry.get_text().as_str(),
+            ),
+            mount_directory: String::from(self_.mount_directory_entry.get_text().as_str()),
+        }
     }
 
     fn fill_combo_box_text(&self) {

@@ -37,7 +37,9 @@ quick_error! {
     }
 }
 
-#[derive(Debug, EnumIter, strum_macros::ToString, Serialize, Deserialize)]
+#[derive(
+    Debug, EnumIter, strum_macros::ToString, Serialize, Deserialize, strum_macros::EnumString,
+)]
 pub enum Backend {
     Cryfs,
     Gocryptfs,

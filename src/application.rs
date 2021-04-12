@@ -19,6 +19,7 @@
 
 use crate::config;
 use crate::ui::{AddNewVaultDialog, ApplicationWindow};
+use crate::user_config;
 use gio::ApplicationFlags;
 use glib::clone;
 use gtk::prelude::*;
@@ -142,7 +143,19 @@ impl VApplication {
         dialog.set_transient_for(Some(window));
         dialog.connect_response(|dialog, id| match id {
             gtk::ResponseType::Ok => {
-                let entries = dialog.get_entry_values();
+                let vault = dialog.get_vault();
+
+                match user_config::VAULTS.lock() {
+                    Ok(mut v) => {
+                        v.vault.push(vault);
+                    }
+                    Err(e) => {
+                        log::error!("Failed to aquire mutex lock of USER_DATA_DIRECTORY: {}", e);
+                    }
+                }
+
+                user_config::write();
+
                 dialog.destroy();
             }
             _ => {
