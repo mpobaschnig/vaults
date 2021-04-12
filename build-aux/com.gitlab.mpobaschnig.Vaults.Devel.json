@@ -30,27 +30,6 @@
     },
     "modules": [
         {
-            "name": "libadwaita",
-            "builddir": true,
-            "buildsystem": "meson",
-            "config-opts": [
-                "-Dprofiling=false",
-                "-Dintrospection=enabled",
-                "-Dgtk_doc=false",
-                "-Dtests=false",
-                "-Dexamples=false",
-                "-Dvapi=false",
-                "-Dglade_catalog=disabled"
-            ],
-            "sources": [
-                {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/GNOME/libadwaita",
-                    "branch": "main"
-                }
-            ]
-        },
-        {
             "name": "gocryptfs",
             "buildsystem": "simple",
             "build-commands": [
