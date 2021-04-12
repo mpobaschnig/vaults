@@ -28,6 +28,7 @@ sources = files(
   'ui/pages/vaults_page.rs',
 
   'ui/add_new_vault_dialog.rs',
+  'ui/import_vault_dialog.rs',
   'ui/mod.rs',
   'ui/window.rs',
 

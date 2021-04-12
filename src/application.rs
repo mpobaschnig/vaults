@@ -18,7 +18,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::config;
-use crate::ui::{AddNewVaultDialog, ApplicationWindow};
+use crate::ui::{AddNewVaultDialog, ApplicationWindow, ImportVaultDialog};
 use crate::user_config;
 use gio::ApplicationFlags;
 use glib::clone;
@@ -167,7 +167,32 @@ impl VApplication {
     }
 
     fn import_vault(&self) {
-        println!("Import vault submenu button clicked");
+        let window = &self.get_active_window().unwrap();
+        let dialog = ImportVaultDialog::new(&window);
+        dialog.set_transient_for(Some(window));
+        dialog.connect_response(|dialog, id| match id {
+            gtk::ResponseType::Ok => {
+                let vault = dialog.get_vault();
+
+                match user_config::VAULTS.lock() {
+                    Ok(mut v) => {
+                        v.vault.push(vault);
+                    }
+                    Err(e) => {
+                        log::error!("Failed to aquire mutex lock of USER_DATA_DIRECTORY: {}", e);
+                    }
+                }
+
+                user_config::write();
+
+                dialog.destroy();
+            }
+            _ => {
+                dialog.destroy();
+            }
+        });
+
+        dialog.show();
     }
 
     #[allow(dead_code)]
