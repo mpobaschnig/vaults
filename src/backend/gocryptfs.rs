@@ -20,8 +20,22 @@
 use crate::vault::Vault;
 
 use super::BackendError;
+use std::process::Command;
 
 pub fn is_available() -> bool {
+    let output_res = Command::new("gocryptfs").arg("--version").output();
+
+    match output_res {
+        Ok(output) => {
+            if output.status.success() {
+                return true;
+            }
+        }
+        Err(e) => {
+            log::error!("Failed to probe gocryptfs: {}", e);
+        }
+    }
+
     false
 }
 
