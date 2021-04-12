@@ -79,10 +79,6 @@
                         <property name="margin-end">6</property>
                         <property name="margin-top">6</property>
                         <property name="margin-bottom">6</property>
-                        <items>
-                          <item translatable="yes" id="cryfs">cryfs</item>
-                          <item translatable="yes" id="gocryptfs">gocryptfs</item>
-                        </items>
                       </object>
                     </child>
                   </object>
