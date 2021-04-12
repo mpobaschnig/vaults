@@ -19,7 +19,7 @@
 
 use std::str::FromStr;
 
-use adw::{subclass::prelude::*, ActionRowExt};
+use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::{self, gio, glib, glib::clone, prelude::*, subclass::prelude::*, CompositeTemplate};
 

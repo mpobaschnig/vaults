@@ -25,7 +25,7 @@ use crate::{application::VApplication, user_config::VAULTS};
 
 use adw::subclass::prelude::*;
 use glib::{clone, GEnum, ParamSpec, ToValue};
-use gtk::subclass::{prelude::*, window};
+use gtk::subclass::prelude::*;
 use gtk::{self, prelude::*};
 use gtk::{gio, glib, CompositeTemplate};
 use gtk_macros::action;
