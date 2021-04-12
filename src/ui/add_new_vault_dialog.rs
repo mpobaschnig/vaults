@@ -254,7 +254,7 @@ impl AddNewVaultDialog {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
         Vault {
-            name: String::from(self_.password_entry.get_text().as_str()),
+            name: String::from(self_.vault_name_entry.get_text().as_str()),
             backend: Backend::from_str(
                 self_
                     .backend_type_combo_box_text
