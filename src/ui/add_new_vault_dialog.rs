@@ -170,7 +170,7 @@ impl AddNewVaultDialog {
 
         self_.encrypted_data_directory_button.connect_clicked(
             clone!(@weak self as obj => move |_| {
-                println!("Encrypted Data Directory button clicked!");
+                obj.encrypted_data_directory_button_clicked();
             }),
         );
 
@@ -183,8 +183,66 @@ impl AddNewVaultDialog {
         self_
             .mount_directory_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
-                println!("Mount Directory button clicked!");
+                obj.mount_directory_button_clicked();
             }));
+    }
+
+    fn encrypted_data_directory_button_clicked(&self) {
+        let file_chooser = gtk::FileChooserDialog::new(
+            Some(&gettext("Choose Encrypted Data Directory")),
+            Some(self),
+            gtk::FileChooserAction::SelectFolder,
+            &[
+                (&gettext("Cancel"), gtk::ResponseType::Cancel),
+                (&gettext("Select"), gtk::ResponseType::Accept),
+            ],
+        );
+
+        file_chooser.set_transient_for(Some(self));
+
+        file_chooser.connect_response(
+            clone!(@weak self as obj, @strong file_chooser => move |s, response| {
+                if response == gtk::ResponseType::Accept {
+                    let file = file_chooser.get_file().unwrap();
+                    let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
+                    log::info!("Use file {:?}", &path);
+                    let self_ = imp::AddNewVaultDialog::from_instance(&obj);
+                    self_.encrypted_data_directory_entry.set_text(&path);
+                }
+                s.destroy();
+            }),
+        );
+
+        file_chooser.show();
+    }
+
+    fn mount_directory_button_clicked(&self) {
+        let file_chooser = gtk::FileChooserDialog::new(
+            Some(&gettext("Choose Mount Directory")),
+            Some(self),
+            gtk::FileChooserAction::SelectFolder,
+            &[
+                (&gettext("Cancel"), gtk::ResponseType::Cancel),
+                (&gettext("Select"), gtk::ResponseType::Accept),
+            ],
+        );
+
+        file_chooser.set_transient_for(Some(self));
+
+        file_chooser.connect_response(
+            clone!(@weak self as obj, @strong file_chooser => move |s, response| {
+                if response == gtk::ResponseType::Accept {
+                    let file = file_chooser.get_file().unwrap();
+                    let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
+                    log::info!("Use file {:?}", &path);
+                    let self_ = imp::AddNewVaultDialog::from_instance(&obj);
+                    self_.mount_directory_entry.set_text(&path);
+                }
+                s.destroy();
+            }),
+        );
+
+        file_chooser.show();
     }
 
     fn check_add_button_enable_conditions(&self) {
