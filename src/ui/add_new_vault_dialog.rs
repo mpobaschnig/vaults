@@ -23,6 +23,8 @@ use gtk::{self, prelude::*};
 use gtk::{glib, CompositeTemplate};
 use gtk::{glib::clone, subclass::prelude::*};
 
+use crate::backend::AVAILABLE_BACKENDS;
+
 mod imp {
     use super::*;
 
@@ -89,6 +91,8 @@ mod imp {
             self.parent_constructed(obj);
             obj.setup_actions();
             obj.setup_signals();
+
+            obj.fill_combo_box_text();
         }
     }
 
@@ -231,5 +235,23 @@ impl AddNewVaultDialog {
             encrypted_data_directory,
             mount_directory,
         )
+    }
+
+    fn fill_combo_box_text(&self) {
+        let self_ = imp::AddNewVaultDialog::from_instance(self);
+
+        let combo_box_text = &self_.backend_type_combo_box_text;
+
+        let backends_res = AVAILABLE_BACKENDS.lock();
+        match backends_res {
+            Ok(backends) => {
+                for backend in backends.iter() {
+                    combo_box_text.append_text(backend);
+                }
+            }
+            Err(e) => {
+                log::error!("Failed to aquire mutex lock of AVAILABLE_BACKENDS: {}", e);
+            }
+        }
     }
 }
