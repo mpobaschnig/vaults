@@ -185,6 +185,7 @@ impl AddNewVaultDialog {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
         let vault_name = self_.vault_name_entry.get_text();
+        let backend = self_.backend_type_combo_box_text.get_active();
         let password = self_.password_entry.get_text();
         let confirm_password = self_.password_confirm_entry.get_text();
         let encrypted_data_directory = self_.encrypted_data_directory_entry.get_text();
@@ -195,6 +196,7 @@ impl AddNewVaultDialog {
             && !confirm_password.is_empty()
             && !encrypted_data_directory.is_empty()
             && !mount_directory.is_empty()
+            && backend.is_some()
         {
             if password.eq(&confirm_password) {
                 self_.add_new_vault_button.set_sensitive(true);
