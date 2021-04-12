@@ -71,11 +71,11 @@
     <section>
       <item>
         <attribute name="label" translatable="yes">_Add New Vault</attribute>
-        <attribute name="action">app.add_new_vault</attribute>
+        <attribute name="action">win.add_new_vault</attribute>
       </item>
       <item>
         <attribute name="label" translatable="yes">_Import Vault</attribute>
-        <attribute name="action">app.import_vault</attribute>
+        <attribute name="action">win.import_vault</attribute>
       </item>
     </section>
   </menu>

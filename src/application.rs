@@ -18,8 +18,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::config;
-use crate::ui::{AddNewVaultDialog, ApplicationWindow, ImportVaultDialog};
-use crate::user_config;
+use crate::ui::ApplicationWindow;
+
 use gio::ApplicationFlags;
 use glib::clone;
 use gtk::prelude::*;
@@ -92,22 +92,6 @@ impl VApplication {
     }
 
     fn setup_gactions(&self) {
-        action!(
-            self,
-            "add_new_vault",
-            clone!(@weak self as app => move |_, _| {
-                app.add_new_vault();
-            })
-        );
-
-        action!(
-            self,
-            "import_vault",
-            clone!(@weak self as app => move |_, _| {
-                app.import_vault();
-            })
-        );
-
         // About
         action!(
             self,
@@ -134,64 +118,6 @@ impl VApplication {
                 gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
             );
         }
-    }
-
-    fn add_new_vault(&self) {
-        let window = &self.get_active_window().unwrap();
-        let dialog = AddNewVaultDialog::new(&window);
-        dialog.set_transient_for(Some(window));
-        dialog.connect_response(|dialog, id| match id {
-            gtk::ResponseType::Ok => {
-                let vault = dialog.get_vault();
-
-                match user_config::VAULTS.lock() {
-                    Ok(mut v) => {
-                        v.vault.push(vault);
-                    }
-                    Err(e) => {
-                        log::error!("Failed to aquire mutex lock of USER_DATA_DIRECTORY: {}", e);
-                    }
-                }
-
-                user_config::write();
-
-                dialog.destroy();
-            }
-            _ => {
-                dialog.destroy();
-            }
-        });
-
-        dialog.show();
-    }
-
-    fn import_vault(&self) {
-        let window = &self.get_active_window().unwrap();
-        let dialog = ImportVaultDialog::new(&window);
-        dialog.set_transient_for(Some(window));
-        dialog.connect_response(|dialog, id| match id {
-            gtk::ResponseType::Ok => {
-                let vault = dialog.get_vault();
-
-                match user_config::VAULTS.lock() {
-                    Ok(mut v) => {
-                        v.vault.push(vault);
-                    }
-                    Err(e) => {
-                        log::error!("Failed to aquire mutex lock of USER_DATA_DIRECTORY: {}", e);
-                    }
-                }
-
-                user_config::write();
-
-                dialog.destroy();
-            }
-            _ => {
-                dialog.destroy();
-            }
-        });
-
-        dialog.show();
     }
 
     fn show_about_dialog(&self) {

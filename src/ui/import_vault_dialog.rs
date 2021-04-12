@@ -21,13 +21,12 @@ use std::str::FromStr;
 
 use adw::{subclass::prelude::*, ActionRowExt};
 use gettextrs::gettext;
-use gtk::{self, prelude::*};
-use gtk::{glib, CompositeTemplate};
-use gtk::{glib::clone, subclass::prelude::*};
+use gtk::{self, gio, glib, glib::clone, prelude::*, subclass::prelude::*, CompositeTemplate};
 
 use crate::{
     backend::{Backend, AVAILABLE_BACKENDS},
     vault::Vault,
+    VApplication,
 };
 
 mod imp {
@@ -103,11 +102,17 @@ glib::wrapper! {
 }
 
 impl ImportVaultDialog {
-    pub fn new(parent: &gtk::Window) -> Self {
+    pub fn new() -> Self {
         let dialog: Self = glib::Object::new(&[("use-header-bar", &1)])
             .expect("Failed to create ImportVaultDialog");
 
-        dialog.set_transient_for(Some(parent));
+        let window = gio::Application::get_default()
+            .unwrap()
+            .downcast_ref::<VApplication>()
+            .unwrap()
+            .get_active_window()
+            .unwrap();
+        dialog.set_transient_for(Some(&window));
 
         dialog
     }

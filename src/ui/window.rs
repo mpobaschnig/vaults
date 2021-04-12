@@ -20,11 +20,15 @@
 use crate::application::VApplication;
 use crate::config::{APP_ID, PROFILE};
 use crate::ui::pages::*;
+use crate::ui::{AddNewVaultDialog, ImportVaultDialog};
+use crate::user_config;
+
 use adw::subclass::prelude::*;
 use glib::{clone, GEnum, ParamSpec, ToValue};
-use gtk::subclass::prelude::*;
+use gtk::subclass::{prelude::*, window};
 use gtk::{self, prelude::*};
 use gtk::{gio, glib, CompositeTemplate};
+use gtk_macros::action;
 use log::*;
 use once_cell::sync::Lazy;
 use std::cell::RefCell;
@@ -103,6 +107,7 @@ mod imp {
             }
 
             obj.setup_connect_handlers();
+            obj.setup_gactions();
         }
 
         fn properties() -> &'static [ParamSpec] {
@@ -178,7 +183,81 @@ impl ApplicationWindow {
             }));
     }
 
-    fn refresh_button_clicked(&self) {}
+    fn setup_gactions(&self) {
+        action!(
+            self,
+            "add_new_vault",
+            clone!(@weak self as win => move |_, _| {
+                win.add_new_vault_clicked();
+            })
+        );
+
+        action!(
+            self,
+            "import_vault",
+            clone!(@weak self as win => move |_, _| {
+                win.import_vault_clicked();
+            })
+        );
+    }
+
+    fn add_new_vault_clicked(&self) {
+        let dialog = AddNewVaultDialog::new();
+        dialog.connect_response(|dialog, id| match id {
+            gtk::ResponseType::Ok => {
+                let vault = dialog.get_vault();
+
+                match user_config::VAULTS.lock() {
+                    Ok(mut v) => {
+                        v.vault.push(vault);
+                    }
+                    Err(e) => {
+                        log::error!("Failed to aquire mutex lock of USER_DATA_DIRECTORY: {}", e);
+                    }
+                }
+
+                user_config::write();
+
+                dialog.destroy();
+            }
+            _ => {
+                dialog.destroy();
+            }
+        });
+
+        dialog.show();
+    }
+
+    fn import_vault_clicked(&self) {
+        let dialog = ImportVaultDialog::new();
+        dialog.connect_response(|dialog, id| match id {
+            gtk::ResponseType::Ok => {
+                let vault = dialog.get_vault();
+
+                match user_config::VAULTS.lock() {
+                    Ok(mut v) => {
+                        v.vault.push(vault);
+                    }
+                    Err(e) => {
+                        log::error!("Failed to aquire mutex lock of USER_DATA_DIRECTORY: {}", e);
+                    }
+                }
+
+                user_config::write();
+
+                dialog.destroy();
+            }
+            _ => {
+                dialog.destroy();
+            }
+        });
+
+        dialog.show();
+    }
+
+    fn refresh_button_clicked(&self) {
+        self.update_view();
+    }
 
     fn update_view(&self) {
         let self_ = imp::ApplicationWindow::from_instance(self);
