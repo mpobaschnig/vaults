@@ -145,6 +145,12 @@ impl AddNewVaultDialog {
             }));
 
         self_
+            .backend_type_combo_box_text
+            .connect_changed(clone!(@weak self as obj => move |_| {
+                obj.check_add_button_enable_conditions();
+            }));
+
+        self_
             .password_entry
             .connect_property_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
