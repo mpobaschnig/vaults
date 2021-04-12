@@ -18,12 +18,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::backend::*;
+use serde::{Deserialize, Serialize};
 
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Vault {
     pub name: String,
     pub backend: Backend,
     pub encrypted_data_directory: String,
     pub mount_directory: String,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Vaults {
+    pub vault: Vec<Vault>,
 }
 
 impl Vault {

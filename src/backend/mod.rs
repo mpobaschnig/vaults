@@ -22,6 +22,7 @@ pub mod gocryptfs;
 
 use crate::vault::Vault;
 use once_cell::sync::Lazy;
+use serde::{Deserialize, Serialize};
 use std::string::String;
 use std::sync::Mutex;
 use strum::IntoEnumIterator;
@@ -36,7 +37,7 @@ quick_error! {
     }
 }
 
-#[derive(Debug, EnumIter, strum_macros::ToString)]
+#[derive(Debug, EnumIter, strum_macros::ToString, Serialize, Deserialize)]
 pub enum Backend {
     Cryfs,
     Gocryptfs,

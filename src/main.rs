@@ -20,6 +20,7 @@
 mod application;
 #[rustfmt::skip]
 mod config;
+mod user_config;
 mod vault;
 
 mod backend;
@@ -27,6 +28,8 @@ mod ui;
 
 #[macro_use]
 extern crate quick_error;
+extern crate serde;
+extern crate toml;
 
 use application::VApplication;
 use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
@@ -49,6 +52,8 @@ fn main() {
     }
 
     backend::probe_backends();
+
+    user_config::init();
 
     gtk::glib::set_application_name("Vaults");
     gtk::glib::set_prgname(Some("vaults"));
