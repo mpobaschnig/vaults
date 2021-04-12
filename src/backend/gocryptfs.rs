@@ -39,14 +39,17 @@ pub fn is_available() -> bool {
     false
 }
 
+#[allow(unused_variables)]
 pub fn init(vault: &Vault) -> Result<(), BackendError> {
     Err(BackendError::NotImplemented)
 }
 
+#[allow(unused_variables)]
 pub fn open(vault: &Vault) -> Result<(), BackendError> {
     Err(BackendError::NotImplemented)
 }
 
+#[allow(unused_variables)]
 pub fn close(vault: &Vault) -> Result<(), BackendError> {
     Err(BackendError::NotImplemented)
 }
