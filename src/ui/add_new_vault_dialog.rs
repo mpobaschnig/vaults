@@ -273,6 +273,10 @@ impl AddNewVaultDialog {
                 for backend in backends.iter() {
                     combo_box_text.append_text(backend);
                 }
+
+                if !backends.is_empty() {
+                    combo_box_text.set_active(Some(0));
+                }
             }
             Err(e) => {
                 log::error!("Failed to aquire mutex lock of AVAILABLE_BACKENDS: {}", e);
