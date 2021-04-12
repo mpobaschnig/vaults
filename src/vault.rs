@@ -17,9 +17,13 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use std::rc::Rc;
+
+use crate::backend::Backend;
+
 pub struct Vault {
     pub name: String,
-    pub backend_type: String,
+    pub backend_type: Rc<dyn Backend>,
     pub encrypted_data_directory: String,
     pub mount_directory: String,
 }
