@@ -22,7 +22,7 @@ use once_cell::sync::Lazy;
 use std::sync::Mutex;
 use toml::de::Error;
 
-use crate::vault::Vaults;
+use crate::vault::{Vault, Vaults};
 
 pub static USER_DATA_DIRECTORY: Lazy<Mutex<Option<String>>> = Lazy::new(|| Mutex::new(None));
 
@@ -49,12 +49,13 @@ pub fn init() {
 
 pub fn read() {
     match USER_DATA_DIRECTORY.lock() {
-        Ok(user_data_directory) => {
-            if let Some(dir) = &*user_data_directory {
-                let contents = std::fs::read_to_string(dir);
-                match contents {
-                    Ok(s) => match VAULTS.lock() {
-                        Ok(mut vaults) => {
+        Ok(user_data_directory) => match VAULTS.lock() {
+            Ok(mut vaults) => {
+                vaults.vault.clear();
+                if let Some(dir) = &*user_data_directory {
+                    let contents = std::fs::read_to_string(dir);
+                    match contents {
+                        Ok(s) => {
                             let v_res: Result<Vaults, Error> = toml::from_str(&s);
                             match v_res {
                                 Ok(v) => {
@@ -70,15 +71,15 @@ pub fn read() {
                             }
                         }
                         Err(e) => {
-                            log::warn!("Failed to aquire mutex lock of VAULTS: {}", e);
+                            log::warn!("Failed to read user data config: {}", e);
                         }
-                    },
-                    Err(e) => {
-                        log::warn!("Failed to read user data config: {}", e);
                     }
                 }
             }
-        }
+            Err(e) => {
+                log::warn!("Failed to aquire mutex lock of VAULTS: {}", e);
+            }
+        },
         Err(e) => {
             log::error!("Failed to aquire mutex lock of USER_DATA_DIRECTORY: {}", e);
         }
@@ -119,4 +120,18 @@ pub fn write() {
             log::error!("Failed to aquire mutex lock of USER_DATA_DIRECTORY: {}", e);
         }
     }
+}
+
+pub fn is_empty() -> bool {
+    match VAULTS.lock() {
+        Ok(v) => {
+            if v.vault.is_empty() {
+                return true;
+            }
+        }
+        Err(e) => {
+            log::error!("Failed to aquire mutex lock of VAULTS: {}", e);
+        }
+    }
+    false
 }
