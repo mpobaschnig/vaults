@@ -38,7 +38,14 @@ quick_error! {
 }
 
 #[derive(
-    Debug, EnumIter, strum_macros::ToString, Serialize, Deserialize, strum_macros::EnumString,
+    Debug,
+    EnumIter,
+    strum_macros::ToString,
+    Serialize,
+    Deserialize,
+    strum_macros::EnumString,
+    Copy,
+    Clone,
 )]
 pub enum Backend {
     Cryfs,

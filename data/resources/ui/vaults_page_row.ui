@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Generated with glade 3.38.2 -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <template class="VaultsPageRow" parent="GtkListBoxRow">
+    <property name="visible">True</property>
+    <property name="selectable">False</property>
+    <child>
+      <object class="AdwActionRow" id="vaults_page_row">
+        <property name="title" translatable="yes">Vault X</property>
+        <child>
+          <object class="GtkButton" id="open_folder_button">
+            <property name="margin-start">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="icon_name">folder-symbolic</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="locker_button">
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="icon_name">changes-prevent-symbolic</property>
+          </object>
+        </child>
+        <child>
+          <object class="GtkButton" id="settings_button">
+            <property name="margin-end">6</property>
+            <property name="margin-top">6</property>
+            <property name="margin-bottom">6</property>
+            <property name="icon_name">emblem-system-symbolic</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

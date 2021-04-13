@@ -17,11 +17,15 @@
                 <property name="margin_start">12</property>
                 <property name="margin_end">12</property>
                 <child>
-                  <object class="GtkLabel">
-                    <property name="label" translatable="yes">_Here should be vault rows...</property>
-                    <attributes>
-                      <attribute name="font-desc" value="Cantarell Bold 12"/>
-                    </attributes>
+                  <object class="GtkListBox" id="vaults_list_box">
+                    <property name="selection-mode">none</property>
+                    <property name="margin-start">12</property>
+                    <property name="margin-end">12</property>
+                    <property name="margin-top">12</property>
+                    <property name="margin-bottom">12</property>
+                    <style>
+                      <class name="content"/>
+                    </style>
                   </object>
                 </child>
               </object>

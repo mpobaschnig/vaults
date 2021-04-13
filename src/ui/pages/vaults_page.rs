@@ -17,6 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use super::VaultsPageRow;
 use adw::subclass::prelude::*;
 use glib::subclass;
 use gtk::glib;
@@ -24,18 +25,29 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 
+use crate::user_config::VAULTS;
+
 mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/com/gitlab/mpobaschnig/Vaults/vaults_page.ui")]
-    pub struct VVaultsPage {}
+    pub struct VVaultsPage {
+        #[template_child]
+        pub vaults_list_box: TemplateChild<gtk::ListBox>,
+    }
 
     #[glib::object_subclass]
     impl ObjectSubclass for VVaultsPage {
         const NAME: &'static str = "VVaultsPage";
         type ParentType = adw::Bin;
         type Type = super::VVaultsPage;
+
+        fn new() -> Self {
+            Self {
+                vaults_list_box: TemplateChild::default(),
+            }
+        }
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -59,5 +71,26 @@ glib::wrapper! {
 }
 
 impl VVaultsPage {
-    pub fn init(&self) {}
+    pub fn new() -> Self {
+        let window: Self = glib::Object::new(&[]).expect("Failed to create VVaultsPage");
+
+        window
+    }
+
+    pub fn init(&self) {
+        let self_ = imp::VVaultsPage::from_instance(self);
+
+        match VAULTS.lock() {
+            Ok(v) => {
+                for vault in v.vault.iter() {
+                    let row = VaultsPageRow::new(vault.clone());
+                    row.set_vault(vault.clone());
+                    self_.vaults_list_box.insert(&row, -1);
+                }
+            }
+            Err(e) => {
+                log::error!("Failed to aquire mutex lock of VAULTS: {}", e);
+            }
+        }
+    }
 }

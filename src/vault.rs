@@ -28,6 +28,28 @@ pub struct Vault {
     pub mount_directory: String,
 }
 
+impl Clone for Vault {
+    fn clone(&self) -> Vault {
+        Vault {
+            name: self.name.clone(),
+            backend: self.backend,
+            encrypted_data_directory: self.encrypted_data_directory.clone(),
+            mount_directory: self.mount_directory.clone(),
+        }
+    }
+}
+
+impl Default for Vault {
+    fn default() -> Self {
+        Vault {
+            name: "".to_owned(),
+            backend: crate::backend::Backend::Cryfs,
+            encrypted_data_directory: "".to_owned(),
+            mount_directory: "".to_owned(),
+        }
+    }
+}
+
 #[derive(Serialize, Deserialize, Debug)]
 pub struct Vaults {
     pub vault: Vec<Vault>,

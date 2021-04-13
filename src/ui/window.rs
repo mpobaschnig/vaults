@@ -106,6 +106,8 @@ mod imp {
                 obj.get_style_context().add_class("devel");
             }
 
+            self.vaults_page.init();
+
             obj.setup_connect_handlers();
             obj.setup_gactions();
         }
