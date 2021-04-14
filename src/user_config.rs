@@ -22,7 +22,7 @@ use once_cell::sync::Lazy;
 use std::sync::Mutex;
 use toml::de::Error;
 
-use crate::vault::{Vault, Vaults};
+use crate::vault::Vaults;
 
 pub static USER_DATA_DIRECTORY: Lazy<Mutex<Option<String>>> = Lazy::new(|| Mutex::new(None));
 
