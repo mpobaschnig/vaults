@@ -46,7 +46,7 @@ mod imp {
         pub settings_button: TemplateChild<gtk::Button>,
 
         pub vault: RefCell<Vault>,
-        pub locked: RefCell<bool>,
+        pub is_mounted: RefCell<bool>,
     }
 
     #[glib::object_subclass]
@@ -62,7 +62,7 @@ mod imp {
                 locker_button: TemplateChild::default(),
                 settings_button: TemplateChild::default(),
                 vault: RefCell::new(Vault::default()),
-                locked: RefCell::new(true),
+                is_mounted: RefCell::new(false),
             }
         }
 
@@ -142,21 +142,10 @@ impl VaultsPageRow {
     fn locker_button_clicked(&self) {
         let self_ = imp::VaultsPageRow::from_instance(&self);
         let vault = self_.vault.borrow();
-        if *self_.locked.borrow() {
-            match Backend::open(&vault.backend, &vault) {
-                Ok(_) => {
-                    *self_.locked.borrow_mut() = false;
-                    self_.locker_button.set_icon_name(&"changes-allow-symbolic");
-                    self_.open_folder_button.set_visible(true);
-                }
-                Err(e) => {
-                    log::error!("Error opening vault: {}", e);
-                }
-            }
-        } else {
+        if *self_.is_mounted.borrow() {
             match Backend::close(&vault.backend, &vault) {
                 Ok(_) => {
-                    *self_.locked.borrow_mut() = true;
+                    *self_.is_mounted.borrow_mut() = false;
                     self_
                         .locker_button
                         .set_icon_name(&"changes-prevent-symbolic");
@@ -164,6 +153,17 @@ impl VaultsPageRow {
                 }
                 Err(e) => {
                     log::error!("Error closing vault: {}", e);
+                }
+            }
+        } else {
+            match Backend::open(&vault.backend, &vault) {
+                Ok(_) => {
+                    *self_.is_mounted.borrow_mut() = true;
+                    self_.locker_button.set_icon_name(&"changes-allow-symbolic");
+                    self_.open_folder_button.set_visible(true);
+                }
+                Err(e) => {
+                    log::error!("Error opening vault: {}", e);
                 }
             }
         }
