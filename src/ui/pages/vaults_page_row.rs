@@ -80,6 +80,8 @@ mod imp {
             self.parent_constructed(obj);
 
             obj.setup_connect_handlers();
+
+            self.open_folder_button.set_visible(false);
         }
     }
 
@@ -145,6 +147,7 @@ impl VaultsPageRow {
                 Ok(_) => {
                     *self_.locked.borrow_mut() = false;
                     self_.locker_button.set_icon_name(&"changes-allow-symbolic");
+                    self_.open_folder_button.set_visible(true);
                 }
                 Err(e) => {
                     log::error!("Error opening vault: {}", e);
@@ -157,6 +160,7 @@ impl VaultsPageRow {
                     self_
                         .locker_button
                         .set_icon_name(&"changes-prevent-symbolic");
+                    self_.open_folder_button.set_visible(false);
                 }
                 Err(e) => {
                     log::error!("Error closing vault: {}", e);
