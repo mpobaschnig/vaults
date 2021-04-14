@@ -18,13 +18,15 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use adw::{subclass::prelude::*, PreferencesRowExt};
-use glib::subclass;
+use glib::{clone, subclass};
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use std::cell::RefCell;
+use std::process::Command;
 
+use crate::backend::Backend;
 use crate::vault::Vault;
 
 mod imp {
@@ -44,6 +46,7 @@ mod imp {
         pub settings_button: TemplateChild<gtk::Button>,
 
         pub vault: RefCell<Vault>,
+        pub locked: RefCell<bool>,
     }
 
     #[glib::object_subclass]
@@ -59,6 +62,7 @@ mod imp {
                 locker_button: TemplateChild::default(),
                 settings_button: TemplateChild::default(),
                 vault: RefCell::new(Vault::default()),
+                locked: RefCell::new(true),
             }
         }
 
@@ -74,6 +78,8 @@ mod imp {
     impl ObjectImpl for VaultsPageRow {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
+
+            obj.setup_connect_handlers();
         }
     }
 
@@ -96,6 +102,70 @@ impl VaultsPageRow {
 
         object
     }
+
+    pub fn setup_connect_handlers(&self) {
+        let self_ = imp::VaultsPageRow::from_instance(&self);
+
+        self_
+            .open_folder_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.open_folder_button_clicked();
+            }));
+
+        self_
+            .locker_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.locker_button_clicked();
+            }));
+
+        self_
+            .settings_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.settings_button_clicked();
+            }));
+    }
+
+    fn open_folder_button_clicked(&self) {
+        let self_ = imp::VaultsPageRow::from_instance(&self);
+
+        let output_res = Command::new("xdg-open")
+            .arg(&self_.vault.borrow().mount_directory)
+            .output();
+
+        if let Err(e) = output_res {
+            log::error!("Failed to open folder: {}", e);
+        }
+    }
+
+    fn locker_button_clicked(&self) {
+        let self_ = imp::VaultsPageRow::from_instance(&self);
+        let vault = self_.vault.borrow();
+        if *self_.locked.borrow() {
+            match Backend::open(&vault.backend, &vault) {
+                Ok(_) => {
+                    *self_.locked.borrow_mut() = false;
+                    self_.locker_button.set_icon_name(&"changes-allow-symbolic");
+                }
+                Err(e) => {
+                    log::error!("Error opening vault: {}", e);
+                }
+            }
+        } else {
+            match Backend::close(&vault.backend, &vault) {
+                Ok(_) => {
+                    *self_.locked.borrow_mut() = true;
+                    self_
+                        .locker_button
+                        .set_icon_name(&"changes-prevent-symbolic");
+                }
+                Err(e) => {
+                    log::error!("Error closing vault: {}", e);
+                }
+            }
+        }
+    }
+
+    fn settings_button_clicked(&self) {}
 
     pub fn set_vault(&self, vault: Vault) {
         let self_ = imp::VaultsPageRow::from_instance(&self);
