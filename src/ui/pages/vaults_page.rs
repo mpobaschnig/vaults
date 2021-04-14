@@ -25,7 +25,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 
-use crate::user_config::VAULTS;
+use crate::{user_config::VAULTS, vault::Vault};
 
 mod imp {
     use super::*;
@@ -80,6 +80,10 @@ impl VVaultsPage {
     pub fn init(&self) {
         let self_ = imp::VVaultsPage::from_instance(self);
 
+        while let Some(child) = self_.vaults_list_box.get_last_child() {
+            self_.vaults_list_box.remove(&child);
+        }
+
         match VAULTS.lock() {
             Ok(v) => {
                 for vault in v.vault.iter() {
@@ -92,5 +96,12 @@ impl VVaultsPage {
                 log::error!("Failed to aquire mutex lock of VAULTS: {}", e);
             }
         }
+    }
+
+    pub fn add_vault(&self, vault: Vault) {
+        let self_ = imp::VVaultsPage::from_instance(self);
+        let row = VaultsPageRow::new(vault.clone());
+        row.set_vault(vault.clone());
+        self_.vaults_list_box.insert(&row, -1);
     }
 }

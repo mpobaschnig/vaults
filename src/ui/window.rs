@@ -216,13 +216,20 @@ impl ApplicationWindow {
 
     fn add_new_vault_clicked(&self) {
         let dialog = AddNewVaultDialog::new();
-        dialog.connect_response(|dialog, id| match id {
+        dialog.connect_response(clone!(@strong self as self2=> move |dialog, id| match id {
             gtk::ResponseType::Ok => {
                 let vault = dialog.get_vault();
-
                 match user_config::VAULTS.lock() {
                     Ok(mut v) => {
+                        let self_ = imp::ApplicationWindow::from_instance(&self2);
+
+                        if v.vault.is_empty() {
+                            self2.set_view(VView::Vaults);
+                            self2.update_view();
+                        }
+                        self_.vaults_page.add_vault(vault.clone());
                         v.vault.push(vault);
+
                     }
                     Err(e) => {
                         log::error!("Failed to aquire mutex lock of USER_DATA_DIRECTORY: {}", e);
@@ -236,19 +243,24 @@ impl ApplicationWindow {
             _ => {
                 dialog.destroy();
             }
-        });
+        }));
 
         dialog.show();
     }
 
     fn import_vault_clicked(&self) {
         let dialog = ImportVaultDialog::new();
-        dialog.connect_response(|dialog, id| match id {
+        dialog.connect_response(clone!(@strong self as self2=> move |dialog, id| match id {
             gtk::ResponseType::Ok => {
                 let vault = dialog.get_vault();
-
                 match user_config::VAULTS.lock() {
                     Ok(mut v) => {
+                        let self_ = imp::ApplicationWindow::from_instance(&self2);
+
+                        if v.vault.is_empty() {
+                            self2.set_view(VView::Vaults);
+                        }
+                        self_.vaults_page.add_vault(vault.clone());
                         v.vault.push(vault);
                     }
                     Err(e) => {
@@ -263,13 +275,21 @@ impl ApplicationWindow {
             _ => {
                 dialog.destroy();
             }
-        });
+        }));
 
         dialog.show();
     }
 
     fn refresh_button_clicked(&self) {
-        self.update_view();
+        user_config::read();
+
+        if user_config::is_empty() {
+            let self_ = imp::ApplicationWindow::from_instance(self);
+            self_.vaults_page.init();
+            self.set_view(VView::Start);
+        } else {
+            self.set_view(VView::Vaults);
+        }
     }
 
     fn update_view(&self) {
