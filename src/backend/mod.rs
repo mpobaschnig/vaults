@@ -64,8 +64,8 @@ impl Backend {
         }
     }
 
-    pub fn init(&self, vault: &Vault) -> Result<(), BackendError> {
-        match &self {
+    pub fn init(vault: &Vault) -> Result<(), BackendError> {
+        match vault.backend {
             Backend::Cryfs => {
                 return cryfs::init(vault);
             }
@@ -75,8 +75,8 @@ impl Backend {
         }
     }
 
-    pub fn open(&self, vault: &Vault) -> Result<(), BackendError> {
-        match &self {
+    pub fn open(vault: &Vault) -> Result<(), BackendError> {
+        match vault.backend {
             Backend::Cryfs => {
                 return cryfs::open(vault);
             }
@@ -86,8 +86,8 @@ impl Backend {
         }
     }
 
-    pub fn close(&self, vault: &Vault) -> Result<(), BackendError> {
-        match &self {
+    pub fn close(vault: &Vault) -> Result<(), BackendError> {
+        match vault.backend {
             Backend::Cryfs => {
                 return cryfs::close(vault);
             }

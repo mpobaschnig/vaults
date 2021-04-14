@@ -143,7 +143,7 @@ impl VaultsPageRow {
         let self_ = imp::VaultsPageRow::from_instance(&self);
         let vault = self_.vault.borrow();
         if *self_.is_mounted.borrow() {
-            match Backend::close(&vault.backend, &vault) {
+            match Backend::close(&vault) {
                 Ok(_) => {
                     *self_.is_mounted.borrow_mut() = false;
                     self_
@@ -156,7 +156,7 @@ impl VaultsPageRow {
                 }
             }
         } else {
-            match Backend::open(&vault.backend, &vault) {
+            match Backend::open(&vault) {
                 Ok(_) => {
                     *self_.is_mounted.borrow_mut() = true;
                     self_.locker_button.set_icon_name(&"changes-allow-symbolic");

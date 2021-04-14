@@ -57,14 +57,14 @@ pub struct Vaults {
 
 impl Vault {
     pub fn init(&self) -> Result<(), BackendError> {
-        return self.backend.init(self);
+        return Backend::init(self);
     }
 
     pub fn open(&self, _vault: Vault) -> Result<(), BackendError> {
-        return self.backend.open(self);
+        return Backend::open(self);
     }
 
     pub fn close(&self, _vault: Vault) -> Result<(), BackendError> {
-        return self.backend.close(self);
+        return Backend::close(self);
     }
 }
