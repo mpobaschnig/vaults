@@ -45,11 +45,11 @@ fn main() {
     setlocale(LocaleCategory::LcAll, "");
 
     if let Err(e) = bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR) {
-        log::warn!("Could not bind text domain: {}", e);
+        log::error!("Could not bind text domain: {}", e);
     }
 
     if let Err(e) = textdomain(GETTEXT_PACKAGE) {
-        log::warn!("Could not set text domain: {}", e);
+        log::error!("Could not set text domain: {}", e);
     }
 
     backend::probe_backends();
