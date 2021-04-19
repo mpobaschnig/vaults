@@ -28,7 +28,7 @@ use gtk::CompositeTemplate;
 use std::cell::RefCell;
 use std::process::Command;
 
-use super::VaultsPageRowSettingsDialog;
+use super::{VaultsPageRowPasswordPromptDialog, VaultsPageRowSettingsDialog};
 use crate::{backend::Backend, vault::*};
 
 mod imp {
@@ -191,16 +191,31 @@ impl VaultsPageRow {
                 }
             }
         } else {
-            match Backend::open(&vault) {
-                Ok(_) => {
-                    *self_.is_mounted.borrow_mut() = true;
-                    self_.locker_button.set_icon_name(&"changes-allow-symbolic");
-                    self_.open_folder_button.set_visible(true);
-                }
-                Err(e) => {
-                    log::error!("Error opening vault: {}", e);
-                }
-            }
+            let dialog = VaultsPageRowPasswordPromptDialog::new();
+            dialog.connect_response(clone!(@strong self as self2 => move |dialog, id|
+                let password = dialog.get_password();
+                match id {
+                    gtk::ResponseType::Ok => {
+                        match Backend::open(&vault, password) {
+                            Ok(_) => {
+                                let self2_ = imp::VaultsPageRow::from_instance(&self2);
+                                *self2_.is_mounted.borrow_mut() = true;
+                                self2_.locker_button.set_icon_name(&"changes-allow-symbolic");
+                                self2_.open_folder_button.set_visible(true);
+                            }
+                            Err(e) => {
+                                log::error!("Error opening vault: {}", e);
+                            }
+                        }
+                        dialog.destroy();
+                    }
+                    _ => {
+                        dialog.destroy();
+                    }
+                };
+            ));
+
+            dialog.show();
         }
     }
 
