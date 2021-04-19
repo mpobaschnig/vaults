@@ -14,7 +14,8 @@
         "--talk-name=org.a11y.Bus",
         "--env=RUST_LOG=vaults=debug",
         "--env=G_MESSAGES_DEBUG=none",
-        "--filesystem=host"
+        "--talk-name=org.freedesktop.Flatpak",
+        "--filesystem=home"
     ],
     "build-options" : {
         "append-path" : "/usr/lib/sdk/rust-stable/bin",
