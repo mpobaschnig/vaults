@@ -332,6 +332,11 @@ impl AddNewVaultDialog {
         )
     }
 
+    pub fn get_password(&self) -> String {
+        let self_ = imp::AddNewVaultDialog::from_instance(self);
+        String::from(self_.password_entry.get_text().as_str())
+    }
+
     fn fill_combo_box_text(&self) {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 

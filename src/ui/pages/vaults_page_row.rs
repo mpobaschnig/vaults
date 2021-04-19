@@ -32,7 +32,6 @@ use super::{VaultsPageRowPasswordPromptDialog, VaultsPageRowSettingsDialog};
 use crate::{backend::Backend, vault::*};
 
 mod imp {
-
     use super::*;
 
     #[derive(Debug, CompositeTemplate)]
@@ -48,7 +47,6 @@ mod imp {
         pub settings_button: TemplateChild<gtk::Button>,
 
         pub config: RefCell<Option<VaultConfig>>,
-        pub is_mounted: RefCell<bool>,
     }
 
     #[glib::object_subclass]
@@ -64,7 +62,6 @@ mod imp {
                 locker_button: TemplateChild::default(),
                 settings_button: TemplateChild::default(),
                 config: RefCell::new(None),
-                is_mounted: RefCell::new(false),
             }
         }
 
@@ -175,46 +172,118 @@ impl VaultsPageRow {
     }
 
     fn locker_button_clicked(&self) {
-        let self_ = imp::VaultsPageRow::from_instance(&self);
         let vault = self.get_vault();
-        if *self_.is_mounted.borrow() {
-            match Backend::close(&vault) {
+
+        if self.is_mounted() {
+            let self_ = imp::VaultsPageRow::from_instance(self);
+
+            self_.open_folder_button.set_sensitive(false);
+
+            let spinner = gtk::Spinner::new();
+            self_.locker_button.set_child(Some(&spinner));
+
+            spinner.start();
+
+            enum Message {
+                Finished,
+                Error,
+            }
+
+            let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+            let vault_config = vault.get_config().clone().unwrap();
+            std::thread::spawn(move || match Backend::close(&vault_config) {
                 Ok(_) => {
-                    *self_.is_mounted.borrow_mut() = false;
-                    self_
-                        .locker_button
-                        .set_icon_name(&"changes-prevent-symbolic");
-                    self_.open_folder_button.set_visible(false);
-                    self_.settings_button.set_sensitive(true);
+                    let _ = sender.send(Message::Finished);
                 }
                 Err(e) => {
-                    log::error!("Error closing vault: {}", e);
+                    log::error!("Error opening vault: {}", e);
+                    let _ = sender.send(Message::Error);
                 }
-            }
+            });
+
+            let locker_button = self_.locker_button.clone();
+            let open_folder_button = self_.open_folder_button.clone();
+            let settings_button = self_.settings_button.clone();
+            receiver.attach(None, move |message| {
+                match message {
+                    Message::Finished => {
+                        locker_button.set_icon_name(&"changes-prevent-symbolic");
+                        open_folder_button.set_visible(false);
+                        open_folder_button.set_sensitive(true);
+                        settings_button.set_sensitive(true);
+                    }
+                    Message::Error => {
+                        locker_button.set_icon_name(&"changes-allow-symbolic");
+                        open_folder_button.set_visible(true);
+                        open_folder_button.set_sensitive(true);
+                        settings_button.set_sensitive(false);
+                    }
+                }
+                spinner.stop();
+                glib::Continue(true)
+            });
         } else {
             let dialog = VaultsPageRowPasswordPromptDialog::new();
-            dialog.connect_response(clone!(@strong self as self2 => move |dialog, id|
-                let password = dialog.get_password();
-                dialog.destroy();
+            dialog.connect_response(clone!(@strong self as self2 => move |dialog, id| {
                 match id {
                     gtk::ResponseType::Ok => {
-                        match Backend::open(&vault, password) {
-                            Ok(_) => {
-                                let self2_ = imp::VaultsPageRow::from_instance(&self2);
-                                *self2_.is_mounted.borrow_mut() = true;
-                                self2_.locker_button.set_icon_name(&"changes-allow-symbolic");
-                                self2_.open_folder_button.set_visible(true);
-                                self2_.settings_button.set_sensitive(false);
-                            }
-                            Err(e) => {
-                                log::error!("Error opening vault: {}", e);
-                            }
+                        let password = dialog.get_password();
+                        dialog.destroy();
+
+                        let self2_ = imp::VaultsPageRow::from_instance(&self2);
+
+                        self2_.settings_button.set_sensitive(false);
+                        self2_.open_folder_button.set_sensitive(false);
+
+                        let spinner = gtk::Spinner::new();
+                        self2_.locker_button.set_child(Some(&spinner));
+
+                        spinner.start();
+
+                        enum Message {
+                            Finished,
+                            Error
                         }
 
+                        let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+                        let vault_config = vault.get_config().clone().unwrap();
+                        std::thread::spawn(move || {
+                            match Backend::open(&vault_config, password) {
+                                Ok(_) => {
+                                    let _ = sender.send(Message::Finished);
+                                }
+                                Err(e) => {
+                                    log::error!("Error opening vault: {}", e);
+                                    let _ = sender.send(Message::Error);
+                                }
+                            }
+                        });
+
+                        let locker_button = self2_.locker_button.clone();
+                        let open_folder_button = self2_.open_folder_button.clone();
+                        let settings_button = self2_.settings_button.clone();
+                        receiver.attach(None, move |message| {
+                            match message {
+                                Message::Finished => {
+                                    locker_button.set_icon_name(&"changes-allow-symbolic");
+                                    open_folder_button.set_visible(true);
+                                    open_folder_button.set_sensitive(true);
+                                    settings_button.set_sensitive(false);
+                                }
+                                Message::Error => {
+                                    locker_button.set_icon_name(&"changes-prevent-symbolic");
+                                    open_folder_button.set_visible(false);
+                                    open_folder_button.set_sensitive(false);
+                                    settings_button.set_sensitive(true);
+                                }
+                            }
+                            spinner.stop();
+                            glib::Continue(true)
+                        });
                     }
                     _ => {}
                 };
-            ));
+            }));
 
             dialog.show();
         }
@@ -275,5 +344,16 @@ impl VaultsPageRow {
     pub fn get_name(&self) -> String {
         let self_ = imp::VaultsPageRow::from_instance(&self);
         self_.vaults_page_row.get_title().unwrap().to_string()
+    }
+
+    fn is_mounted(&self) -> bool {
+        let self_ = imp::VaultsPageRow::from_instance(&self);
+        // TODO: find better way to check if vault is mounted that is thread-safe
+        // and can be safed in VaultsPageRow object
+        if self_.open_folder_button.is_visible() {
+            true
+        } else {
+            false
+        }
     }
 }

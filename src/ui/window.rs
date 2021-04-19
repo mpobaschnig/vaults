@@ -221,7 +221,7 @@ impl ApplicationWindow {
             gtk::ResponseType::Ok => {
                 let vault = dialog.get_vault();
                 let password = dialog.get_password();
-                match Backend::init(&vault, password) {
+                match Backend::init(&vault.get_config().unwrap(), password) {
                     Ok(_) => {
                         UserConfig::instance().add_vault(vault);
                         self2.set_view(VView::Vaults);

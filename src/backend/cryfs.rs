@@ -17,7 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use crate::vault::Vault;
+use crate::vault::VaultConfig;
 
 use super::BackendError;
 
@@ -26,16 +26,16 @@ pub fn is_available() -> bool {
 }
 
 #[allow(unused_variables)]
-pub fn init(vault: &Vault, password: String) -> Result<(), BackendError> {
+pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
     Err(BackendError::NotImplemented)
 }
 
 #[allow(unused_variables)]
-pub fn open(vault: &Vault, password: String) -> Result<(), BackendError> {
+pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
     Err(BackendError::NotImplemented)
 }
 
 #[allow(unused_variables)]
-pub fn close(vault: &Vault) -> Result<(), BackendError> {
+pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
     Err(BackendError::NotImplemented)
 }

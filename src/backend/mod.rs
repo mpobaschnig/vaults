@@ -20,7 +20,7 @@
 pub mod cryfs;
 pub mod gocryptfs;
 
-use crate::vault::Vault;
+use crate::vault::VaultConfig;
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::string::String;
@@ -65,35 +65,35 @@ impl Backend {
         }
     }
 
-    pub fn init(vault: &Vault, password: String) -> Result<(), BackendError> {
-        match vault.get_config().unwrap().backend {
+    pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
+        match vault_config.backend {
             Backend::Cryfs => {
-                return cryfs::init(vault, password);
+                return cryfs::init(vault_config, password);
             }
             Backend::Gocryptfs => {
-                return gocryptfs::init(vault, password);
+                return gocryptfs::init(vault_config, password);
             }
         }
     }
 
-    pub fn open(vault: &Vault, password: String) -> Result<(), BackendError> {
-        match vault.get_config().unwrap().backend {
+    pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
+        match vault_config.backend {
             Backend::Cryfs => {
-                return cryfs::open(vault, password);
+                return cryfs::open(vault_config, password);
             }
             Backend::Gocryptfs => {
-                return gocryptfs::open(vault, password);
+                return gocryptfs::open(vault_config, password);
             }
         }
     }
 
-    pub fn close(vault: &Vault) -> Result<(), BackendError> {
-        match vault.get_config().unwrap().backend {
+    pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
+        match vault_config.backend {
             Backend::Cryfs => {
-                return cryfs::close(vault);
+                return cryfs::close(vault_config);
             }
             Backend::Gocryptfs => {
-                return gocryptfs::close(vault);
+                return gocryptfs::close(vault_config);
             }
         }
     }

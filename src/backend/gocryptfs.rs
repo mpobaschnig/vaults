@@ -18,7 +18,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use super::BackendError;
-use crate::vault::Vault;
+use crate::vault::VaultConfig;
 use std::process::Command;
 use std::{io::Write, process::Stdio};
 
@@ -39,14 +39,14 @@ pub fn is_available() -> bool {
     false
 }
 
-pub fn init(vault: &Vault, password: String) -> Result<(), BackendError> {
+pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
     let child = Command::new("gocryptfs")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .arg("--init")
         .arg("-q")
         .arg("--")
-        .arg(vault.get_config().unwrap().encrypted_data_directory)
+        .arg(&vault_config.encrypted_data_directory)
         .spawn();
 
     match child {
@@ -94,7 +94,7 @@ pub fn init(vault: &Vault, password: String) -> Result<(), BackendError> {
     }
 }
 
-pub fn open(vault: &Vault, password: String) -> Result<(), BackendError> {
+pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
     let child = Command::new("flatpak-spawn")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -102,8 +102,8 @@ pub fn open(vault: &Vault, password: String) -> Result<(), BackendError> {
         .arg("gocryptfs")
         .arg("-q")
         .arg("--")
-        .arg(vault.get_config().unwrap().encrypted_data_directory)
-        .arg(vault.get_config().unwrap().mount_directory)
+        .arg(&vault_config.encrypted_data_directory)
+        .arg(&vault_config.mount_directory)
         .spawn();
 
     match child {
@@ -152,13 +152,13 @@ pub fn open(vault: &Vault, password: String) -> Result<(), BackendError> {
     }
 }
 
-pub fn close(vault: &Vault) -> Result<(), BackendError> {
+pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
     let child = Command::new("flatpak-spawn")
         .stdout(Stdio::piped())
         .arg("--host")
         .arg("fusermount")
         .arg("-u")
-        .arg(vault.get_config().unwrap().mount_directory)
+        .arg(&vault_config.mount_directory)
         .spawn();
 
     match child {
