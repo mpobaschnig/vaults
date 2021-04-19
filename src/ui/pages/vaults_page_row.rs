@@ -138,9 +138,7 @@ impl VaultsPageRow {
             self_.open_folder_button.set_sensitive(true);
             self_.open_folder_button.set_visible(true);
             self_.settings_button.set_sensitive(false);
-            self_
-                .locker_button
-                .set_icon_name(&"changes-prevent-symbolic");
+            self_.locker_button.set_icon_name(&"changes-allow-symbolic");
         }
 
         object
