@@ -134,6 +134,15 @@ impl VaultsPageRow {
             }
         }
 
+        if vault.is_mounted() {
+            self_.open_folder_button.set_sensitive(true);
+            self_.open_folder_button.set_visible(true);
+            self_.settings_button.set_sensitive(false);
+            self_
+                .locker_button
+                .set_icon_name(&"changes-prevent-symbolic");
+        }
+
         object
     }
 
@@ -349,10 +358,7 @@ impl VaultsPageRow {
     }
 
     fn is_mounted(&self) -> bool {
-        let self_ = imp::VaultsPageRow::from_instance(&self);
-        // TODO: find better way to check if vault is mounted that is thread-safe
-        // and can be safed in VaultsPageRow object
-        if self_.open_folder_button.is_visible() {
+        if self.get_vault().is_mounted() {
             true
         } else {
             false

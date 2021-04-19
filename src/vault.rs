@@ -153,4 +153,27 @@ impl Vault {
         log::debug!("Lock vault!");
         Backend::close(&self.get_config().unwrap())
     }
+
+    pub fn is_mounted(&self) -> bool {
+        use proc_mounts::*;
+
+        let mount_list = MountList::new();
+        match mount_list {
+            Ok(mount_list) => {
+                let is_mounted = MountList::get_mount_by_dest(
+                    &mount_list,
+                    self.get_config().unwrap().mount_directory,
+                );
+
+                match is_mounted {
+                    Some(_) => true,
+                    None => false,
+                }
+            }
+            Err(e) => {
+                log::error!("Could not check if mounted: {}", e);
+                return false;
+            }
+        }
+    }
 }
