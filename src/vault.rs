@@ -139,14 +139,14 @@ impl Vault {
         o
     }
 
-    pub fn init(&self) -> Result<(), BackendError> {
+    pub fn init(&self, password: String) -> Result<(), BackendError> {
         log::debug!("Init vault!");
-        Backend::init(self)
+        Backend::init(self, password)
     }
 
-    pub fn unlock(&self) -> Result<(), BackendError> {
+    pub fn unlock(&self, password: String) -> Result<(), BackendError> {
         log::debug!("Unlock vault!");
-        Backend::open(self)
+        Backend::open(self, password)
     }
 
     pub fn lock(&self) -> Result<(), BackendError> {

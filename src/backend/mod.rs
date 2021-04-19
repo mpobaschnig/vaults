@@ -34,6 +34,7 @@ quick_error! {
     #[derive(Debug)]
     pub enum BackendError {
         NotImplemented {}
+        GenericError {}
     }
 }
 
@@ -64,24 +65,24 @@ impl Backend {
         }
     }
 
-    pub fn init(vault: &Vault) -> Result<(), BackendError> {
+    pub fn init(vault: &Vault, password: String) -> Result<(), BackendError> {
         match vault.get_config().unwrap().backend {
             Backend::Cryfs => {
-                return cryfs::init(vault);
+                return cryfs::init(vault, password);
             }
             Backend::Gocryptfs => {
-                return gocryptfs::init(vault);
+                return gocryptfs::init(vault, password);
             }
         }
     }
 
-    pub fn open(vault: &Vault) -> Result<(), BackendError> {
+    pub fn open(vault: &Vault, password: String) -> Result<(), BackendError> {
         match vault.get_config().unwrap().backend {
             Backend::Cryfs => {
-                return cryfs::open(vault);
+                return cryfs::open(vault, password);
             }
             Backend::Gocryptfs => {
-                return gocryptfs::open(vault);
+                return gocryptfs::open(vault, password);
             }
         }
     }

@@ -26,12 +26,12 @@ pub fn is_available() -> bool {
 }
 
 #[allow(unused_variables)]
-pub fn init(vault: &Vault) -> Result<(), BackendError> {
+pub fn init(vault: &Vault, password: String) -> Result<(), BackendError> {
     Err(BackendError::NotImplemented)
 }
 
 #[allow(unused_variables)]
-pub fn open(vault: &Vault) -> Result<(), BackendError> {
+pub fn open(vault: &Vault, password: String) -> Result<(), BackendError> {
     Err(BackendError::NotImplemented)
 }
 
