@@ -185,6 +185,7 @@ impl VaultsPageRow {
                         .locker_button
                         .set_icon_name(&"changes-prevent-symbolic");
                     self_.open_folder_button.set_visible(false);
+                    self_.settings_button.set_sensitive(true);
                 }
                 Err(e) => {
                     log::error!("Error closing vault: {}", e);
@@ -202,6 +203,7 @@ impl VaultsPageRow {
                                 *self2_.is_mounted.borrow_mut() = true;
                                 self2_.locker_button.set_icon_name(&"changes-allow-symbolic");
                                 self2_.open_folder_button.set_visible(true);
+                                self2_.settings_button.set_sensitive(false);
                             }
                             Err(e) => {
                                 log::error!("Error opening vault: {}", e);
