@@ -1,39 +1,40 @@
 {
-    "app-id": "com.gitlab.mpobaschnig.Vaults.Devel",
-    "runtime": "org.gnome.Platform",
-    "runtime-version": "40",
-    "sdk": "org.gnome.Sdk",
-    "sdk-extensions": [
+    "app-id" : "com.gitlab.mpobaschnig.Vaults.Devel",
+    "runtime" : "org.gnome.Platform",
+    "runtime-version" : "40",
+    "sdk" : "org.gnome.Sdk",
+    "sdk-extensions" : [
         "org.freedesktop.Sdk.Extension.rust-stable"
     ],
-    "command": "vaults",
-    "finish-args": [
+    "command" : "vaults",
+    "finish-args" : [
         "--socket=fallback-x11",
         "--socket=wayland",
         "--device=dri",
         "--talk-name=org.a11y.Bus",
         "--env=RUST_LOG=vaults=debug",
-        "--env=G_MESSAGES_DEBUG=none"
+        "--env=G_MESSAGES_DEBUG=none",
+        "--filesystem=host"
     ],
-    "build-options": {
-        "append-path": "/usr/lib/sdk/rust-stable/bin",
-        "build-args": [
+    "build-options" : {
+        "append-path" : "/usr/lib/sdk/rust-stable/bin",
+        "build-args" : [
             "--share=network"
         ],
-        "test-args": [
+        "test-args" : [
             "--socket=x11",
             "--share=network"
         ],
-        "env": {
-            "RUST_BACKTRACE": "1"
+        "env" : {
+            "RUST_BACKTRACE" : "1"
         }
     },
-    "modules": [
+    "modules" : [
         {
-            "name": "libadwaita",
-            "builddir": true,
-            "buildsystem": "meson",
-            "config-opts": [
+            "name" : "libadwaita",
+            "builddir" : true,
+            "buildsystem" : "meson",
+            "config-opts" : [
                 "-Dprofiling=false",
                 "-Dintrospection=enabled",
                 "-Dgtk_doc=false",
@@ -42,40 +43,40 @@
                 "-Dvapi=false",
                 "-Dglade_catalog=disabled"
             ],
-            "sources": [
+            "sources" : [
                 {
-                    "type": "git",
-                    "url": "https://gitlab.gnome.org/GNOME/libadwaita",
-                    "branch": "main"
+                    "type" : "git",
+                    "url" : "https://gitlab.gnome.org/GNOME/libadwaita",
+                    "branch" : "main"
                 }
             ]
         },
         {
-            "name": "gocryptfs",
-            "buildsystem": "simple",
-            "build-commands": [
+            "name" : "gocryptfs",
+            "buildsystem" : "simple",
+            "build-commands" : [
                 "tar -xf gocryptfs_v1.8.0_linux-static_amd64.tar.gz",
                 "install -D gocryptfs /app/bin/gocryptfs"
             ],
-            "sources": [
+            "sources" : [
                 {
-                    "type": "file",
-                    "url": "https://github.com/rfjakob/gocryptfs/releases/download/v1.8.0/gocryptfs_v1.8.0_linux-static_amd64.tar.gz",
-                    "sha256": "ebf563c5f89ff61a36f0170c06e726e36968e125e18f84626027e8c0569513dc"
+                    "type" : "file",
+                    "url" : "https://github.com/rfjakob/gocryptfs/releases/download/v1.8.0/gocryptfs_v1.8.0_linux-static_amd64.tar.gz",
+                    "sha256" : "ebf563c5f89ff61a36f0170c06e726e36968e125e18f84626027e8c0569513dc"
                 }
             ]
         },
         {
-            "name": "vaults",
-            "buildsystem": "meson",
-            "run-tests": true,
-            "config-opts": [
+            "name" : "vaults",
+            "buildsystem" : "meson",
+            "run-tests" : true,
+            "config-opts" : [
                 "-Dprofile=development"
             ],
-            "sources": [
+            "sources" : [
                 {
-                    "type": "dir",
-                    "path": "../"
+                    "type" : "dir",
+                    "path" : "../"
                 }
             ]
         }
