@@ -195,6 +195,7 @@ impl VaultsPageRow {
             let dialog = VaultsPageRowPasswordPromptDialog::new();
             dialog.connect_response(clone!(@strong self as self2 => move |dialog, id|
                 let password = dialog.get_password();
+                dialog.destroy();
                 match id {
                     gtk::ResponseType::Ok => {
                         match Backend::open(&vault, password) {
@@ -209,11 +210,9 @@ impl VaultsPageRow {
                                 log::error!("Error opening vault: {}", e);
                             }
                         }
-                        dialog.destroy();
+
                     }
-                    _ => {
-                        dialog.destroy();
-                    }
+                    _ => {}
                 };
             ));
 
