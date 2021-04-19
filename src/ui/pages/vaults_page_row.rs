@@ -281,7 +281,9 @@ impl VaultsPageRow {
                             glib::Continue(true)
                         });
                     }
-                    _ => {}
+                    _ => {
+                        dialog.destroy();
+                    }
                 };
             }));
 
