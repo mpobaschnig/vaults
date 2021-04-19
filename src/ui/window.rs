@@ -20,7 +20,7 @@
 use crate::config::{APP_ID, PROFILE};
 use crate::ui::pages::*;
 use crate::ui::{AddNewVaultDialog, ImportVaultDialog};
-use crate::{application::VApplication, user_config_manager::UserConfig};
+use crate::{application::VApplication, backend::Backend, user_config_manager::UserConfig};
 
 use adw::subclass::prelude::*;
 use glib::{clone, GEnum, ParamSpec, ToValue};
@@ -220,10 +220,16 @@ impl ApplicationWindow {
         dialog.connect_response(clone!(@strong self as self2 => move |dialog, id| match id {
             gtk::ResponseType::Ok => {
                 let vault = dialog.get_vault();
-
-                UserConfig::instance().add_vault(vault);
-
-                self2.set_view(VView::Vaults);
+                let password = dialog.get_password();
+                match Backend::init(&vault, password) {
+                    Ok(_) => {
+                        UserConfig::instance().add_vault(vault);
+                        self2.set_view(VView::Vaults);
+                    }
+                    Err(e) => {
+                        log::error!("Could not init vault: {}", e);
+                    }
+                }
 
                 dialog.destroy();
             }
