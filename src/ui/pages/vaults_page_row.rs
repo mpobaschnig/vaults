@@ -184,6 +184,14 @@ impl VaultsPageRow {
         if self.is_mounted() {
             let self_ = imp::VaultsPageRow::from_instance(self);
 
+            if !self_.open_folder_button.is_visible() {
+                self_.locker_button.set_icon_name(&"changes-allow-symbolic");
+                self_.open_folder_button.set_visible(true);
+                self_.open_folder_button.set_sensitive(true);
+                self_.settings_button.set_sensitive(false);
+                return;
+            }
+
             self_.open_folder_button.set_sensitive(false);
 
             let spinner = gtk::Spinner::new();
@@ -230,6 +238,18 @@ impl VaultsPageRow {
                 glib::Continue(true)
             });
         } else {
+            let self_ = imp::VaultsPageRow::from_instance(self);
+
+            if self_.open_folder_button.is_visible() {
+                self_
+                    .locker_button
+                    .set_icon_name(&"changes-prevent-symbolic");
+                self_.open_folder_button.set_visible(false);
+                self_.open_folder_button.set_sensitive(false);
+                self_.settings_button.set_sensitive(true);
+                return;
+            }
+
             let dialog = VaultsPageRowPasswordPromptDialog::new();
             dialog.connect_response(clone!(@strong self as self2 => move |dialog, id| {
                 match id {
