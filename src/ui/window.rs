@@ -20,8 +20,7 @@
 use crate::config::{APP_ID, PROFILE};
 use crate::ui::pages::*;
 use crate::ui::{AddNewVaultDialog, ImportVaultDialog};
-use crate::user_config;
-use crate::{application::VApplication, user_config::VAULTS};
+use crate::{application::VApplication, user_config_manager::UserConfig};
 
 use adw::subclass::prelude::*;
 use glib::{clone, GEnum, ParamSpec, ToValue};
@@ -172,16 +171,18 @@ impl ApplicationWindow {
         // Set icons for shell
         gtk::Window::set_default_icon_name(APP_ID);
 
-        match VAULTS.lock() {
-            Ok(v) => {
-                if !v.vault.is_empty() {
-                    window.set_view(VView::Vaults);
-                }
-            }
-            Err(e) => {
-                log::error!("Failed to aquire mutex lock of VAULTS: {}", e);
-            }
+        if !UserConfig::instance().get_map().is_empty() {
+            window.set_view(VView::Vaults);
         }
+
+        let self_ = imp::ApplicationWindow::from_instance(&window);
+        self_
+            .vaults_page
+            .connect_refresh(clone!(@strong window as obj => move || {
+                if UserConfig::instance().get_map().is_empty() {
+                    obj.set_view(VView::Start);
+                }
+            }));
 
         window
     }
@@ -216,27 +217,13 @@ impl ApplicationWindow {
 
     fn add_new_vault_clicked(&self) {
         let dialog = AddNewVaultDialog::new();
-        dialog.connect_response(clone!(@strong self as self2=> move |dialog, id| match id {
+        dialog.connect_response(clone!(@strong self as self2 => move |dialog, id| match id {
             gtk::ResponseType::Ok => {
                 let vault = dialog.get_vault();
-                match user_config::VAULTS.lock() {
-                    Ok(mut v) => {
-                        let self_ = imp::ApplicationWindow::from_instance(&self2);
 
-                        if v.vault.is_empty() {
-                            self2.set_view(VView::Vaults);
-                            self2.update_view();
-                        }
-                        self_.vaults_page.add_vault(vault.clone());
-                        v.vault.push(vault);
+                UserConfig::instance().add_vault(vault);
 
-                    }
-                    Err(e) => {
-                        log::error!("Failed to aquire mutex lock of USER_DATA_DIRECTORY: {}", e);
-                    }
-                }
-
-                user_config::write();
+                self2.set_view(VView::Vaults);
 
                 dialog.destroy();
             }
@@ -253,22 +240,10 @@ impl ApplicationWindow {
         dialog.connect_response(clone!(@strong self as self2=> move |dialog, id| match id {
             gtk::ResponseType::Ok => {
                 let vault = dialog.get_vault();
-                match user_config::VAULTS.lock() {
-                    Ok(mut v) => {
-                        let self_ = imp::ApplicationWindow::from_instance(&self2);
 
-                        if v.vault.is_empty() {
-                            self2.set_view(VView::Vaults);
-                        }
-                        self_.vaults_page.add_vault(vault.clone());
-                        v.vault.push(vault);
-                    }
-                    Err(e) => {
-                        log::error!("Failed to aquire mutex lock of USER_DATA_DIRECTORY: {}", e);
-                    }
-                }
+                UserConfig::instance().add_vault(vault);
 
-                user_config::write();
+                self2.set_view(VView::Vaults);
 
                 dialog.destroy();
             }
@@ -281,11 +256,14 @@ impl ApplicationWindow {
     }
 
     fn refresh_button_clicked(&self) {
-        user_config::read();
+        let self_ = imp::ApplicationWindow::from_instance(self);
+        self_.vaults_page.clear();
 
-        if user_config::is_empty() {
-            let self_ = imp::ApplicationWindow::from_instance(self);
-            self_.vaults_page.init();
+        UserConfig::instance().read_config();
+
+        self_.vaults_page.init();
+
+        if UserConfig::instance().get_map().is_empty() {
             self.set_view(VView::Start);
         } else {
             self.set_view(VView::Vaults);

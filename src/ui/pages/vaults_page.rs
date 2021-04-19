@@ -19,22 +19,28 @@
 
 use super::VaultsPageRow;
 use adw::subclass::prelude::*;
-use glib::subclass;
+use glib::{clone, subclass};
+use gtk::gio::ListStore;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 
-use crate::{user_config::VAULTS, vault::Vault};
+use crate::{user_config_manager::UserConfig, vault::*};
 
 mod imp {
+    use glib::once_cell::sync::Lazy;
+    use gtk::glib::subclass::Signal;
+
     use super::*;
 
-    #[derive(Debug, Default, CompositeTemplate)]
+    #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/com/gitlab/mpobaschnig/Vaults/vaults_page.ui")]
     pub struct VVaultsPage {
         #[template_child]
         pub vaults_list_box: TemplateChild<gtk::ListBox>,
+
+        pub list_store: ListStore,
     }
 
     #[glib::object_subclass]
@@ -46,6 +52,7 @@ mod imp {
         fn new() -> Self {
             Self {
                 vaults_list_box: TemplateChild::default(),
+                list_store: ListStore::new(gtk::Widget::static_type()),
             }
         }
 
@@ -58,7 +65,31 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for VVaultsPage {}
+    impl ObjectImpl for VVaultsPage {
+        fn constructed(&self, obj: &Self::Type) {
+            self.parent_constructed(obj);
+
+            UserConfig::instance().connect_add_vault(clone!(@weak obj as obj2 => move || {
+                obj2.add_vault();
+            }));
+
+            let self2_ = imp::VVaultsPage::from_instance(&obj);
+            self2_
+                .vaults_list_box
+                .bind_model(Some(&self2_.list_store), |obj| {
+                    obj.clone().downcast::<gtk::Widget>().unwrap()
+                });
+        }
+
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> =
+                Lazy::new(
+                    || vec![Signal::builder("refresh", &[], glib::Type::UNIT.into()).build()],
+                );
+
+            SIGNALS.as_ref()
+        }
+    }
 
     impl WidgetImpl for VVaultsPage {}
 
@@ -71,6 +102,40 @@ glib::wrapper! {
 }
 
 impl VVaultsPage {
+    pub fn connect_refresh<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
+        self.connect_local("refresh", false, move |_| {
+            callback();
+            None
+        })
+        .unwrap()
+    }
+
+    pub fn row_connect_remove(&self, row: &VaultsPageRow) {
+        row.connect_remove(clone!(@weak self as obj, @weak row as r => move || {
+            let self2_ = imp::VVaultsPage::from_instance(&obj);
+            let index = self2_.list_store.find(&r);
+            if let Some(index) = index {
+                self2_.list_store.remove(index);
+                obj.emit_by_name("refresh", &[]).unwrap();
+            } else {
+                log::error!("Vault not initialised!");
+            }
+
+        }));
+    }
+
+    pub fn row_connect_save(&self, row: &VaultsPageRow) {
+        row.connect_save(clone!(@weak self as obj, @weak row as r => move || {
+            let vault = UserConfig::instance().get_current_vault();
+            if let Some(vault) = vault {
+                r.set_vault(vault);
+                obj.emit_by_name("refresh", &[]).unwrap();
+            } else {
+                log::error!("Vault not initialised!");
+            }
+        }));
+    }
+
     pub fn new() -> Self {
         let window: Self = glib::Object::new(&[]).expect("Failed to create VVaultsPage");
 
@@ -80,28 +145,53 @@ impl VVaultsPage {
     pub fn init(&self) {
         let self_ = imp::VVaultsPage::from_instance(self);
 
-        while let Some(child) = self_.vaults_list_box.get_last_child() {
-            self_.vaults_list_box.remove(&child);
-        }
+        let map = UserConfig::instance().get_map();
+        for (k, v) in map.iter() {
+            let vault = Vault::new(
+                k.to_owned(),
+                v.backend,
+                v.encrypted_data_directory.to_owned(),
+                v.mount_directory.to_owned(),
+            );
 
-        match VAULTS.lock() {
-            Ok(v) => {
-                for vault in v.vault.iter() {
-                    let row = VaultsPageRow::new(vault.clone());
-                    row.set_vault(vault.clone());
-                    self_.vaults_list_box.insert(&row, -1);
-                }
-            }
-            Err(e) => {
-                log::error!("Failed to aquire mutex lock of VAULTS: {}", e);
-            }
+            let row = VaultsPageRow::new(vault);
+            self.row_connect_remove(&row);
+            self.row_connect_save(&row);
+
+            self_.list_store.insert_sorted(&row, |v1, v2| {
+                let row1 = v1.downcast_ref::<VaultsPageRow>().unwrap();
+                let name1 = row1.get_name();
+                let row2 = v2.downcast_ref::<VaultsPageRow>().unwrap();
+                let name2 = row2.get_name();
+                name1.cmp(&name2)
+            });
         }
     }
 
-    pub fn add_vault(&self, vault: Vault) {
+    pub fn add_vault(&self) {
         let self_ = imp::VVaultsPage::from_instance(self);
-        let row = VaultsPageRow::new(vault.clone());
-        row.set_vault(vault.clone());
-        self_.vaults_list_box.insert(&row, -1);
+
+        let vault = UserConfig::instance().get_current_vault();
+
+        if let Some(vault) = vault {
+            let row = VaultsPageRow::new(vault.clone());
+            self.row_connect_remove(&row);
+            self.row_connect_save(&row);
+
+            self_.list_store.insert_sorted(&row, |v1, v2| {
+                let row1 = v1.downcast_ref::<VaultsPageRow>().unwrap();
+                let name1 = row1.get_name();
+                let row2 = v2.downcast_ref::<VaultsPageRow>().unwrap();
+                let name2 = row2.get_name();
+                name1.cmp(&name2)
+            });
+        } else {
+            log::error!("Vault not initialised!");
+        }
+    }
+
+    pub fn clear(&self) {
+        let self_ = imp::VVaultsPage::from_instance(self);
+        self_.list_store.remove_all();
     }
 }

@@ -20,7 +20,7 @@
 mod application;
 #[rustfmt::skip]
 mod config;
-mod user_config;
+mod user_config_manager;
 mod vault;
 
 mod backend;
@@ -35,6 +35,7 @@ use application::VApplication;
 use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 use gettextrs::*;
 use gtk::gio;
+use user_config_manager::UserConfig;
 
 fn main() {
     // Initialize logger, debug is carried out via debug!, info!, and warn!.
@@ -53,7 +54,7 @@ fn main() {
 
     backend::probe_backends();
 
-    user_config::init();
+    UserConfig::instance().read_config();
 
     gtk::glib::set_application_name("Vaults");
     gtk::glib::set_prgname(Some("vaults"));

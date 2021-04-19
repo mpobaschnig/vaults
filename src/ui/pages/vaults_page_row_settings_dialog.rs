@@ -1,4 +1,4 @@
-// add_new_vault_dialog.rs
+// vaults_page_row_settings_dialog.rs
 //
 // Copyright 2021 Martin Pobaschnig <mpobaschnig@posteo.de>
 //
@@ -21,13 +21,12 @@ use std::str::FromStr;
 
 use adw::{subclass::prelude::*, ActionRowExt};
 use gettextrs::gettext;
-use gtk::gio;
-use gtk::{self, prelude::*};
-use gtk::{glib, CompositeTemplate};
-use gtk::{glib::clone, subclass::prelude::*};
+use gtk::{self, gio, glib, glib::clone, prelude::*, subclass::prelude::*, CompositeTemplate};
+use std::cell::RefCell;
 
 use crate::{
     backend::{Backend, AVAILABLE_BACKENDS},
+    user_config_manager::UserConfig,
     vault::*,
     VApplication,
 };
@@ -36,22 +35,20 @@ mod imp {
     use super::*;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/com/gitlab/mpobaschnig/Vaults/add_new_vault_dialog.ui")]
-    pub struct AddNewVaultDialog {
+    #[template(resource = "/com/gitlab/mpobaschnig/Vaults/vaults_page_row_settings_dialog.ui")]
+    pub struct VaultsPageRowSettingsDialog {
         #[template_child]
         pub cancel_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub add_new_vault_button: TemplateChild<gtk::Button>,
+        pub delete_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub save_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub vault_name_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
         pub vault_name_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub backend_type_combo_box_text: TemplateChild<gtk::ComboBoxText>,
-        #[template_child]
-        pub password_action_row: TemplateChild<adw::ActionRow>,
-        #[template_child]
-        pub password_entry: TemplateChild<gtk::Entry>,
-        #[template_child]
-        pub password_confirm_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
@@ -60,27 +57,31 @@ mod imp {
         pub mount_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub mount_directory_button: TemplateChild<gtk::Button>,
+
+        pub current_vault: RefCell<Option<Vault>>,
+        pub to_delete: RefCell<bool>,
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for AddNewVaultDialog {
-        const NAME: &'static str = "AddNewVaultDialog";
+    impl ObjectSubclass for VaultsPageRowSettingsDialog {
+        const NAME: &'static str = "VaultsPageRowSettingsDialog";
         type ParentType = gtk::Dialog;
-        type Type = super::AddNewVaultDialog;
+        type Type = super::VaultsPageRowSettingsDialog;
 
         fn new() -> Self {
             Self {
                 cancel_button: TemplateChild::default(),
-                add_new_vault_button: TemplateChild::default(),
+                delete_button: TemplateChild::default(),
+                save_button: TemplateChild::default(),
+                vault_name_action_row: TemplateChild::default(),
                 vault_name_entry: TemplateChild::default(),
                 backend_type_combo_box_text: TemplateChild::default(),
-                password_action_row: TemplateChild::default(),
-                password_entry: TemplateChild::default(),
-                password_confirm_entry: TemplateChild::default(),
                 encrypted_data_directory_entry: TemplateChild::default(),
                 encrypted_data_directory_button: TemplateChild::default(),
                 mount_directory_entry: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
+                current_vault: RefCell::new(None),
+                to_delete: RefCell::new(false),
             }
         }
 
@@ -93,7 +94,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for AddNewVaultDialog {
+    impl ObjectImpl for VaultsPageRowSettingsDialog {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
             obj.setup_actions();
@@ -103,20 +104,20 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for AddNewVaultDialog {}
-    impl WindowImpl for AddNewVaultDialog {}
-    impl DialogImpl for AddNewVaultDialog {}
+    impl WidgetImpl for VaultsPageRowSettingsDialog {}
+    impl WindowImpl for VaultsPageRowSettingsDialog {}
+    impl DialogImpl for VaultsPageRowSettingsDialog {}
 }
 
 glib::wrapper! {
-    pub struct AddNewVaultDialog(ObjectSubclass<imp::AddNewVaultDialog>)
+    pub struct VaultsPageRowSettingsDialog(ObjectSubclass<imp::VaultsPageRowSettingsDialog>)
         @extends gtk::Widget, gtk::Window, gtk::Dialog;
 }
 
-impl AddNewVaultDialog {
-    pub fn new() -> Self {
+impl VaultsPageRowSettingsDialog {
+    pub fn new(vault: Vault) -> Self {
         let dialog: Self = glib::Object::new(&[("use-header-bar", &1)])
-            .expect("Failed to create AddNewVaultDialog");
+            .expect("Failed to create VaultsPageRowSettingsDialog");
 
         let window = gio::Application::get_default()
             .unwrap()
@@ -126,13 +127,15 @@ impl AddNewVaultDialog {
             .unwrap();
         dialog.set_transient_for(Some(&window));
 
+        dialog.set_vault(vault);
+
         dialog
     }
 
     fn setup_actions(&self) {}
 
     fn setup_signals(&self) {
-        let self_ = imp::AddNewVaultDialog::from_instance(self);
+        let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
         self_
             .cancel_button
@@ -141,9 +144,15 @@ impl AddNewVaultDialog {
             }));
 
         self_
-            .add_new_vault_button
+            .delete_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.response(gtk::ResponseType::Ok);
+                obj.delete_button_clicked();
+            }));
+
+        self_
+            .save_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.save_button_clicked();
             }));
 
         self_
@@ -157,18 +166,6 @@ impl AddNewVaultDialog {
             .connect_changed(clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
             }));
-
-        self_
-            .password_entry
-            .connect_property_text_notify(clone!(@weak self as obj => move |_| {
-                obj.check_add_button_enable_conditions();
-            }));
-
-        self_.password_confirm_entry.connect_property_text_notify(
-            clone!(@weak self as obj => move |_| {
-                obj.check_add_button_enable_conditions();
-            }),
-        );
 
         self_
             .encrypted_data_directory_entry
@@ -195,6 +192,33 @@ impl AddNewVaultDialog {
             }));
     }
 
+    fn delete_button_clicked(&self) {
+        UserConfig::instance().remove_vault(self.get_vault());
+        self.response(gtk::ResponseType::Other(0));
+    }
+
+    fn save_button_clicked(&self) {
+        let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
+
+        let new_vault = Vault::new(
+            String::from(self_.vault_name_entry.get_text().as_str()),
+            Backend::from_str(
+                self_
+                    .backend_type_combo_box_text
+                    .get_active_text()
+                    .unwrap()
+                    .as_str(),
+            )
+            .unwrap(),
+            String::from(self_.encrypted_data_directory_entry.get_text().as_str()),
+            String::from(self_.mount_directory_entry.get_text().as_str()),
+        );
+
+        UserConfig::instance().change_vault(self.get_current_vault().unwrap(), new_vault);
+
+        self.response(gtk::ResponseType::Other(1));
+    }
+
     fn encrypted_data_directory_button_clicked(&self) {
         let file_chooser = gtk::FileChooserDialog::new(
             Some(&gettext("Choose Encrypted Data Directory")),
@@ -213,7 +237,7 @@ impl AddNewVaultDialog {
                 if response == gtk::ResponseType::Accept {
                     let file = file_chooser.get_file().unwrap();
                     let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
-                    let self_ = imp::AddNewVaultDialog::from_instance(&obj);
+                    let self_ = imp::VaultsPageRowSettingsDialog::from_instance(&obj);
                     self_.encrypted_data_directory_entry.set_text(&path);
                 }
                 s.destroy();
@@ -241,7 +265,7 @@ impl AddNewVaultDialog {
                 if response == gtk::ResponseType::Accept {
                     let file = file_chooser.get_file().unwrap();
                     let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
-                    let self_ = imp::AddNewVaultDialog::from_instance(&obj);
+                    let self_ = imp::VaultsPageRowSettingsDialog::from_instance(&obj);
                     self_.mount_directory_entry.set_text(&path);
                 }
                 s.destroy();
@@ -252,88 +276,47 @@ impl AddNewVaultDialog {
     }
 
     fn check_add_button_enable_conditions(&self) {
-        let self_ = imp::AddNewVaultDialog::from_instance(self);
+        let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
+
+        let current_vault = self.get_current_vault();
+
+        if current_vault.is_none() {
+            return;
+        }
 
         let vault_name = self_.vault_name_entry.get_text();
         let backend = self_.backend_type_combo_box_text.get_active();
-        let password = self_.password_entry.get_text();
-        let confirm_password = self_.password_confirm_entry.get_text();
         let encrypted_data_directory = self_.encrypted_data_directory_entry.get_text();
         let mount_directory = self_.mount_directory_entry.get_text();
 
+        let is_duplicate_name = UserConfig::instance()
+            .get_map()
+            .contains_key(&vault_name.to_string());
         if !vault_name.is_empty()
-            && !password.is_empty()
-            && !confirm_password.is_empty()
+            && !vault_name.eq(&current_vault.unwrap().get_name().unwrap())
+            && is_duplicate_name
+        {
+            self_
+                .vault_name_action_row
+                .set_subtitle(Some(&gettext("Name already exists.")));
+        } else {
+            self_.vault_name_action_row.set_subtitle(Some(""));
+        }
+
+        if !vault_name.is_empty()
             && !encrypted_data_directory.is_empty()
             && !mount_directory.is_empty()
             && backend.is_some()
+            && !is_duplicate_name
         {
-            if password.eq(&confirm_password) {
-                self_.add_new_vault_button.set_sensitive(true);
-                self_.password_action_row.set_subtitle(Some(""));
-            } else {
-                self_.add_new_vault_button.set_sensitive(false);
-                self_
-                    .password_action_row
-                    .set_subtitle(Some(&gettext("Passwords are not equal!")));
-            }
+            self_.save_button.set_sensitive(true);
         } else {
-            if password.eq(&confirm_password) {
-                self_.password_action_row.set_subtitle(Some(""));
-            } else {
-                self_
-                    .password_action_row
-                    .set_subtitle(Some(&gettext("Passwords are not equal!")));
-            }
-            self_.add_new_vault_button.set_sensitive(false);
+            self_.save_button.set_sensitive(false);
         }
     }
 
-    pub fn get_entry_values(&self) -> (String, String, String, String, String) {
-        let self_ = imp::AddNewVaultDialog::from_instance(self);
-
-        let vault_name = String::from(self_.vault_name_entry.get_text().as_str());
-        let backend_type = String::from(
-            self_
-                .backend_type_combo_box_text
-                .get_active_text()
-                .unwrap()
-                .as_str(),
-        );
-        let password = String::from(self_.password_entry.get_text().as_str());
-        let encrypted_data_directory =
-            String::from(self_.encrypted_data_directory_entry.get_text().as_str());
-        let mount_directory = String::from(self_.mount_directory_entry.get_text().as_str());
-
-        (
-            vault_name,
-            backend_type,
-            password,
-            encrypted_data_directory,
-            mount_directory,
-        )
-    }
-
-    pub fn get_vault(&self) -> Vault {
-        let self_ = imp::AddNewVaultDialog::from_instance(self);
-
-        Vault::new(
-            String::from(self_.vault_name_entry.get_text().as_str()),
-            Backend::from_str(
-                self_
-                    .backend_type_combo_box_text
-                    .get_active_text()
-                    .unwrap()
-                    .as_str(),
-            )
-            .unwrap(),
-            String::from(self_.encrypted_data_directory_entry.get_text().as_str()),
-            String::from(self_.mount_directory_entry.get_text().as_str()),
-        )
-    }
-
     fn fill_combo_box_text(&self) {
-        let self_ = imp::AddNewVaultDialog::from_instance(self);
+        let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
         let combo_box_text = &self_.backend_type_combo_box_text;
 
@@ -353,4 +336,59 @@ impl AddNewVaultDialog {
             }
         }
     }
+
+    pub fn get_vault(&self) -> Vault {
+        let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
+
+        Vault::new(
+            String::from(self_.vault_name_entry.get_text().as_str()),
+            Backend::from_str(
+                self_
+                    .backend_type_combo_box_text
+                    .get_active_text()
+                    .unwrap()
+                    .as_str(),
+            )
+            .unwrap(),
+            String::from(self_.encrypted_data_directory_entry.get_text().as_str()),
+            String::from(self_.mount_directory_entry.get_text().as_str()),
+        )
+    }
+
+    pub fn get_current_vault(&self) -> Option<Vault> {
+        let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
+
+        self_.current_vault.borrow().clone()
+    }
+
+    pub fn set_vault(&self, vault: Vault) {
+        let self_ = imp::VaultsPageRowSettingsDialog::from_instance(&self);
+
+        match (vault.get_name(), vault.get_config()) {
+            (Some(name), Some(config)) => {
+                self_.current_vault.replace(Some(vault.clone()));
+
+                self_.vault_name_entry.set_text(&name);
+                self_
+                    .backend_type_combo_box_text
+                    .set_active_id(Some(&config.backend.to_string()));
+                self_
+                    .encrypted_data_directory_entry
+                    .set_text(&config.encrypted_data_directory.to_string());
+                self_
+                    .mount_directory_entry
+                    .set_text(&config.mount_directory.to_string());
+            }
+            (_, _) => {
+                log::error!("Vault not initalised!");
+                return;
+            }
+        }
+    }
+
+    // pub fn is_to_delete(&self) -> bool {
+    //     let self_ = imp::VaultsPageRowSettingsDialog::from_instance(&self);
+
+    //     *self_.to_delete.borrow()
+    // }
 }

@@ -1,4 +1,4 @@
-// vaults.rs
+// vault.rs
 //
 // Copyright 2021 Martin Pobaschnig <mpobaschnig@posteo.de>
 //
@@ -17,54 +17,140 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use crate::backend::*;
+use crate::backend::{Backend, BackendError};
+use gio::subclass::prelude::*;
+use gtk::{gio, glib};
 use serde::{Deserialize, Serialize};
+use std::cell::RefCell;
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Vault {
-    pub name: String,
+#[derive(Debug, Serialize, Deserialize)]
+pub struct VaultConfig {
     pub backend: Backend,
     pub encrypted_data_directory: String,
     pub mount_directory: String,
 }
 
-impl Clone for Vault {
-    fn clone(&self) -> Vault {
-        Vault {
-            name: self.name.clone(),
-            backend: self.backend,
+impl Clone for VaultConfig {
+    fn clone(&self) -> VaultConfig {
+        VaultConfig {
+            backend: self.backend.clone(),
             encrypted_data_directory: self.encrypted_data_directory.clone(),
             mount_directory: self.mount_directory.clone(),
         }
     }
 }
 
-impl Default for Vault {
-    fn default() -> Self {
-        Vault {
-            name: "".to_owned(),
-            backend: crate::backend::Backend::Cryfs,
-            encrypted_data_directory: "".to_owned(),
-            mount_directory: "".to_owned(),
+mod imp {
+    use super::*;
+
+    #[derive(Debug, Serialize, Deserialize)]
+    pub struct Vault {
+        pub name: RefCell<Option<String>>,
+        pub config: RefCell<Option<VaultConfig>>,
+    }
+
+    #[glib::object_subclass]
+    impl ObjectSubclass for Vault {
+        const NAME: &'static str = "Vault";
+        type ParentType = glib::Object;
+        type Type = super::Vault;
+
+        fn new() -> Self {
+            Self {
+                name: RefCell::new(None),
+                config: RefCell::new(None),
+            }
         }
     }
+
+    impl Clone for Vault {
+        fn clone(&self) -> Vault {
+            Vault {
+                name: self.name.clone(),
+                config: self.config.clone(),
+            }
+        }
+    }
+
+    impl Default for Vault {
+        fn default() -> Self {
+            Vault {
+                name: RefCell::new(None),
+                config: RefCell::new(None),
+            }
+        }
+    }
+
+    impl ObjectImpl for Vault {}
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct Vaults {
-    pub vault: Vec<Vault>,
+glib::wrapper! {
+    pub struct Vault(ObjectSubclass<imp::Vault>);
 }
 
 impl Vault {
+    pub fn new(
+        name: String,
+        backend: Backend,
+        encrypted_data_directory: String,
+        mount_directory: String,
+    ) -> Vault {
+        let o: Self = glib::Object::new(&[]).expect("Failed to create UserConfig");
+
+        let self_ = imp::Vault::from_instance(&o);
+
+        self_.name.replace(Some(name));
+        self_.config.replace(Some(VaultConfig {
+            backend,
+            encrypted_data_directory,
+            mount_directory,
+        }));
+
+        o
+    }
+
+    pub fn get_name(&self) -> Option<String> {
+        let self_ = imp::Vault::from_instance(&self);
+
+        self_.name.borrow().clone()
+    }
+
+    pub fn set_name(&self, name: String) {
+        let self_ = &mut imp::Vault::from_instance(&self);
+
+        self_.name.borrow_mut().replace(name);
+    }
+
+    pub fn get_config(&self) -> Option<VaultConfig> {
+        let self_ = imp::Vault::from_instance(&self);
+
+        self_.config.borrow().clone()
+    }
+
+    pub fn set_config(&self, config: VaultConfig) {
+        let self_ = &mut imp::Vault::from_instance(&self);
+
+        self_.config.borrow_mut().replace(config);
+    }
+
+    pub fn new_none() -> Vault {
+        let o: Self = glib::Object::new(&[]).expect("Failed to create UserConfig");
+
+        o
+    }
+
     pub fn init(&self) -> Result<(), BackendError> {
-        return Backend::init(self);
+        log::debug!("Init vault!");
+        Backend::init(self)
     }
 
-    pub fn open(&self, _vault: Vault) -> Result<(), BackendError> {
-        return Backend::open(self);
+    pub fn unlock(&self) -> Result<(), BackendError> {
+        log::debug!("Unlock vault!");
+        Backend::open(self)
     }
 
-    pub fn close(&self, _vault: Vault) -> Result<(), BackendError> {
-        return Backend::close(self);
+    pub fn lock(&self) -> Result<(), BackendError> {
+        log::debug!("Lock vault!");
+        Backend::close(self)
     }
 }

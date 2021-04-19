@@ -2,7 +2,7 @@
 <interface>
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
-  <template class="ImportVaultDialog" parent="GtkDialog">
+  <template class="VaultsPageRowSettingsDialog" parent="GtkDialog">
     <property name="default-height">300</property>
     <property name="default-width">460</property>
     <property name="use-header-bar">1</property>
@@ -23,12 +23,20 @@
           </object>
         </child>
         <child type="end">
-          <object class="GtkButton" id="import_vault_button">
-            <property name="label" translatable="yes">_Add</property>
+          <object class="GtkButton" id="save_button">
+            <property name="label" translatable="yes">_Save</property>
             <property name="use_underline">True</property>
-            <property name="sensitive">False</property>
             <style>
               <class name="suggested-action"/>
+            </style>
+          </object>
+        </child>
+        <child type="end">
+          <object class="GtkButton" id="delete_button">
+            <property name="label" translatable="yes">_Delete</property>
+            <property name="use_underline">True</property>
+            <style>
+              <class name="destructive-action"/>
             </style>
           </object>
         </child>

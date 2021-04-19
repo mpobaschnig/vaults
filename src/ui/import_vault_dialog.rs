@@ -19,13 +19,14 @@
 
 use std::str::FromStr;
 
-use adw::subclass::prelude::*;
+use adw::{subclass::prelude::*, ActionRowExt};
 use gettextrs::gettext;
 use gtk::{self, gio, glib, glib::clone, prelude::*, subclass::prelude::*, CompositeTemplate};
 
 use crate::{
     backend::{Backend, AVAILABLE_BACKENDS},
-    vault::Vault,
+    user_config_manager::UserConfig,
+    vault::*,
     VApplication,
 };
 
@@ -39,6 +40,8 @@ mod imp {
         pub cancel_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub import_vault_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub vault_name_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
         pub vault_name_entry: TemplateChild<gtk::Entry>,
         #[template_child]
@@ -63,6 +66,7 @@ mod imp {
             Self {
                 cancel_button: TemplateChild::default(),
                 import_vault_button: TemplateChild::default(),
+                vault_name_action_row: TemplateChild::default(),
                 vault_name_entry: TemplateChild::default(),
                 backend_type_combo_box_text: TemplateChild::default(),
                 encrypted_data_directory_entry: TemplateChild::default(),
@@ -189,7 +193,6 @@ impl ImportVaultDialog {
                 if response == gtk::ResponseType::Accept {
                     let file = file_chooser.get_file().unwrap();
                     let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
-                    log::info!("Use file {:?}", &path);
                     let self_ = imp::ImportVaultDialog::from_instance(&obj);
                     self_.encrypted_data_directory_entry.set_text(&path);
                 }
@@ -218,7 +221,6 @@ impl ImportVaultDialog {
                 if response == gtk::ResponseType::Accept {
                     let file = file_chooser.get_file().unwrap();
                     let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
-                    log::info!("Use file {:?}", &path);
                     let self_ = imp::ImportVaultDialog::from_instance(&obj);
                     self_.mount_directory_entry.set_text(&path);
                 }
@@ -237,10 +239,22 @@ impl ImportVaultDialog {
         let encrypted_data_directory = self_.encrypted_data_directory_entry.get_text();
         let mount_directory = self_.mount_directory_entry.get_text();
 
+        let is_duplicate_name = UserConfig::instance()
+            .get_map()
+            .contains_key(&vault_name.to_string());
+        if !vault_name.is_empty() && is_duplicate_name {
+            self_
+                .vault_name_action_row
+                .set_subtitle(Some(&gettext("Name already exists.")));
+        } else {
+            self_.vault_name_action_row.set_subtitle(Some(""));
+        }
+
         if !vault_name.is_empty()
             && !encrypted_data_directory.is_empty()
             && !mount_directory.is_empty()
             && backend.is_some()
+            && !is_duplicate_name
         {
             self_.import_vault_button.set_sensitive(true);
         } else {
@@ -251,9 +265,9 @@ impl ImportVaultDialog {
     pub fn get_vault(&self) -> Vault {
         let self_ = imp::ImportVaultDialog::from_instance(self);
 
-        Vault {
-            name: String::from(self_.vault_name_entry.get_text().as_str()),
-            backend: Backend::from_str(
+        Vault::new(
+            String::from(self_.vault_name_entry.get_text().as_str()),
+            Backend::from_str(
                 self_
                     .backend_type_combo_box_text
                     .get_active_text()
@@ -261,11 +275,9 @@ impl ImportVaultDialog {
                     .as_str(),
             )
             .unwrap(),
-            encrypted_data_directory: String::from(
-                self_.encrypted_data_directory_entry.get_text().as_str(),
-            ),
-            mount_directory: String::from(self_.mount_directory_entry.get_text().as_str()),
-        }
+            String::from(self_.encrypted_data_directory_entry.get_text().as_str()),
+            String::from(self_.mount_directory_entry.get_text().as_str()),
+        )
     }
 
     fn fill_combo_box_text(&self) {

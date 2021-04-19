@@ -65,7 +65,7 @@ impl Backend {
     }
 
     pub fn init(vault: &Vault) -> Result<(), BackendError> {
-        match vault.backend {
+        match vault.get_config().unwrap().backend {
             Backend::Cryfs => {
                 return cryfs::init(vault);
             }
@@ -76,7 +76,7 @@ impl Backend {
     }
 
     pub fn open(vault: &Vault) -> Result<(), BackendError> {
-        match vault.backend {
+        match vault.get_config().unwrap().backend {
             Backend::Cryfs => {
                 return cryfs::open(vault);
             }
@@ -87,7 +87,7 @@ impl Backend {
     }
 
     pub fn close(vault: &Vault) -> Result<(), BackendError> {
-        match vault.backend {
+        match vault.get_config().unwrap().backend {
             Backend::Cryfs => {
                 return cryfs::close(vault);
             }
@@ -106,7 +106,7 @@ pub fn probe_backends() {
             for backend_enum in Backend::iter() {
                 if backend_enum.is_available() {
                     let backend = backend_enum.to_string();
-                    log::info!("Found backend: {}", backend);
+                    log::debug!("Found backend: {}", backend);
                     available_backends.push(backend);
                 }
             }

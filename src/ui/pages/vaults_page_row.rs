@@ -18,22 +18,24 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use adw::{subclass::prelude::*, PreferencesRowExt};
+use glib::once_cell::sync::Lazy;
 use glib::{clone, subclass};
 use gtk::glib;
+use gtk::glib::subclass::Signal;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use std::cell::RefCell;
 use std::process::Command;
 
-use crate::backend::Backend;
-use crate::vault::Vault;
+use super::VaultsPageRowSettingsDialog;
+use crate::{backend::Backend, vault::*};
 
 mod imp {
 
     use super::*;
 
-    #[derive(Debug, Default, CompositeTemplate)]
+    #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/com/gitlab/mpobaschnig/Vaults/vaults_page_row.ui")]
     pub struct VaultsPageRow {
         #[template_child]
@@ -45,7 +47,7 @@ mod imp {
         #[template_child]
         pub settings_button: TemplateChild<gtk::Button>,
 
-        pub vault: RefCell<Vault>,
+        pub config: RefCell<Option<VaultConfig>>,
         pub is_mounted: RefCell<bool>,
     }
 
@@ -61,7 +63,7 @@ mod imp {
                 open_folder_button: TemplateChild::default(),
                 locker_button: TemplateChild::default(),
                 settings_button: TemplateChild::default(),
-                vault: RefCell::new(Vault::default()),
+                config: RefCell::new(None),
                 is_mounted: RefCell::new(false),
             }
         }
@@ -83,8 +85,17 @@ mod imp {
 
             self.open_folder_button.set_visible(false);
         }
-    }
 
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
+                vec![
+                    Signal::builder("remove", &[], glib::Type::UNIT.into()).build(),
+                    Signal::builder("save", &[], glib::Type::UNIT.into()).build(),
+                ]
+            });
+            SIGNALS.as_ref()
+        }
+    }
     impl WidgetImpl for VaultsPageRow {}
     impl ListBoxRowImpl for VaultsPageRow {}
 }
@@ -95,12 +106,36 @@ glib::wrapper! {
 }
 
 impl VaultsPageRow {
+    pub fn connect_remove<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
+        self.connect_local("remove", false, move |_| {
+            callback();
+            None
+        })
+        .unwrap()
+    }
+
+    pub fn connect_save<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
+        self.connect_local("save", false, move |_| {
+            callback();
+            None
+        })
+        .unwrap()
+    }
+
     pub fn new(vault: Vault) -> Self {
         let object: Self = glib::Object::new(&[]).expect("Failed to create VaultsPageRow");
 
         let self_ = &imp::VaultsPageRow::from_instance(&object);
-        self_.vaults_page_row.set_title(Some(&vault.name));
-        self_.vault.replace(vault);
+
+        match (vault.get_name(), vault.get_config()) {
+            (Some(name), Some(config)) => {
+                self_.vaults_page_row.set_title(Some(&name));
+                self_.config.replace(Some(config));
+            }
+            (_, _) => {
+                log::error!("Vault(s) not initialised!");
+            }
+        }
 
         object
     }
@@ -131,7 +166,7 @@ impl VaultsPageRow {
         let self_ = imp::VaultsPageRow::from_instance(&self);
 
         let output_res = Command::new("xdg-open")
-            .arg(&self_.vault.borrow().mount_directory)
+            .arg(&self_.config.borrow().as_ref().unwrap().mount_directory)
             .output();
 
         if let Err(e) = output_res {
@@ -141,7 +176,7 @@ impl VaultsPageRow {
 
     fn locker_button_clicked(&self) {
         let self_ = imp::VaultsPageRow::from_instance(&self);
-        let vault = self_.vault.borrow();
+        let vault = self.get_vault();
         if *self_.is_mounted.borrow() {
             match Backend::close(&vault) {
                 Ok(_) => {
@@ -169,15 +204,60 @@ impl VaultsPageRow {
         }
     }
 
-    fn settings_button_clicked(&self) {}
+    fn settings_button_clicked(&self) {
+        let dialog = VaultsPageRowSettingsDialog::new(self.get_vault());
+        dialog.connect_response(clone!(@strong self as self2=> move |dialog, id|
+            match id {
+                gtk::ResponseType::Other(0) => {
+                    self2.emit_by_name("remove", &[]).unwrap();
 
-    pub fn set_vault(&self, vault: Vault) {
-        let self_ = imp::VaultsPageRow::from_instance(&self);
-        self_.vault.replace(vault);
+                    dialog.destroy();
+                }
+                gtk::ResponseType::Other(1) => {
+                    self2.emit_by_name("save", &[]).unwrap();
+
+                    dialog.destroy();
+                }
+                _ => {
+                    dialog.destroy();
+                }
+        }));
+
+        dialog.show();
     }
 
     pub fn get_vault(&self) -> Vault {
         let self_ = imp::VaultsPageRow::from_instance(&self);
-        return self_.vault.borrow().clone();
+        let name = self_.vaults_page_row.get_title();
+        let config = self_.config.borrow().clone();
+        match (name, config) {
+            (Some(name), Some(config)) => Vault::new(
+                name.to_string(),
+                config.backend,
+                config.encrypted_data_directory,
+                config.mount_directory,
+            ),
+            (_, _) => Vault::new_none(),
+        }
+    }
+
+    pub fn set_vault(&self, vault: Vault) {
+        let self_ = imp::VaultsPageRow::from_instance(&self);
+        let name = vault.get_name();
+        let config = vault.get_config();
+        match (name, config) {
+            (Some(name), Some(config)) => {
+                self_.vaults_page_row.set_title(Some(&name));
+                self_.config.replace(Some(config));
+            }
+            (_, _) => {
+                log::error!("Vault not initialised!");
+            }
+        }
+    }
+
+    pub fn get_name(&self) -> String {
+        let self_ = imp::VaultsPageRow::from_instance(&self);
+        self_.vaults_page_row.get_title().unwrap().to_string()
     }
 }

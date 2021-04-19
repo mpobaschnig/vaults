@@ -27,6 +27,7 @@ sources = files(
   'ui/pages/start_page.rs',
   'ui/pages/vaults_page.rs',
   'ui/pages/vaults_page_row.rs',
+  'ui/pages/vaults_page_row_settings_dialog.rs',
 
   'ui/add_new_vault_dialog.rs',
   'ui/import_vault_dialog.rs',
@@ -37,7 +38,7 @@ sources = files(
   'config.rs',
   'main.rs',
   'vault.rs',
-  'user_config.rs',
+  'user_config_manager.rs',
 )
 
 custom_target(
