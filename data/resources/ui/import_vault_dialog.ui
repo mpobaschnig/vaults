@@ -84,7 +84,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="AdwActionRow">
+                  <object class="AdwActionRow" id="encrypted_data_directory_action_row">
                     <property name="title" translatable="yes">Encrypted Data Directory</property>
                     <child>
                       <object class="GtkEntry" id="encrypted_data_directory_entry">
@@ -104,7 +104,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="AdwActionRow">
+                  <object class="AdwActionRow" id="mount_directory_action_row">
                     <property name="title" translatable="yes">Mount Directory</property>
                     <child>
                       <object class="GtkEntry" id="mount_directory_entry">

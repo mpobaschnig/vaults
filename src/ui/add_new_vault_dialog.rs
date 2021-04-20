@@ -28,6 +28,7 @@ use gtk::{glib::clone, subclass::prelude::*};
 
 use crate::{
     backend::{Backend, AVAILABLE_BACKENDS},
+    user_config_manager::UserConfig,
     vault::*,
     VApplication,
 };
@@ -43,6 +44,8 @@ mod imp {
         #[template_child]
         pub add_new_vault_button: TemplateChild<gtk::Button>,
         #[template_child]
+        pub vault_name_action_row: TemplateChild<adw::ActionRow>,
+        #[template_child]
         pub vault_name_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub backend_type_combo_box_text: TemplateChild<gtk::ComboBoxText>,
@@ -53,9 +56,13 @@ mod imp {
         #[template_child]
         pub password_confirm_entry: TemplateChild<gtk::Entry>,
         #[template_child]
+        pub encrypted_data_directory_action_row: TemplateChild<adw::ActionRow>,
+        #[template_child]
         pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub encrypted_data_directory_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub mount_directory_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
         pub mount_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
@@ -72,13 +79,16 @@ mod imp {
             Self {
                 cancel_button: TemplateChild::default(),
                 add_new_vault_button: TemplateChild::default(),
+                vault_name_action_row: TemplateChild::default(),
                 vault_name_entry: TemplateChild::default(),
                 backend_type_combo_box_text: TemplateChild::default(),
                 password_action_row: TemplateChild::default(),
                 password_entry: TemplateChild::default(),
                 password_confirm_entry: TemplateChild::default(),
+                encrypted_data_directory_action_row: TemplateChild::default(),
                 encrypted_data_directory_entry: TemplateChild::default(),
                 encrypted_data_directory_button: TemplateChild::default(),
+                mount_directory_action_row: TemplateChild::default(),
                 mount_directory_entry: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
             }
@@ -261,12 +271,88 @@ impl AddNewVaultDialog {
         let encrypted_data_directory = self_.encrypted_data_directory_entry.get_text();
         let mount_directory = self_.mount_directory_entry.get_text();
 
+        let is_duplicate_name = UserConfig::instance()
+            .get_map()
+            .contains_key(&vault_name.to_string());
+        if !vault_name.is_empty() && is_duplicate_name {
+            self_
+                .vault_name_action_row
+                .set_subtitle(Some(&gettext("Name already exists.")));
+        } else {
+            if vault_name.is_empty() {
+                self_
+                    .vault_name_action_row
+                    .set_subtitle(Some(&gettext("Name is not valid.")));
+            } else {
+                self_.vault_name_action_row.set_subtitle(Some(""));
+            }
+        }
+
+        let mut is_encrypted_data_directory_empty = false;
+        match std::fs::read_dir(encrypted_data_directory.to_string()) {
+            Ok(dir) => {
+                if dir.count() > 0 {
+                    self_
+                        .encrypted_data_directory_action_row
+                        .set_subtitle(Some(&gettext("Directory is not empty.")));
+                } else {
+                    is_encrypted_data_directory_empty = true;
+                    self_
+                        .encrypted_data_directory_action_row
+                        .set_subtitle(Some(&gettext("")));
+                }
+            }
+            Err(e) => {
+                log::debug!("Could not read encrypted data directory: {}", e);
+                self_
+                    .encrypted_data_directory_action_row
+                    .set_subtitle(Some(&gettext("Directory is not valid.")));
+            }
+        }
+
+        let mut is_mount_directory_empty = false;
+        match std::fs::read_dir(mount_directory.to_string()) {
+            Ok(dir) => {
+                if dir.count() > 0 {
+                    self_
+                        .mount_directory_action_row
+                        .set_subtitle(Some(&gettext("Directory is not empty.")));
+                } else {
+                    is_mount_directory_empty = true;
+                    self_
+                        .mount_directory_action_row
+                        .set_subtitle(Some(&gettext("")));
+                }
+            }
+            Err(e) => {
+                log::debug!("Could not read mount directory: {}", e);
+                self_
+                    .mount_directory_action_row
+                    .set_subtitle(Some(&gettext("Directory is not valid.")));
+            }
+        }
+
+        if is_encrypted_data_directory_empty
+            && is_mount_directory_empty
+            && encrypted_data_directory.eq(&mount_directory)
+        {
+            self_
+                .encrypted_data_directory_action_row
+                .set_subtitle(Some(&gettext("Directories must not be equal.")));
+            self_
+                .mount_directory_action_row
+                .set_subtitle(Some(&gettext("Directories must not be equal.")));
+        }
+
         if !vault_name.is_empty()
             && !password.is_empty()
             && !confirm_password.is_empty()
             && !encrypted_data_directory.is_empty()
             && !mount_directory.is_empty()
             && backend.is_some()
+            && !is_duplicate_name
+            && is_encrypted_data_directory_empty
+            && is_mount_directory_empty
         {
             if password.eq(&confirm_password) {
                 self_.add_new_vault_button.set_sensitive(true);

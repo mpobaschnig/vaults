@@ -47,9 +47,13 @@ mod imp {
         #[template_child]
         pub backend_type_combo_box_text: TemplateChild<gtk::ComboBoxText>,
         #[template_child]
+        pub encrypted_data_directory_action_row: TemplateChild<adw::ActionRow>,
+        #[template_child]
         pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub encrypted_data_directory_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub mount_directory_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
         pub mount_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
@@ -69,8 +73,10 @@ mod imp {
                 vault_name_action_row: TemplateChild::default(),
                 vault_name_entry: TemplateChild::default(),
                 backend_type_combo_box_text: TemplateChild::default(),
+                encrypted_data_directory_action_row: TemplateChild::default(),
                 encrypted_data_directory_entry: TemplateChild::default(),
                 encrypted_data_directory_button: TemplateChild::default(),
+                mount_directory_action_row: TemplateChild::default(),
                 mount_directory_entry: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
             }
@@ -247,7 +253,69 @@ impl ImportVaultDialog {
                 .vault_name_action_row
                 .set_subtitle(Some(&gettext("Name already exists.")));
         } else {
-            self_.vault_name_action_row.set_subtitle(Some(""));
+            if vault_name.is_empty() {
+                self_
+                    .vault_name_action_row
+                    .set_subtitle(Some(&gettext("Name is not valid.")));
+            } else {
+                self_.vault_name_action_row.set_subtitle(Some(""));
+            }
+        }
+
+        let mut is_encrypted_data_directory_empty = false;
+        match std::fs::read_dir(encrypted_data_directory.to_string()) {
+            Ok(dir) => {
+                if dir.count() > 0 {
+                    self_
+                        .encrypted_data_directory_action_row
+                        .set_subtitle(Some(&gettext("Directory is not empty.")));
+                } else {
+                    is_encrypted_data_directory_empty = true;
+                    self_
+                        .encrypted_data_directory_action_row
+                        .set_subtitle(Some(&gettext("")));
+                }
+            }
+            Err(e) => {
+                log::debug!("Could not read encrypted data directory: {}", e);
+                self_
+                    .encrypted_data_directory_action_row
+                    .set_subtitle(Some(&gettext("Directory is not valid.")));
+            }
+        }
+
+        let mut is_mount_directory_empty = false;
+        match std::fs::read_dir(mount_directory.to_string()) {
+            Ok(dir) => {
+                if dir.count() > 0 {
+                    self_
+                        .mount_directory_action_row
+                        .set_subtitle(Some(&gettext("Directory is not empty.")));
+                } else {
+                    is_mount_directory_empty = true;
+                    self_
+                        .mount_directory_action_row
+                        .set_subtitle(Some(&gettext("")));
+                }
+            }
+            Err(e) => {
+                log::debug!("Could not read mount directory: {}", e);
+                self_
+                    .mount_directory_action_row
+                    .set_subtitle(Some(&gettext("Directory is not valid.")));
+            }
+        }
+
+        if is_encrypted_data_directory_empty
+            && is_mount_directory_empty
+            && encrypted_data_directory.eq(&mount_directory)
+        {
+            self_
+                .encrypted_data_directory_action_row
+                .set_subtitle(Some(&gettext("Directories must not be equal.")));
+            self_
+                .mount_directory_action_row
+                .set_subtitle(Some(&gettext("Directories must not be equal.")));
         }
 
         if !vault_name.is_empty()
@@ -255,6 +323,8 @@ impl ImportVaultDialog {
             && !mount_directory.is_empty()
             && backend.is_some()
             && !is_duplicate_name
+            && is_encrypted_data_directory_empty
+            && is_mount_directory_empty
         {
             self_.import_vault_button.set_sensitive(true);
         } else {
