@@ -15,5 +15,5 @@ jobs:
     - uses: bilelmoussaoui/flatpak-github-actions@v2
       with:
         bundle: "vaults.flatpak"
-        manifest-path: "build-aux/com.gitlab.mpobaschnig.Vaults.Devel.json"
+        manifest-path: "build-aux/com.github.mpobaschnig.Vaults.Devel.json"
         run-tests: "true"

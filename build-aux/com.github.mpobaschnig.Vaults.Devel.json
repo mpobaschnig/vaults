@@ -1,5 +1,5 @@
 {
-    "app-id" : "com.gitlab.mpobaschnig.Vaults.Devel",
+    "app-id" : "com.github.mpobaschnig.Vaults.Devel",
     "runtime" : "org.gnome.Platform",
     "runtime-version" : "40",
     "sdk" : "org.gnome.Sdk",

@@ -28,7 +28,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
-    #[template(resource = "/com/gitlab/mpobaschnig/Vaults/start_page.ui")]
+    #[template(resource = "/com/github/mpobaschnig/Vaults/start_page.ui")]
     pub struct VStartPage {}
 
     #[glib::object_subclass]

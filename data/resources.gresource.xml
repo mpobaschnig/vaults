@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <gresources>
-  <gresource prefix="/com/gitlab/mpobaschnig/Vaults/">
+  <gresource prefix="/com/github/mpobaschnig/Vaults/">
     <file compressed="true" preprocess="xml-stripblanks" alias="shortcuts.ui">resources/ui/shortcuts.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="window.ui">resources/ui/window.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="start_page.ui">resources/ui/start_page.ui</file>

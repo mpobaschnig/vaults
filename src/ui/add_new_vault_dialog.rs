@@ -37,7 +37,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/com/gitlab/mpobaschnig/Vaults/add_new_vault_dialog.ui")]
+    #[template(resource = "/com/github/mpobaschnig/Vaults/add_new_vault_dialog.ui")]
     pub struct AddNewVaultDialog {
         #[template_child]
         pub cancel_button: TemplateChild<gtk::Button>,

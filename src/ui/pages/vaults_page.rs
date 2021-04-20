@@ -35,7 +35,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/com/gitlab/mpobaschnig/Vaults/vaults_page.ui")]
+    #[template(resource = "/com/github/mpobaschnig/Vaults/vaults_page.ui")]
     pub struct VVaultsPage {
         #[template_child]
         pub vaults_list_box: TemplateChild<gtk::ListBox>,

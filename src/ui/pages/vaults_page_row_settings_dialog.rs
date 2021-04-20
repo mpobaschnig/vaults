@@ -35,7 +35,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/com/gitlab/mpobaschnig/Vaults/vaults_page_row_settings_dialog.ui")]
+    #[template(resource = "/com/github/mpobaschnig/Vaults/vaults_page_row_settings_dialog.ui")]
     pub struct VaultsPageRowSettingsDialog {
         #[template_child]
         pub cancel_button: TemplateChild<gtk::Button>,

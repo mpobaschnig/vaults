@@ -27,7 +27,7 @@ mod imp {
 
     #[derive(Debug, CompositeTemplate)]
     #[template(
-        resource = "/com/gitlab/mpobaschnig/Vaults/vaults_page_row_password_prompt_dialog.ui"
+        resource = "/com/github/mpobaschnig/Vaults/vaults_page_row_password_prompt_dialog.ui"
     )]
     pub struct VaultsPageRowPasswordPromptDialog {
         #[template_child]
