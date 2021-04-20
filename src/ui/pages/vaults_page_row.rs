@@ -29,7 +29,11 @@ use std::cell::RefCell;
 use std::process::Command;
 
 use super::{VaultsPageRowPasswordPromptDialog, VaultsPageRowSettingsDialog};
-use crate::{backend::Backend, vault::*};
+use crate::{
+    backend::{Backend, BackendError},
+    vault::*,
+    VApplication,
+};
 
 mod imp {
     use super::*;
@@ -201,7 +205,7 @@ impl VaultsPageRow {
 
             enum Message {
                 Finished,
-                Error,
+                Error(BackendError),
             }
 
             let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
@@ -211,8 +215,7 @@ impl VaultsPageRow {
                     let _ = sender.send(Message::Finished);
                 }
                 Err(e) => {
-                    log::error!("Error opening vault: {}", e);
-                    let _ = sender.send(Message::Error);
+                    let _ = sender.send(Message::Error(e));
                 }
             });
 
@@ -227,11 +230,31 @@ impl VaultsPageRow {
                         open_folder_button.set_sensitive(true);
                         settings_button.set_sensitive(true);
                     }
-                    Message::Error => {
+                    Message::Error(e) => {
                         locker_button.set_icon_name(&"changes-allow-symbolic");
                         open_folder_button.set_visible(true);
                         open_folder_button.set_sensitive(true);
                         settings_button.set_sensitive(false);
+                        log::error!("Error opening vault: {}", &e);
+                        gtk::glib::MainContext::default().spawn_local(async move {
+                            let window = gtk::gio::Application::get_default()
+                                .unwrap()
+                                .downcast_ref::<VApplication>()
+                                .unwrap()
+                                .get_active_window()
+                                .unwrap()
+                                .clone();
+                            let info_dialog = gtk::MessageDialogBuilder::new()
+                                .message_type(gtk::MessageType::Error)
+                                .transient_for(&window)
+                                .modal(true)
+                                .buttons(gtk::ButtonsType::Close)
+                                .text(&format!("{}", e))
+                                .build();
+
+                            info_dialog.run_future().await;
+                            info_dialog.close();
+                        });
                     }
                 }
                 spinner.stop();
@@ -269,7 +292,7 @@ impl VaultsPageRow {
 
                         enum Message {
                             Finished,
-                            Error
+                            Error(BackendError)
                         }
 
                         let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
@@ -280,8 +303,7 @@ impl VaultsPageRow {
                                     let _ = sender.send(Message::Finished);
                                 }
                                 Err(e) => {
-                                    log::error!("Error opening vault: {}", e);
-                                    let _ = sender.send(Message::Error);
+                                    let _ = sender.send(Message::Error(e));
                                 }
                             }
                         });
@@ -297,11 +319,31 @@ impl VaultsPageRow {
                                     open_folder_button.set_sensitive(true);
                                     settings_button.set_sensitive(false);
                                 }
-                                Message::Error => {
+                                Message::Error(e) => {
                                     locker_button.set_icon_name(&"changes-prevent-symbolic");
                                     open_folder_button.set_visible(false);
                                     open_folder_button.set_sensitive(false);
                                     settings_button.set_sensitive(true);
+                                    log::error!("Error opening vault: {}", &e);
+                                    gtk::glib::MainContext::default().spawn_local(async move {
+                                        let window = gtk::gio::Application::get_default()
+                                            .unwrap()
+                                            .downcast_ref::<VApplication>()
+                                            .unwrap()
+                                            .get_active_window()
+                                            .unwrap()
+                                            .clone();
+                                        let info_dialog = gtk::MessageDialogBuilder::new()
+                                            .message_type(gtk::MessageType::Error)
+                                            .transient_for(&window)
+                                            .modal(true)
+                                            .buttons(gtk::ButtonsType::Close)
+                                            .text(&format!("{}", e))
+                                            .build();
+
+                                        info_dialog.run_future().await;
+                                        info_dialog.close();
+                                    });
                                 }
                             }
                             spinner.stop();
