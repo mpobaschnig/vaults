@@ -58,12 +58,10 @@ mod imp {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
                 vec![
-                    Signal::builder("init", &[], glib::Type::UNIT.into()).build(),
                     Signal::builder("refresh", &[], glib::Type::UNIT.into()).build(),
                     Signal::builder("add-vault", &[], glib::Type::UNIT.into()).build(),
                     Signal::builder("remove-vault", &[], glib::Type::UNIT.into()).build(),
                     Signal::builder("change-vault", &[], glib::Type::UNIT.into()).build(),
-                    Signal::builder("clear", &[], glib::Type::UNIT.into()).build(),
                 ]
             });
 
@@ -77,14 +75,6 @@ glib::wrapper! {
 }
 
 impl UserConfig {
-    pub fn connect_init<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
-        self.connect_local("init", false, move |_| {
-            callback();
-            None
-        })
-        .unwrap()
-    }
-
     pub fn connect_refresh<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
         self.connect_local("refresh", false, move |_| {
             callback();
@@ -111,14 +101,6 @@ impl UserConfig {
 
     pub fn connect_change_vault<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
         self.connect_local("change-vault", false, move |_| {
-            callback();
-            None
-        })
-        .unwrap()
-    }
-
-    pub fn connect_clear<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
-        self.connect_local("clear", false, move |_| {
             callback();
             None
         })
