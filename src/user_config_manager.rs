@@ -41,7 +41,7 @@ mod imp {
 
     #[glib::object_subclass]
     impl ObjectSubclass for UserConfig {
-        const NAME: &'static str = "VaultsUserConfig";
+        const NAME: &'static str = "UserConfig";
         type ParentType = glib::Object;
         type Type = super::UserConfig;
 
