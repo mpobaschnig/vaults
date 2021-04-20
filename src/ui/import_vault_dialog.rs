@@ -196,7 +196,7 @@ impl ImportVaultDialog {
 
         dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
             if response == gtk::ResponseType::Accept {
-                let file = file_chooser.get_file().unwrap();
+                let file = dialog.get_file().unwrap();
                 let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
                 let self_ = imp::ImportVaultDialog::from_instance(&obj);
                 self_.encrypted_data_directory_entry.set_text(&path);
@@ -223,7 +223,7 @@ impl ImportVaultDialog {
 
         dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
             if response == gtk::ResponseType::Accept {
-                let file = file_chooser.get_file().unwrap();
+                let file = dialog.get_file().unwrap();
                 let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
                 let self_ = imp::ImportVaultDialog::from_instance(&obj);
                 self_.mount_directory_entry.set_text(&path);
