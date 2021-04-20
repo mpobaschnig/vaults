@@ -1,3 +1,4 @@
 # Vaults
 
-A GNOME application for creating encrypted vaults.
+An application for creating encrypted vaults for the GNOME desktop.
+
