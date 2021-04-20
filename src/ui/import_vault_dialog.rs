@@ -262,28 +262,6 @@ impl ImportVaultDialog {
             }
         }
 
-        let mut is_encrypted_data_directory_empty = false;
-        match std::fs::read_dir(encrypted_data_directory.to_string()) {
-            Ok(dir) => {
-                if dir.count() > 0 {
-                    self_
-                        .encrypted_data_directory_action_row
-                        .set_subtitle(Some(&gettext("Directory is not empty.")));
-                } else {
-                    is_encrypted_data_directory_empty = true;
-                    self_
-                        .encrypted_data_directory_action_row
-                        .set_subtitle(Some(&gettext("")));
-                }
-            }
-            Err(e) => {
-                log::debug!("Could not read encrypted data directory: {}", e);
-                self_
-                    .encrypted_data_directory_action_row
-                    .set_subtitle(Some(&gettext("Directory is not valid.")));
-            }
-        }
-
         let mut is_mount_directory_empty = false;
         match std::fs::read_dir(mount_directory.to_string()) {
             Ok(dir) => {
@@ -306,10 +284,7 @@ impl ImportVaultDialog {
             }
         }
 
-        if is_encrypted_data_directory_empty
-            && is_mount_directory_empty
-            && encrypted_data_directory.eq(&mount_directory)
-        {
+        if is_mount_directory_empty && encrypted_data_directory.eq(&mount_directory) {
             self_
                 .encrypted_data_directory_action_row
                 .set_subtitle(Some(&gettext("Directories must not be equal.")));
@@ -323,7 +298,6 @@ impl ImportVaultDialog {
             && !mount_directory.is_empty()
             && backend.is_some()
             && !is_duplicate_name
-            && is_encrypted_data_directory_empty
             && is_mount_directory_empty
         {
             self_.import_vault_button.set_sensitive(true);
