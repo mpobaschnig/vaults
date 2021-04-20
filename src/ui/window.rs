@@ -226,6 +226,25 @@ impl ApplicationWindow {
                     }
                     Err(e) => {
                         log::error!("Could not init vault: {}", e);
+                        gtk::glib::MainContext::default().spawn_local(async move {
+                            let window = gtk::gio::Application::get_default()
+                                .unwrap()
+                                .downcast_ref::<VApplication>()
+                                .unwrap()
+                                .get_active_window()
+                                .unwrap()
+                                .clone();
+                            let info_dialog = gtk::MessageDialogBuilder::new()
+                                .message_type(gtk::MessageType::Error)
+                                .transient_for(&window)
+                                .modal(true)
+                                .buttons(gtk::ButtonsType::Close)
+                                .text(&format!("{}", e))
+                                .build();
+
+                            info_dialog.run_future().await;
+                            info_dialog.close();
+                        });
                     }
                 }
             }
