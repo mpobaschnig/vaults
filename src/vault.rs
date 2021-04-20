@@ -95,9 +95,9 @@ impl Vault {
         encrypted_data_directory: String,
         mount_directory: String,
     ) -> Vault {
-        let o: Self = glib::Object::new(&[]).expect("Failed to create UserConfig");
+        let object: Self = glib::Object::new(&[]).expect("Failed to create UserConfig");
 
-        let self_ = imp::Vault::from_instance(&o);
+        let self_ = imp::Vault::from_instance(&object);
 
         self_.name.replace(Some(name));
         self_.config.replace(Some(VaultConfig {
@@ -106,7 +106,7 @@ impl Vault {
             mount_directory,
         }));
 
-        o
+        object
     }
 
     pub fn get_name(&self) -> Option<String> {
@@ -134,23 +134,20 @@ impl Vault {
     }
 
     pub fn new_none() -> Vault {
-        let o: Self = glib::Object::new(&[]).expect("Failed to create UserConfig");
+        let object: Self = glib::Object::new(&[]).expect("Failed to create UserConfig");
 
-        o
+        object
     }
 
     pub fn init(&self, password: String) -> Result<(), BackendError> {
-        log::debug!("Init vault!");
         Backend::init(&self.get_config().unwrap(), password)
     }
 
     pub fn unlock(&self, password: String) -> Result<(), BackendError> {
-        log::debug!("Unlock vault!");
         Backend::open(&self.get_config().unwrap(), password)
     }
 
     pub fn lock(&self) -> Result<(), BackendError> {
-        log::debug!("Lock vault!");
         Backend::close(&self.get_config().unwrap())
     }
 
