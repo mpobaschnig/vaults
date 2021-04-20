@@ -164,25 +164,25 @@ glib::wrapper! {
 
 impl ApplicationWindow {
     pub fn new(app: &VApplication) -> Self {
-        let window: Self = glib::Object::new(&[]).expect("Failed to create ApplicationWindow");
-        window.set_application(Some(app));
+        let object: Self = glib::Object::new(&[]).expect("Failed to create ApplicationWindow");
+        object.set_application(Some(app));
 
         gtk::Window::set_default_icon_name(APP_ID);
 
         if !UserConfig::instance().get_map().is_empty() {
-            window.set_view(VView::Vaults);
+            object.set_view(VView::Vaults);
         }
 
-        let self_ = imp::ApplicationWindow::from_instance(&window);
+        let self_ = imp::ApplicationWindow::from_instance(&object);
         self_
             .vaults_page
-            .connect_refresh(clone!(@strong window as obj => move || {
+            .connect_refresh(clone!(@strong object => move || {
                 if UserConfig::instance().get_map().is_empty() {
-                    obj.set_view(VView::Start);
+                    object.set_view(VView::Start);
                 }
             }));
 
-        window
+        object
     }
 
     fn setup_connect_handlers(&self) {
