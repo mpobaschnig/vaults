@@ -64,8 +64,14 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
                                 if output.status.success() {
                                     log::info!("Successfully opened vault");
                                 } else {
-                                    log::info!("Failed to init vault");
-                                    return Err(BackendError::GenericError);
+                                    match output.status.code() {
+                                        Some(status) => {
+                                            return Err(status_to_err(status));
+                                        }
+                                        None => {
+                                            return Err(BackendError::GenericError);
+                                        }
+                                    }
                                 }
                             }
                             Err(e) => {
@@ -112,18 +118,20 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
                 Some(stdin) => {
                     let mut pw = String::from(&password);
                     pw.push_str(&"\n".to_owned());
-
                     match stdin.write_all(pw.as_bytes()) {
                         Ok(_) => match child.wait_with_output() {
                             Ok(output) => {
                                 if output.status.success() {
                                     log::debug!("Successfully opened vault");
                                 } else {
-                                    log::error!(
-                                        "Failed to open vault {}",
-                                        std::str::from_utf8(&output.stdout).unwrap()
-                                    );
-                                    return Err(BackendError::GenericError);
+                                    match output.status.code() {
+                                        Some(status) => {
+                                            return Err(status_to_err(status));
+                                        }
+                                        None => {
+                                            return Err(BackendError::GenericError);
+                                        }
+                                    }
                                 }
                             }
                             Err(e) => {
@@ -168,11 +176,14 @@ pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
                     if output.status.success() {
                         log::debug!("Successfully closed vault");
                     } else {
-                        log::error!(
-                            "Failed to close vault {}",
-                            std::str::from_utf8(&output.stdout).unwrap()
-                        );
-                        return Err(BackendError::GenericError);
+                        match output.status.code() {
+                            Some(status) => {
+                                return Err(status_to_err(status));
+                            }
+                            None => {
+                                return Err(BackendError::GenericError);
+                            }
+                        }
                     }
                 }
                 Err(e) => {
@@ -187,5 +198,44 @@ pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
             log::error!("Failed to close vault: {}", e);
             Err(BackendError::GenericError)
         }
+    }
+}
+
+fn status_to_err(status: i32) -> BackendError {
+    struct GocryptfsExitStatus {}
+
+    #[allow(dead_code)]
+    impl GocryptfsExitStatus {
+        pub const GOCRYPTFS_EXIT_STATUS_SUCCESS: i32 = 0;
+        // TODO: Change to correct error code once gocryptfs 2.0 is out
+        // see: https://github.com/rfjakob/gocryptfs/pull/503
+        pub const GOCRYPTFS_EXIT_STATUS_INVALID_CIPHER_DIR: i32 = 6;
+        pub const GOCRYPTFS_EXIT_STATUS_NON_EMPTY_CIPHER_DIR: i32 = 7;
+        pub const GOCRYPTFS_EXIT_STATUS_NON_EMPTY_MOUNT_POINT: i32 = 10;
+        pub const GOCRYPTFS_EXIT_STATUS_WRONG_PASSWORD: i32 = 12;
+        pub const GOCRYPTFS_EXIT_STATUS_EMPTY_PASSWORD: i32 = 22;
+        pub const GOCRYPTFS_EXIT_STATUS_CANNOT_READ_CONFIG: i32 = 23;
+        pub const GOCRYPTFS_EXIT_STATUS_CANNOT_WRITE_CONFIG: i32 = 24;
+        pub const GOCRYPTFS_EXIT_STATUS_FSCK_ERROR: i32 = 26;
+    }
+
+    match status {
+        GocryptfsExitStatus::GOCRYPTFS_EXIT_STATUS_INVALID_CIPHER_DIR => {
+            BackendError::EncryptedDataDirectoryNotValid
+        }
+        GocryptfsExitStatus::GOCRYPTFS_EXIT_STATUS_NON_EMPTY_CIPHER_DIR => {
+            BackendError::EncryptedDataDirectoryNotEmpty
+        }
+        GocryptfsExitStatus::GOCRYPTFS_EXIT_STATUS_NON_EMPTY_MOUNT_POINT => {
+            BackendError::MountDirectoryNotEmpty
+        }
+        GocryptfsExitStatus::GOCRYPTFS_EXIT_STATUS_WRONG_PASSWORD => BackendError::WrongPassword,
+        GocryptfsExitStatus::GOCRYPTFS_EXIT_STATUS_CANNOT_READ_CONFIG => {
+            BackendError::CannotReadConfig
+        }
+        GocryptfsExitStatus::GOCRYPTFS_EXIT_STATUS_CANNOT_WRITE_CONFIG => {
+            BackendError::CanotWriteConfig
+        }
+        _ => BackendError::GenericError,
     }
 }
