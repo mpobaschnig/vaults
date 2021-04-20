@@ -182,7 +182,7 @@ impl ImportVaultDialog {
     }
 
     fn encrypted_data_directory_button_clicked(&self) {
-        let file_chooser = gtk::FileChooserDialog::new(
+        let dialog = gtk::FileChooserDialog::new(
             Some(&gettext("Choose Encrypted Data Directory")),
             Some(self),
             gtk::FileChooserAction::SelectFolder,
@@ -192,25 +192,24 @@ impl ImportVaultDialog {
             ],
         );
 
-        file_chooser.set_transient_for(Some(self));
+        dialog.set_transient_for(Some(self));
 
-        file_chooser.connect_response(
-            clone!(@weak self as obj, @strong file_chooser => move |s, response| {
-                if response == gtk::ResponseType::Accept {
-                    let file = file_chooser.get_file().unwrap();
-                    let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
-                    let self_ = imp::ImportVaultDialog::from_instance(&obj);
-                    self_.encrypted_data_directory_entry.set_text(&path);
-                }
-                s.destroy();
-            }),
-        );
+        dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
+            if response == gtk::ResponseType::Accept {
+                let file = file_chooser.get_file().unwrap();
+                let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
+                let self_ = imp::ImportVaultDialog::from_instance(&obj);
+                self_.encrypted_data_directory_entry.set_text(&path);
+            }
 
-        file_chooser.show();
+           dialog.destroy();
+        }));
+
+        dialog.show();
     }
 
     fn mount_directory_button_clicked(&self) {
-        let file_chooser = gtk::FileChooserDialog::new(
+        let dialog = gtk::FileChooserDialog::new(
             Some(&gettext("Choose Mount Directory")),
             Some(self),
             gtk::FileChooserAction::SelectFolder,
@@ -220,21 +219,20 @@ impl ImportVaultDialog {
             ],
         );
 
-        file_chooser.set_transient_for(Some(self));
+        dialog.set_transient_for(Some(self));
 
-        file_chooser.connect_response(
-            clone!(@weak self as obj, @strong file_chooser => move |s, response| {
-                if response == gtk::ResponseType::Accept {
-                    let file = file_chooser.get_file().unwrap();
-                    let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
-                    let self_ = imp::ImportVaultDialog::from_instance(&obj);
-                    self_.mount_directory_entry.set_text(&path);
-                }
-                s.destroy();
-            }),
-        );
+        dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
+            if response == gtk::ResponseType::Accept {
+                let file = file_chooser.get_file().unwrap();
+                let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
+                let self_ = imp::ImportVaultDialog::from_instance(&obj);
+                self_.mount_directory_entry.set_text(&path);
+            }
 
-        file_chooser.show();
+            dialog.destroy();
+        }));
+
+        dialog.show();
     }
 
     fn check_add_button_enable_conditions(&self) {
