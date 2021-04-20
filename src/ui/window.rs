@@ -91,7 +91,6 @@ mod imp {
             Self::bind_template(klass);
         }
 
-        // You must call `Widget`'s `init_template()` within `instance_init()`.
         fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
             obj.init_template();
         }
@@ -168,7 +167,6 @@ impl ApplicationWindow {
         let window: Self = glib::Object::new(&[]).expect("Failed to create ApplicationWindow");
         window.set_application(Some(app));
 
-        // Set icons for shell
         gtk::Window::set_default_icon_name(APP_ID);
 
         if !UserConfig::instance().get_map().is_empty() {
@@ -281,7 +279,6 @@ impl ApplicationWindow {
         let view = *self_.view.borrow();
         debug!("Set view to {:?}", view);
 
-        // Show requested view / page
         match view {
             VView::Start => {
                 self_

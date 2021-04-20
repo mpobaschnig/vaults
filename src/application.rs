@@ -65,7 +65,6 @@ mod imp {
             self.window.replace(Some(window));
 
             app.setup_gactions();
-            app.setup_accels();
         }
 
         fn startup(&self, app: &Self::Type) {
@@ -92,7 +91,6 @@ impl VApplication {
     }
 
     fn setup_gactions(&self) {
-        // About
         action!(
             self,
             "about",
@@ -100,12 +98,6 @@ impl VApplication {
                 app.show_about_dialog();
             })
         );
-    }
-
-    // Sets up keyboard shortcuts
-    fn setup_accels(&self) {
-        self.set_accels_for_action("app.quit", &["<primary>q"]);
-        self.set_accels_for_action("win.show-help-overlay", &["<primary>question"]);
     }
 
     fn setup_css(&self) {
@@ -125,7 +117,7 @@ impl VApplication {
             .program_name("Vaults")
             .logo_icon_name(config::APP_ID)
             .license_type(gtk::License::Gpl30)
-            .website("https://gitlab.com/mpobaschnig/Vaults")
+            .website("https://github.com/mpobaschnig/Vaults")
             .version(config::VERSION)
             .transient_for(&self.get_active_window().unwrap())
             .modal(true)

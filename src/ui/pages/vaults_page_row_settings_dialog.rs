@@ -385,10 +385,4 @@ impl VaultsPageRowSettingsDialog {
             }
         }
     }
-
-    // pub fn is_to_delete(&self) -> bool {
-    //     let self_ = imp::VaultsPageRowSettingsDialog::from_instance(&self);
-
-    //     *self_.to_delete.borrow()
-    // }
 }

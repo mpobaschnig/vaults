@@ -39,10 +39,8 @@ use gtk::gio;
 use user_config_manager::UserConfig;
 
 fn main() {
-    // Initialize logger, debug is carried out via debug!, info!, and warn!.
     pretty_env_logger::init();
 
-    // Prepare i18n
     setlocale(LocaleCategory::LcAll, "");
 
     if let Err(e) = bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR) {
