@@ -199,16 +199,16 @@ impl ApplicationWindow {
         action!(
             self,
             "add_new_vault",
-            clone!(@weak self as win => move |_, _| {
-                win.add_new_vault_clicked();
+            clone!(@weak self as obj => move |_, _| {
+                obj.add_new_vault_clicked();
             })
         );
 
         action!(
             self,
             "import_vault",
-            clone!(@weak self as win => move |_, _| {
-                win.import_vault_clicked();
+            clone!(@weak self as obj => move |_, _| {
+                obj.import_vault_clicked();
             })
         );
     }
@@ -257,13 +257,13 @@ impl ApplicationWindow {
 
     fn import_vault_clicked(&self) {
         let dialog = ImportVaultDialog::new();
-        dialog.connect_response(clone!(@strong self as self2=> move |dialog, id| match id {
+        dialog.connect_response(clone!(@strong self as obj => move |dialog, id| match id {
             gtk::ResponseType::Ok => {
                 let vault = dialog.get_vault();
 
                 UserConfig::instance().add_vault(vault);
 
-                self2.set_view(VView::Vaults);
+                obj.set_view(VView::Vaults);
 
                 dialog.destroy();
             }

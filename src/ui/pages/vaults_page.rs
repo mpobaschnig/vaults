@@ -69,14 +69,13 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
-            UserConfig::instance().connect_add_vault(clone!(@weak obj as obj2 => move || {
-                obj2.add_vault();
+            UserConfig::instance().connect_add_vault(clone!(@weak obj => move || {
+                obj.add_vault();
             }));
 
-            let self2_ = imp::VVaultsPage::from_instance(&obj);
-            self2_
-                .vaults_list_box
-                .bind_model(Some(&self2_.list_store), |obj| {
+            let obj_ = imp::VVaultsPage::from_instance(&obj);
+            obj_.vaults_list_box
+                .bind_model(Some(&obj_.list_store), |obj| {
                     obj.clone().downcast::<gtk::Widget>().unwrap()
                 });
         }
@@ -111,11 +110,11 @@ impl VVaultsPage {
     }
 
     pub fn row_connect_remove(&self, row: &VaultsPageRow) {
-        row.connect_remove(clone!(@weak self as obj, @weak row as r => move || {
-            let self2_ = imp::VVaultsPage::from_instance(&obj);
-            let index = self2_.list_store.find(&r);
+        row.connect_remove(clone!(@weak self as obj, @weak row => move || {
+            let obj_ = imp::VVaultsPage::from_instance(&obj);
+            let index = obj_.list_store.find(&row);
             if let Some(index) = index {
-                self2_.list_store.remove(index);
+                obj_.list_store.remove(index);
                 obj.emit_by_name("refresh", &[]).unwrap();
             } else {
                 log::error!("Vault not initialised!");

@@ -94,8 +94,8 @@ impl VApplication {
         action!(
             self,
             "about",
-            clone!(@weak self as app => move |_, _| {
-                app.show_about_dialog();
+            clone!(@weak self as obj => move |_, _| {
+                obj.show_about_dialog();
             })
         );
     }

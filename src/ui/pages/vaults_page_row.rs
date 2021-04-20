@@ -274,19 +274,19 @@ impl VaultsPageRow {
             }
 
             let dialog = VaultsPageRowPasswordPromptDialog::new();
-            dialog.connect_response(clone!(@strong self as self2 => move |dialog, id| {
+            dialog.connect_response(clone!(@strong self as obj => move |dialog, id| {
                 match id {
                     gtk::ResponseType::Ok => {
                         let password = dialog.get_password();
                         dialog.destroy();
 
-                        let self2_ = imp::VaultsPageRow::from_instance(&self2);
+                        let obj_ = imp::VaultsPageRow::from_instance(&obj);
 
-                        self2_.settings_button.set_sensitive(false);
-                        self2_.open_folder_button.set_sensitive(false);
+                        obj_.settings_button.set_sensitive(false);
+                        obj_.open_folder_button.set_sensitive(false);
 
                         let spinner = gtk::Spinner::new();
-                        self2_.locker_button.set_child(Some(&spinner));
+                        obj_.locker_button.set_child(Some(&spinner));
 
                         spinner.start();
 
@@ -308,9 +308,9 @@ impl VaultsPageRow {
                             }
                         });
 
-                        let locker_button = self2_.locker_button.clone();
-                        let open_folder_button = self2_.open_folder_button.clone();
-                        let settings_button = self2_.settings_button.clone();
+                        let locker_button = obj_.locker_button.clone();
+                        let open_folder_button = obj_.open_folder_button.clone();
+                        let settings_button = obj_.settings_button.clone();
                         receiver.attach(None, move |message| {
                             match message {
                                 Message::Finished => {
@@ -362,15 +362,15 @@ impl VaultsPageRow {
 
     fn settings_button_clicked(&self) {
         let dialog = VaultsPageRowSettingsDialog::new(self.get_vault());
-        dialog.connect_response(clone!(@strong self as self2=> move |dialog, id|
+        dialog.connect_response(clone!(@strong self as obj => move |dialog, id|
             match id {
                 gtk::ResponseType::Other(0) => {
-                    self2.emit_by_name("remove", &[]).unwrap();
+                    obj.emit_by_name("remove", &[]).unwrap();
 
                     dialog.destroy();
                 }
                 gtk::ResponseType::Other(1) => {
-                    self2.emit_by_name("save", &[]).unwrap();
+                    obj.emit_by_name("save", &[]).unwrap();
 
                     dialog.destroy();
                 }
