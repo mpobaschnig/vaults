@@ -215,26 +215,23 @@ impl ApplicationWindow {
 
     fn add_new_vault_clicked(&self) {
         let dialog = AddNewVaultDialog::new();
-        dialog.connect_response(clone!(@strong self as self2 => move |dialog, id| match id {
-            gtk::ResponseType::Ok => {
+        dialog.connect_response(clone!(@strong self as obj => move |dialog, id|
+            if id == gtk::ResponseType::Ok {
                 let vault = dialog.get_vault();
                 let password = dialog.get_password();
                 match Backend::init(&vault.get_config().unwrap(), password) {
                     Ok(_) => {
                         UserConfig::instance().add_vault(vault);
-                        self2.set_view(VView::Vaults);
+                        obj.set_view(VView::Vaults);
                     }
                     Err(e) => {
                         log::error!("Could not init vault: {}", e);
                     }
                 }
+            }
 
-                dialog.destroy();
-            }
-            _ => {
-                dialog.destroy();
-            }
-        }));
+            dialog.destroy();
+        ));
 
         dialog.show();
     }
