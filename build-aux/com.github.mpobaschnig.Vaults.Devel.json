@@ -53,21 +53,6 @@
             ]
         },
         {
-            "name" : "gocryptfs",
-            "buildsystem" : "simple",
-            "build-commands" : [
-                "tar -xf gocryptfs_v1.8.0_linux-static_amd64.tar.gz",
-                "install -D gocryptfs /app/bin/gocryptfs"
-            ],
-            "sources" : [
-                {
-                    "type" : "file",
-                    "url" : "https://github.com/rfjakob/gocryptfs/releases/download/v1.8.0/gocryptfs_v1.8.0_linux-static_amd64.tar.gz",
-                    "sha256" : "ebf563c5f89ff61a36f0170c06e726e36968e125e18f84626027e8c0569513dc"
-                }
-            ]
-        },
-        {
             "name" : "vaults",
             "buildsystem" : "meson",
             "run-tests" : true,

@@ -23,7 +23,11 @@ use std::process::Command;
 use std::{io::Write, process::Stdio};
 
 pub fn is_available() -> bool {
-    let output_res = Command::new("gocryptfs").arg("--version").output();
+    let output_res = Command::new("flatpak-spawn")
+        .arg("--host")
+        .arg("gocryptfs")
+        .arg("--version")
+        .output();
 
     match output_res {
         Ok(output) => {
@@ -40,9 +44,11 @@ pub fn is_available() -> bool {
 }
 
 pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
-    let child = Command::new("gocryptfs")
+    let child = Command::new("flatpak-spawn")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
+        .arg("--host")
+        .arg("gocryptfs")
         .arg("--init")
         .arg("-q")
         .arg("--")
