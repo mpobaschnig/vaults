@@ -3,7 +3,7 @@
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
   <template class="ImportVaultDialog" parent="GtkDialog">
-    <property name="default-height">320</property>
+    <property name="default-height">360</property>
     <property name="default-width">460</property>
     <property name="use-header-bar">1</property>
     <property name="modal">1</property>
