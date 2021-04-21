@@ -17,25 +17,183 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use crate::vault::VaultConfig;
-
 use super::BackendError;
+use crate::vault::VaultConfig;
+use std::process::Command;
+use std::{self, io::Write, process::Stdio};
 
 pub fn is_available() -> bool {
+    let output_res = Command::new("flatpak-spawn")
+        .arg("--host")
+        .arg("cryfs")
+        .arg("--version")
+        .output();
+
+    match output_res {
+        Ok(output) => {
+            if output.status.success() {
+                return true;
+            }
+        }
+        Err(e) => {
+            log::error!("Failed to probe cryfs: {}", e);
+        }
+    }
+
     false
 }
 
-#[allow(unused_variables)]
 pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
-    Err(BackendError::NotImplemented)
+    Ok(())
 }
 
-#[allow(unused_variables)]
 pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
-    Err(BackendError::NotImplemented)
+    let child = Command::new("flatpak-spawn")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .arg("--host")
+        .arg("--env=CRYFS_FRONTEND=noninteractive")
+        .arg("cryfs")
+        .arg(&vault_config.encrypted_data_directory)
+        .arg(&vault_config.mount_directory)
+        .spawn();
+
+    match child {
+        Ok(mut child) => {
+            match child.stdin.as_mut() {
+                Some(stdin) => {
+                    let mut pw = String::from(&password);
+                    pw.push_str(&"\n".to_owned());
+
+                    match stdin.write_all(pw.as_bytes()) {
+                        Ok(_) => match child.wait_with_output() {
+                            Ok(output) => {
+                                if output.status.success() {
+                                    log::debug!("Successfully opened vault");
+                                } else {
+                                    std::io::stdout().write_all(&output.stdout).unwrap();
+                                    std::io::stderr().write_all(&output.stderr).unwrap();
+                                    match output.status.code() {
+                                        Some(status) => {
+                                            log::debug!("Got err status: {}", status);
+                                            return Err(status_to_err(status));
+                                        }
+                                        None => {
+                                            log::debug!("Got no err status!");
+                                            return Err(BackendError::GenericError);
+                                        }
+                                    }
+                                }
+                            }
+                            Err(e) => {
+                                log::error!("Failed to wait for child: {}", e);
+                                return Err(BackendError::GenericError);
+                            }
+                        },
+                        Err(e) => {
+                            log::error!("Failed to write to stdin: {}", e);
+                            return Err(BackendError::GenericError);
+                        }
+                    }
+                }
+                None => {
+                    log::error!("Could not get stdin of child!");
+                    return Err(BackendError::GenericError);
+                }
+            }
+
+            Ok(())
+        }
+        Err(e) => {
+            log::error!("Failed to init vault: {}", e);
+            Err(BackendError::GenericError)
+        }
+    }
 }
 
-#[allow(unused_variables)]
 pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
-    Err(BackendError::NotImplemented)
+    let child = Command::new("flatpak-spawn")
+        .stdout(Stdio::piped())
+        .arg("--host")
+        .arg("cryfs-unmount")
+        .arg(&vault_config.mount_directory)
+        .spawn();
+
+    match child {
+        Ok(child) => {
+            match child.wait_with_output() {
+                Ok(output) => {
+                    if output.status.success() {
+                        log::debug!("Successfully closed vault");
+                    } else {
+                        match output.status.code() {
+                            Some(status) => {
+                                return Err(status_to_err(status));
+                            }
+                            None => {
+                                return Err(BackendError::GenericError);
+                            }
+                        }
+                    }
+                }
+                Err(e) => {
+                    log::error!("Failed to wait for child: {}", e);
+                    return Err(BackendError::GenericError);
+                }
+            }
+
+            Ok(())
+        }
+        Err(e) => {
+            log::error!("Failed to close vault: {}", e);
+            Err(BackendError::GenericError)
+        }
+    }
+}
+
+fn status_to_err(status: i32) -> BackendError {
+    struct CryfsExitStatus {}
+
+    // Error codes from: https://github.com/cryfs/cryfs/blob/develop/src/cryfs/impl/ErrorCodes.h
+    impl CryfsExitStatus {
+        pub const SUCCESS: i32 = 0;
+        // An error happened that doesn't have an error code associated with it
+        pub const UNSPECIFIED_ERROR: i32 = 1;
+        // The command line arguments are invalid.
+        pub const INVALID_ARGUMENTS: i32 = 10;
+        // Couldn't load config file. Probably the password is wrong
+        pub const WRONG_PASSWORD: i32 = 11;
+        // Password cannot be empty
+        pub const EMPTY_PASSWORD: i32 = 12;
+        // The file system format is too new for this CryFS version. Please update your CryFS version.
+        pub const TOO_NEW_FILESYSTEM_FORMAT: i32 = 13;
+        // The file system format is too old for this CryFS version. Run with --allow-filesystem-upgrade to upgrade it.
+        pub const TOO_OLD_FILESYSTEM_FORMAT: i32 = 14;
+        // The file system uses a different cipher than the one specified on the command line using the --cipher argument.
+        pub const WRONG_CIPHER: i32 = 15;
+        // Base directory doesn't exist or is inaccessible (i.e. not read or writable or not a directory)
+        pub const INACCESSIBLE_BASE_DIR: i32 = 16;
+        // Mount directory doesn't exist or is inaccessible (i.e. not read or writable or not a directory)
+        pub const INACCESSIBLE_MOUNT_DIR: i32 = 17;
+        // Base directory can't be a subdirectory of the mount directory
+        pub const BASE_DIR_INSIDE_MOUNT_DIR: i32 = 18;
+        // Something's wrong with the file system.
+        pub const INVALID_FILESYSTEM: i32 = 19;
+        // The filesystem id in the config file is different to the last time we loaded a filesystem from this basedir. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.
+        pub const FILESYSTEM_ID_CHANGED: i32 = 20;
+        // The filesystem encryption key differs from the last time we loaded this filesystem. This could mean an attacker replaced the file system with a different one. You can pass the --allow-replaced-filesystem option to allow this.
+        pub const ENCRYPTION_KEY_CHANGED: i32 = 21;
+        // The command line options and the file system disagree on whether missing blocks should be treated as integrity violations.
+        pub const FILESYSTEM_HAS_DIFFERENT_INTEGRITY_SETUP: i32 = 22;
+        // File system is in single-client mode and can only be used from the client that created it.
+        pub const SINGLE_CLIENT_FILE_SYSTEM: i32 = 23;
+        // A previous run of the file system detected an integrity violation. Preventing access to make sure the user notices. The file system will be accessible again after the user deletes the integrity state file.
+        pub const INTEGRITY_VIOLATION_ON_PREVIOUS_RUN: i32 = 24;
+        // An integrity violation was detected and the file system unmounted to make sure the user notices.
+        pub const INTEGRITY_VIOLATION: i32 = 25;
+    }
+
+    match status {
+        _ => BackendError::GenericError,
+    }
 }
