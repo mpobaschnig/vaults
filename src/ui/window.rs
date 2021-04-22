@@ -20,7 +20,7 @@
 use crate::config::{APP_ID, PROFILE};
 use crate::ui::pages::*;
 use crate::ui::{AddNewVaultDialog, ImportVaultDialog};
-use crate::{application::VApplication, backend::Backend, user_config_manager::UserConfig};
+use crate::{application::VApplication, backend::Backend, user_config_manager::UserConnfigManager};
 
 use adw::subclass::prelude::*;
 use glib::{clone, GEnum, ParamSpec, ToValue};
@@ -169,7 +169,7 @@ impl ApplicationWindow {
 
         gtk::Window::set_default_icon_name(APP_ID);
 
-        if !UserConfig::instance().get_map().is_empty() {
+        if !UserConnfigManager::instance().get_map().is_empty() {
             object.set_view(VView::Vaults);
         }
 
@@ -177,7 +177,7 @@ impl ApplicationWindow {
         self_
             .vaults_page
             .connect_refresh(clone!(@strong object => move || {
-                if UserConfig::instance().get_map().is_empty() {
+                if UserConnfigManager::instance().get_map().is_empty() {
                     object.set_view(VView::Start);
                 }
             }));
@@ -221,7 +221,7 @@ impl ApplicationWindow {
                 let password = dialog.get_password();
                 match Backend::init(&vault.get_config().unwrap(), password) {
                     Ok(_) => {
-                        UserConfig::instance().add_vault(vault);
+                        UserConnfigManager::instance().add_vault(vault);
                         obj.set_view(VView::Vaults);
                     }
                     Err(e) => {
@@ -262,7 +262,7 @@ impl ApplicationWindow {
             gtk::ResponseType::Ok => {
                 let vault = dialog.get_vault();
 
-                UserConfig::instance().add_vault(vault);
+                UserConnfigManager::instance().add_vault(vault);
 
                 obj.set_view(VView::Vaults);
 
@@ -280,11 +280,11 @@ impl ApplicationWindow {
         let self_ = imp::ApplicationWindow::from_instance(self);
         self_.vaults_page.clear();
 
-        UserConfig::instance().read_config();
+        UserConnfigManager::instance().read_config();
 
         self_.vaults_page.init();
 
-        if UserConfig::instance().get_map().is_empty() {
+        if UserConnfigManager::instance().get_map().is_empty() {
             self.set_view(VView::Start);
         } else {
             self.set_view(VView::Vaults);

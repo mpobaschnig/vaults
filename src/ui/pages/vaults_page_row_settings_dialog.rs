@@ -26,7 +26,7 @@ use std::cell::RefCell;
 
 use crate::{
     backend::{Backend, AVAILABLE_BACKENDS},
-    user_config_manager::UserConfig,
+    user_config_manager::UserConnfigManager,
     vault::*,
     VApplication,
 };
@@ -193,7 +193,7 @@ impl VaultsPageRowSettingsDialog {
     }
 
     fn delete_button_clicked(&self) {
-        UserConfig::instance().remove_vault(self.get_vault());
+        UserConnfigManager::instance().remove_vault(self.get_vault());
         self.response(gtk::ResponseType::Other(0));
     }
 
@@ -214,7 +214,7 @@ impl VaultsPageRowSettingsDialog {
             String::from(self_.mount_directory_entry.get_text().as_str()),
         );
 
-        UserConfig::instance().change_vault(self.get_current_vault().unwrap(), new_vault);
+        UserConnfigManager::instance().change_vault(self.get_current_vault().unwrap(), new_vault);
 
         self.response(gtk::ResponseType::Other(1));
     }
@@ -288,7 +288,7 @@ impl VaultsPageRowSettingsDialog {
         let encrypted_data_directory = self_.encrypted_data_directory_entry.get_text();
         let mount_directory = self_.mount_directory_entry.get_text();
 
-        let is_duplicate_name = UserConfig::instance()
+        let is_duplicate_name = UserConnfigManager::instance()
             .get_map()
             .contains_key(&vault_name.to_string());
         if !vault_name.is_empty()

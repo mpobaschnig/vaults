@@ -28,7 +28,7 @@ use gtk::{
 
 use crate::{
     backend::{Backend, AVAILABLE_BACKENDS},
-    user_config_manager::UserConfig,
+    user_config_manager::UserConnfigManager,
     vault::*,
     VApplication,
 };
@@ -255,7 +255,7 @@ impl ImportVaultDialog {
     fn is_different_vault_name(&self, vault_name: GString) -> bool {
         let self_ = imp::ImportVaultDialog::from_instance(self);
 
-        let is_duplicate_name = UserConfig::instance()
+        let is_duplicate_name = UserConnfigManager::instance()
             .get_map()
             .contains_key(&vault_name.to_string());
         if !vault_name.is_empty() && is_duplicate_name {

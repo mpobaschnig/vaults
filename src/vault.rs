@@ -95,7 +95,7 @@ impl Vault {
         encrypted_data_directory: String,
         mount_directory: String,
     ) -> Vault {
-        let object: Self = glib::Object::new(&[]).expect("Failed to create UserConfig");
+        let object: Self = glib::Object::new(&[]).expect("Failed to create UserConnfigManager");
 
         let self_ = imp::Vault::from_instance(&object);
 
@@ -134,7 +134,7 @@ impl Vault {
     }
 
     pub fn new_none() -> Vault {
-        let object: Self = glib::Object::new(&[]).expect("Failed to create UserConfig");
+        let object: Self = glib::Object::new(&[]).expect("Failed to create UserConnfigManager");
 
         object
     }
