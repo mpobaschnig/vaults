@@ -23,25 +23,14 @@ use gettextrs::gettext;
 use std::process::Command;
 use std::{self, io::Write, process::Stdio};
 
-pub fn is_available() -> bool {
-    let output_res = Command::new("flatpak-spawn")
+pub fn is_available() -> Result<bool, BackendError> {
+    let output = Command::new("flatpak-spawn")
         .arg("--host")
         .arg("cryfs")
         .arg("--version")
-        .output();
+        .output()?;
 
-    match output_res {
-        Ok(output) => {
-            if output.status.success() {
-                return true;
-            }
-        }
-        Err(e) => {
-            log::error!("Failed to probe cryfs: {}", e);
-        }
-    }
-
-    false
+    Ok(output.status.success())
 }
 
 pub fn init(_vault_config: &VaultConfig, _password: String) -> Result<(), BackendError> {
@@ -49,7 +38,7 @@ pub fn init(_vault_config: &VaultConfig, _password: String) -> Result<(), Backen
 }
 
 pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
-    let child = Command::new("flatpak-spawn")
+    let mut child = Command::new("flatpak-spawn")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .arg("--host")
@@ -57,58 +46,25 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
         .arg("cryfs")
         .arg(&vault_config.encrypted_data_directory)
         .arg(&vault_config.mount_directory)
-        .spawn();
+        .spawn()?;
 
-    match child {
-        Ok(mut child) => {
-            match child.stdin.as_mut() {
-                Some(stdin) => {
-                    let mut pw = String::from(&password);
-                    pw.push_str(&"\n".to_owned());
+    let mut pw = String::from(&password);
+    pw.push_str(&"\n".to_owned());
 
-                    match stdin.write_all(pw.as_bytes()) {
-                        Ok(_) => match child.wait_with_output() {
-                            Ok(output) => {
-                                if output.status.success() {
-                                    log::debug!("Successfully opened vault");
-                                } else {
-                                    std::io::stdout().write_all(&output.stdout).unwrap();
-                                    std::io::stderr().write_all(&output.stderr).unwrap();
-                                    match output.status.code() {
-                                        Some(status) => {
-                                            log::debug!("Got err status: {}", status);
-                                            return Err(status_to_err(status));
-                                        }
-                                        None => {
-                                            log::debug!("Got no err status!");
-                                            return Err(BackendError::Generic);
-                                        }
-                                    }
-                                }
-                            }
-                            Err(e) => {
-                                log::error!("Failed to wait for child: {}", e);
-                                return Err(BackendError::Generic);
-                            }
-                        },
-                        Err(e) => {
-                            log::error!("Failed to write to stdin: {}", e);
-                            return Err(BackendError::Generic);
-                        }
-                    }
-                }
-                None => {
-                    log::error!("Could not get stdin of child!");
-                    return Err(BackendError::Generic);
-                }
-            }
+    child
+        .stdin
+        .as_mut()
+        .ok_or(BackendError::Generic)?
+        .write_all(pw.as_bytes())?;
 
-            Ok(())
-        }
-        Err(e) => {
-            log::error!("Failed to init vault: {}", e);
-            Err(BackendError::Generic)
-        }
+    let output = child.wait_with_output()?;
+    if output.status.success() {
+        Ok(())
+    } else {
+        std::io::stdout().write_all(&output.stdout).unwrap();
+        std::io::stderr().write_all(&output.stderr).unwrap();
+
+        Err(status_to_err(output.status.code()))
     }
 }
 
@@ -118,41 +74,20 @@ pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
         .arg("--host")
         .arg("cryfs-unmount")
         .arg(&vault_config.mount_directory)
-        .spawn();
+        .spawn()?;
 
-    match child {
-        Ok(child) => {
-            match child.wait_with_output() {
-                Ok(output) => {
-                    if output.status.success() {
-                        log::debug!("Successfully closed vault");
-                    } else {
-                        match output.status.code() {
-                            Some(status) => {
-                                return Err(status_to_err(status));
-                            }
-                            None => {
-                                return Err(BackendError::Generic);
-                            }
-                        }
-                    }
-                }
-                Err(e) => {
-                    log::error!("Failed to wait for child: {}", e);
-                    return Err(BackendError::Generic);
-                }
-            }
+    let output = child.wait_with_output()?;
+    if output.status.success() {
+        Ok(())
+    } else {
+        std::io::stdout().write_all(&output.stdout).unwrap();
+        std::io::stderr().write_all(&output.stderr).unwrap();
 
-            Ok(())
-        }
-        Err(e) => {
-            log::error!("Failed to close vault: {}", e);
-            Err(BackendError::Generic)
-        }
+        Err(status_to_err(output.status.code()))
     }
 }
 
-fn status_to_err(status: i32) -> BackendError {
+fn status_to_err(status: Option<i32>) -> BackendError {
     struct CryfsExitStatus {}
 
     // Error codes and text from:
@@ -196,23 +131,26 @@ fn status_to_err(status: i32) -> BackendError {
     }
 
     match status {
-        CryfsExitStatus::UNSPECIFIED_ERROR => BackendError::ToUser(gettext("An unknown error occurred.")),
-        CryfsExitStatus::INVALID_ARGUMENTS => BackendError::ToUser(gettext("Invalid arguments were given.")),
-        CryfsExitStatus::WRONG_PASSWORD => BackendError::ToUser(gettext("The password is wrong.")),
-        CryfsExitStatus::EMPTY_PASSWORD => BackendError::ToUser(gettext("The password is empty.")),
-        CryfsExitStatus::TOO_NEW_FILESYSTEM_FORMAT => BackendError::ToUser(gettext("The file system format is too new for this CryFS version. Please update cryFs.")),
-        CryfsExitStatus::TOO_OLD_FILESYSTEM_FORMAT => BackendError::ToUser(gettext("The file system format is too old for this CryFS version.")),
-        CryfsExitStatus::WRONG_CIPHER => BackendError::ToUser(gettext("The vault uses a different cipher than the default for CryFS.")),
-        CryfsExitStatus::INACCESSIBLE_BASE_DIR => BackendError::ToUser(gettext("The encrypted data directory does not exist or is inaccessible.")),
-        CryfsExitStatus::INACCESSIBLE_MOUNT_DIR => BackendError::ToUser(gettext("The mount directory does not exist or is inaccessible.")),
-        CryfsExitStatus::BASE_DIR_INSIDE_MOUNT_DIR => BackendError::ToUser(gettext("The mount directory is inside the Encrypted Data Directory.")),
-        CryfsExitStatus::INVALID_FILESYSTEM => BackendError::ToUser(gettext("The file system is invalid.")),
-        CryfsExitStatus::FILESYSTEM_ID_CHANGED => BackendError::ToUser(gettext("The file system id in the configuration file is different to the last time this Vault was mounted. This could mean someone replaced the file system with a different one.")),
-        CryfsExitStatus::ENCRYPTION_KEY_CHANGED => BackendError::ToUser(gettext("The file system encryption key is different to the last time this Vault was mounted. This could mean someone replaced the file system with a different one.")),
-        CryfsExitStatus::FILESYSTEM_HAS_DIFFERENT_INTEGRITY_SETUP => BackendError::ToUser(gettext("Vaults and the file system disagree if missing blocks should be treated as integrity violations.")),
-        CryfsExitStatus::SINGLE_CLIENT_FILE_SYSTEM => BackendError::ToUser(gettext("The file system is in single-client mode and can only be used from the client that created it.")),
-        CryfsExitStatus::INTEGRITY_VIOLATION_ON_PREVIOUS_RUN => BackendError::ToUser(gettext("A previous run of the file system detected an integrity violation. The file system will be accessible again after integrity state file is deleted.")),
-        CryfsExitStatus::INTEGRITY_VIOLATION => BackendError::ToUser(gettext("An integrity violation was detected.")),
-        _ => BackendError::ToUser(gettext("An unknown error occurred.")),
+        Some(status) => match status {
+            CryfsExitStatus::UNSPECIFIED_ERROR => BackendError::ToUser(gettext("An unknown error occurred.")),
+            CryfsExitStatus::INVALID_ARGUMENTS => BackendError::ToUser(gettext("Invalid arguments were given.")),
+            CryfsExitStatus::WRONG_PASSWORD => BackendError::ToUser(gettext("The password is wrong.")),
+            CryfsExitStatus::EMPTY_PASSWORD => BackendError::ToUser(gettext("The password is empty.")),
+            CryfsExitStatus::TOO_NEW_FILESYSTEM_FORMAT => BackendError::ToUser(gettext("The file system format is too new for this CryFS version. Please update cryFs.")),
+            CryfsExitStatus::TOO_OLD_FILESYSTEM_FORMAT => BackendError::ToUser(gettext("The file system format is too old for this CryFS version.")),
+            CryfsExitStatus::WRONG_CIPHER => BackendError::ToUser(gettext("The vault uses a different cipher than the default for CryFS.")),
+            CryfsExitStatus::INACCESSIBLE_BASE_DIR => BackendError::ToUser(gettext("The encrypted data directory does not exist or is inaccessible.")),
+            CryfsExitStatus::INACCESSIBLE_MOUNT_DIR => BackendError::ToUser(gettext("The mount directory does not exist or is inaccessible.")),
+            CryfsExitStatus::BASE_DIR_INSIDE_MOUNT_DIR => BackendError::ToUser(gettext("The mount directory is inside the Encrypted Data Directory.")),
+            CryfsExitStatus::INVALID_FILESYSTEM => BackendError::ToUser(gettext("The file system is invalid.")),
+            CryfsExitStatus::FILESYSTEM_ID_CHANGED => BackendError::ToUser(gettext("The file system id in the configuration file is different to the last time this Vault was mounted. This could mean someone replaced the file system with a different one.")),
+            CryfsExitStatus::ENCRYPTION_KEY_CHANGED => BackendError::ToUser(gettext("The file system encryption key is different to the last time this Vault was mounted. This could mean someone replaced the file system with a different one.")),
+            CryfsExitStatus::FILESYSTEM_HAS_DIFFERENT_INTEGRITY_SETUP => BackendError::ToUser(gettext("Vaults and the file system disagree if missing blocks should be treated as integrity violations.")),
+            CryfsExitStatus::SINGLE_CLIENT_FILE_SYSTEM => BackendError::ToUser(gettext("The file system is in single-client mode and can only be used from the client that created it.")),
+            CryfsExitStatus::INTEGRITY_VIOLATION_ON_PREVIOUS_RUN => BackendError::ToUser(gettext("A previous run of the file system detected an integrity violation. The file system will be accessible again after integrity state file is deleted.")),
+            CryfsExitStatus::INTEGRITY_VIOLATION => BackendError::ToUser(gettext("An integrity violation was detected.")),
+            _ => BackendError::ToUser(gettext("An unknown error occurred.")),
+        }
+        None => BackendError::Generic
     }
 }

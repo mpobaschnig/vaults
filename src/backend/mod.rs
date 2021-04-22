@@ -36,7 +36,9 @@ quick_error! {
         ToUser(e: String) {
             display("{}", e)
         }
-        Generic
+        Generic {
+            from(std::io::Error)
+        }
     }
 }
 
@@ -56,7 +58,7 @@ pub enum Backend {
 }
 
 impl Backend {
-    fn is_available(&self) -> bool {
+    fn is_available(&self) -> Result<bool, BackendError> {
         match &self {
             Backend::Cryfs => {
                 return cryfs::is_available();
@@ -102,20 +104,13 @@ impl Backend {
 }
 
 pub fn probe_backends() {
-    let available_backends_res = AVAILABLE_BACKENDS.lock();
-    match available_backends_res {
-        Ok(mut available_backends) => {
-            available_backends.clear();
-            for backend_enum in Backend::iter() {
-                if backend_enum.is_available() {
-                    let backend = backend_enum.to_string();
-                    log::debug!("Found backend: {}", backend);
-                    available_backends.push(backend);
-                }
-            }
-        }
-        Err(e) => {
-            log::error!("Failed to aquire mutex lock of AVAILABLE_BACKENDS: {}", e);
+    let mut available_backends = AVAILABLE_BACKENDS.lock().unwrap();
+
+    available_backends.clear();
+
+    for backend in Backend::iter() {
+        if backend.is_available().is_ok() {
+            available_backends.push(backend.to_string());
         }
     }
 }
