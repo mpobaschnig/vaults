@@ -60,45 +60,29 @@ pub enum Backend {
 impl Backend {
     fn is_available(&self) -> Result<bool, BackendError> {
         match &self {
-            Backend::Cryfs => {
-                return cryfs::is_available();
-            }
-            Backend::Gocryptfs => {
-                return gocryptfs::is_available();
-            }
+            Backend::Cryfs => cryfs::is_available(),
+            Backend::Gocryptfs => gocryptfs::is_available(),
         }
     }
 
     pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
         match vault_config.backend {
-            Backend::Cryfs => {
-                return cryfs::init(vault_config, password);
-            }
-            Backend::Gocryptfs => {
-                return gocryptfs::init(vault_config, password);
-            }
+            Backend::Cryfs => cryfs::init(vault_config, password),
+            Backend::Gocryptfs => gocryptfs::init(vault_config, password),
         }
     }
 
     pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
         match vault_config.backend {
-            Backend::Cryfs => {
-                return cryfs::open(vault_config, password);
-            }
-            Backend::Gocryptfs => {
-                return gocryptfs::open(vault_config, password);
-            }
+            Backend::Cryfs => cryfs::open(vault_config, password),
+            Backend::Gocryptfs => gocryptfs::open(vault_config, password),
         }
     }
 
     pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
         match vault_config.backend {
-            Backend::Cryfs => {
-                return cryfs::close(vault_config);
-            }
-            Backend::Gocryptfs => {
-                return gocryptfs::close(vault_config);
-            }
+            Backend::Cryfs => cryfs::close(vault_config),
+            Backend::Gocryptfs => gocryptfs::close(vault_config),
         }
     }
 }
