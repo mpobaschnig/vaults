@@ -239,7 +239,8 @@ impl ApplicationWindow {
                                 .transient_for(&window)
                                 .modal(true)
                                 .buttons(gtk::ButtonsType::Close)
-                                .text(&format!("{}", e))
+                                .text(&vault.get_name().unwrap())
+                                .secondary_text(&format!("{}", e))
                                 .build();
 
                             info_dialog.run_future().await;

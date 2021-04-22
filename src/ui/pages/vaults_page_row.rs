@@ -222,6 +222,7 @@ impl VaultsPageRow {
             let locker_button = self_.locker_button.clone();
             let open_folder_button = self_.open_folder_button.clone();
             let settings_button = self_.settings_button.clone();
+            let vaults_page_row = self_.vaults_page_row.clone();
             receiver.attach(None, move |message| {
                 match message {
                     Message::Finished => {
@@ -236,6 +237,7 @@ impl VaultsPageRow {
                         open_folder_button.set_sensitive(true);
                         settings_button.set_sensitive(false);
                         log::error!("Error opening vault: {}", &e);
+                        let vault_name = vaults_page_row.get_title().unwrap().to_string();
                         gtk::glib::MainContext::default().spawn_local(async move {
                             let window = gtk::gio::Application::get_default()
                                 .unwrap()
@@ -249,7 +251,8 @@ impl VaultsPageRow {
                                 .transient_for(&window)
                                 .modal(true)
                                 .buttons(gtk::ButtonsType::Close)
-                                .text(&format!("{}", e))
+                                .text(&vault_name)
+                                .secondary_text(&format!("{}", e))
                                 .build();
 
                             info_dialog.run_future().await;
@@ -311,6 +314,7 @@ impl VaultsPageRow {
                         let locker_button = obj_.locker_button.clone();
                         let open_folder_button = obj_.open_folder_button.clone();
                         let settings_button = obj_.settings_button.clone();
+                        let vaults_page_row = obj_.vaults_page_row.clone();
                         receiver.attach(None, move |message| {
                             match message {
                                 Message::Finished => {
@@ -324,6 +328,7 @@ impl VaultsPageRow {
                                     open_folder_button.set_visible(false);
                                     open_folder_button.set_sensitive(false);
                                     settings_button.set_sensitive(true);
+                                    let vault_name = vaults_page_row.get_title().unwrap().to_string();
                                     log::error!("Error opening vault: {}", &e);
                                     gtk::glib::MainContext::default().spawn_local(async move {
                                         let window = gtk::gio::Application::get_default()
@@ -338,7 +343,8 @@ impl VaultsPageRow {
                                             .transient_for(&window)
                                             .modal(true)
                                             .buttons(gtk::ButtonsType::Close)
-                                            .text(&format!("{}", e))
+                                            .text(&vault_name)
+                                            .secondary_text(&format!("{}", e))
                                             .build();
 
                                         info_dialog.run_future().await;
