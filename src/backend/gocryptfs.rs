@@ -19,6 +19,7 @@
 
 use super::BackendError;
 use crate::vault::VaultConfig;
+use gettextrs::gettext;
 use std::process::Command;
 use std::{io::Write, process::Stdio};
 
@@ -75,25 +76,25 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
                                             return Err(status_to_err(status));
                                         }
                                         None => {
-                                            return Err(BackendError::GenericError);
+                                            return Err(BackendError::Generic);
                                         }
                                     }
                                 }
                             }
                             Err(e) => {
                                 log::error!("Failed to wait for child: {}", e);
-                                return Err(BackendError::GenericError);
+                                return Err(BackendError::Generic);
                             }
                         },
                         Err(e) => {
                             log::error!("Failed to write to stdin: {}", e);
-                            return Err(BackendError::GenericError);
+                            return Err(BackendError::Generic);
                         }
                     }
                 }
                 None => {
                     log::error!("Could not get stdin of child!");
-                    return Err(BackendError::GenericError);
+                    return Err(BackendError::Generic);
                 }
             }
 
@@ -101,7 +102,7 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
         }
         Err(e) => {
             log::error!("Failed to init vault: {}", e);
-            Err(BackendError::GenericError)
+            Err(BackendError::Generic)
         }
     }
 }
@@ -135,25 +136,25 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
                                             return Err(status_to_err(status));
                                         }
                                         None => {
-                                            return Err(BackendError::GenericError);
+                                            return Err(BackendError::Generic);
                                         }
                                     }
                                 }
                             }
                             Err(e) => {
                                 log::error!("Failed to wait for child: {}", e);
-                                return Err(BackendError::GenericError);
+                                return Err(BackendError::Generic);
                             }
                         },
                         Err(e) => {
                             log::error!("Failed to write to stdin: {}", e);
-                            return Err(BackendError::GenericError);
+                            return Err(BackendError::Generic);
                         }
                     }
                 }
                 None => {
                     log::error!("Could not get stdin of child!");
-                    return Err(BackendError::GenericError);
+                    return Err(BackendError::Generic);
                 }
             }
 
@@ -161,7 +162,7 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
         }
         Err(e) => {
             log::error!("Failed to init vault: {}", e);
-            Err(BackendError::GenericError)
+            Err(BackendError::Generic)
         }
     }
 }
@@ -187,14 +188,14 @@ pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
                                 return Err(status_to_err(status));
                             }
                             None => {
-                                return Err(BackendError::GenericError);
+                                return Err(BackendError::Generic);
                             }
                         }
                     }
                 }
                 Err(e) => {
                     log::error!("Failed to wait for child: {}", e);
-                    return Err(BackendError::GenericError);
+                    return Err(BackendError::Generic);
                 }
             }
 
@@ -202,7 +203,7 @@ pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
         }
         Err(e) => {
             log::error!("Failed to close vault: {}", e);
-            Err(BackendError::GenericError)
+            Err(BackendError::Generic)
         }
     }
 }
@@ -212,36 +213,44 @@ fn status_to_err(status: i32) -> BackendError {
 
     #[allow(dead_code)]
     impl GocryptfsExitStatus {
-        pub const GOCRYPTFS_EXIT_STATUS_SUCCESS: i32 = 0;
+        pub const SUCCESS: i32 = 0;
         // TODO: Change to correct error code once gocryptfs 2.0 is out
         // see: https://github.com/rfjakob/gocryptfs/pull/503
-        pub const GOCRYPTFS_EXIT_STATUS_INVALID_CIPHER_DIR: i32 = 6;
-        pub const GOCRYPTFS_EXIT_STATUS_NON_EMPTY_CIPHER_DIR: i32 = 7;
-        pub const GOCRYPTFS_EXIT_STATUS_NON_EMPTY_MOUNT_POINT: i32 = 10;
-        pub const GOCRYPTFS_EXIT_STATUS_WRONG_PASSWORD: i32 = 12;
-        pub const GOCRYPTFS_EXIT_STATUS_EMPTY_PASSWORD: i32 = 22;
-        pub const GOCRYPTFS_EXIT_STATUS_CANNOT_READ_CONFIG: i32 = 23;
-        pub const GOCRYPTFS_EXIT_STATUS_CANNOT_WRITE_CONFIG: i32 = 24;
-        pub const GOCRYPTFS_EXIT_STATUS_FSCK_ERROR: i32 = 26;
+        pub const INVALID_CIPHER_DIR: i32 = 6;
+        pub const NON_EMPTY_CIPHER_DIR: i32 = 7;
+        pub const NON_EMPTY_MOUNT_POINT: i32 = 10;
+        pub const WRONG_PASSWORD: i32 = 12;
+        pub const EMPTY_PASSWORD: i32 = 22;
+        pub const CANNOT_READ_CONFIG: i32 = 23;
+        pub const CANNOT_WRITE_CONFIG: i32 = 24;
+        pub const FSCK_ERROR: i32 = 26;
     }
 
     match status {
-        GocryptfsExitStatus::GOCRYPTFS_EXIT_STATUS_INVALID_CIPHER_DIR => {
-            BackendError::EncryptedDataDirectoryNotValid
+        GocryptfsExitStatus::INVALID_CIPHER_DIR => {
+            BackendError::ToUser(gettext("The encrypted data directory is not valid."))
         }
-        GocryptfsExitStatus::GOCRYPTFS_EXIT_STATUS_NON_EMPTY_CIPHER_DIR => {
-            BackendError::EncryptedDataDirectoryNotEmpty
+        GocryptfsExitStatus::NON_EMPTY_CIPHER_DIR => {
+            BackendError::ToUser(gettext("The encrypted data directory is not empty."))
         }
-        GocryptfsExitStatus::GOCRYPTFS_EXIT_STATUS_NON_EMPTY_MOUNT_POINT => {
-            BackendError::MountDirectoryNotEmpty
+        GocryptfsExitStatus::NON_EMPTY_MOUNT_POINT => {
+            BackendError::ToUser(gettext("The mount directory is not empty."))
         }
-        GocryptfsExitStatus::GOCRYPTFS_EXIT_STATUS_WRONG_PASSWORD => BackendError::WrongPassword,
-        GocryptfsExitStatus::GOCRYPTFS_EXIT_STATUS_CANNOT_READ_CONFIG => {
-            BackendError::CannotReadConfig
+        GocryptfsExitStatus::WRONG_PASSWORD => {
+            BackendError::ToUser(gettext("The password is wrong."))
         }
-        GocryptfsExitStatus::GOCRYPTFS_EXIT_STATUS_CANNOT_WRITE_CONFIG => {
-            BackendError::CanotWriteConfig
+        GocryptfsExitStatus::EMPTY_PASSWORD => {
+            BackendError::ToUser(gettext("The password is empty."))
         }
-        _ => BackendError::GenericError,
+        GocryptfsExitStatus::CANNOT_READ_CONFIG => {
+            BackendError::ToUser(gettext("Vaults cannot read configuration file."))
+        }
+        GocryptfsExitStatus::CANNOT_WRITE_CONFIG => {
+            BackendError::ToUser(gettext("Vaults cannot write configuration file."))
+        }
+        GocryptfsExitStatus::FSCK_ERROR => {
+            BackendError::ToUser(gettext("The file system check reported an error."))
+        }
+        _ => BackendError::ToUser(gettext("An unknown error occurred.")),
     }
 }

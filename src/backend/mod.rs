@@ -21,7 +21,6 @@ pub mod cryfs;
 pub mod gocryptfs;
 
 use crate::vault::VaultConfig;
-use gettextrs::gettext;
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::string::String;
@@ -34,28 +33,10 @@ pub static AVAILABLE_BACKENDS: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::ne
 quick_error! {
     #[derive(Debug)]
     pub enum BackendError {
-        NotImplemented {}
-        GenericError {
-            display("{}", gettext("An unknown error occurred."))
+        ToUser(e: String) {
+            display("{}", e)
         }
-        EncryptedDataDirectoryNotValid {
-            display("{}", gettext("Encrypted Data Directory is not valid."))
-        }
-        EncryptedDataDirectoryNotEmpty {
-            display("{}", gettext("Encrypted Data Directory is not empty."))
-        }
-        MountDirectoryNotEmpty {
-            display("{}", gettext("Mount Directory is not empty."))
-        }
-        WrongPassword {
-            display("{}", gettext("Password is incorrect."))
-        }
-        CannotReadConfig {
-            display("{}", gettext("Cannot read configuration."))
-        }
-        CanotWriteConfig {
-            display("{}", gettext("Cannot write configuration."))
-        }
+        Generic
     }
 }
 
