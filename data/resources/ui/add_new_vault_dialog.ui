@@ -40,7 +40,6 @@
         <child>
           <object class="AdwClamp">
             <property name="valign">center</property>
-            <property name="halign">center</property>
             <property name="vexpand">True</property>
             <property name="hexpand">True</property>
             <property name="margin-start">12</property>
