@@ -292,13 +292,13 @@ impl ImportVaultDialog {
                 if is_empty {
                     self_
                         .encrypted_data_directory_action_row
-                        .set_subtitle(Some(&gettext("")));
-                    true
+                        .set_subtitle(Some(&gettext("Directory is empty.")));
+                    false
                 } else {
                     self_
                         .encrypted_data_directory_action_row
-                        .set_subtitle(Some(&gettext("Directory is not empty.")));
-                    false
+                        .set_subtitle(Some(&gettext("")));
+                    true
                 }
             }
             Err(_) => {
