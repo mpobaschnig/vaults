@@ -15,7 +15,7 @@
         "--env=RUST_LOG=vaults=debug",
         "--env=G_MESSAGES_DEBUG=none",
         "--talk-name=org.freedesktop.Flatpak",
-        "--filesystem=home"
+        "--filesystem=host"
     ],
     "build-options" : {
         "append-path" : "/usr/lib/sdk/rust-stable/bin",
