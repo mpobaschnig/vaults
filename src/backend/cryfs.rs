@@ -44,7 +44,7 @@ pub fn is_available() -> bool {
     false
 }
 
-pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
+pub fn init(_vault_config: &VaultConfig, _password: String) -> Result<(), BackendError> {
     Ok(())
 }
 
@@ -158,7 +158,7 @@ fn status_to_err(status: i32) -> BackendError {
     // Error codes and text from:
     // https://github.com/cryfs/cryfs/blob/develop/src/cryfs/impl/ErrorCodes.h
     impl CryfsExitStatus {
-        pub const SUCCESS: i32 = 0;
+        pub const _SUCCESS: i32 = 0;
         // An error happened that doesn't have an error code associated with it
         pub const UNSPECIFIED_ERROR: i32 = 1;
         // The command line arguments are invalid.
