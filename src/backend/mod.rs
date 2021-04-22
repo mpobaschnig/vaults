@@ -88,13 +88,13 @@ impl Backend {
 }
 
 pub fn probe_backends() {
-    let mut available_backends = AVAILABLE_BACKENDS.lock().unwrap();
+    if let Ok(mut available_backends) = AVAILABLE_BACKENDS.lock() {
+        available_backends.clear();
 
-    available_backends.clear();
-
-    for backend in Backend::iter() {
-        if backend.is_available().is_ok() {
-            available_backends.push(backend.to_string());
+        for backend in Backend::iter() {
+            if backend.is_available().is_ok() {
+                available_backends.push(backend.to_string());
+            }
         }
     }
 }
