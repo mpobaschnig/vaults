@@ -109,6 +109,12 @@ impl Vault {
         object
     }
 
+    pub fn new_none() -> Vault {
+        let object: Self = glib::Object::new(&[]).expect("Failed to create UserConnfigManager");
+
+        object
+    }
+
     pub fn get_name(&self) -> Option<String> {
         let self_ = imp::Vault::from_instance(&self);
 
@@ -131,12 +137,6 @@ impl Vault {
         let self_ = &mut imp::Vault::from_instance(&self);
 
         self_.config.borrow_mut().replace(config);
-    }
-
-    pub fn new_none() -> Vault {
-        let object: Self = glib::Object::new(&[]).expect("Failed to create UserConnfigManager");
-
-        object
     }
 
     pub fn init(&self, password: String) -> Result<(), BackendError> {
