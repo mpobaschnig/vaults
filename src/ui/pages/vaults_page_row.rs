@@ -396,7 +396,10 @@ impl VaultsPageRow {
                 config.encrypted_data_directory,
                 config.mount_directory,
             ),
-            (_, _) => Vault::new_none(),
+            (_, _) => {
+                log::error!("Vault not initialised!");
+                Vault::new_none()
+            }
         }
     }
 
