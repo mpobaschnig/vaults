@@ -176,7 +176,7 @@ impl ApplicationWindow {
         let self_ = imp::ApplicationWindow::from_instance(&object);
         self_
             .vaults_page
-            .connect_refresh(clone!(@strong object => move || {
+            .connect_refresh(clone!(@weak object => move || {
                 if UserConnfigManager::instance().get_map().is_empty() {
                     object.set_view(VView::Start);
                 }
@@ -215,7 +215,7 @@ impl ApplicationWindow {
 
     fn add_new_vault_clicked(&self) {
         let dialog = AddNewVaultDialog::new();
-        dialog.connect_response(clone!(@strong self as obj => move |dialog, id|
+        dialog.connect_response(clone!(@weak self as obj => move |dialog, id|
             if id == gtk::ResponseType::Ok {
                 let vault = dialog.get_vault();
                 let password = dialog.get_password();
@@ -258,7 +258,7 @@ impl ApplicationWindow {
 
     fn import_vault_clicked(&self) {
         let dialog = ImportVaultDialog::new();
-        dialog.connect_response(clone!(@strong self as obj => move |dialog, id| match id {
+        dialog.connect_response(clone!(@weak self as obj => move |dialog, id| match id {
             gtk::ResponseType::Ok => {
                 let vault = dialog.get_vault();
 

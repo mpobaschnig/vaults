@@ -277,7 +277,7 @@ impl VaultsPageRow {
             }
 
             let dialog = VaultsPageRowPasswordPromptDialog::new();
-            dialog.connect_response(clone!(@strong self as obj => move |dialog, id| {
+            dialog.connect_response(clone!(@weak self as obj => move |dialog, id| {
                 match id {
                     gtk::ResponseType::Ok => {
                         let password = dialog.get_password();
@@ -368,7 +368,7 @@ impl VaultsPageRow {
 
     fn settings_button_clicked(&self) {
         let dialog = VaultsPageRowSettingsDialog::new(self.get_vault());
-        dialog.connect_response(clone!(@strong self as obj => move |dialog, id|
+        dialog.connect_response(clone!(@weak self as obj => move |dialog, id|
             match id {
                 gtk::ResponseType::Other(0) => {
                     obj.emit_by_name("remove", &[]).unwrap();

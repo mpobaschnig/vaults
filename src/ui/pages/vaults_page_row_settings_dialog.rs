@@ -260,7 +260,7 @@ impl VaultsPageRowSettingsDialog {
         file_chooser.set_transient_for(Some(self));
 
         file_chooser.connect_response(
-            clone!(@weak self as obj, @strong file_chooser => move |s, response| {
+            clone!(@weak self as obj, @weak file_chooser => move |s, response| {
                 if response == gtk::ResponseType::Accept {
                     let file = file_chooser.get_file().unwrap();
                     let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
