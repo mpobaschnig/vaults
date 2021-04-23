@@ -410,19 +410,12 @@ impl ImportVaultDialog {
 
         let combo_box_text = &self_.backend_type_combo_box_text;
 
-        let backends_res = AVAILABLE_BACKENDS.lock();
-        match backends_res {
-            Ok(backends) => {
-                for backend in backends.iter() {
-                    combo_box_text.append_text(backend);
-                }
-
-                if !backends.is_empty() {
-                    combo_box_text.set_active(Some(0));
-                }
+        if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
+            for backend in available_backends.iter() {
+                combo_box_text.append_text(backend);
             }
-            Err(e) => {
-                log::error!("Failed to aquire mutex lock of AVAILABLE_BACKENDS: {}", e);
+            if !available_backends.is_empty() {
+                combo_box_text.set_active(Some(0));
             }
         }
     }
