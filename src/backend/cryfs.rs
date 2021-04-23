@@ -33,8 +33,9 @@ pub fn is_available() -> Result<bool, BackendError> {
     Ok(output.status.success())
 }
 
-pub fn init(_vault_config: &VaultConfig, _password: String) -> Result<(), BackendError> {
-    Ok(())
+pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
+    open(vault_config, password)?;
+    close(vault_config)
 }
 
 pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
