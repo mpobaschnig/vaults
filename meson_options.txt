@@ -5,6 +5,5 @@ option(
     'default',
     'development'
   ],
-  value: 'default',
-  description: 'The build profile for Vaults. One of "default" or "development".'
+  value: 'default'
 )
