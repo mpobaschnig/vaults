@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Martin Pobaschnig 2019 <mpobaschnig@posteo.de> -->
+<!-- Martin Pobaschnig 2021 <mpobaschnig@posteo.de> -->
 <component type="desktop-application">
   <id>@app-id@</id>
   <metadata_license>CC0</metadata_license>
   <project_license>GPL-3.0+</project_license>
   <name>Vaults</name>
-  <summary>A GTK + Rust application template.</summary>
+  <summary>An application for creating encrypted vaults for the GNOME desktop.</summary>
   <description>
-    <p>A boilerplate template for GTK + Rust. It uses Meson as a build system and has flatpak support by default.</p>
+    <p>
+      An application for creating encrypted vaults for the GNOME desktop. Vaults lets you
+      create encrypted vaults in which you can safely store files.
+    </p>
   </description>
   <screenshots>
     <screenshot type="default">
-      <image>https://gitlab.com/mpobaschnig/Vaults/raw/master/data/resources/screenshots/screenshot1.png</image>
+      <image>https://github.com/mpobaschnig/Vaults/blob/master/data/resources/screenshots/vaults.png</image>
       <caption>Main Window</caption>
     </screenshot>
   </screenshots>
-  <url type="homepage">https://gitlab.com/mpobaschnig/Vaults</url>
-  <url type="bugtracker">https://gitlab.com/mpobaschnig/Vaults/issues</url>
+  <url type="homepage">https://github.com/mpobaschnig/Vaults</url>
+  <url type="bugtracker">https://github.com/mpobaschnig/Vaults/issues</url>
   <content_rating type="oars-1.0" />
   <releases>
-    <release version="0.0.1" date="2019-07-11" />
+    <release version="0.1.0" date="2021-04-23" />
   </releases>
   <kudos>
-     <!--
-       GNOME Software kudos:
-       https://gitlab.gnome.org/GNOME/gnome-software/blob/master/doc/kudos.md
-     -->
      <kudo>ModernToolkit</kudo>
      <kudo>HiDpiIcon</kudo>
   </kudos>
