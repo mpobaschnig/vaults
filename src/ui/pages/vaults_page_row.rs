@@ -139,10 +139,7 @@ impl VaultsPageRow {
         }
 
         if vault.is_mounted() {
-            self_.open_folder_button.set_sensitive(true);
-            self_.open_folder_button.set_visible(true);
-            self_.settings_button.set_sensitive(false);
-            self_.locker_button.set_icon_name(&"changes-allow-symbolic");
+            object.set_vault_row_state_opened();
         }
 
         object
@@ -189,10 +186,7 @@ impl VaultsPageRow {
             let self_ = imp::VaultsPageRow::from_instance(self);
 
             if !self_.open_folder_button.is_visible() {
-                self_.locker_button.set_icon_name(&"changes-allow-symbolic");
-                self_.open_folder_button.set_visible(true);
-                self_.open_folder_button.set_sensitive(true);
-                self_.settings_button.set_sensitive(false);
+                self.set_vault_row_state_opened();
                 return;
             }
 
@@ -267,12 +261,7 @@ impl VaultsPageRow {
             let self_ = imp::VaultsPageRow::from_instance(self);
 
             if self_.open_folder_button.is_visible() {
-                self_
-                    .locker_button
-                    .set_icon_name(&"changes-prevent-symbolic");
-                self_.open_folder_button.set_visible(false);
-                self_.open_folder_button.set_sensitive(false);
-                self_.settings_button.set_sensitive(true);
+                self.set_vault_row_state_closed();
                 return;
             }
 
@@ -429,5 +418,25 @@ impl VaultsPageRow {
         } else {
             false
         }
+    }
+
+    fn set_vault_row_state_opened(&self) {
+        let self_ = imp::VaultsPageRow::from_instance(self);
+
+        self_.locker_button.set_icon_name(&"changes-allow-symbolic");
+        self_.open_folder_button.set_visible(true);
+        self_.open_folder_button.set_sensitive(true);
+        self_.settings_button.set_sensitive(false);
+    }
+
+    fn set_vault_row_state_closed(&self) {
+        let self_ = imp::VaultsPageRow::from_instance(self);
+
+        self_
+            .locker_button
+            .set_icon_name(&"changes-prevent-symbolic");
+        self_.open_folder_button.set_visible(false);
+        self_.open_folder_button.set_sensitive(true);
+        self_.settings_button.set_sensitive(true);
     }
 }
