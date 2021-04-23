@@ -169,7 +169,7 @@ impl Vault {
             }
             Err(e) => {
                 log::error!("Could not check if mounted: {}", e);
-                return false;
+                false
             }
         }
     }
