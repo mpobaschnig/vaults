@@ -50,6 +50,8 @@ mod imp {
         #[template_child]
         pub settings_button: TemplateChild<gtk::Button>,
 
+        pub spinner: RefCell<gtk::Spinner>,
+
         pub config: RefCell<Option<VaultConfig>>,
     }
 
@@ -66,6 +68,7 @@ mod imp {
                 locker_button: TemplateChild::default(),
                 settings_button: TemplateChild::default(),
                 config: RefCell::new(None),
+                spinner: RefCell::new(gtk::Spinner::new()),
             }
         }
 
@@ -187,9 +190,14 @@ impl VaultsPageRow {
             return;
         }
 
+        if self_.spinner.borrow().get_spinning() {
+            return;
+        }
+
         self_.open_folder_button.set_sensitive(false);
 
-        let spinner = gtk::Spinner::new();
+        *self_.spinner.borrow_mut() = gtk::Spinner::new();
+        let spinner = self_.spinner.borrow().clone();
         self_.locker_button.set_child(Some(&spinner));
 
         spinner.start();
@@ -269,6 +277,10 @@ impl VaultsPageRow {
             return;
         }
 
+        if self_.spinner.borrow().get_spinning() {
+            return;
+        }
+
         let dialog = VaultsPageRowPasswordPromptDialog::new();
         dialog.connect_response(clone!(@weak self as obj => move |dialog, id| {
             let password = dialog.get_password();
@@ -284,7 +296,8 @@ impl VaultsPageRow {
             obj_.settings_button.set_sensitive(false);
             obj_.open_folder_button.set_sensitive(false);
 
-            let spinner = gtk::Spinner::new();
+            *obj_.spinner.borrow_mut() = gtk::Spinner::new();
+            let spinner = obj_.spinner.borrow().clone();
             obj_.locker_button.set_child(Some(&spinner));
 
             spinner.start();
