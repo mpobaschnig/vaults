@@ -97,7 +97,7 @@ mod imp {
     impl ObjectImpl for VaultsPageRowSettingsDialog {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-            obj.setup_actions();
+
             obj.setup_signals();
 
             obj.fill_combo_box_text();
@@ -131,8 +131,6 @@ impl VaultsPageRowSettingsDialog {
 
         dialog
     }
-
-    fn setup_actions(&self) {}
 
     fn setup_signals(&self) {
         let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
