@@ -222,7 +222,7 @@ impl VaultsPageRow {
                     Message::Finished => {
                         locker_button.set_icon_name(&"changes-prevent-symbolic");
                         open_folder_button.set_visible(false);
-                        open_folder_button.set_sensitive(true);
+                        open_folder_button.set_sensitive(false);
                         settings_button.set_sensitive(true);
                     }
                     Message::Error(e) => {
