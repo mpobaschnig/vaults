@@ -221,7 +221,6 @@ impl UserConnfigManager {
             }
             (_, _) => {
                 log::error!("Vault not initalised!");
-                return;
             }
         }
     }
