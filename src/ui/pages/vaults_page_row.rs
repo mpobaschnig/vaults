@@ -375,20 +375,12 @@ impl VaultsPageRow {
         let dialog = VaultsPageRowSettingsDialog::new(self.get_vault());
         dialog.connect_response(clone!(@weak self as obj => move |dialog, id|
             match id {
-                gtk::ResponseType::Other(0) => {
-                    obj.emit_by_name("remove", &[]).unwrap();
-
-                    dialog.destroy();
-                }
-                gtk::ResponseType::Other(1) => {
-                    obj.emit_by_name("save", &[]).unwrap();
-
-                    dialog.destroy();
-                }
-                _ => {
-                    dialog.destroy();
-                }
-        }));
+                gtk::ResponseType::Other(0) => {obj.emit_by_name("remove", &[]).unwrap();},
+                gtk::ResponseType::Other(1) => {obj.emit_by_name("save", &[]).unwrap();},
+                _ => {},
+            };
+            dialog.destroy();
+        ));
 
         dialog.show();
     }
