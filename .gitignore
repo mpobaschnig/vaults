@@ -1,4 +1,5 @@
 _build/
+.flatpak-builder/
 .flatpak/
 .vscode/settings.json
 *.ui.in~
