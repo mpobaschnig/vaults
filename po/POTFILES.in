@@ -2,6 +2,8 @@
 data/com.github.mpobaschnig.Vaults.desktop.in.in
 data/com.github.mpobaschnig.Vaults.gschema.xml.in
 data/com.github.mpobaschnig.Vaults.metainfo.xml.in.in
+
+# data/resources/ui/
 data/resources/ui/add_new_vault_dialog.ui
 data/resources/ui/import_vault_dialog.ui
 data/resources/ui/shortcuts.ui
