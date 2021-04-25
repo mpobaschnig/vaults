@@ -19,19 +19,18 @@
 
 use std::str::FromStr;
 
-use adw::{subclass::prelude::*, ActionRowExt};
-use gettextrs::gettext;
-use gtk::gio;
-use gtk::{self, prelude::*};
-use gtk::{glib, CompositeTemplate};
-use gtk::{glib::clone, glib::GString, subclass::prelude::*};
-
 use crate::{
     backend::{Backend, AVAILABLE_BACKENDS},
     user_config_manager::UserConnfigManager,
     vault::*,
     VApplication,
 };
+use adw::{subclass::prelude::*, ActionRowExt};
+use gettextrs::gettext;
+use gtk::gio;
+use gtk::{self, prelude::*};
+use gtk::{glib, CompositeTemplate};
+use gtk::{glib::clone, glib::GString, subclass::prelude::*};
 
 mod imp {
     use super::*;
@@ -47,6 +46,8 @@ mod imp {
         pub vault_name_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
         pub vault_name_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub backend_type_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
         pub backend_type_combo_box_text: TemplateChild<gtk::ComboBoxText>,
         #[template_child]
@@ -81,6 +82,7 @@ mod imp {
                 add_new_vault_button: TemplateChild::default(),
                 vault_name_action_row: TemplateChild::default(),
                 vault_name_entry: TemplateChild::default(),
+                backend_type_action_row: TemplateChild::default(),
                 backend_type_combo_box_text: TemplateChild::default(),
                 password_action_row: TemplateChild::default(),
                 password_entry: TemplateChild::default(),
@@ -109,7 +111,7 @@ mod imp {
             obj.setup_actions();
             obj.setup_signals();
 
-            obj.fill_combo_box_text();
+            obj.setup_combo_box();
         }
     }
 
@@ -493,7 +495,7 @@ impl AddNewVaultDialog {
         String::from(self_.password_entry.get_text().as_str())
     }
 
-    fn fill_combo_box_text(&self) {
+    fn setup_combo_box(&self) {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
         let combo_box_text = &self_.backend_type_combo_box_text;
@@ -515,6 +517,10 @@ impl AddNewVaultDialog {
                 } else {
                     combo_box_text.set_active(Some(0));
                 }
+            } else {
+                self_.backend_type_action_row.set_subtitle(Some(&gettext(
+                    "No backend is installed. Please install gocryptfs or cryfs.",
+                )));
             }
         }
     }
