@@ -282,6 +282,7 @@ impl ApplicationWindow {
 
     fn refresh_button_clicked(&self) {
         let self_ = imp::ApplicationWindow::from_instance(self);
+
         self_.vaults_page.clear();
 
         backend::probe_backends();
