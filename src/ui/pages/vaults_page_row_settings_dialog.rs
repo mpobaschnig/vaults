@@ -26,13 +26,9 @@ use gtk::{
     CompositeTemplate,
 };
 use std::cell::RefCell;
+use strum::IntoEnumIterator;
 
-use crate::{
-    backend::{Backend, AVAILABLE_BACKENDS},
-    user_config_manager::UserConnfigManager,
-    vault::*,
-    VApplication,
-};
+use crate::{backend::Backend, user_config_manager::UserConnfigManager, vault::*, VApplication};
 
 mod imp {
     use super::*;
@@ -485,13 +481,13 @@ impl VaultsPageRowSettingsDialog {
 
         let combo_box_text = &self_.backend_type_combo_box_text;
 
-        if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
-            for (i, backend) in available_backends.iter().enumerate() {
-                combo_box_text.append_text(backend);
+        for (i, backend) in Backend::iter().enumerate() {
+            let backend = backend.to_string();
 
-                if backend.eq(&curr_backend) {
-                    combo_box_text.set_active(Some(i as u32));
-                }
+            combo_box_text.append_text(&backend);
+
+            if backend.eq(&curr_backend) {
+                combo_box_text.set_active(Some(i as u32));
             }
         }
     }
