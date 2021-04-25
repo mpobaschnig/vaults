@@ -92,8 +92,10 @@ pub fn probe_backends() {
         available_backends.clear();
 
         for backend in Backend::iter() {
-            if backend.is_available().is_ok() {
-                available_backends.push(backend.to_string());
+            if let Ok(success) = backend.is_available() {
+                if success {
+                    available_backends.push(backend.to_string());
+                }
             }
         }
     }
