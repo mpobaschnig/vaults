@@ -79,7 +79,7 @@
                   </object>
                 </child>
                 <child>
-                  <object class="AdwActionRow">
+                  <object class="AdwActionRow" id="backend_type_action_row">
                     <property name="title" translatable="yes">Backend Type</property>
                     <child>
                       <object class="GtkComboBoxText" id="backend_type_combo_box_text">
