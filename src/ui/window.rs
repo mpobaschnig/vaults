@@ -20,7 +20,9 @@
 use crate::config::{APP_ID, PROFILE};
 use crate::ui::pages::*;
 use crate::ui::{AddNewVaultDialog, ImportVaultDialog};
-use crate::{application::VApplication, backend::Backend, user_config_manager::UserConnfigManager};
+use crate::{
+    application::VApplication, backend, backend::Backend, user_config_manager::UserConnfigManager,
+};
 
 use adw::subclass::prelude::*;
 use glib::{clone, GEnum, ParamSpec, ToValue};
@@ -279,6 +281,8 @@ impl ApplicationWindow {
     fn refresh_button_clicked(&self) {
         let self_ = imp::ApplicationWindow::from_instance(self);
         self_.vaults_page.clear();
+
+        backend::probe_backends();
 
         UserConnfigManager::instance().read_config();
 
