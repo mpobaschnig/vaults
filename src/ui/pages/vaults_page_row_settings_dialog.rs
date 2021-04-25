@@ -435,7 +435,13 @@ impl VaultsPageRowSettingsDialog {
     fn exists_config_file(&self, backend: Backend, encrypted_data_directory: &GString) -> bool {
         let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
+        if !self.is_encrypted_data_directory_valid(&encrypted_data_directory) {
+            self_.backend_type_action_row.set_subtitle(Some(&""));
+            return false;
+        }
+
         let mut path_str = encrypted_data_directory.to_string();
+
         match backend {
             Backend::Cryfs => {
                 path_str.push_str("/cryfs.config");
