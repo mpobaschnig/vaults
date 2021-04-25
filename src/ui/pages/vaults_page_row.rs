@@ -401,7 +401,15 @@ impl VaultsPageRow {
         dialog.connect_response(clone!(@weak self as obj => move |dialog, id|
             match id {
                 gtk::ResponseType::Other(0) => {obj.emit_by_name("remove", &[]).unwrap();},
-                gtk::ResponseType::Other(1) => {obj.emit_by_name("save", &[]).unwrap();},
+                gtk::ResponseType::Other(1) => {
+                    obj.emit_by_name("save", &[]).unwrap();
+                    let vault = &obj.get_vault();
+                    if !vault.is_backend_available() {
+                        obj.set_vault_row_state_backend_unavailable();
+                    } else {
+                        obj.set_vault_row_state_backend_available();
+                    }
+                },
                 _ => {},
             };
             dialog.destroy();
