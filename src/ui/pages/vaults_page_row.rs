@@ -489,7 +489,7 @@ impl VaultsPageRow {
 
         self_
             .vaults_page_row
-            .set_subtitle(Some(&gettext("Backend not available.")));
+            .set_subtitle(Some(&gettext("Backend is not available")));
         self_.locker_button.set_sensitive(false);
     }
 
