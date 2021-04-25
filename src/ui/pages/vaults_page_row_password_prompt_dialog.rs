@@ -117,6 +117,12 @@ impl VaultsPageRowPasswordPromptDialog {
             .connect_property_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_unlock_button_enable_conditions();
             }));
+
+        self_
+            .password_entry
+            .connect_activate(clone!(@weak self as obj => move |_| {
+                obj.connect_activate();
+            }));
     }
 
     fn cancel_button_clicked(&self) {
@@ -136,6 +142,14 @@ impl VaultsPageRowPasswordPromptDialog {
             self_.unlock_button.set_sensitive(true);
         } else {
             self_.unlock_button.set_sensitive(false);
+        }
+    }
+
+    fn connect_activate(&self) {
+        let self_ = imp::VaultsPageRowPasswordPromptDialog::from_instance(self);
+
+        if !self_.password_entry.get_text().is_empty() {
+            self.unlock_button_clicked();
         }
     }
 
