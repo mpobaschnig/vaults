@@ -173,4 +173,13 @@ impl Vault {
             }
         }
     }
+
+    pub fn is_backend_available(&self) -> bool {
+        if let Some(config) = self.get_config() {
+            if let Ok(success) = config.backend.is_available() {
+                return success;
+            }
+        }
+        false
+    }
 }

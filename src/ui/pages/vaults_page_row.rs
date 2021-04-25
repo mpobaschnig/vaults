@@ -17,7 +17,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use adw::{subclass::prelude::*, PreferencesRowExt};
+use adw::{subclass::prelude::*, ActionRowExt, PreferencesRowExt};
+use gettextrs::gettext;
 use glib::once_cell::sync::Lazy;
 use glib::{clone, subclass};
 use gtk::glib;
@@ -143,6 +144,10 @@ impl VaultsPageRow {
 
         if vault.is_mounted() {
             object.set_vault_row_state_opened();
+        }
+
+        if !vault.is_backend_available() {
+            object.set_vault_row_state_backend_unavailable();
         }
 
         object
@@ -377,6 +382,13 @@ impl VaultsPageRow {
     fn locker_button_clicked(&self) {
         let vault = self.get_vault();
 
+        if !vault.is_backend_available() {
+            self.set_vault_row_state_backend_unavailable();
+            return;
+        } else {
+            self.set_vault_row_state_backend_available();
+        }
+
         if self.is_mounted() {
             self.locker_button_clicked_is_mounted(vault);
         } else {
@@ -462,5 +474,21 @@ impl VaultsPageRow {
         self_.open_folder_button.set_visible(false);
         self_.open_folder_button.set_sensitive(true);
         self_.settings_button.set_sensitive(true);
+    }
+
+    fn set_vault_row_state_backend_unavailable(&self) {
+        let self_ = imp::VaultsPageRow::from_instance(self);
+
+        self_
+            .vaults_page_row
+            .set_subtitle(Some(&gettext("Backend not available.")));
+        self_.locker_button.set_sensitive(false);
+    }
+
+    fn set_vault_row_state_backend_available(&self) {
+        let self_ = imp::VaultsPageRow::from_instance(self);
+
+        self_.vaults_page_row.set_subtitle(Some(""));
+        self_.locker_button.set_sensitive(true);
     }
 }
