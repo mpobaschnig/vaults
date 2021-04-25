@@ -216,6 +216,8 @@ impl ApplicationWindow {
     }
 
     fn add_new_vault_clicked(&self) {
+        backend::probe_backends();
+
         let dialog = AddNewVaultDialog::new();
         dialog.connect_response(clone!(@weak self as obj => move |dialog, id|
             if id == gtk::ResponseType::Ok {
