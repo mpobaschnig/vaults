@@ -66,6 +66,8 @@ mod imp {
             self.parent_constructed(obj);
 
             obj.setup_signals();
+
+            self.password_entry.grab_focus_without_selecting();
         }
     }
 
