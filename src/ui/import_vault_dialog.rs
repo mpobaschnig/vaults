@@ -25,13 +25,9 @@ use gtk::{
     self, gio, glib, glib::clone, glib::GString, prelude::*, subclass::prelude::*,
     CompositeTemplate,
 };
+use strum::IntoEnumIterator;
 
-use crate::{
-    backend::{Backend, AVAILABLE_BACKENDS},
-    user_config_manager::UserConnfigManager,
-    vault::*,
-    VApplication,
-};
+use crate::{backend::Backend, user_config_manager::UserConnfigManager, vault::*, VApplication};
 
 mod imp {
     use super::*;
@@ -410,24 +406,12 @@ impl ImportVaultDialog {
 
         let combo_box_text = &self_.backend_type_combo_box_text;
 
-        if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
-            let mut gocryptfs_index: Option<u32> = None;
+        for backend in Backend::iter() {
+            let backend = backend.to_string();
 
-            for (i, backend) in available_backends.iter().enumerate() {
-                if backend.eq("Gocryptfs") {
-                    gocryptfs_index = Some(i as u32);
-                }
-
-                combo_box_text.append_text(backend);
-            }
-
-            if !available_backends.is_empty() {
-                if let Some(index) = gocryptfs_index {
-                    combo_box_text.set_active(Some(index));
-                } else {
-                    combo_box_text.set_active(Some(0));
-                }
-            }
+            combo_box_text.append_text(&backend);
         }
+
+        combo_box_text.set_active(Some(0));
     }
 }
