@@ -21,7 +21,10 @@ use std::str::FromStr;
 
 use adw::{subclass::prelude::*, ActionRowExt};
 use gettextrs::gettext;
-use gtk::{self, gio, glib, glib::clone, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::{
+    self, gio, glib, glib::clone, glib::GString, prelude::*, subclass::prelude::*,
+    CompositeTemplate,
+};
 use std::cell::RefCell;
 
 use crate::{
@@ -50,9 +53,13 @@ mod imp {
         #[template_child]
         pub backend_type_combo_box_text: TemplateChild<gtk::ComboBoxText>,
         #[template_child]
+        pub encrypted_data_directory_action_row: TemplateChild<adw::ActionRow>,
+        #[template_child]
         pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub encrypted_data_directory_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub mount_directory_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
         pub mount_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
@@ -76,8 +83,10 @@ mod imp {
                 vault_name_action_row: TemplateChild::default(),
                 vault_name_entry: TemplateChild::default(),
                 backend_type_combo_box_text: TemplateChild::default(),
+                encrypted_data_directory_action_row: TemplateChild::default(),
                 encrypted_data_directory_entry: TemplateChild::default(),
                 encrypted_data_directory_button: TemplateChild::default(),
+                mount_directory_action_row: TemplateChild::default(),
                 mount_directory_entry: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
                 current_vault: RefCell::new(None),
@@ -97,10 +106,6 @@ mod imp {
     impl ObjectImpl for VaultsPageRowSettingsDialog {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
-
-            obj.setup_signals();
-
-            obj.fill_combo_box_text();
         }
     }
 
@@ -128,6 +133,10 @@ impl VaultsPageRowSettingsDialog {
         dialog.set_transient_for(Some(&window));
 
         dialog.set_vault(vault);
+
+        dialog.setup_signals();
+
+        dialog.fill_combo_box_text();
 
         dialog
     }
@@ -271,39 +280,191 @@ impl VaultsPageRowSettingsDialog {
         dialog.show();
     }
 
-    fn check_add_button_enable_conditions(&self) {
+    fn is_valid_vault_name(&self, vault_name: GString) -> bool {
         let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
-        let current_vault = self.get_current_vault();
-
-        if current_vault.is_none() {
-            return;
+        if vault_name.is_empty() {
+            self_
+                .vault_name_action_row
+                .set_subtitle(Some(&gettext("Name is not valid.")));
+            false
+        } else {
+            self_.vault_name_action_row.set_subtitle(Some(""));
+            true
         }
+    }
 
-        let vault_name = self_.vault_name_entry.get_text();
-        let backend = self_.backend_type_combo_box_text.get_active();
-        let encrypted_data_directory = self_.encrypted_data_directory_entry.get_text();
-        let mount_directory = self_.mount_directory_entry.get_text();
+    fn is_different_vault_name(&self, vault_name: GString) -> bool {
+        let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
+        let is_same_name = vault_name.eq(&self.get_current_vault().unwrap().get_name().unwrap());
         let is_duplicate_name = UserConnfigManager::instance()
             .get_map()
             .contains_key(&vault_name.to_string());
-        if !vault_name.is_empty()
-            && !vault_name.eq(&current_vault.unwrap().get_name().unwrap())
-            && is_duplicate_name
-        {
+        if !vault_name.is_empty() && !is_same_name && is_duplicate_name {
             self_
                 .vault_name_action_row
                 .set_subtitle(Some(&gettext("Name already exists.")));
+            false
         } else {
-            self_.vault_name_action_row.set_subtitle(Some(""));
+            true
+        }
+    }
+
+    fn is_path_empty(&self, path: &GString) -> Result<bool, std::io::Error> {
+        match std::fs::read_dir(path.to_string()) {
+            Ok(dir) => {
+                if dir.count() > 0 {
+                    Ok(false)
+                } else {
+                    Ok(true)
+                }
+            }
+            Err(e) => {
+                log::debug!("Could not read path {}: {}", path, e);
+                Err(e)
+            }
+        }
+    }
+
+    fn is_encrypted_data_directory_valid(&self, encrypted_data_directory: &GString) -> bool {
+        let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
+
+        match self.is_path_empty(encrypted_data_directory) {
+            Ok(is_empty) => {
+                if is_empty {
+                    self_
+                        .encrypted_data_directory_action_row
+                        .set_subtitle(Some(&gettext("Directory is empty.")));
+                    false
+                } else {
+                    self_
+                        .encrypted_data_directory_action_row
+                        .set_subtitle(Some(&gettext("")));
+                    true
+                }
+            }
+            Err(_) => {
+                self_
+                    .encrypted_data_directory_action_row
+                    .set_subtitle(Some(&gettext("Directory is not valid.")));
+                false
+            }
+        }
+    }
+
+    fn is_mount_directory_valid(&self, mount_directory: &GString) -> bool {
+        let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
+
+        match self.is_path_empty(mount_directory) {
+            Ok(is_empty) => {
+                if is_empty {
+                    self_
+                        .mount_directory_action_row
+                        .set_subtitle(Some(&gettext("")));
+                    true
+                } else {
+                    self_
+                        .mount_directory_action_row
+                        .set_subtitle(Some(&gettext("Directory is not empty.")));
+                    false
+                }
+            }
+            Err(_) => {
+                self_
+                    .mount_directory_action_row
+                    .set_subtitle(Some(&gettext("Directory is not valid.")));
+                false
+            }
+        }
+    }
+
+    fn are_directories_different(
+        &self,
+        encrypted_data_directory: &GString,
+        mount_directory: &GString,
+    ) -> bool {
+        let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
+
+        if encrypted_data_directory.eq(mount_directory) {
+            self_
+                .encrypted_data_directory_action_row
+                .set_subtitle(Some(&gettext("Directories must not be equal.")));
+            self_
+                .mount_directory_action_row
+                .set_subtitle(Some(&gettext("Directories must not be equal.")));
+            false
+        } else {
+            true
+        }
+    }
+
+    fn has_something_changed(
+        &self,
+        curr_vault_name: &GString,
+        curr_backend: &GString,
+        curr_encrypted_data_directory: &GString,
+        curr_mount_directory: &GString,
+    ) -> bool {
+        let prev_vault = self.get_current_vault().unwrap();
+        let prev_config = &prev_vault.get_config().unwrap();
+
+        let prev_vault_name = &prev_vault.get_name().unwrap();
+        let prev_backend = &prev_config.backend.to_string();
+        let prev_encrypted_data_directory = &prev_config.encrypted_data_directory;
+        let prev_mount_directory = &prev_config.mount_directory;
+
+        if !curr_vault_name.eq(prev_vault_name) {
+            return true;
         }
 
-        if !vault_name.is_empty()
-            && !encrypted_data_directory.is_empty()
-            && !mount_directory.is_empty()
-            && backend.is_some()
-            && !is_duplicate_name
+        if !curr_backend.eq(prev_backend) {
+            return true;
+        }
+
+        if !curr_encrypted_data_directory.eq(prev_encrypted_data_directory) {
+            return true;
+        }
+
+        if !curr_mount_directory.eq(prev_mount_directory) {
+            return true;
+        }
+
+        false
+    }
+
+    fn check_add_button_enable_conditions(&self) {
+        let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
+
+        let vault_name = self_.vault_name_entry.get_text();
+        let backend = self_.backend_type_combo_box_text.get_active_text().unwrap();
+        let encrypted_data_directory = self_.encrypted_data_directory_entry.get_text();
+        let mount_directory = self_.mount_directory_entry.get_text();
+
+        let is_valid_vault_name = self.is_valid_vault_name(vault_name.clone());
+        let is_different_vault_name = self.is_different_vault_name(vault_name.clone());
+        let is_encrypted_data_directory_valid =
+            self.is_encrypted_data_directory_valid(&encrypted_data_directory);
+        let is_mount_directory_valid = self.is_mount_directory_valid(&mount_directory);
+        let are_directories_different =
+            if is_encrypted_data_directory_valid && is_mount_directory_valid {
+                self.are_directories_different(&encrypted_data_directory, &mount_directory)
+            } else {
+                false
+            };
+        let has_something_changed = self.has_something_changed(
+            &vault_name,
+            &backend,
+            &encrypted_data_directory,
+            &mount_directory,
+        );
+
+        if is_valid_vault_name
+            && is_different_vault_name
+            && is_encrypted_data_directory_valid
+            && is_mount_directory_valid
+            && are_directories_different
+            && has_something_changed
         {
             self_.save_button.set_sensitive(true);
         } else {
@@ -314,24 +475,22 @@ impl VaultsPageRowSettingsDialog {
     fn fill_combo_box_text(&self) {
         let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
+        let curr_backend = self
+            .get_current_vault()
+            .unwrap()
+            .get_config()
+            .unwrap()
+            .backend
+            .to_string();
+
         let combo_box_text = &self_.backend_type_combo_box_text;
 
         if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
-            let mut gocryptfs_index: Option<u32> = None;
-
             for (i, backend) in available_backends.iter().enumerate() {
-                if backend.eq("Gocryptfs") {
-                    gocryptfs_index = Some(i as u32);
-                }
-
                 combo_box_text.append_text(backend);
-            }
 
-            if !available_backends.is_empty() {
-                if let Some(index) = gocryptfs_index {
-                    combo_box_text.set_active(Some(index));
-                } else {
-                    combo_box_text.set_active(Some(0));
+                if backend.eq(&curr_backend) {
+                    combo_box_text.set_active(Some(i as u32));
                 }
             }
         }
