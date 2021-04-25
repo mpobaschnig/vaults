@@ -44,6 +44,8 @@ mod imp {
         #[template_child]
         pub vault_name_entry: TemplateChild<gtk::Entry>,
         #[template_child]
+        pub backend_type_action_row: TemplateChild<adw::ActionRow>,
+        #[template_child]
         pub backend_type_combo_box_text: TemplateChild<gtk::ComboBoxText>,
         #[template_child]
         pub encrypted_data_directory_action_row: TemplateChild<adw::ActionRow>,
@@ -71,6 +73,7 @@ mod imp {
                 import_vault_button: TemplateChild::default(),
                 vault_name_action_row: TemplateChild::default(),
                 vault_name_entry: TemplateChild::default(),
+                backend_type_action_row: TemplateChild::default(),
                 backend_type_combo_box_text: TemplateChild::default(),
                 encrypted_data_directory_action_row: TemplateChild::default(),
                 encrypted_data_directory_entry: TemplateChild::default(),
@@ -352,10 +355,43 @@ impl ImportVaultDialog {
         }
     }
 
+    fn exists_config_file(&self, backend: Backend, encrypted_data_directory: &GString) -> bool {
+        let self_ = imp::ImportVaultDialog::from_instance(self);
+
+        if !self.is_encrypted_data_directory_valid(&encrypted_data_directory) {
+            self_.backend_type_action_row.set_subtitle(Some(&""));
+            return false;
+        }
+
+        let mut path_str = encrypted_data_directory.to_string();
+
+        match backend {
+            Backend::Cryfs => {
+                path_str.push_str("/cryfs.config");
+            }
+            Backend::Gocryptfs => {
+                path_str.push_str("/gocryptfs.conf");
+            }
+        }
+
+        let path = std::path::Path::new(&path_str);
+        if path.exists() {
+            self_.backend_type_action_row.set_subtitle(Some(&""));
+            true
+        } else {
+            self_
+                .backend_type_action_row
+                .set_subtitle(Some(&gettext("No configuration file found.")));
+            false
+        }
+    }
+
     fn check_add_button_enable_conditions(&self) {
         let self_ = imp::ImportVaultDialog::from_instance(self);
 
         let vault_name = self_.vault_name_entry.get_text();
+        let backend_str = self_.backend_type_combo_box_text.get_active_text().unwrap();
+        let backend = Backend::from_str(&backend_str.as_str()).unwrap();
         let encrypted_data_directory = self_.encrypted_data_directory_entry.get_text();
         let mount_directory = self_.mount_directory_entry.get_text();
 
@@ -370,12 +406,14 @@ impl ImportVaultDialog {
             } else {
                 false
             };
+        let exists_config_file = self.exists_config_file(backend, &encrypted_data_directory);
 
         if is_valid_vault_name
             && is_different_vault_name
             && is_encrypted_data_directory_valid
             && is_mount_directory_valid
             && are_directories_different
+            && exists_config_file
         {
             self_.import_vault_button.set_sensitive(true);
         } else {
