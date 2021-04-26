@@ -114,19 +114,28 @@
                   <object class="AdwActionRow" id="encrypted_data_directory_action_row">
                     <property name="title" translatable="yes">Encrypted Data Directory</property>
                     <child>
-                      <object class="GtkEntry" id="encrypted_data_directory_entry">
-                        <property name="margin-start">6</property>
-                        <property name="margin-top">6</property>
-                        <property name="margin-bottom">6</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="encrypted_data_directory_button">
-                        <property name="margin-end">6</property>
-                        <property name="margin-top">6</property>
-                        <property name="margin-bottom">6</property>
-                        <property name="icon_name">document-open-symbolic</property>
-                        <property name="tooltip-text" translatable="yes">Choose Encrypted Data Directory</property>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="valign">center</property>
+                        <child>
+                          <object class="GtkEntry" id="encrypted_data_directory_entry">
+                            <property name="margin-start">6</property>
+                            <property name="margin-top">6</property>
+                            <property name="margin-bottom">6</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="encrypted_data_directory_button">
+                            <property name="margin-end">6</property>
+                            <property name="margin-top">6</property>
+                            <property name="margin-bottom">6</property>
+                            <property name="icon_name">document-open-symbolic</property>
+                            <property name="tooltip-text" translatable="yes">Choose Encrypted Data Directory</property>
+                          </object>
+                        </child>
+                        <style>
+                          <class name="linked"/>
+                        </style>
                       </object>
                     </child>
                   </object>
@@ -135,19 +144,28 @@
                   <object class="AdwActionRow" id="mount_directory_action_row">
                     <property name="title" translatable="yes">Mount Directory</property>
                     <child>
-                      <object class="GtkEntry" id="mount_directory_entry">
-                        <property name="margin-start">6</property>
-                        <property name="margin-top">6</property>
-                        <property name="margin-bottom">6</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="mount_directory_button">
-                        <property name="margin-end">6</property>
-                        <property name="margin-top">6</property>
-                        <property name="margin-bottom">6</property>
-                        <property name="icon_name">document-open-symbolic</property>
-                        <property name="tooltip-text" translatable="yes">Choose Mount Directory</property>
+                      <object class="GtkBox">
+                        <property name="visible">True</property>
+                        <property name="valign">center</property>
+                        <child>
+                          <object class="GtkEntry" id="mount_directory_entry">
+                            <property name="margin-start">6</property>
+                            <property name="margin-top">6</property>
+                            <property name="margin-bottom">6</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="mount_directory_button">
+                            <property name="margin-end">6</property>
+                            <property name="margin-top">6</property>
+                            <property name="margin-bottom">6</property>
+                            <property name="icon_name">document-open-symbolic</property>
+                            <property name="tooltip-text" translatable="yes">Choose Mount Directory</property>
+                          </object>
+                        </child>
+                        <style>
+                          <class name="linked"/>
+                        </style>
                       </object>
                     </child>
                   </object>
