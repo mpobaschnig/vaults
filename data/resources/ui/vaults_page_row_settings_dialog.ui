@@ -33,8 +33,8 @@
           </object>
         </child>
         <child type="end">
-          <object class="GtkButton" id="delete_button">
-            <property name="label" translatable="yes">_Delete</property>
+          <object class="GtkButton" id="remove_button">
+            <property name="label" translatable="yes">_Remove</property>
             <property name="use_underline">True</property>
             <style>
               <class name="destructive-action"/>

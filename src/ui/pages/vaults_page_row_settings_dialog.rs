@@ -39,7 +39,7 @@ mod imp {
         #[template_child]
         pub cancel_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub delete_button: TemplateChild<gtk::Button>,
+        pub remove_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub save_button: TemplateChild<gtk::Button>,
         #[template_child]
@@ -64,7 +64,7 @@ mod imp {
         pub mount_directory_button: TemplateChild<gtk::Button>,
 
         pub current_vault: RefCell<Option<Vault>>,
-        pub to_delete: RefCell<bool>,
+        pub to_remove: RefCell<bool>,
     }
 
     #[glib::object_subclass]
@@ -76,7 +76,7 @@ mod imp {
         fn new() -> Self {
             Self {
                 cancel_button: TemplateChild::default(),
-                delete_button: TemplateChild::default(),
+                remove_button: TemplateChild::default(),
                 save_button: TemplateChild::default(),
                 vault_name_action_row: TemplateChild::default(),
                 vault_name_entry: TemplateChild::default(),
@@ -89,7 +89,7 @@ mod imp {
                 mount_directory_entry: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
                 current_vault: RefCell::new(None),
-                to_delete: RefCell::new(false),
+                to_remove: RefCell::new(false),
             }
         }
 
@@ -150,9 +150,9 @@ impl VaultsPageRowSettingsDialog {
             }));
 
         self_
-            .delete_button
+            .remove_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.delete_button_clicked();
+                obj.remove_button_clicked();
             }));
 
         self_
@@ -198,7 +198,7 @@ impl VaultsPageRowSettingsDialog {
             }));
     }
 
-    fn delete_button_clicked(&self) {
+    fn remove_button_clicked(&self) {
         UserConnfigManager::instance().remove_vault(self.get_vault());
         self.response(gtk::ResponseType::Other(0));
     }
