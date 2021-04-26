@@ -168,7 +168,7 @@ impl UserConnfigManager {
                     }
                 }
                 Err(e) => {
-                    log::error!("Failed to read user data config: {}", e);
+                    log::warn!("Failed to read user data config: {}", e);
                 }
             }
         }
