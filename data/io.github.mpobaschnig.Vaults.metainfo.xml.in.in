@@ -32,4 +32,11 @@
   <update_contact>mpobaschnig@posteo.de</update_contact>
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
+  <releases>
+		<release version="0.1.0" date="2021-04-27">
+			<p>
+				Initial release
+			</p>
+		</release>
+	</releases>
 </component>
