@@ -231,6 +231,7 @@ impl VaultsPageRow {
             match message {
                 Message::Finished => {
                     locker_button.set_icon_name(&"changes-prevent-symbolic");
+                    locker_button.set_tooltip_text(Some(&gettext("Open Vault")));
                     open_folder_button.set_visible(false);
                     open_folder_button.set_sensitive(false);
                     settings_button.set_sensitive(true);
@@ -239,6 +240,7 @@ impl VaultsPageRow {
                     log::error!("Error closing vault: {}", &e);
 
                     locker_button.set_icon_name(&"changes-allow-symbolic");
+                    locker_button.set_tooltip_text(Some(&gettext("Close Vault")));
                     open_folder_button.set_visible(true);
                     open_folder_button.set_sensitive(true);
                     settings_button.set_sensitive(false);
@@ -333,6 +335,7 @@ impl VaultsPageRow {
                 match message {
                     Message::Finished => {
                         locker_button.set_icon_name(&"changes-allow-symbolic");
+                        locker_button.set_tooltip_text(Some(&gettext("Close Vault")));
                         open_folder_button.set_visible(true);
                         open_folder_button.set_sensitive(true);
                         settings_button.set_sensitive(false);
@@ -341,6 +344,7 @@ impl VaultsPageRow {
                         log::error!("Error opening vault: {}", &e);
 
                         locker_button.set_icon_name(&"changes-prevent-symbolic");
+                        locker_button.set_tooltip_text(Some(&gettext("Open Vault")));
                         open_folder_button.set_visible(false);
                         open_folder_button.set_sensitive(false);
                         settings_button.set_sensitive(true);
@@ -468,6 +472,9 @@ impl VaultsPageRow {
         let self_ = imp::VaultsPageRow::from_instance(self);
 
         self_.locker_button.set_icon_name(&"changes-allow-symbolic");
+        self_
+            .locker_button
+            .set_tooltip_text(Some(&gettext("Close Vault")));
         self_.open_folder_button.set_visible(true);
         self_.open_folder_button.set_sensitive(true);
         self_.settings_button.set_sensitive(false);
@@ -479,6 +486,9 @@ impl VaultsPageRow {
         self_
             .locker_button
             .set_icon_name(&"changes-prevent-symbolic");
+        self_
+            .locker_button
+            .set_tooltip_text(Some(&gettext("Open Vault")));
         self_.open_folder_button.set_visible(false);
         self_.open_folder_button.set_sensitive(true);
         self_.settings_button.set_sensitive(true);

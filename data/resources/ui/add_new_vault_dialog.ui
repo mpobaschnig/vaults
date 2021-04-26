@@ -126,6 +126,7 @@
                         <property name="margin-top">6</property>
                         <property name="margin-bottom">6</property>
                         <property name="icon_name">document-open-symbolic</property>
+                        <property name="tooltip-text" translatable="yes">Choose Encrypted Data Directory</property>
                       </object>
                     </child>
                   </object>
@@ -146,6 +147,7 @@
                         <property name="margin-top">6</property>
                         <property name="margin-bottom">6</property>
                         <property name="icon_name">document-open-symbolic</property>
+                        <property name="tooltip-text" translatable="yes">Choose Mount Directory</property>
                       </object>
                     </child>
                   </object>

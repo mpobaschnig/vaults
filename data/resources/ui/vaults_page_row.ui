@@ -14,6 +14,7 @@
             <property name="margin-top">6</property>
             <property name="margin-bottom">6</property>
             <property name="icon_name">folder-symbolic</property>
+            <property name="tooltip-text" translatable="yes">Open Folder</property>
           </object>
         </child>
         <child>
@@ -21,6 +22,7 @@
             <property name="margin-top">6</property>
             <property name="margin-bottom">6</property>
             <property name="icon_name">changes-prevent-symbolic</property>
+            <property name="tooltip-text" translatable="yes">Open Vault</property>
           </object>
         </child>
         <child>
@@ -29,6 +31,7 @@
             <property name="margin-top">6</property>
             <property name="margin-bottom">6</property>
             <property name="icon_name">emblem-system-symbolic</property>
+            <property name="tooltip-text" translatable="yes">Open Settings</property>
           </object>
         </child>
       </object>

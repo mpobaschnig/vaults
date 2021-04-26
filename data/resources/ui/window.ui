@@ -18,12 +18,14 @@
                 <child>
                   <object class="GtkMenuButton" id="add_menu_button">
                     <property name="icon_name">list-add-symbolic</property>
+                    <property name="tooltip-text" translatable="yes">Add or Import New Vault</property>
                     <property name="menu_model">add_menu</property>
                   </object>
                 </child>
                 <child>
                   <object class="GtkButton" id="refresh_button">
                     <property name="icon_name">view-refresh-symbolic</property>
+                    <property name="tooltip-text" translatable="yes">Refresh</property>
                   </object>
                 </child>
                 <child type="end">
