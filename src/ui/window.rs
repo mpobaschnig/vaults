@@ -52,7 +52,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/com/github/mpobaschnig/Vaults/window.ui")]
+    #[template(resource = "/io/github/mpobaschnig/Vaults/window.ui")]
     pub struct ApplicationWindow {
         #[template_child]
         pub window_leaflet: TemplateChild<adw::Leaflet>,

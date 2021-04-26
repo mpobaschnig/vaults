@@ -40,7 +40,7 @@ mod imp {
     use super::*;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/com/github/mpobaschnig/Vaults/vaults_page_row.ui")]
+    #[template(resource = "/io/github/mpobaschnig/Vaults/vaults_page_row.ui")]
     pub struct VaultsPageRow {
         #[template_child]
         pub vaults_page_row: TemplateChild<adw::ActionRow>,

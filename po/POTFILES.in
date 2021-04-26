@@ -1,7 +1,7 @@
 # data/
-data/com.github.mpobaschnig.Vaults.desktop.in.in
-data/com.github.mpobaschnig.Vaults.gschema.xml.in
-data/com.github.mpobaschnig.Vaults.metainfo.xml.in.in
+data/io.github.mpobaschnig.Vaults.desktop.in.in
+data/io.github.mpobaschnig.Vaults.gschema.xml.in
+data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in
 
 # data/resources/ui/
 data/resources/ui/add_new_vault_dialog.ui
