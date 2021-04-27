@@ -11,11 +11,10 @@
         "--socket=fallback-x11",
         "--socket=wayland",
         "--device=dri",
-        "--talk-name=org.a11y.Bus",
         "--env=RUST_LOG=vaults=debug",
         "--env=G_MESSAGES_DEBUG=none",
         "--talk-name=org.freedesktop.Flatpak",
-        "--filesystem=xdg-config"
+        "--filesystem=host"
     ],
     "cleanup": [
         "/include",
@@ -23,50 +22,61 @@
     ],
     "build-options" : {
         "append-path" : "/usr/lib/sdk/rust-stable/bin",
-        "build-args" : [
-            "--share=network"
-        ],
-        "test-args" : [
-            "--socket=x11",
-            "--share=network"
-        ],
         "env" : {
             "RUST_BACKTRACE" : "1"
         }
     },
     "modules" : [
         {
-            "name" : "libadwaita",
-            "builddir" : true,
-            "buildsystem" : "meson",
-            "config-opts" : [
+            "name": "libsass",
+            "buildsystem": "meson",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/lazka/libsass.git",
+                    "commit": "302397c0c8ae2d7ab02f45ea461c2c3d768f248e"
+                }
+            ]
+        },
+        {
+            "name": "sassc",
+            "buildsystem": "meson",
+            "sources": [
+                {
+                    "type": "git",
+                    "url": "https://github.com/lazka/sassc.git",
+                    "commit": "82803377c33247265d779af034eceb5949e78354"
+                }
+            ]
+        },
+        {
+            "name": "libadwaita",
+            "builddir": true,
+            "buildsystem": "meson",
+            "config-opts": [
                 "-Dprofiling=false",
                 "-Dintrospection=enabled",
                 "-Dgtk_doc=false",
                 "-Dtests=false",
                 "-Dexamples=false",
-                "-Dvapi=false",
-                "-Dglade_catalog=disabled"
+                "-Dvapi=false"
             ],
-            "sources" : [
+            "sources": [
                 {
-                    "type" : "git",
-                    "url" : "https://gitlab.gnome.org/GNOME/libadwaita",
-                    "branch" : "main"
+                    "type": "git",
+                    "url": "https://gitlab.gnome.org/GNOME/libadwaita",
+                    "commit": "14d6e9d65497904e8f5977f57503732845ec4e46"
                 }
             ]
         },
         {
-            "name" : "vaults",
-            "buildsystem" : "meson",
-            "run-tests" : true,
-            "config-opts" : [
-                "-Dprofile=development"
-            ],
-            "sources" : [
+            "name": "vaults",
+            "buildsystem": "meson",
+            "sources": [
                 {
-                    "type" : "dir",
-                    "path" : "."
+                    "type": "git",
+                    "url": "https://github.com/mpobaschnig/Vaults",
+                    "commit": "802ddeae967c88befc904fb0cb42b225630b599b"
                 }
             ]
         }
