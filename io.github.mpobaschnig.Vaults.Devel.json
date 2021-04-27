@@ -15,7 +15,7 @@
         "--env=RUST_LOG=vaults=debug",
         "--env=G_MESSAGES_DEBUG=none",
         "--talk-name=org.freedesktop.Flatpak",
-        "--filesystem=host"
+        "--filesystem=xdg-config"
     ],
     "cleanup": [
         "/include",
