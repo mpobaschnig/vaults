@@ -1,11 +1,21 @@
-# Vaults
+<h1 align="center">
+  <img src="data/icons/io.github.mpobaschnig.Vaults.svg" alt="Vaults" width="128" height="128"/><br>
+  Vaults
+</h1>
 
-An application for creating encrypted vaults for the GNOME desktop.
+<p align="center"><strong>An application for creating encrypted vaults for the GNOME desktop.</strong></p>
+
+<p align="center">
+ <a href="https://flathub.org/apps/details/io.github.mpobaschnig.Vaults"><img width="200" alt="Download on Flathub" src="https://flathub.org/assets/badges/flathub-badge-en.png"/></a>
+</p>
+
+<p align="center">
+  <img src="data/resources/screenshots/vaults.png" alt="Main Window"/>
+</p>
+
 It currently uses [gocryptfs](https://github.com/rfjakob/gocryptfs) and [CryFS](https://github.com/cryfs/cryfs/) for encryption.
 
 Please always keep a backup of your encrypted files.
-
-![Vaults](/data/resources/screenshots/vaults.png)
 
 Note: This is an early release. It should work fine, however, UI might be inconsistent and is about to be polished in following releases.
 
