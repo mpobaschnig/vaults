@@ -21,9 +21,11 @@ Note: This is an early release. It should work fine, however, UI might be incons
 
 ## Dependencies
 
-- gocryptfs
-- CryFS
-- libfuse
+Since the Flatpak version is sandboxed, you need following components installed on your system:
+
+- [gocryptfs](https://github.com/rfjakob/gocryptfs)
+- [CryFS](https://github.com/cryfs/cryfs/)
+- [libfuse](https://github.com/libfuse/libfuse)
 
 ## How to build
 
