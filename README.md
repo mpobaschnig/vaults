@@ -9,8 +9,8 @@ Please always keep a backup of your encrypted files.
 
 ## Dependencies
 
-- Gocryptfs (optional)
-- CryFS (optional)
+- Gocryptfs
+- CryFS
 - libfuse
 
 ## How to build
