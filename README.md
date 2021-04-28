@@ -1,8 +1,17 @@
 # Vaults
 
 An application for creating encrypted vaults for the GNOME desktop.
+It currently uses [Gocryptfs](https://github.com/rfjakob/gocryptfs) and [CryFS](https://github.com/cryfs/cryfs/) for encryption.
+
+Please always keep a backup of your encrypted files.
 
 ![Vaults](/data/resources/screenshots/vaults.png)
+
+## Dependencies
+
+- Gocryptfs (optional)
+- CryFS (optional)
+- libfuse
 
 ## How to build
 
