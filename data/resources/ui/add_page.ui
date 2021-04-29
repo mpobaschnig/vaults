@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="AddPage" parent="AdwBin">
+    <child>
+      <object class="GtkScrolledWindow" id="scrolledwindow">
+        <property name="hscrollbar_policy">never</property>
+        <child>
+          <object class="GtkViewport">
+            <property name="vexpand">True</property>
+            <property name="hexpand">True</property>
+            <property name="scroll-to-focus">True</property>
+            <child>
+              <object class="AdwClamp">
+                <property name="maximum_size">1600</property>
+                <property name="margin_top">12</property>
+                <property name="margin_bottom">12</property>
+                <property name="margin_start">12</property>
+                <property name="margin_end">12</property>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

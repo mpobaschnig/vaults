@@ -29,7 +29,6 @@ use glib::{clone, GEnum, ParamSpec, ToValue};
 use gtk::subclass::prelude::*;
 use gtk::{self, prelude::*};
 use gtk::{gio, glib, CompositeTemplate};
-use gtk_macros::action;
 use log::*;
 use once_cell::sync::Lazy;
 use std::cell::RefCell;
@@ -38,6 +37,7 @@ use std::cell::RefCell;
 #[repr(u32)]
 #[genum(type_name = "VVView")]
 pub enum VView {
+    Add,
     Start,
     Vaults,
 }
@@ -57,12 +57,16 @@ mod imp {
         #[template_child]
         pub window_leaflet: TemplateChild<adw::Leaflet>,
         #[template_child]
+        pub add_page: TemplateChild<AddPage>,
+        #[template_child]
         pub start_page: TemplateChild<VStartPage>,
         #[template_child]
         pub vaults_page: TemplateChild<VVaultsPage>,
 
         #[template_child]
         pub headerbar: TemplateChild<adw::HeaderBar>,
+        #[template_child]
+        pub add_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub refresh_button: TemplateChild<gtk::Button>,
 
@@ -80,9 +84,11 @@ mod imp {
         fn new() -> Self {
             Self {
                 window_leaflet: TemplateChild::default(),
+                add_page: TemplateChild::default(),
                 start_page: TemplateChild::default(),
                 vaults_page: TemplateChild::default(),
                 headerbar: TemplateChild::default(),
+                add_button: TemplateChild::default(),
                 refresh_button: TemplateChild::default(),
                 settings: gio::Settings::new(APP_ID),
                 view: RefCell::new(VView::Start),
@@ -109,7 +115,6 @@ mod imp {
             self.vaults_page.init();
 
             obj.setup_connect_handlers();
-            obj.setup_gactions();
         }
 
         fn properties() -> &'static [ParamSpec] {
@@ -191,28 +196,16 @@ impl ApplicationWindow {
         let self_ = imp::ApplicationWindow::from_instance(self);
 
         self_
+            .add_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.set_view(VView::Add);
+            }));
+
+        self_
             .refresh_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.refresh_button_clicked();
             }));
-    }
-
-    fn setup_gactions(&self) {
-        action!(
-            self,
-            "add_new_vault",
-            clone!(@weak self as obj => move |_, _| {
-                obj.add_new_vault_clicked();
-            })
-        );
-
-        action!(
-            self,
-            "import_vault",
-            clone!(@weak self as obj => move |_, _| {
-                obj.import_vault_clicked();
-            })
-        );
     }
 
     fn add_new_vault_clicked(&self) {
@@ -304,6 +297,11 @@ impl ApplicationWindow {
         debug!("Set view to {:?}", view);
 
         match view {
+            VView::Add => {
+                self_
+                    .window_leaflet
+                    .set_visible_child(&self_.add_page.get());
+            }
             VView::Start => {
                 self_
                     .window_leaflet

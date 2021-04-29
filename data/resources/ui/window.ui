@@ -16,10 +16,9 @@
             <child>
               <object class="AdwHeaderBar" id="headerbar">
                 <child>
-                  <object class="GtkMenuButton" id="add_menu_button">
+                  <object class="GtkButton" id="add_button">
                     <property name="icon_name">list-add-symbolic</property>
                     <property name="tooltip-text" translatable="yes">Add or Import New Vault</property>
-                    <property name="menu_model">add_menu</property>
                   </object>
                 </child>
                 <child>
@@ -54,6 +53,9 @@
                       <object class="AdwLeaflet" id="window_leaflet">
                         <property name="can_unfold">False</property>
                         <property name="hexpand">True</property>
+                        <child>
+                          <object class="AddPage" id="add_page"/>
+                        </child>
                         <child>
                           <object class="VStartPage" id="start_page"/>
                         </child>

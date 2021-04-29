@@ -24,6 +24,7 @@ sources = files(
   'backend/mod.rs',
 
   'ui/pages/mod.rs',
+  'ui/pages/add_page.rs',
   'ui/pages/start_page.rs',
   'ui/pages/vaults_page.rs',
   'ui/pages/vaults_page_row.rs',
