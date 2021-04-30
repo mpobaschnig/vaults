@@ -263,6 +263,8 @@ impl ApplicationWindow {
 
         if !UserConnfigManager::instance().get_map().is_empty() {
             object.set_view(VView::Vaults);
+        } else {
+            object.set_view(VView::Start);
         }
 
         let self_ = imp::ApplicationWindow::from_instance(&object);
