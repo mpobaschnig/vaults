@@ -143,7 +143,8 @@ impl UserConnfigManager {
                 log::debug!("Got user data dir: {}", user_data_directory);
 
                 let self_ = &mut imp::UserConnfigManager::from_instance(&object);
-                *self_.user_data_directory.borrow_mut() = Some(user_data_directory.to_owned());
+                *self_.user_data_directory.borrow_mut() =
+                    Some(user_data_directory.to_owned() + "/");
             }
             None => {
                 log::error!("Could not get user data directory");
@@ -284,5 +285,10 @@ impl UserConnfigManager {
                 log::error!("Vault(s) not initialised!");
             }
         }
+    }
+
+    pub fn get_user_data_dir(&self) -> Option<String> {
+        let self_ = &mut imp::UserConnfigManager::from_instance(&self);
+        self_.user_data_directory.borrow().clone()
     }
 }
