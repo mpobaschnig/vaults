@@ -308,7 +308,11 @@ impl ApplicationWindow {
                     .add_button
                     .set_tooltip_text(Some(&gettext("Add or Import New Vault")));
                 self_.refresh_button.set_visible(true);
-                self.set_view(VView::Vaults);
+                if UserConnfigManager::instance().get_map().is_empty() {
+                    self.set_view(VView::Start);
+                } else {
+                    self.set_view(VView::Vaults);
+                }
             }
             _ => {
                 self_.add_button.set_icon_name(&"go-previous-symbolic");
