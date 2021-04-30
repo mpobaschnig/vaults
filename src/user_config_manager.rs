@@ -20,7 +20,7 @@
 use crate::vault::*;
 use gtk::{
     gio::subclass::prelude::*,
-    glib::{self, get_user_config_dir, prelude::*, subclass::Signal},
+    glib::{self, get_user_config_dir, get_user_data_dir, prelude::*, subclass::Signal},
 };
 use once_cell::sync::Lazy;
 use std::{cell::RefCell, collections::HashMap};
@@ -35,6 +35,7 @@ mod imp {
     pub struct UserConnfigManager {
         pub vaults: RefCell<HashMap<String, VaultConfig>>,
         pub user_config_directory: RefCell<Option<String>>,
+        pub user_data_directory: RefCell<Option<String>>,
 
         pub current_vault: RefCell<Option<Vault>>,
     }
@@ -49,6 +50,7 @@ mod imp {
             Self {
                 vaults: RefCell::new(HashMap::new()),
                 user_config_directory: RefCell::new(None),
+                user_data_directory: RefCell::new(None),
                 current_vault: RefCell::new(None),
             }
         }
@@ -130,6 +132,18 @@ impl UserConnfigManager {
                 let self_ = &mut imp::UserConnfigManager::from_instance(&object);
                 *self_.user_config_directory.borrow_mut() =
                     Some(user_config_directory.to_owned() + "/user_config.toml");
+            }
+            None => {
+                log::error!("Could not get user data directory");
+            }
+        }
+
+        match get_user_data_dir().as_os_str().to_str() {
+            Some(user_data_directory) => {
+                log::debug!("Got user data dir: {}", user_data_directory);
+
+                let self_ = &mut imp::UserConnfigManager::from_instance(&object);
+                *self_.user_data_directory.borrow_mut() = Some(user_data_directory.to_owned());
             }
             None => {
                 log::error!("Could not get user data directory");
