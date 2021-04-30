@@ -33,7 +33,6 @@ use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use std::cell::RefCell;
 use std::str::FromStr;
-use strum::IntoEnumIterator;
 
 mod imp {
     use super::*;
@@ -139,11 +138,7 @@ mod imp {
 
             let obj_ = imp::AddPage::from_instance(&obj);
 
-            for backend in Backend::iter() {
-                let backend = backend.to_string();
-                obj_.backend_type_combo_box_text.append_text(&backend);
-            }
-            obj_.backend_type_combo_box_text.set_active(Some(1));
+            obj.setup_combo_box();
 
             obj_.add_new_vault_action_row
                 .connect_activated(clone!(@weak obj => move |_| {
@@ -244,7 +239,6 @@ impl AddPage {
         let self_ = imp::AddPage::from_instance(self);
 
         self_.vault_name_entry.set_text("");
-        self.setup_combo_box();
         self_.password_entry.set_text("");
         self_.confirm_password_entry.set_text("");
         self_.encrypted_data_directory_entry.set_text("");

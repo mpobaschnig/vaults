@@ -133,8 +133,6 @@ mod imp {
 
                     spinner.start();
 
-                    obj.set_view(VView::Vaults);
-
                     enum Message {
                         Finished,
                         Error(BackendError),
@@ -160,6 +158,7 @@ mod imp {
                             Message::Finished => {
                                 add_button.set_icon_name(&"list-add-symbolic");
                                 UserConnfigManager::instance().add_vault(vault);
+                                obj.set_view(VView::Vaults);
                             }
                             Message::Error(e) => {
                                 add_button.set_icon_name(&"list-add-symbolic");
