@@ -34,7 +34,7 @@ mod imp {
     #[derive(Debug)]
     pub struct UserConnfigManager {
         pub vaults: RefCell<HashMap<String, VaultConfig>>,
-        pub user_data_directory: RefCell<Option<String>>,
+        pub user_config_directory: RefCell<Option<String>>,
 
         pub current_vault: RefCell<Option<Vault>>,
     }
@@ -48,7 +48,7 @@ mod imp {
         fn new() -> Self {
             Self {
                 vaults: RefCell::new(HashMap::new()),
-                user_data_directory: RefCell::new(None),
+                user_config_directory: RefCell::new(None),
                 current_vault: RefCell::new(None),
             }
         }
@@ -124,12 +124,12 @@ impl UserConnfigManager {
         let object: Self = glib::Object::new(&[]).expect("Failed to create UserConnfigManager");
 
         match get_user_config_dir().as_os_str().to_str() {
-            Some(user_data_directory) => {
-                log::debug!("Got user config dir: {}", user_data_directory);
+            Some(user_config_directory) => {
+                log::debug!("Got user config dir: {}", user_config_directory);
 
                 let self_ = &mut imp::UserConnfigManager::from_instance(&object);
-                *self_.user_data_directory.borrow_mut() =
-                    Some(user_data_directory.to_owned() + "/user_config.toml");
+                *self_.user_config_directory.borrow_mut() =
+                    Some(user_config_directory.to_owned() + "/user_config.toml");
             }
             None => {
                 log::error!("Could not get user data directory");
@@ -148,7 +148,7 @@ impl UserConnfigManager {
     pub fn read_config(&self) {
         let self_ = &mut imp::UserConnfigManager::from_instance(&self);
 
-        if let Some(path) = self_.user_data_directory.borrow().as_ref() {
+        if let Some(path) = self_.user_config_directory.borrow().as_ref() {
             let map = &mut *self_.vaults.borrow_mut();
 
             map.clear();
@@ -177,7 +177,7 @@ impl UserConnfigManager {
     pub fn write_config(&self, map: &mut HashMap<String, VaultConfig>) {
         let self_ = &mut imp::UserConnfigManager::from_instance(&self);
 
-        if let Some(path) = self_.user_data_directory.borrow().as_ref() {
+        if let Some(path) = self_.user_config_directory.borrow().as_ref() {
             match toml::to_string_pretty(&map) {
                 Ok(contents) => match std::fs::write(path, &contents) {
                     Ok(_) => {
