@@ -308,4 +308,9 @@ impl UserConnfigManager {
         let self_ = &mut imp::UserConnfigManager::from_instance(&self);
         self_.user_data_directory.borrow().clone()
     }
+
+    pub fn get_vaults_home(&self) -> Option<String> {
+        let self_ = &mut imp::UserConnfigManager::from_instance(&self);
+        self_.vaults_home.borrow().clone()
+    }
 }
