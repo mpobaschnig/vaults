@@ -18,13 +18,13 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::config::{APP_ID, PROFILE};
+use crate::password_manager::PasswordManager;
 use crate::ui::pages::*;
-use crate::ui::{AddNewVaultDialog, ImportVaultDialog};
 use crate::{
-    application::VApplication, backend, backend::Backend, user_config_manager::UserConnfigManager,
+    application::VApplication, backend, backend::*, user_config_manager::UserConnfigManager,
 };
-
 use adw::subclass::prelude::*;
+use gettextrs::gettext;
 use glib::{clone, GEnum, ParamSpec, ToValue};
 use gtk::subclass::prelude::*;
 use gtk::{self, prelude::*};
@@ -70,6 +70,8 @@ mod imp {
         #[template_child]
         pub refresh_button: TemplateChild<gtk::Button>,
 
+        pub spinner: RefCell<gtk::Spinner>,
+
         pub settings: gio::Settings,
 
         pub view: RefCell<VView>,
@@ -90,6 +92,7 @@ mod imp {
                 headerbar: TemplateChild::default(),
                 add_button: TemplateChild::default(),
                 refresh_button: TemplateChild::default(),
+                spinner: RefCell::new(gtk::Spinner::new()),
                 settings: gio::Settings::new(APP_ID),
                 view: RefCell::new(VView::Start),
             }
@@ -112,7 +115,87 @@ mod imp {
                 obj.get_style_context().add_class("devel");
             }
 
+            self.add_page.init();
             self.vaults_page.init();
+
+            self.add_page
+                .connect_add_import(clone!(@weak obj => move || {
+                    let self_ = imp::ApplicationWindow::from_instance(&obj);
+
+                    let vault = UserConnfigManager::instance().get_current_vault().unwrap();
+                    let password = PasswordManager::instance().get_current_password().unwrap();
+                    PasswordManager::instance().clear_current_pssword();
+                    let vault_config = vault.get_config().clone().unwrap();
+
+                    *self_.spinner.borrow_mut() = gtk::Spinner::new();
+                    let spinner = self_.spinner.borrow().clone();
+                    self_.add_button.set_child(Some(&spinner));
+
+                    spinner.start();
+
+                    obj.set_view(VView::Vaults);
+
+                    enum Message {
+                        Finished,
+                        Error(BackendError),
+                    }
+
+                    let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+                    std::thread::spawn(move || match Backend::init(&vault_config, password) {
+                        Ok(_) => {
+                            let _ = sender.send(Message::Finished);
+                            std::thread::sleep(std::time::Duration::from_secs(2));
+                        }
+                        Err(e) => {
+                            let _ = sender.send(Message::Error(e));
+                            std::thread::sleep(std::time::Duration::from_secs(2));
+                        }
+                    });
+
+                    let add_button = self_.add_button.clone();
+                    let refresh_button = self_.refresh_button.clone();
+                    receiver.attach(None, move |message| {
+                        let vault = UserConnfigManager::instance().get_current_vault().unwrap();
+                        match message {
+                            Message::Finished => {
+                                add_button.set_icon_name(&"list-add-symbolic");
+                                UserConnfigManager::instance().add_vault(vault);
+                            }
+                            Message::Error(e) => {
+                                add_button.set_icon_name(&"list-add-symbolic");
+                                gtk::glib::MainContext::default().spawn_local(async move {
+                                    let window = gtk::gio::Application::get_default()
+                                        .unwrap()
+                                        .downcast_ref::<VApplication>()
+                                        .unwrap()
+                                        .get_active_window()
+                                        .unwrap()
+                                        .clone();
+                                    let info_dialog = gtk::MessageDialogBuilder::new()
+                                        .message_type(gtk::MessageType::Error)
+                                        .transient_for(&window)
+                                        .modal(true)
+                                        .buttons(gtk::ButtonsType::Close)
+                                        .text(&vault.get_name().unwrap())
+                                        .secondary_text(&format!("{}", e))
+                                        .build();
+
+                                    info_dialog.run_future().await;
+                                    info_dialog.close();
+                                });
+                            }
+                        }
+
+                        refresh_button.set_sensitive(true);
+                        refresh_button.set_visible(true);
+                        add_button.set_icon_name(&"list-add-symbolic");
+                        add_button.set_tooltip_text(Some(&gettext("Add or Import New Vault")));
+
+                        spinner.stop();
+
+                        glib::Continue(true)
+                    });
+                }));
 
             obj.setup_connect_handlers();
         }
@@ -170,6 +253,8 @@ glib::wrapper! {
 }
 
 impl ApplicationWindow {
+    pub fn window_connect_add_import(&self) {}
+
     pub fn new(app: &VApplication) -> Self {
         let object: Self = glib::Object::new(&[]).expect("Failed to create ApplicationWindow");
         object.set_application(Some(app));
@@ -198,7 +283,7 @@ impl ApplicationWindow {
         self_
             .add_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.set_view(VView::Add);
+                obj.add_button_clicked();
             }));
 
         self_
@@ -208,69 +293,30 @@ impl ApplicationWindow {
             }));
     }
 
-    fn add_new_vault_clicked(&self) {
-        backend::probe_backends();
+    fn add_button_clicked(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
 
-        let dialog = AddNewVaultDialog::new();
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, id|
-            if id == gtk::ResponseType::Ok {
-                let vault = dialog.get_vault();
-                let password = dialog.get_password();
-                match Backend::init(&vault.get_config().unwrap(), password) {
-                    Ok(_) => {
-                        UserConnfigManager::instance().add_vault(vault);
-                        obj.set_view(VView::Vaults);
-                    }
-                    Err(e) => {
-                        log::error!("Could not init vault: {}", e);
-                        gtk::glib::MainContext::default().spawn_local(async move {
-                            let window = gtk::gio::Application::get_default()
-                                .unwrap()
-                                .downcast_ref::<VApplication>()
-                                .unwrap()
-                                .get_active_window()
-                                .unwrap()
-                                .clone();
-                            let info_dialog = gtk::MessageDialogBuilder::new()
-                                .message_type(gtk::MessageType::Error)
-                                .transient_for(&window)
-                                .modal(true)
-                                .buttons(gtk::ButtonsType::Close)
-                                .text(&vault.get_name().unwrap())
-                                .secondary_text(&format!("{}", e))
-                                .build();
+        if self_.spinner.borrow().get_spinning() {
+            return;
+        }
 
-                            info_dialog.run_future().await;
-                            info_dialog.close();
-                        });
-                    }
-                }
-            }
-
-            dialog.destroy();
-        ));
-
-        dialog.show();
-    }
-
-    fn import_vault_clicked(&self) {
-        let dialog = ImportVaultDialog::new();
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, id| match id {
-            gtk::ResponseType::Ok => {
-                let vault = dialog.get_vault();
-
-                UserConnfigManager::instance().add_vault(vault);
-
-                obj.set_view(VView::Vaults);
-
-                dialog.destroy();
+        match self.get_view().unwrap() {
+            VView::Add => {
+                self_.add_button.set_icon_name(&"list-add-symbolic");
+                self_
+                    .add_button
+                    .set_tooltip_text(Some(&gettext("Add or Import New Vault")));
+                self_.refresh_button.set_visible(true);
+                self.set_view(VView::Vaults);
             }
             _ => {
-                dialog.destroy();
+                self_.add_button.set_icon_name(&"go-previous-symbolic");
+                self_.add_button.set_tooltip_text(Some(&gettext("Go Back")));
+                self_.refresh_button.set_visible(false);
+                self_.add_page.init();
+                self.set_view(VView::Add);
             }
-        }));
-
-        dialog.show();
+        }
     }
 
     fn refresh_button_clicked(&self) {
@@ -317,5 +363,9 @@ impl ApplicationWindow {
 
     pub fn set_view(&self, view: VView) {
         self.set_property("view", &view).unwrap()
+    }
+
+    pub fn get_view(&self) -> Option<VView> {
+        self.get_property("view").unwrap().get().unwrap()
     }
 }

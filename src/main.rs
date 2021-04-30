@@ -20,6 +20,7 @@
 mod application;
 #[rustfmt::skip]
 mod config;
+mod password_manager;
 mod user_config_manager;
 mod vault;
 

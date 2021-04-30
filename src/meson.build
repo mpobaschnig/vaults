@@ -39,6 +39,7 @@ sources = files(
   'application.rs',
   'config.rs',
   'main.rs',
+  'password_manager.rs',
   'vault.rs',
   'user_config_manager.rs',
 )

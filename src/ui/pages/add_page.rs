@@ -17,19 +17,76 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use adw::subclass::prelude::*;
-use glib::subclass;
+use crate::backend::*;
+use crate::password_manager::PasswordManager;
+use crate::user_config_manager::UserConnfigManager;
+use crate::vault::*;
+use adw::{subclass::prelude::*, ActionRowExt};
+use gettextrs::gettext;
+use glib::clone;
+use glib::once_cell::sync::Lazy;
 use gtk::glib;
+use gtk::glib::subclass::Signal;
+use gtk::glib::GString;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
+use std::cell::RefCell;
+use std::str::FromStr;
+use strum::IntoEnumIterator;
 
 mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/io/github/mpobaschnig/Vaults/add_page.ui")]
-    pub struct AddPage {}
+    pub struct AddPage {
+        #[template_child]
+        pub carousel: TemplateChild<adw::Carousel>,
+        #[template_child]
+        pub add_new_vault_action_row: TemplateChild<adw::ActionRow>,
+        #[template_child]
+        pub import_new_vault_action_row: TemplateChild<adw::ActionRow>,
+        #[template_child]
+        pub vault_name_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub backend_type_combo_box_text: TemplateChild<gtk::ComboBoxText>,
+        #[template_child]
+        pub backend_type_info_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub password_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub password_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub confirm_password_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub confirm_password_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub previous_button_p_2: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub next_button_p_2: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub encrypted_data_directory_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub mount_directory_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub mount_directory_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub info_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub previous_button_p_3: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub add_import_button: TemplateChild<gtk::Button>,
+
+        pub is_add_new_vault: RefCell<Option<bool>>,
+        pub name: RefCell<Option<String>>,
+        pub backend_type: RefCell<Option<Backend>>,
+        pub password: RefCell<Option<String>>,
+        pub encrypted_data_directory: RefCell<Option<String>>,
+        pub mount_directory: RefCell<Option<String>>,
+    }
 
     #[glib::object_subclass]
     impl ObjectSubclass for AddPage {
@@ -37,16 +94,126 @@ mod imp {
         type ParentType = adw::Bin;
         type Type = super::AddPage;
 
+        fn new() -> Self {
+            Self {
+                carousel: TemplateChild::default(),
+                add_new_vault_action_row: TemplateChild::default(),
+                import_new_vault_action_row: TemplateChild::default(),
+                vault_name_entry: TemplateChild::default(),
+                backend_type_combo_box_text: TemplateChild::default(),
+                backend_type_info_button: TemplateChild::default(),
+                password_label: TemplateChild::default(),
+                password_entry: TemplateChild::default(),
+                confirm_password_label: TemplateChild::default(),
+                confirm_password_entry: TemplateChild::default(),
+                previous_button_p_2: TemplateChild::default(),
+                next_button_p_2: TemplateChild::default(),
+                encrypted_data_directory_entry: TemplateChild::default(),
+                encrypted_data_directory_button: TemplateChild::default(),
+                mount_directory_entry: TemplateChild::default(),
+                mount_directory_button: TemplateChild::default(),
+                info_label: TemplateChild::default(),
+                previous_button_p_3: TemplateChild::default(),
+                add_import_button: TemplateChild::default(),
+                is_add_new_vault: RefCell::new(None),
+                name: RefCell::new(None),
+                backend_type: RefCell::new(None),
+                password: RefCell::new(None),
+                encrypted_data_directory: RefCell::new(None),
+                mount_directory: RefCell::new(None),
+            }
+        }
+
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
         }
 
-        fn instance_init(obj: &subclass::InitializingObject<Self>) {
+        fn instance_init(obj: &glib::subclass::InitializingObject<Self>) {
             obj.init_template();
         }
     }
 
-    impl ObjectImpl for AddPage {}
+    impl ObjectImpl for AddPage {
+        fn constructed(&self, obj: &Self::Type) {
+            self.parent_constructed(obj);
+
+            let obj_ = imp::AddPage::from_instance(&obj);
+
+            for backend in Backend::iter() {
+                let backend = backend.to_string();
+                obj_.backend_type_combo_box_text.append_text(&backend);
+            }
+            obj_.backend_type_combo_box_text.set_active(Some(1));
+
+            obj_.add_new_vault_action_row
+                .connect_activated(clone!(@weak obj => move |_| {
+                    obj.add_new_vault_action_row_clicked();
+                }));
+
+            obj_.import_new_vault_action_row
+                .connect_activated(clone!(@weak obj => move |_| {
+                    obj.import_new_vault_action_row_clicked();
+                }));
+
+            obj_.previous_button_p_2
+                .connect_clicked(clone!(@weak obj => move |_| {
+                    obj.previous_button_p_2_clicked();
+                }));
+
+            obj_.next_button_p_2
+                .connect_clicked(clone!(@weak obj => move |_| {
+                    obj.next_button_p_2_clicked();
+                }));
+
+            obj_.vault_name_entry
+                .connect_property_text_notify(clone!(@weak obj => move |_| {
+                    obj.check_next_button_p_2_enable();
+                }));
+
+            obj_.backend_type_combo_box_text
+                .connect_changed(clone!(@weak obj => move |_| {
+                    obj.check_next_button_p_2_enable();
+                }));
+
+            obj_.password_entry
+                .connect_property_text_notify(clone!(@weak obj => move |_| {
+                    obj.check_next_button_p_2_enable();
+                }));
+
+            obj_.confirm_password_entry.connect_property_text_notify(
+                clone!(@weak obj => move |_| {
+                    obj.check_next_button_p_2_enable();
+                }),
+            );
+
+            obj_.previous_button_p_3
+                .connect_clicked(clone!(@weak obj => move |_| {
+                    obj.previous_button_p_3_clicked();
+                }));
+
+            obj_.encrypted_data_directory_entry
+                .connect_property_text_notify(clone!(@weak obj => move |_| {
+                    obj.check_add_import_button_enable();
+                }));
+
+            obj_.mount_directory_entry
+                .connect_property_text_notify(clone!(@weak obj => move |_| {
+                    obj.check_add_import_button_enable();
+                }));
+
+            obj_.add_import_button
+                .connect_clicked(clone!(@weak obj => move |_| {
+                    obj.add_import_button_clicked();
+                }));
+        }
+
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
+                vec![Signal::builder("add-import", &[], glib::Type::UNIT.into()).build()]
+            });
+            SIGNALS.as_ref()
+        }
+    }
 
     impl WidgetImpl for AddPage {}
 
@@ -59,5 +226,374 @@ glib::wrapper! {
 }
 
 impl AddPage {
-    pub fn init(&self) {}
+    pub fn connect_add_import<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
+        self.connect_local("add-import", false, move |_| {
+            callback();
+            None
+        })
+        .unwrap()
+    }
+
+    pub fn new() -> Self {
+        let page: Self = glib::Object::new(&[]).expect("Failed to create AddPage");
+
+        page
+    }
+
+    pub fn init(&self) {
+        let self_ = imp::AddPage::from_instance(self);
+
+        self_.vault_name_entry.set_text("");
+        self.setup_combo_box();
+        self_.password_entry.set_text("");
+        self_.confirm_password_entry.set_text("");
+        self_.encrypted_data_directory_entry.set_text("");
+        self_.mount_directory_entry.set_text("");
+        self_.info_label.set_text("");
+
+        self_.next_button_p_2.set_sensitive(false);
+        self_.add_import_button.set_sensitive(false);
+
+        self_
+            .carousel
+            .scroll_to(&self_.carousel.get_nth_page(0).unwrap());
+    }
+
+    fn setup_combo_box(&self) {
+        let self_ = imp::AddPage::from_instance(self);
+
+        let combo_box_text = &self_.backend_type_combo_box_text;
+
+        if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
+            let mut gocryptfs_index: Option<u32> = None;
+
+            for (i, backend) in available_backends.iter().enumerate() {
+                if backend.eq("Gocryptfs") {
+                    gocryptfs_index = Some(i as u32);
+                }
+
+                combo_box_text.append_text(backend);
+            }
+
+            if !available_backends.is_empty() {
+                if let Some(index) = gocryptfs_index {
+                    combo_box_text.set_active(Some(index));
+                } else {
+                    combo_box_text.set_active(Some(0));
+                }
+            }
+        }
+    }
+
+    fn add_new_vault_action_row_clicked(&self) {
+        let self_ = imp::AddPage::from_instance(&self);
+
+        self_.is_add_new_vault.borrow_mut().replace(true);
+        self_.password_label.set_visible(true);
+        self_.password_entry.set_visible(true);
+        self_.confirm_password_label.set_visible(true);
+        self_.confirm_password_entry.set_visible(true);
+        self_.add_import_button.set_label(&gettext("Add"));
+        self_
+            .carousel
+            .scroll_to(&self_.carousel.get_nth_page(1).unwrap());
+    }
+
+    fn import_new_vault_action_row_clicked(&self) {
+        let self_ = imp::AddPage::from_instance(&self);
+
+        self_.is_add_new_vault.borrow_mut().replace(false);
+        self_.password_label.set_visible(false);
+        self_.password_entry.set_visible(false);
+        self_.confirm_password_label.set_visible(false);
+        self_.confirm_password_entry.set_visible(false);
+        self_.add_import_button.set_label(&gettext("Import"));
+        self_
+            .carousel
+            .scroll_to(&self_.carousel.get_nth_page(1).unwrap());
+    }
+
+    fn previous_button_p_2_clicked(&self) {
+        let self_ = imp::AddPage::from_instance(&self);
+        self_
+            .carousel
+            .scroll_to(&self_.carousel.get_nth_page(0).unwrap());
+    }
+
+    fn next_button_p_2_clicked(&self) {
+        let self_ = imp::AddPage::from_instance(&self);
+
+        self_
+            .name
+            .borrow_mut()
+            .replace(self_.vault_name_entry.get_text().to_string());
+
+        if let Some(user_data_directory) = UserConnfigManager::instance().get_user_data_dir() {
+            let mut path = String::from(user_data_directory);
+            path.push_str(&self_.name.borrow().as_ref().unwrap());
+            self_.encrypted_data_directory_entry.set_text(&path);
+        }
+
+        if let Some(vaults_home) = UserConnfigManager::instance().get_vaults_home() {
+            let mut path = String::from(vaults_home);
+            path.push_str(&self_.name.borrow().as_ref().unwrap());
+            self_.mount_directory_entry.set_text(&path);
+        }
+
+        self_
+            .carousel
+            .scroll_to(&self_.carousel.get_nth_page(2).unwrap());
+    }
+
+    fn previous_button_p_3_clicked(&self) {
+        let self_ = imp::AddPage::from_instance(&self);
+        self_
+            .carousel
+            .scroll_to(&self_.carousel.get_nth_page(1).unwrap());
+    }
+
+    fn add_import_button_clicked(&self) {
+        let self_ = imp::AddPage::from_instance(&self);
+
+        let vault = Vault::new(
+            String::from(self_.vault_name_entry.get_text().as_str()),
+            Backend::from_str(
+                self_
+                    .backend_type_combo_box_text
+                    .get_active_text()
+                    .unwrap()
+                    .as_str(),
+            )
+            .unwrap(),
+            String::from(self_.encrypted_data_directory_entry.get_text().as_str()),
+            String::from(self_.mount_directory_entry.get_text().as_str()),
+        );
+        let password = String::from(self_.password_entry.get_text().as_str());
+
+        if let Err(e) = std::fs::create_dir_all(std::path::Path::new(
+            &vault.get_config().unwrap().encrypted_data_directory,
+        )) {
+            log::error!("Could not create directories: {}", e);
+        };
+        if let Err(e) = std::fs::create_dir_all(std::path::Path::new(
+            &vault.get_config().unwrap().mount_directory,
+        )) {
+            log::error!("Could not create directories: {}", e);
+        };
+
+        UserConnfigManager::instance().set_current_vault(vault);
+        PasswordManager::instance().set_current_password(password);
+
+        self.emit_by_name("add-import", &[]).unwrap();
+    }
+
+    fn is_valid_vault_name(&self, vault_name: GString) -> bool {
+        let self_ = imp::AddPage::from_instance(self);
+
+        if vault_name.is_empty() {
+            self_
+                .info_label
+                .set_text(&gettext("Vault name is not valid."));
+            false
+        } else {
+            true
+        }
+    }
+
+    fn is_different_vault_name(&self, vault_name: GString) -> bool {
+        let self_ = imp::AddPage::from_instance(self);
+
+        let is_duplicate_name = UserConnfigManager::instance()
+            .get_map()
+            .contains_key(&vault_name.to_string());
+        if !vault_name.is_empty() && is_duplicate_name {
+            self_
+                .info_label
+                .set_text(&gettext("Vault name already exists."));
+            false
+        } else {
+            true
+        }
+    }
+
+    fn are_passwords_empty(&self, password: &GString, confirm_password: &GString) -> bool {
+        let self_ = imp::AddPage::from_instance(self);
+
+        if password.is_empty() && confirm_password.is_empty() {
+            self_.info_label.set_text(&gettext("Password is empty."));
+            true
+        } else {
+            false
+        }
+    }
+
+    fn are_passwords_equal(&self, password: &GString, confirm_password: &GString) -> bool {
+        let self_ = imp::AddPage::from_instance(self);
+
+        if password.eq(confirm_password) {
+            true
+        } else {
+            self_
+                .info_label
+                .set_text(&gettext("Passwords are not equal."));
+            false
+        }
+    }
+
+    fn check_next_button_p_2_enable(&self) {
+        let self_ = imp::AddPage::from_instance(&self);
+
+        self_.info_label.set_text("");
+        self_.next_button_p_2.set_sensitive(false);
+
+        let vault_name = self_.vault_name_entry.get_text();
+        let password = self_.password_entry.get_text();
+        let confirm_password = self_.confirm_password_entry.get_text();
+
+        let is_valid_vault_name = self.is_valid_vault_name(vault_name.clone());
+        if !is_valid_vault_name {
+            return;
+        }
+
+        let is_different_vault_name = self.is_different_vault_name(vault_name);
+        if !is_different_vault_name {
+            return;
+        }
+
+        let are_passwords_empty = self.are_passwords_empty(&password, &confirm_password);
+        if are_passwords_empty {
+            return;
+        }
+
+        let are_passwords_equal = if !are_passwords_empty {
+            self.are_passwords_equal(&password, &confirm_password)
+        } else {
+            false
+        };
+        if !are_passwords_equal {
+            return;
+        }
+
+        self_.next_button_p_2.set_sensitive(true);
+    }
+
+    fn is_path_empty(&self, path: &GString) -> Result<bool, std::io::Error> {
+        match std::fs::read_dir(path.to_string()) {
+            Ok(dir) => {
+                if dir.count() > 0 {
+                    Ok(false)
+                } else {
+                    Ok(true)
+                }
+            }
+            Err(e) => {
+                log::debug!("Could not read path {}: {}", path, e);
+                Err(e)
+            }
+        }
+    }
+
+    fn is_encrypted_data_directory_valid(&self, encrypted_data_directory: &GString) -> bool {
+        let self_ = imp::AddPage::from_instance(self);
+
+        if !std::path::Path::exists(std::path::Path::new(encrypted_data_directory)) {
+            return true;
+        }
+
+        match self.is_path_empty(encrypted_data_directory) {
+            Ok(is_empty) => {
+                if is_empty {
+                    true
+                } else {
+                    self_
+                        .info_label
+                        .set_text(&gettext("Encrypted data directory is not empty."));
+                    false
+                }
+            }
+            Err(_) => {
+                self_
+                    .info_label
+                    .set_text(&gettext("Encrypted data directory is not valid."));
+                false
+            }
+        }
+    }
+
+    fn is_mount_directory_valid(&self, mount_directory: &GString) -> bool {
+        let self_ = imp::AddPage::from_instance(self);
+
+        if !std::path::Path::exists(std::path::Path::new(mount_directory)) {
+            return true;
+        }
+
+        match self.is_path_empty(mount_directory) {
+            Ok(is_empty) => {
+                if is_empty {
+                    true
+                } else {
+                    self_
+                        .info_label
+                        .set_text(&gettext("Mount directory is not empty."));
+                    false
+                }
+            }
+            Err(_) => {
+                self_
+                    .info_label
+                    .set_text(&gettext("Mount directory is not valid."));
+                false
+            }
+        }
+    }
+
+    fn are_directories_different(
+        &self,
+        encrypted_data_directory: &GString,
+        mount_directory: &GString,
+    ) -> bool {
+        let self_ = imp::AddPage::from_instance(self);
+
+        if encrypted_data_directory.eq(mount_directory) {
+            self_
+                .info_label
+                .set_text(&gettext("Directories must be different."));
+            false
+        } else {
+            true
+        }
+    }
+
+    fn check_add_import_button_enable(&self) {
+        let self_ = imp::AddPage::from_instance(&self);
+
+        self_.info_label.set_text("");
+        self_.add_import_button.set_sensitive(false);
+
+        let encrypted_data_directory = self_.encrypted_data_directory_entry.get_text();
+        let mount_directory = self_.mount_directory_entry.get_text();
+
+        let is_encrypted_data_directory_valid =
+            self.is_encrypted_data_directory_valid(&encrypted_data_directory);
+        if !is_encrypted_data_directory_valid {
+            return;
+        }
+
+        let is_mount_directory_valid = self.is_mount_directory_valid(&mount_directory);
+        if !is_mount_directory_valid {
+            return;
+        }
+
+        let are_directories_different =
+            if is_encrypted_data_directory_valid && is_mount_directory_valid {
+                self.are_directories_different(&encrypted_data_directory, &mount_directory)
+            } else {
+                false
+            };
+        if !are_directories_different {
+            return;
+        }
+
+        self_.add_import_button.set_sensitive(true);
+    }
 }
