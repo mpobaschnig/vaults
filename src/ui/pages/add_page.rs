@@ -538,28 +538,53 @@ impl AddPage {
     fn is_encrypted_data_directory_valid(&self, encrypted_data_directory: &GString) -> bool {
         let self_ = imp::AddPage::from_instance(self);
 
-        if !std::path::Path::exists(std::path::Path::new(encrypted_data_directory)) {
-            return true;
-        }
+        if let Some(is_add_new_vault) = *self_.is_add_new_vault.borrow() {
+            if is_add_new_vault {
+                if !std::path::Path::exists(std::path::Path::new(encrypted_data_directory)) {
+                    return true;
+                }
 
-        match self.is_path_empty(encrypted_data_directory) {
-            Ok(is_empty) => {
-                if is_empty {
-                    true
-                } else {
-                    self_
-                        .info_label
-                        .set_text(&gettext("Encrypted data directory is not empty."));
-                    false
+                match self.is_path_empty(encrypted_data_directory) {
+                    Ok(is_empty) => {
+                        if is_empty {
+                            return true;
+                        } else {
+                            self_
+                                .info_label
+                                .set_text(&gettext("Encrypted data directory is not empty."));
+                            return false;
+                        }
+                    }
+                    Err(_) => {
+                        self_
+                            .info_label
+                            .set_text(&gettext("Encrypted data directory is not valid."));
+                        return false;
+                    }
+                }
+            } else {
+                match self.is_path_empty(encrypted_data_directory) {
+                    Ok(is_empty) => {
+                        if is_empty {
+                            self_
+                                .info_label
+                                .set_text(&gettext("Encrypted data directory is empty."));
+                            return false;
+                        } else {
+                            return true;
+                        }
+                    }
+                    Err(_) => {
+                        self_
+                            .info_label
+                            .set_text(&gettext("Encrypted data directory is not valid."));
+                        return false;
+                    }
                 }
             }
-            Err(_) => {
-                self_
-                    .info_label
-                    .set_text(&gettext("Encrypted data directory is not valid."));
-                false
-            }
         }
+
+        false
     }
 
     fn is_mount_directory_valid(&self, mount_directory: &GString) -> bool {
