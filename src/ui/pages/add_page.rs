@@ -480,18 +480,22 @@ impl AddPage {
             return;
         }
 
-        let are_passwords_empty = self.are_passwords_empty(&password, &confirm_password);
-        if are_passwords_empty {
-            return;
-        }
+        if let Some(is_add_new_vault) = *self_.is_add_new_vault.borrow() {
+            if is_add_new_vault {
+                let are_passwords_empty = self.are_passwords_empty(&password, &confirm_password);
+                if are_passwords_empty {
+                    return;
+                }
 
-        let are_passwords_equal = if !are_passwords_empty {
-            self.are_passwords_equal(&password, &confirm_password)
-        } else {
-            false
-        };
-        if !are_passwords_equal {
-            return;
+                let are_passwords_equal = if !are_passwords_empty {
+                    self.are_passwords_equal(&password, &confirm_password)
+                } else {
+                    false
+                };
+                if !are_passwords_equal {
+                    return;
+                }
+            }
         }
 
         self_.next_button_p_2.set_sensitive(true);
