@@ -348,16 +348,22 @@ impl AddPage {
             .borrow_mut()
             .replace(self_.vault_name_entry.get_text().to_string());
 
-        if let Some(user_data_directory) = UserConnfigManager::instance().get_user_data_dir() {
-            let mut path = String::from(user_data_directory);
-            path.push_str(&self_.name.borrow().as_ref().unwrap());
-            self_.encrypted_data_directory_entry.set_text(&path);
-        }
+        if let Some(is_add_new_vault) = *self_.is_add_new_vault.borrow() {
+            if is_add_new_vault {
+                if let Some(user_data_directory) =
+                    UserConnfigManager::instance().get_user_data_dir()
+                {
+                    let mut path = String::from(user_data_directory);
+                    path.push_str(&self_.name.borrow().as_ref().unwrap());
+                    self_.encrypted_data_directory_entry.set_text(&path);
+                }
 
-        if let Some(vaults_home) = UserConnfigManager::instance().get_vaults_home() {
-            let mut path = String::from(vaults_home);
-            path.push_str(&self_.name.borrow().as_ref().unwrap());
-            self_.mount_directory_entry.set_text(&path);
+                if let Some(vaults_home) = UserConnfigManager::instance().get_vaults_home() {
+                    let mut path = String::from(vaults_home);
+                    path.push_str(&self_.name.borrow().as_ref().unwrap());
+                    self_.mount_directory_entry.set_text(&path);
+                }
+            }
         }
 
         self_
