@@ -21,10 +21,12 @@ use crate::backend::*;
 use crate::password_manager::PasswordManager;
 use crate::user_config_manager::UserConnfigManager;
 use crate::vault::*;
+use crate::VApplication;
 use adw::{subclass::prelude::*, ActionRowExt};
 use gettextrs::gettext;
 use glib::clone;
 use glib::once_cell::sync::Lazy;
+use gtk::gio::{self};
 use gtk::glib;
 use gtk::glib::subclass::Signal;
 use gtk::glib::GString;
@@ -211,6 +213,16 @@ mod imp {
             obj_.add_import_button
                 .connect_clicked(clone!(@weak obj => move |_| {
                     obj.add_import_button_clicked();
+                }));
+
+            obj_.encrypted_data_directory_button
+                .connect_clicked(clone!(@weak obj => move |_| {
+                    obj.encrypted_data_directory_button_clicked();
+                }));
+
+            obj_.mount_directory_button
+                .connect_clicked(clone!(@weak obj => move |_| {
+                    obj.mount_directory_button_clicked();
                 }));
         }
 
@@ -637,5 +649,73 @@ impl AddPage {
         } else {
             self_.info_revealer_label.set_text(&gettext("CryFS works well together with cloud services like Dropbox, iCloud, OneDrive and others. It does not expose directory structure, number of files or file sizes in the encrypted data directory. While being considered safe, there is no independent audit of CryFS."));
         }
+    }
+
+    fn encrypted_data_directory_button_clicked(&self) {
+        let window = gio::Application::get_default()
+            .unwrap()
+            .downcast_ref::<VApplication>()
+            .unwrap()
+            .get_active_window()
+            .unwrap();
+
+        let dialog = gtk::FileChooserDialog::new(
+            Some(&gettext("Choose Encrypted Data Directory")),
+            Some(&window),
+            gtk::FileChooserAction::SelectFolder,
+            &[
+                (&gettext("Cancel"), gtk::ResponseType::Cancel),
+                (&gettext("Select"), gtk::ResponseType::Accept),
+            ],
+        );
+
+        dialog.set_transient_for(Some(&window));
+
+        dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
+            if response == gtk::ResponseType::Accept {
+                let file = dialog.get_file().unwrap();
+                let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
+                let self_ = imp::AddPage::from_instance(&obj);
+                self_.encrypted_data_directory_entry.set_text(&path);
+            }
+
+            dialog.destroy();
+        }));
+
+        dialog.show();
+    }
+
+    fn mount_directory_button_clicked(&self) {
+        let window = gio::Application::get_default()
+            .unwrap()
+            .downcast_ref::<VApplication>()
+            .unwrap()
+            .get_active_window()
+            .unwrap();
+
+        let dialog = gtk::FileChooserDialog::new(
+            Some(&gettext("Choose Mount Directory")),
+            Some(&window),
+            gtk::FileChooserAction::SelectFolder,
+            &[
+                (&gettext("Cancel"), gtk::ResponseType::Cancel),
+                (&gettext("Select"), gtk::ResponseType::Accept),
+            ],
+        );
+
+        dialog.set_transient_for(Some(&window));
+
+        dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
+            if response == gtk::ResponseType::Accept {
+                let file = dialog.get_file().unwrap();
+                let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
+                let self_ = imp::AddPage::from_instance(&obj);
+                self_.mount_directory_entry.set_text(&path);
+            }
+
+            dialog.destroy();
+        }));
+
+        dialog.show();
     }
 }
