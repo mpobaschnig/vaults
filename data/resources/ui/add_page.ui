@@ -2,298 +2,344 @@
 <interface>
   <template class="AddPage" parent="AdwBin">
     <child>
-      <object class="GtkViewport">
-        <property name="vexpand">True</property>
-        <property name="hexpand">True</property>
+      <object class="GtkScrolledWindow">
+        <property name="hscrollbar-policy">never</property>
         <child>
-          <object class="GtkBox">
-            <property name="orientation">vertical</property>
+          <object class="GtkViewport">
             <property name="vexpand">True</property>
             <property name="hexpand">True</property>
             <child>
-              <object class="AdwCarousel" id="carousel">
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
                 <property name="vexpand">True</property>
                 <property name="hexpand">True</property>
-                <property name="interactive">False</property>
                 <child>
-                  <object class="GtkBox">
+                  <object class="AdwCarousel" id="carousel">
+                    <property name="vexpand">True</property>
+                    <property name="hexpand">True</property>
+                    <property name="interactive">False</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="hexpand">True</property>
+                        <property name="vexpand">True</property>
+                        <property name="hexpand">True</property>
+                        <property name="margin-start">12</property>
+                        <property name="margin-end">12</property>
+                        <property name="margin-top">12</property>
+                        <child>
+                          <object class="AdwClamp">
+                            <property name="maximum-size">300</property>
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
+                            <child>
+                              <object class="GtkListBox">
+                                <property name="hexpand">True</property>
+                                <property name="selection-mode">none</property>
+                                <style>
+                                  <class name="content"/>
+                                </style>
+                                <child>
+                                  <object class="AdwActionRow" id="add_new_vault_action_row">
+                                    <property name="hexpand">True</property>
+                                    <property name="title" translatable="yes">Add New Vault...</property>
+                                    <property name="activatable">True</property>
+                                    <child>
+                                      <object class="GtkImage">
+                                        <property name="icon_name">go-next-symbolic</property>
+                                        <property name="visible">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="AdwActionRow" id="import_new_vault_action_row">
+                                    <property name="title" translatable="yes">Import New Vault...</property>
+                                    <property name="width-request">240</property>
+                                    <property name="activatable">True</property>
+                                    <child>
+                                      <object class="GtkImage">
+                                        <property name="icon_name">go-next-symbolic</property>
+                                        <property name="visible">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="hexpand">True</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="spacing">6</property>
+                        <child>
+                          <object class="GtkButton" id="previous_button_p_2">
+                            <property name="margin-start">12</property>
+                            <property name="margin-end">12</property>
+                            <property name="icon_name">go-previous-symbolic</property>
+                            <property name="vexpand">True</property>
+                            <property name="valign">center</property>
+                            <property name="halign">center</property>
+                            <property name="tooltip-text" translatable="yes">Go To Previous Page</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwClamp">
+                            <property name="maximum-size">300</property>
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="width-request">200</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="orientation">vertical</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="label">Vault Name</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="vault_name_entry">
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="margin-top">12</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="label">Backend Type</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="hexpand">True</property>
+                                    <child>
+                                      <object class="GtkComboBoxText" id="backend_type_combo_box_text">
+                                       <property name="hexpand">True</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkToggleButton" id="backend_type_info_button">
+                                        <property name="icon_name">dialog-information-symbolic</property>
+                                        <property name="tooltip-text" translatable="yes">Show Information</property>
+                                      </object>
+                                    </child>
+                                    <style>
+                                      <class name="linked"/>
+                                    </style>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkRevealer" id="info_revealer">
+                                    <property name="hexpand">True</property>
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-start">6</property>
+                                    <property name="margin-end">6</property>
+                                    <property name="margin-bottom">6</property>
+                                    <child>
+                                      <object class="GtkLabel" id="info_revealer_label">
+                                        <property name="hexpand">True</property>
+                                        <property name="wrap">True</property>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="password_label">
+                                    <property name="margin-top">12</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="label">Password</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="password_entry">
+                                    <property name="visibility">False</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="confirm_password_label">
+                                    <property name="margin-top">12</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="label">Confirm Password</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="confirm_password_entry">
+                                    <property name="visibility">False</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkButton" id="next_button_p_2">
+                            <property name="margin-start">12</property>
+                            <property name="margin-end">12</property>
+                            <property name="icon_name">go-next-symbolic</property>
+                            <property name="vexpand">True</property>
+                            <property name="valign">center</property>
+                            <property name="halign">center</property>
+                            <property name="tooltip-text" translatable="yes">Go To Next Page</property>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="hexpand">True</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="spacing">6</property>
+                        <child>
+                          <object class="GtkButton" id="previous_button_p_3">
+                            <property name="margin-start">12</property>
+                            <property name="margin-end">12</property>
+                            <property name="icon_name">go-previous-symbolic</property>
+                            <property name="vexpand">True</property>
+                            <property name="valign">center</property>
+                            <property name="halign">center</property>
+                            <property name="tooltip-text" translatable="yes">Go To Previous Page</property>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
+                            <child>
+                              <object class="AdwClamp">
+                                <property name="maximum-size">300</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="orientation">vertical</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="vexpand">True</property>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="margin-top">12</property>
+                                        <property name="margin-bottom">6</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="label">Encrypted Data Directory</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="hexpand">True</property>
+                                        <child>
+                                          <object class="GtkEntry" id="encrypted_data_directory_entry">
+                                            <property name="hexpand">True</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="encrypted_data_directory_button">
+                                            <property name="icon_name">document-open-symbolic</property>
+                                            <property name="tooltip-text" translatable="yes">Choose Encrypted Data Directory</property>
+                                          </object>
+                                        </child>
+                                        <style>
+                                          <class name="linked"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkLabel">
+                                        <property name="margin-top">12</property>
+                                        <property name="margin-bottom">6</property>
+                                        <property name="hexpand">True</property>
+                                        <property name="halign">start</property>
+                                        <property name="label">Mount Directory</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkBox">
+                                        <property name="visible">True</property>
+                                        <child>
+                                          <object class="GtkEntry" id="mount_directory_entry">
+                                            <property name="hexpand">True</property>
+                                          </object>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="mount_directory_button">
+                                            <property name="icon_name">document-open-symbolic</property>
+                                            <property name="tooltip-text" translatable="yes">Choose Mount Directory</property>
+                                          </object>
+                                        </child>
+                                        <style>
+                                          <class name="linked"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="add_import_button">
+                                        <property name="margin-top">24</property>
+                                        <property name="margin-start">24</property>
+                                        <property name="margin-end">24</property>
+                                        <property name="label">Add</property>
+                                        <style>
+                                          <class name="suggested-action"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkButton">
+                                <property name="vexpand">True</property>
+                                <property name="halign">center</property>
+                                <property name="valign">center</property>
+                                <property name="opacity">0</property>
+                                <property name="sensitive">False</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel" id="info_label">
                     <property name="hexpand">True</property>
                     <property name="vexpand">True</property>
                     <property name="halign">center</property>
-                    <property name="hexpand">True</property>
-                    <property name="margin-start">12</property>
-                    <property name="margin-end">12</property>
-                    <property name="margin-top">12</property>
-                    <property name="margin-bottom">12</property>
-                    <child>
-                      <object class="GtkListBox">
-                        <property name="width-request">240</property>
-                        <property name="selection-mode">none</property>
-                        <style>
-                          <class name="content"/>
-                        </style>
-                        <child>
-                          <object class="AdwActionRow" id="add_new_vault_action_row">
-                            <property name="title" translatable="yes">Add New Vault...</property>
-                            <property name="activatable">True</property>
-                            <child>
-                              <object class="GtkImage">
-                                <property name="icon_name">go-next-symbolic</property>
-                                <property name="visible">True</property>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="AdwActionRow" id="import_new_vault_action_row">
-                            <property name="title" translatable="yes">Import New Vault...</property>
-                            <property name="activatable">True</property>
-                            <child>
-                              <object class="GtkImage">
-                                <property name="icon_name">go-next-symbolic</property>
-                                <property name="visible">True</property>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
+                    <property name="valign">end</property>
+                    <property name="label">Passwords do not match.</property>
+                    <style>
+                      <class name="dim-label"/>
+                    </style>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkBox">
-                    <property name="hexpand">True</property>
-                    <property name="margin-start">6</property>
-                    <property name="margin-end">6</property>
-                    <property name="margin-top">6</property>
-                    <property name="margin-bottom">6</property>
-                    <property name="spacing">6</property>
-                    <child>
-                      <object class="GtkButton" id="previous_button_p_2">
-                        <property name="icon_name">go-previous-symbolic</property>
-                        <property name="vexpand">True</property>
-                        <property name="hexpand">True</property>
-                        <property name="valign">center</property>
-                        <property name="halign">center</property>
-                        <property name="tooltip-text" translatable="yes">Go To Previous Page</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="hexpand">True</property>
-                        <property name="vexpand">True</property>
-                        <property name="halign">center</property>
-                        <property name="orientation">vertical</property>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">6</property>
-                            <property name="hexpand">True</property>
-                            <property name="halign">start</property>
-                            <property name="label">Vault Name</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="vault_name_entry">
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="margin-top">12</property>
-                            <property name="margin-bottom">6</property>
-                            <property name="hexpand">True</property>
-                            <property name="halign">start</property>
-                            <property name="label">Backend Type</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkBox">
-                            <property name="hexpand">True</property>
-                            <child>
-                              <object class="GtkComboBoxText" id="backend_type_combo_box_text">
-                               <property name="hexpand">True</property>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="backend_type_info_button">
-                                <property name="icon_name">dialog-information-symbolic</property>
-                                <property name="tooltip-text" translatable="yes">Show Information</property>
-                              </object>
-                            </child>
-                            <style>
-                              <class name="linked"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="password_label">
-                            <property name="margin-top">12</property>
-                            <property name="margin-bottom">6</property>
-                            <property name="hexpand">True</property>
-                            <property name="halign">start</property>
-                            <property name="label">Password</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="password_entry">
-                            <property name="visibility">False</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="confirm_password_label">
-                            <property name="margin-top">12</property>
-                            <property name="margin-bottom">6</property>
-                            <property name="hexpand">True</property>
-                            <property name="halign">start</property>
-                            <property name="label">Confirm Password</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="confirm_password_entry">
-                            <property name="visibility">False</property>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton" id="next_button_p_2">
-                        <property name="icon_name">go-next-symbolic</property>
-                        <property name="vexpand">True</property>
-                        <property name="hexpand">True</property>
-                        <property name="valign">center</property>
-                        <property name="halign">center</property>
-                        <property name="tooltip-text" translatable="yes">Go To Next Page</property>
-                      </object>
-                    </child>
+                  <object class="AdwCarouselIndicatorDots">
+                    <property name="carousel">carousel</property>
                   </object>
                 </child>
-                <child>
-                  <object class="GtkBox">
-                    <property name="hexpand">True</property>
-                    <property name="margin-start">6</property>
-                    <property name="margin-end">6</property>
-                    <property name="margin-top">6</property>
-                    <property name="margin-bottom">6</property>
-                    <property name="spacing">6</property>
-                    <child>
-                      <object class="GtkButton" id="previous_button_p_3">
-                        <property name="icon_name">go-previous-symbolic</property>
-                        <property name="vexpand">True</property>
-                        <property name="hexpand">True</property>
-                        <property name="valign">center</property>
-                        <property name="halign">center</property>
-                        <property name="tooltip-text" translatable="yes">Go To Previous Page</property>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="hexpand">True</property>
-                        <property name="vexpand">True</property>
-                        <property name="halign">center</property>
-                        <property name="orientation">vertical</property>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="margin-top">12</property>
-                            <property name="margin-bottom">6</property>
-                            <property name="hexpand">True</property>
-                            <property name="halign">start</property>
-                            <property name="label">Encrypted Data Directory</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkBox">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                            <child>
-                              <object class="GtkEntry" id="encrypted_data_directory_entry">
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="encrypted_data_directory_button">
-                                <property name="icon_name">document-open-symbolic</property>
-                                <property name="tooltip-text" translatable="yes">Choose Encrypted Data Directory</property>
-                              </object>
-                            </child>
-                            <style>
-                              <class name="linked"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="margin-top">12</property>
-                            <property name="margin-bottom">6</property>
-                            <property name="hexpand">True</property>
-                            <property name="halign">start</property>
-                            <property name="label">Mount Directory</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkBox">
-                            <property name="visible">True</property>
-                            <property name="valign">center</property>
-                            <child>
-                              <object class="GtkEntry" id="mount_directory_entry">
-                              </object>
-                            </child>
-                            <child>
-                              <object class="GtkButton" id="mount_directory_button">
-                                <property name="icon_name">document-open-symbolic</property>
-                                <property name="tooltip-text" translatable="yes">Choose Mount Directory</property>
-                              </object>
-                            </child>
-                            <style>
-                              <class name="linked"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="add_import_button">
-                            <property name="margin-top">24</property>
-                            <property name="margin-start">24</property>
-                            <property name="margin-end">24</property>
-                            <property name="label">Add</property>
-                            <style>
-                              <class name="suggested-action"/>
-                            </style>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkButton">
-                        <property name="vexpand">True</property>
-                        <property name="hexpand">True</property>
-                        <property name="valign">center</property>
-                        <property name="halign">center</property>
-                        <property name="opacity">0</property>
-                        <property name="sensitive">False</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-            <child>
-              <object class="GtkLabel" id="info_label">
-                <property name="hexpand">True</property>
-                <property name="vexpand">True</property>
-                <property name="halign">center</property>
-                <property name="valign">end</property>
-                <property name="label">Passwords do not match.</property>
-                <style>
-                  <class name="dim-label"/>
-                </style>
-              </object>
-            </child>
-            <child>
-              <object class="AdwCarouselIndicatorDots">
-                <property name="carousel">carousel</property>
               </object>
             </child>
           </object>
+
         </child>
-      </object>
-    </child>
+      </object>    </child>
   </template>
 </interface>

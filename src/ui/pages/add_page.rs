@@ -53,6 +53,10 @@ mod imp {
         #[template_child]
         pub backend_type_info_button: TemplateChild<gtk::Button>,
         #[template_child]
+        pub info_revealer: TemplateChild<gtk::Revealer>,
+        #[template_child]
+        pub info_revealer_label: TemplateChild<gtk::Label>,
+        #[template_child]
         pub password_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub password_entry: TemplateChild<gtk::Entry>,
@@ -101,6 +105,8 @@ mod imp {
                 vault_name_entry: TemplateChild::default(),
                 backend_type_combo_box_text: TemplateChild::default(),
                 backend_type_info_button: TemplateChild::default(),
+                info_revealer: TemplateChild::default(),
+                info_revealer_label: TemplateChild::default(),
                 password_label: TemplateChild::default(),
                 password_entry: TemplateChild::default(),
                 confirm_password_label: TemplateChild::default(),
@@ -167,7 +173,13 @@ mod imp {
 
             obj_.backend_type_combo_box_text
                 .connect_changed(clone!(@weak obj => move |_| {
+                    obj.set_info_label_text();
                     obj.check_next_button_p_2_enable();
+                }));
+
+            obj_.backend_type_info_button
+                .connect_clicked(clone!(@weak obj => move |_| {
+                    obj.backend_type_info_button_clicked();
                 }));
 
             obj_.password_entry
@@ -276,6 +288,8 @@ impl AddPage {
                     combo_box_text.set_active(Some(0));
                 }
             }
+
+            self.set_info_label_text();
         }
     }
 
@@ -312,6 +326,18 @@ impl AddPage {
         self_
             .carousel
             .scroll_to(&self_.carousel.get_nth_page(0).unwrap());
+    }
+
+    fn backend_type_info_button_clicked(&self) {
+        let self_ = imp::AddPage::from_instance(&self);
+
+        self.set_info_label_text();
+
+        if self_.info_revealer.get_reveal_child() {
+            self_.info_revealer.set_reveal_child(false);
+        } else {
+            self_.info_revealer.set_reveal_child(true);
+        }
     }
 
     fn next_button_p_2_clicked(&self) {
@@ -589,5 +615,17 @@ impl AddPage {
         }
 
         self_.add_import_button.set_sensitive(true);
+    }
+
+    fn set_info_label_text(&self) {
+        let self_ = imp::AddPage::from_instance(&self);
+
+        let backend = self_.backend_type_combo_box_text.get_active_text().unwrap();
+
+        if backend.eq("Gocryptfs") {
+            self_.info_revealer_label.set_text(&gettext("Fast and robust, gocryptfs works well in general cases where third-parties do not always have access to the encrypted data directory (e.g. file hosting services). It exposes directory structure, number of files and file sizes. Security audit in 2017 verified gocryptfs being safe against third-parties that can read or write to encrypted data."));
+        } else {
+            self_.info_revealer_label.set_text(&gettext("CryFS works well together with cloud services like Dropbox, iCloud, OneDrive and others. It does not expose directory structure, number of files or file sizes in the encrypted data directory. While being considered safe, there is no independent audit of CryFS."));
+        }
     }
 }
