@@ -228,7 +228,10 @@ mod imp {
 
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
-                vec![Signal::builder("add-import", &[], glib::Type::UNIT.into()).build()]
+                vec![
+                    Signal::builder("add", &[], glib::Type::UNIT.into()).build(),
+                    Signal::builder("import", &[], glib::Type::UNIT.into()).build(),
+                ]
             });
             SIGNALS.as_ref()
         }
@@ -245,8 +248,16 @@ glib::wrapper! {
 }
 
 impl AddPage {
-    pub fn connect_add_import<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
-        self.connect_local("add-import", false, move |_| {
+    pub fn connect_add<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
+        self.connect_local("add", false, move |_| {
+            callback();
+            None
+        })
+        .unwrap()
+    }
+
+    pub fn connect_import<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
+        self.connect_local("import", false, move |_| {
             callback();
             None
         })
@@ -406,23 +417,32 @@ impl AddPage {
             String::from(self_.encrypted_data_directory_entry.get_text().as_str()),
             String::from(self_.mount_directory_entry.get_text().as_str()),
         );
-        let password = String::from(self_.password_entry.get_text().as_str());
+        let vault_config = vault.get_config().clone().unwrap();
 
-        if let Err(e) = std::fs::create_dir_all(std::path::Path::new(
-            &vault.get_config().unwrap().encrypted_data_directory,
-        )) {
-            log::error!("Could not create directories: {}", e);
-        };
-        if let Err(e) = std::fs::create_dir_all(std::path::Path::new(
-            &vault.get_config().unwrap().mount_directory,
-        )) {
+        if let Err(e) =
+            std::fs::create_dir_all(std::path::Path::new(&vault_config.encrypted_data_directory))
+        {
             log::error!("Could not create directories: {}", e);
         };
 
         UserConnfigManager::instance().set_current_vault(vault);
-        PasswordManager::instance().set_current_password(password);
 
-        self.emit_by_name("add-import", &[]).unwrap();
+        if let Some(is_add_new_vault) = *self_.is_add_new_vault.borrow() {
+            if is_add_new_vault {
+                if let Err(e) =
+                    std::fs::create_dir_all(std::path::Path::new(&vault_config.mount_directory))
+                {
+                    log::error!("Could not create directories: {}", e);
+                };
+
+                let password = String::from(self_.password_entry.get_text().as_str());
+                PasswordManager::instance().set_current_password(password);
+
+                self.emit_by_name("add", &[]).unwrap();
+            } else {
+                self.emit_by_name("import", &[]).unwrap();
+            }
+        }
     }
 
     fn is_valid_vault_name(&self, vault_name: GString) -> bool {

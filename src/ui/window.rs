@@ -118,83 +118,97 @@ mod imp {
             self.add_page.init();
             self.vaults_page.init();
 
-            self.add_page
-                .connect_add_import(clone!(@weak obj => move || {
-                    let self_ = imp::ApplicationWindow::from_instance(&obj);
+            self.add_page.connect_add(clone!(@weak obj => move || {
+                let self_ = imp::ApplicationWindow::from_instance(&obj);
 
+                let vault = UserConnfigManager::instance().get_current_vault().unwrap();
+                let password = PasswordManager::instance().get_current_password().unwrap();
+                PasswordManager::instance().clear_current_pssword();
+                let vault_config = vault.get_config().clone().unwrap();
+
+                *self_.spinner.borrow_mut() = gtk::Spinner::new();
+                let spinner = self_.spinner.borrow().clone();
+                self_.add_button.set_child(Some(&spinner));
+
+                spinner.start();
+
+                enum Message {
+                    Finished,
+                    Error(BackendError),
+                }
+
+                let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+                std::thread::spawn(move || match Backend::init(&vault_config, password) {
+                    Ok(_) => {
+                        let _ = sender.send(Message::Finished);
+                        std::thread::sleep(std::time::Duration::from_secs(2));
+                    }
+                    Err(e) => {
+                        let _ = sender.send(Message::Error(e));
+                        std::thread::sleep(std::time::Duration::from_secs(2));
+                    }
+                });
+
+                let add_button = self_.add_button.clone();
+                let refresh_button = self_.refresh_button.clone();
+                receiver.attach(None, move |message| {
                     let vault = UserConnfigManager::instance().get_current_vault().unwrap();
-                    let password = PasswordManager::instance().get_current_password().unwrap();
-                    PasswordManager::instance().clear_current_pssword();
-                    let vault_config = vault.get_config().clone().unwrap();
+                    match message {
+                        Message::Finished => {
+                            add_button.set_icon_name(&"list-add-symbolic");
+                            UserConnfigManager::instance().add_vault(vault);
+                            obj.set_view(VView::Vaults);
+                        }
+                        Message::Error(e) => {
+                            add_button.set_icon_name(&"list-add-symbolic");
+                            gtk::glib::MainContext::default().spawn_local(async move {
+                                let window = gtk::gio::Application::get_default()
+                                    .unwrap()
+                                    .downcast_ref::<VApplication>()
+                                    .unwrap()
+                                    .get_active_window()
+                                    .unwrap()
+                                    .clone();
+                                let info_dialog = gtk::MessageDialogBuilder::new()
+                                    .message_type(gtk::MessageType::Error)
+                                    .transient_for(&window)
+                                    .modal(true)
+                                    .buttons(gtk::ButtonsType::Close)
+                                    .text(&vault.get_name().unwrap())
+                                    .secondary_text(&format!("{}", e))
+                                    .build();
 
-                    *self_.spinner.borrow_mut() = gtk::Spinner::new();
-                    let spinner = self_.spinner.borrow().clone();
-                    self_.add_button.set_child(Some(&spinner));
-
-                    spinner.start();
-
-                    enum Message {
-                        Finished,
-                        Error(BackendError),
+                                info_dialog.run_future().await;
+                                info_dialog.close();
+                            });
+                        }
                     }
 
-                    let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
-                    std::thread::spawn(move || match Backend::init(&vault_config, password) {
-                        Ok(_) => {
-                            let _ = sender.send(Message::Finished);
-                            std::thread::sleep(std::time::Duration::from_secs(2));
-                        }
-                        Err(e) => {
-                            let _ = sender.send(Message::Error(e));
-                            std::thread::sleep(std::time::Duration::from_secs(2));
-                        }
-                    });
+                    refresh_button.set_sensitive(true);
+                    refresh_button.set_visible(true);
+                    add_button.set_icon_name(&"list-add-symbolic");
+                    add_button.set_tooltip_text(Some(&gettext("Add or Import New Vault")));
 
-                    let add_button = self_.add_button.clone();
-                    let refresh_button = self_.refresh_button.clone();
-                    receiver.attach(None, move |message| {
-                        let vault = UserConnfigManager::instance().get_current_vault().unwrap();
-                        match message {
-                            Message::Finished => {
-                                add_button.set_icon_name(&"list-add-symbolic");
-                                UserConnfigManager::instance().add_vault(vault);
-                                obj.set_view(VView::Vaults);
-                            }
-                            Message::Error(e) => {
-                                add_button.set_icon_name(&"list-add-symbolic");
-                                gtk::glib::MainContext::default().spawn_local(async move {
-                                    let window = gtk::gio::Application::get_default()
-                                        .unwrap()
-                                        .downcast_ref::<VApplication>()
-                                        .unwrap()
-                                        .get_active_window()
-                                        .unwrap()
-                                        .clone();
-                                    let info_dialog = gtk::MessageDialogBuilder::new()
-                                        .message_type(gtk::MessageType::Error)
-                                        .transient_for(&window)
-                                        .modal(true)
-                                        .buttons(gtk::ButtonsType::Close)
-                                        .text(&vault.get_name().unwrap())
-                                        .secondary_text(&format!("{}", e))
-                                        .build();
+                    spinner.stop();
 
-                                    info_dialog.run_future().await;
-                                    info_dialog.close();
-                                });
-                            }
-                        }
+                    glib::Continue(true)
+                });
+            }));
 
-                        refresh_button.set_sensitive(true);
-                        refresh_button.set_visible(true);
-                        add_button.set_icon_name(&"list-add-symbolic");
-                        add_button.set_tooltip_text(Some(&gettext("Add or Import New Vault")));
+            self.add_page.connect_import(clone!(@weak obj => move || {
+                let self_ = imp::ApplicationWindow::from_instance(&obj);
 
-                        spinner.stop();
+                let vault = UserConnfigManager::instance().get_current_vault().unwrap();
 
-                        glib::Continue(true)
-                    });
-                }));
+                UserConnfigManager::instance().add_vault(vault);
+
+                obj.set_view(VView::Vaults);
+
+                self_.add_button.set_icon_name(&"list-add-symbolic");
+                self_.add_button.set_tooltip_text(Some(&gettext("Add or Import New Vault")));
+                self_.refresh_button.set_sensitive(true);
+                self_.refresh_button.set_visible(true);
+            }));
 
             obj.setup_connect_handlers();
         }
