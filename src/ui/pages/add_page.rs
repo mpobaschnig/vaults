@@ -558,6 +558,10 @@ impl AddPage {
     fn is_encrypted_data_directory_valid(&self, encrypted_data_directory: &GString) -> bool {
         let self_ = imp::AddPage::from_instance(self);
 
+        if encrypted_data_directory.is_empty() {
+            return false;
+        }
+
         if let Some(is_add_new_vault) = *self_.is_add_new_vault.borrow() {
             if is_add_new_vault {
                 if !std::path::Path::exists(std::path::Path::new(encrypted_data_directory)) {
@@ -609,6 +613,10 @@ impl AddPage {
 
     fn is_mount_directory_valid(&self, mount_directory: &GString) -> bool {
         let self_ = imp::AddPage::from_instance(self);
+
+        if mount_directory.is_empty() {
+            return false;
+        }
 
         if !std::path::Path::exists(std::path::Path::new(mount_directory)) {
             return true;
