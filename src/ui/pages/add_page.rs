@@ -330,6 +330,7 @@ impl AddPage {
         self_.confirm_password_label.set_visible(true);
         self_.confirm_password_entry.set_visible(true);
         self_.add_import_button.set_label(&gettext("Add"));
+        self_.vault_name_entry.grab_focus_without_selecting();
         self_
             .carousel
             .scroll_to(&self_.carousel.get_nth_page(1).unwrap());
@@ -344,6 +345,7 @@ impl AddPage {
         self_.confirm_password_label.set_visible(false);
         self_.confirm_password_entry.set_visible(false);
         self_.add_import_button.set_label(&gettext("Import"));
+        self_.vault_name_entry.grab_focus_without_selecting();
         self_
             .carousel
             .scroll_to(&self_.carousel.get_nth_page(1).unwrap());
