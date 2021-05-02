@@ -150,11 +150,9 @@ mod imp {
                 std::thread::spawn(move || match Backend::init(&vault_config, password) {
                     Ok(_) => {
                         let _ = sender.send(Message::Finished);
-                        std::thread::sleep(std::time::Duration::from_secs(2));
                     }
                     Err(e) => {
                         let _ = sender.send(Message::Error(e));
-                        std::thread::sleep(std::time::Duration::from_secs(2));
                     }
                 });
 
