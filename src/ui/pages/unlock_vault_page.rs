@@ -178,13 +178,13 @@ impl UnlockVaultPage {
 
         window.set_unlock_vault_view();
 
-        row.set_settings_handler_id(self.connect_unlock(
+        row.set_unlock_handler_id(self.connect_unlock(
             clone!(@weak self as obj, @weak row => move || {
                 let self_ = imp::UnlockVaultPage::from_instance(&obj);
 
                 let password = self_.password_entry.get_text().to_string();
 
-                obj.disconnect(row.get_settings_handler_id());
+                obj.disconnect(row.get_unlock_handler_id());
 
                 let ancestor = obj.get_ancestor(ApplicationWindow::static_type()).unwrap();
                 let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();

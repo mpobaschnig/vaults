@@ -515,13 +515,13 @@ impl VaultsPageRow {
         }
     }
 
-    pub fn set_settings_handler_id(&self, id: glib::SignalHandlerId) {
+    pub fn set_unlock_handler_id(&self, id: glib::SignalHandlerId) {
         let self_ = imp::VaultsPageRow::from_instance(self);
 
         self_.unlock_signal_id.replace(Some(id));
     }
 
-    pub fn get_settings_handler_id(&self) -> glib::SignalHandlerId {
+    pub fn get_unlock_handler_id(&self) -> glib::SignalHandlerId {
         let self_ = imp::VaultsPageRow::from_instance(self);
 
         self_.unlock_signal_id.borrow_mut().take().unwrap()
