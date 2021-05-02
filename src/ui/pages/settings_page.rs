@@ -20,7 +20,7 @@
 use crate::backend::Backend;
 use crate::ui::pages::VaultsPageRow;
 use crate::ui::ApplicationWindow;
-use crate::user_config_manager::UserConnfigManager;
+use crate::user_config_manager::UserConfigManager;
 use crate::vault::Vault;
 use crate::VApplication;
 use adw::subclass::prelude::*;
@@ -225,7 +225,7 @@ impl SettingsPage {
             .mount_directory_entry
             .set_text(&vault_config.mount_directory);
 
-        UserConnfigManager::instance().set_current_vault(vault);
+        UserConfigManager::instance().set_current_vault(vault);
 
         let ancestor = self.get_ancestor(ApplicationWindow::static_type()).unwrap();
         let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
@@ -258,7 +258,7 @@ impl SettingsPage {
                     row.set_vault_row_state_backend_available();
                 }
 
-                UserConnfigManager::instance().change_vault(row.get_vault(), new_vault);
+                UserConfigManager::instance().change_vault(row.get_vault(), new_vault);
 
                 row.emit_by_name("save", &[]).unwrap();
 
@@ -274,7 +274,7 @@ impl SettingsPage {
 
                 let vault = row.get_vault();
 
-                UserConnfigManager::instance().remove_vault(vault);
+                UserConfigManager::instance().remove_vault(vault);
 
                 row.emit_by_name("remove", &[]).unwrap();
 
@@ -308,7 +308,7 @@ impl SettingsPage {
             .unwrap()
             .get_name()
             .unwrap());
-        let is_duplicate_name = UserConnfigManager::instance()
+        let is_duplicate_name = UserConfigManager::instance()
             .get_map()
             .contains_key(&vault_name.to_string());
         if !vault_name.is_empty() && !is_same_name && is_duplicate_name {

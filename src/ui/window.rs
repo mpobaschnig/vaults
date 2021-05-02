@@ -21,7 +21,7 @@ use crate::config::{APP_ID, PROFILE};
 use crate::password_manager::PasswordManager;
 use crate::ui::pages::*;
 use crate::{
-    application::VApplication, backend, backend::*, user_config_manager::UserConnfigManager,
+    application::VApplication, backend, backend::*, user_config_manager::UserConfigManager,
 };
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
@@ -130,7 +130,7 @@ mod imp {
             self.add_page.connect_add(clone!(@weak obj => move || {
                 let self_ = imp::ApplicationWindow::from_instance(&obj);
 
-                let vault = UserConnfigManager::instance().get_current_vault().unwrap();
+                let vault = UserConfigManager::instance().get_current_vault().unwrap();
                 let password = PasswordManager::instance().get_current_password().unwrap();
                 PasswordManager::instance().clear_current_pssword();
                 let vault_config = vault.get_config().clone().unwrap();
@@ -160,11 +160,11 @@ mod imp {
                 let refresh_button = self_.refresh_button.clone();
                 let add_page = self_.add_page.clone();
                 receiver.attach(None, move |message| {
-                    let vault = UserConnfigManager::instance().get_current_vault().unwrap();
+                    let vault = UserConfigManager::instance().get_current_vault().unwrap();
                     match message {
                         Message::Finished => {
                             add_button.set_icon_name(&"list-add-symbolic");
-                            UserConnfigManager::instance().add_vault(vault);
+                            UserConfigManager::instance().add_vault(vault);
                             obj.set_view(VView::Vaults);
                         }
                         Message::Error(e) => {
@@ -208,9 +208,9 @@ mod imp {
             self.add_page.connect_import(clone!(@weak obj => move || {
                 let self_ = imp::ApplicationWindow::from_instance(&obj);
 
-                let vault = UserConnfigManager::instance().get_current_vault().unwrap();
+                let vault = UserConfigManager::instance().get_current_vault().unwrap();
 
-                UserConnfigManager::instance().add_vault(vault);
+                UserConfigManager::instance().add_vault(vault);
 
                 obj.set_view(VView::Vaults);
 
@@ -299,7 +299,7 @@ impl ApplicationWindow {
 
         gtk::Window::set_default_icon_name(APP_ID);
 
-        if !UserConnfigManager::instance().get_map().is_empty() {
+        if !UserConfigManager::instance().get_map().is_empty() {
             object.set_view(VView::Vaults);
         } else {
             object.set_view(VView::Start);
@@ -309,7 +309,7 @@ impl ApplicationWindow {
         self_
             .vaults_page
             .connect_refresh(clone!(@weak object => move || {
-                if UserConnfigManager::instance().get_map().is_empty() {
+                if UserConfigManager::instance().get_map().is_empty() {
                     object.set_view(VView::Start);
                 }
             }));
@@ -368,7 +368,7 @@ impl ApplicationWindow {
             .add_button
             .set_tooltip_text(Some(&gettext("Add or Import New Vault")));
         self_.refresh_button.set_visible(true);
-        if UserConnfigManager::instance().get_map().is_empty() {
+        if UserConfigManager::instance().get_map().is_empty() {
             self.set_view(VView::Start);
         } else {
             self.set_view(VView::Vaults);
@@ -382,11 +382,11 @@ impl ApplicationWindow {
 
         backend::probe_backends();
 
-        UserConnfigManager::instance().read_config();
+        UserConfigManager::instance().read_config();
 
         self_.vaults_page.init();
 
-        if UserConnfigManager::instance().get_map().is_empty() {
+        if UserConfigManager::instance().get_map().is_empty() {
             self.set_view(VView::Start);
         } else {
             self.set_view(VView::Vaults);

@@ -19,7 +19,7 @@
 
 use crate::backend::*;
 use crate::password_manager::PasswordManager;
-use crate::user_config_manager::UserConnfigManager;
+use crate::user_config_manager::UserConfigManager;
 use crate::vault::*;
 use crate::VApplication;
 use adw::{subclass::prelude::*, ActionRowExt};
@@ -378,15 +378,14 @@ impl AddPage {
 
         if let Some(is_add_new_vault) = *self_.is_add_new_vault.borrow() {
             if is_add_new_vault {
-                if let Some(user_data_directory) =
-                    UserConnfigManager::instance().get_user_data_dir()
+                if let Some(user_data_directory) = UserConfigManager::instance().get_user_data_dir()
                 {
                     let mut path = String::from(user_data_directory);
                     path.push_str(&self_.name.borrow().as_ref().unwrap());
                     self_.encrypted_data_directory_entry.set_text(&path);
                 }
 
-                if let Some(vaults_home) = UserConnfigManager::instance().get_vaults_home() {
+                if let Some(vaults_home) = UserConfigManager::instance().get_vaults_home() {
                     let mut path = String::from(vaults_home);
                     path.push_str(&self_.name.borrow().as_ref().unwrap());
                     self_.mount_directory_entry.set_text(&path);
@@ -432,7 +431,7 @@ impl AddPage {
             log::error!("Could not create directories: {}", e);
         };
 
-        UserConnfigManager::instance().set_current_vault(vault);
+        UserConfigManager::instance().set_current_vault(vault);
 
         if let Some(is_add_new_vault) = *self_.is_add_new_vault.borrow() {
             if is_add_new_vault {
@@ -468,7 +467,7 @@ impl AddPage {
     fn is_different_vault_name(&self, vault_name: GString) -> bool {
         let self_ = imp::AddPage::from_instance(self);
 
-        let is_duplicate_name = UserConnfigManager::instance()
+        let is_duplicate_name = UserConfigManager::instance()
             .get_map()
             .contains_key(&vault_name.to_string());
         if !vault_name.is_empty() && is_duplicate_name {
