@@ -29,7 +29,6 @@ use gtk::CompositeTemplate;
 use std::cell::RefCell;
 use std::process::Command;
 
-use super::VaultsPageRowSettingsDialog;
 use crate::{
     backend::{Backend, BackendError},
     ui::ApplicationWindow,
@@ -57,6 +56,8 @@ mod imp {
         pub config: RefCell<Option<VaultConfig>>,
 
         pub unlock_signal_id: RefCell<Option<glib::SignalHandlerId>>,
+        pub save_signal_id: RefCell<Option<glib::SignalHandlerId>>,
+        pub remove_signal_id: RefCell<Option<glib::SignalHandlerId>>,
     }
 
     #[glib::object_subclass]
@@ -74,6 +75,8 @@ mod imp {
                 config: RefCell::new(None),
                 spinner: RefCell::new(gtk::Spinner::new()),
                 unlock_signal_id: RefCell::new(None),
+                save_signal_id: RefCell::new(None),
+                remove_signal_id: RefCell::new(None),
             }
         }
 
@@ -98,8 +101,8 @@ mod imp {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
                 vec![
-                    Signal::builder("remove", &[], glib::Type::UNIT.into()).build(),
                     Signal::builder("save", &[], glib::Type::UNIT.into()).build(),
+                    Signal::builder("remove", &[], glib::Type::UNIT.into()).build(),
                 ]
             });
             SIGNALS.as_ref()
@@ -389,25 +392,10 @@ impl VaultsPageRow {
     }
 
     fn settings_button_clicked(&self) {
-        let dialog = VaultsPageRowSettingsDialog::new(self.get_vault());
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, id|
-            match id {
-                gtk::ResponseType::Other(0) => {obj.emit_by_name("remove", &[]).unwrap();},
-                gtk::ResponseType::Other(1) => {
-                    obj.emit_by_name("save", &[]).unwrap();
-                    let vault = &obj.get_vault();
-                    if !vault.is_backend_available() {
-                        obj.set_vault_row_state_backend_unavailable();
-                    } else {
-                        obj.set_vault_row_state_backend_available();
-                    }
-                },
-                _ => {},
-            };
-            dialog.destroy();
-        ));
+        let ancestor = self.get_ancestor(ApplicationWindow::static_type()).unwrap();
+        let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
 
-        dialog.show();
+        window.call_settings(self);
     }
 
     pub fn get_vault(&self) -> Vault {
@@ -482,7 +470,7 @@ impl VaultsPageRow {
         self_.settings_button.set_sensitive(true);
     }
 
-    fn set_vault_row_state_backend_unavailable(&self) {
+    pub fn set_vault_row_state_backend_unavailable(&self) {
         let self_ = imp::VaultsPageRow::from_instance(self);
 
         self_
@@ -491,7 +479,7 @@ impl VaultsPageRow {
         self_.locker_button.set_sensitive(false);
     }
 
-    fn set_vault_row_state_backend_available(&self) {
+    pub fn set_vault_row_state_backend_available(&self) {
         let self_ = imp::VaultsPageRow::from_instance(self);
 
         self_.vaults_page_row.set_subtitle(Some(""));
@@ -537,5 +525,29 @@ impl VaultsPageRow {
         let self_ = imp::VaultsPageRow::from_instance(self);
 
         self_.unlock_signal_id.borrow_mut().take().unwrap()
+    }
+
+    pub fn set_save_handler_id(&self, id: glib::SignalHandlerId) {
+        let self_ = imp::VaultsPageRow::from_instance(self);
+
+        self_.save_signal_id.replace(Some(id));
+    }
+
+    pub fn get_save_handler_id(&self) -> glib::SignalHandlerId {
+        let self_ = imp::VaultsPageRow::from_instance(self);
+
+        self_.save_signal_id.borrow_mut().take().unwrap()
+    }
+
+    pub fn set_remove_handler_id(&self, id: glib::SignalHandlerId) {
+        let self_ = imp::VaultsPageRow::from_instance(self);
+
+        self_.remove_signal_id.replace(Some(id));
+    }
+
+    pub fn get_remove_handler_id(&self) -> glib::SignalHandlerId {
+        let self_ = imp::VaultsPageRow::from_instance(self);
+
+        self_.remove_signal_id.borrow_mut().take().unwrap()
     }
 }

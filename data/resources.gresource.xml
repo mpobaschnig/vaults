@@ -5,6 +5,7 @@
     <file compressed="true" preprocess="xml-stripblanks" alias="window.ui">resources/ui/window.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="add_page.ui">resources/ui/add_page.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="unlock_vault_page.ui">resources/ui/unlock_vault_page.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="settings_page.ui">resources/ui/settings_page.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="start_page.ui">resources/ui/start_page.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="vaults_page.ui">resources/ui/vaults_page.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="vaults_page_row.ui">resources/ui/vaults_page_row.ui</file>

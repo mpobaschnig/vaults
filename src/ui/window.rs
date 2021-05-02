@@ -39,6 +39,7 @@ use std::cell::RefCell;
 #[genum(type_name = "VVView")]
 pub enum VView {
     Add,
+    SettingsPage,
     Start,
     Vaults,
     UnlockVault,
@@ -60,6 +61,8 @@ mod imp {
         pub window_leaflet: TemplateChild<adw::Leaflet>,
         #[template_child]
         pub add_page: TemplateChild<AddPage>,
+        #[template_child]
+        pub settings_page: TemplateChild<SettingsPage>,
         #[template_child]
         pub start_page: TemplateChild<VStartPage>,
         #[template_child]
@@ -91,6 +94,7 @@ mod imp {
             Self {
                 window_leaflet: TemplateChild::default(),
                 add_page: TemplateChild::default(),
+                settings_page: TemplateChild::default(),
                 start_page: TemplateChild::default(),
                 vaults_page: TemplateChild::default(),
                 unlock_vault_page: TemplateChild::default(),
@@ -342,6 +346,9 @@ impl ApplicationWindow {
             VView::UnlockVault => {
                 self.set_standard_window_view();
             }
+            VView::SettingsPage => {
+                self.set_standard_window_view();
+            }
             _ => {
                 self_.add_button.set_icon_name(&"go-previous-symbolic");
                 self_.add_button.set_tooltip_text(Some(&gettext("Go Back")));
@@ -396,6 +403,11 @@ impl ApplicationWindow {
                     .window_leaflet
                     .set_visible_child(&self_.add_page.get());
             }
+            VView::SettingsPage => {
+                self_
+                    .window_leaflet
+                    .set_visible_child(&self_.settings_page.get());
+            }
             VView::Start => {
                 self_
                     .window_leaflet
@@ -438,5 +450,23 @@ impl ApplicationWindow {
 
         self_.unlock_vault_page.init();
         self_.unlock_vault_page.call_unlock(row);
+    }
+
+    pub fn set_settings_page(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.add_button.set_icon_name(&"go-previous-symbolic");
+        self_.add_button.set_tooltip_text(Some(&gettext("Go Back")));
+        self_.refresh_button.set_visible(false);
+        self_.unlock_vault_page.init();
+
+        self.set_view(VView::SettingsPage);
+    }
+
+    pub fn call_settings(&self, row: &VaultsPageRow) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.settings_page.init();
+        self_.settings_page.call_settings(row);
     }
 }

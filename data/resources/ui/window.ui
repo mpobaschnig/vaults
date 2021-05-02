@@ -63,6 +63,9 @@
                         <child>
                           <object class="UnlockVaultPage" id="unlock_vault_page"/>
                         </child>
+                        <child>
+                          <object class="SettingsPage" id="settings_page"/>
+                        </child>
                       </object>
                     </child>
                   </object>
