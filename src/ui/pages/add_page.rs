@@ -281,6 +281,11 @@ impl AddPage {
         self_.info_label.set_text("");
 
         self_.next_button_p_2.set_sensitive(false);
+        self_.previous_button_p_3.set_sensitive(true);
+        self_.encrypted_data_directory_entry.set_sensitive(true);
+        self_.encrypted_data_directory_button.set_sensitive(true);
+        self_.mount_directory_entry.set_sensitive(true);
+        self_.mount_directory_button.set_sensitive(true);
         self_.add_import_button.set_sensitive(false);
 
         self_
@@ -403,6 +408,8 @@ impl AddPage {
 
     fn add_import_button_clicked(&self) {
         let self_ = imp::AddPage::from_instance(&self);
+
+        self.set_last_page_sensitive(false);
 
         let vault = Vault::new(
             String::from(self_.vault_name_entry.get_text().as_str()),
@@ -770,5 +777,20 @@ impl AddPage {
         }));
 
         dialog.show();
+    }
+
+    pub fn set_last_page_sensitive(&self, sensitive: bool) {
+        let self_ = imp::AddPage::from_instance(&self);
+
+        self_.previous_button_p_3.set_sensitive(sensitive);
+        self_
+            .encrypted_data_directory_entry
+            .set_sensitive(sensitive);
+        self_
+            .encrypted_data_directory_button
+            .set_sensitive(sensitive);
+        self_.mount_directory_entry.set_sensitive(sensitive);
+        self_.mount_directory_button.set_sensitive(sensitive);
+        self_.add_import_button.set_sensitive(sensitive);
     }
 }

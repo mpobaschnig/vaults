@@ -158,6 +158,7 @@ mod imp {
 
                 let add_button = self_.add_button.clone();
                 let refresh_button = self_.refresh_button.clone();
+                let add_page = self_.add_page.clone();
                 receiver.attach(None, move |message| {
                     let vault = UserConnfigManager::instance().get_current_vault().unwrap();
                     match message {
@@ -195,6 +196,8 @@ mod imp {
                     refresh_button.set_visible(true);
                     add_button.set_icon_name(&"list-add-symbolic");
                     add_button.set_tooltip_text(Some(&gettext("Add or Import New Vault")));
+
+                    add_page.set_last_page_sensitive(true);
 
                     spinner.stop();
 
