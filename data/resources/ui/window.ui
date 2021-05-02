@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ApplicationWindow" parent="AdwApplicationWindow">
-    <property name="default-width">480</property>
-    <property name="default-height">360</property>
+    <property name="default-width">500</property>
+    <property name="default-height">400</property>
     <child>
       <object class="AdwSqueezer" id="window_squeezer">
         <property name="orientation">vertical</property>
@@ -17,12 +17,6 @@
                   <object class="GtkButton" id="add_button">
                     <property name="icon_name">list-add-symbolic</property>
                     <property name="tooltip-text" translatable="yes">Add or Import New Vault</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkButton" id="refresh_button">
-                    <property name="icon_name">view-refresh-symbolic</property>
-                    <property name="tooltip-text" translatable="yes">Refresh</property>
                   </object>
                 </child>
                 <child type="end">

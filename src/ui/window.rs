@@ -20,9 +20,7 @@
 use crate::config::{APP_ID, PROFILE};
 use crate::password_manager::PasswordManager;
 use crate::ui::pages::*;
-use crate::{
-    application::VApplication, backend, backend::*, user_config_manager::UserConfigManager,
-};
+use crate::{application::VApplication, backend::*, user_config_manager::UserConfigManager};
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::{clone, GEnum, ParamSpec, ToValue};
@@ -74,8 +72,6 @@ mod imp {
         pub headerbar: TemplateChild<adw::HeaderBar>,
         #[template_child]
         pub add_button: TemplateChild<gtk::Button>,
-        #[template_child]
-        pub refresh_button: TemplateChild<gtk::Button>,
 
         pub spinner: RefCell<gtk::Spinner>,
 
@@ -100,7 +96,6 @@ mod imp {
                 unlock_vault_page: TemplateChild::default(),
                 headerbar: TemplateChild::default(),
                 add_button: TemplateChild::default(),
-                refresh_button: TemplateChild::default(),
                 spinner: RefCell::new(gtk::Spinner::new()),
                 settings: gio::Settings::new(APP_ID),
                 view: RefCell::new(VView::Start),
@@ -157,7 +152,6 @@ mod imp {
                 });
 
                 let add_button = self_.add_button.clone();
-                let refresh_button = self_.refresh_button.clone();
                 let add_page = self_.add_page.clone();
                 receiver.attach(None, move |message| {
                     let vault = UserConfigManager::instance().get_current_vault().unwrap();
@@ -192,8 +186,6 @@ mod imp {
                         }
                     }
 
-                    refresh_button.set_sensitive(true);
-                    refresh_button.set_visible(true);
                     add_button.set_icon_name(&"list-add-symbolic");
                     add_button.set_tooltip_text(Some(&gettext("Add or Import New Vault")));
 
@@ -216,8 +208,6 @@ mod imp {
 
                 self_.add_button.set_icon_name(&"list-add-symbolic");
                 self_.add_button.set_tooltip_text(Some(&gettext("Add or Import New Vault")));
-                self_.refresh_button.set_sensitive(true);
-                self_.refresh_button.set_visible(true);
             }));
 
             obj.setup_connect_handlers();
@@ -325,12 +315,6 @@ impl ApplicationWindow {
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.add_button_clicked();
             }));
-
-        self_
-            .refresh_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.refresh_button_clicked();
-            }));
     }
 
     fn add_button_clicked(&self) {
@@ -353,7 +337,6 @@ impl ApplicationWindow {
             _ => {
                 self_.add_button.set_icon_name(&"go-previous-symbolic");
                 self_.add_button.set_tooltip_text(Some(&gettext("Go Back")));
-                self_.refresh_button.set_visible(false);
                 self_.add_page.init();
                 self.set_view(VView::Add);
             }
@@ -367,25 +350,6 @@ impl ApplicationWindow {
         self_
             .add_button
             .set_tooltip_text(Some(&gettext("Add or Import New Vault")));
-        self_.refresh_button.set_visible(true);
-        if UserConfigManager::instance().get_map().is_empty() {
-            self.set_view(VView::Start);
-        } else {
-            self.set_view(VView::Vaults);
-        }
-    }
-
-    fn refresh_button_clicked(&self) {
-        let self_ = imp::ApplicationWindow::from_instance(self);
-
-        self_.vaults_page.clear();
-
-        backend::probe_backends();
-
-        UserConfigManager::instance().read_config();
-
-        self_.vaults_page.init();
-
         if UserConfigManager::instance().get_map().is_empty() {
             self.set_view(VView::Start);
         } else {
@@ -440,7 +404,6 @@ impl ApplicationWindow {
 
         self_.add_button.set_icon_name(&"go-previous-symbolic");
         self_.add_button.set_tooltip_text(Some(&gettext("Go Back")));
-        self_.refresh_button.set_visible(false);
         self_.unlock_vault_page.init();
 
         self.set_view(VView::UnlockVault);
@@ -458,7 +421,6 @@ impl ApplicationWindow {
 
         self_.add_button.set_icon_name(&"go-previous-symbolic");
         self_.add_button.set_tooltip_text(Some(&gettext("Go Back")));
-        self_.refresh_button.set_visible(false);
         self_.unlock_vault_page.init();
 
         self.set_view(VView::SettingsPage);
