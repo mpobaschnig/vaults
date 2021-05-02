@@ -26,6 +26,7 @@ use crate::{
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::{clone, GEnum, ParamSpec, ToValue};
+use gtk::glib::subclass::Signal;
 use gtk::subclass::prelude::*;
 use gtk::{self, prelude::*};
 use gtk::{gio, glib, CompositeTemplate};
@@ -40,6 +41,7 @@ pub enum VView {
     Add,
     Start,
     Vaults,
+    UnlockVault,
 }
 
 impl Default for VView {
@@ -62,6 +64,8 @@ mod imp {
         pub start_page: TemplateChild<VStartPage>,
         #[template_child]
         pub vaults_page: TemplateChild<VVaultsPage>,
+        #[template_child]
+        pub unlock_vault_page: TemplateChild<UnlockVaultPage>,
 
         #[template_child]
         pub headerbar: TemplateChild<adw::HeaderBar>,
@@ -89,6 +93,7 @@ mod imp {
                 add_page: TemplateChild::default(),
                 start_page: TemplateChild::default(),
                 vaults_page: TemplateChild::default(),
+                unlock_vault_page: TemplateChild::default(),
                 headerbar: TemplateChild::default(),
                 add_button: TemplateChild::default(),
                 refresh_button: TemplateChild::default(),
@@ -251,6 +256,13 @@ mod imp {
                 _ => unimplemented!(),
             }
         }
+
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> =
+                Lazy::new(|| vec![Signal::builder("unlock", &[], glib::Type::UNIT.into()).build()]);
+
+            SIGNALS.as_ref()
+        }
     }
 
     impl WidgetImpl for ApplicationWindow {}
@@ -266,6 +278,14 @@ glib::wrapper! {
 }
 
 impl ApplicationWindow {
+    pub fn connect_unlock<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
+        self.connect_local("unlock", false, move |_| {
+            callback();
+            None
+        })
+        .unwrap()
+    }
+
     pub fn window_connect_add_import(&self) {}
 
     pub fn new(app: &VApplication) -> Self {
@@ -317,16 +337,10 @@ impl ApplicationWindow {
 
         match self.get_view().unwrap() {
             VView::Add => {
-                self_.add_button.set_icon_name(&"list-add-symbolic");
-                self_
-                    .add_button
-                    .set_tooltip_text(Some(&gettext("Add or Import New Vault")));
-                self_.refresh_button.set_visible(true);
-                if UserConnfigManager::instance().get_map().is_empty() {
-                    self.set_view(VView::Start);
-                } else {
-                    self.set_view(VView::Vaults);
-                }
+                self.set_standard_window_view();
+            }
+            VView::UnlockVault => {
+                self.set_standard_window_view();
             }
             _ => {
                 self_.add_button.set_icon_name(&"go-previous-symbolic");
@@ -335,6 +349,21 @@ impl ApplicationWindow {
                 self_.add_page.init();
                 self.set_view(VView::Add);
             }
+        }
+    }
+
+    pub fn set_standard_window_view(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.add_button.set_icon_name(&"list-add-symbolic");
+        self_
+            .add_button
+            .set_tooltip_text(Some(&gettext("Add or Import New Vault")));
+        self_.refresh_button.set_visible(true);
+        if UserConnfigManager::instance().get_map().is_empty() {
+            self.set_view(VView::Start);
+        } else {
+            self.set_view(VView::Vaults);
         }
     }
 
@@ -377,6 +406,11 @@ impl ApplicationWindow {
                     .window_leaflet
                     .set_visible_child(&self_.vaults_page.get());
             }
+            VView::UnlockVault => {
+                self_
+                    .window_leaflet
+                    .set_visible_child(&self_.unlock_vault_page.get());
+            }
         }
     }
 
@@ -386,5 +420,23 @@ impl ApplicationWindow {
 
     pub fn get_view(&self) -> Option<VView> {
         self.get_property("view").unwrap().get().unwrap()
+    }
+
+    pub fn set_unlock_vault_view(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.add_button.set_icon_name(&"go-previous-symbolic");
+        self_.add_button.set_tooltip_text(Some(&gettext("Go Back")));
+        self_.refresh_button.set_visible(false);
+        self_.unlock_vault_page.init();
+
+        self.set_view(VView::UnlockVault);
+    }
+
+    pub fn call_unlock(&self, row: &VaultsPageRow) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.unlock_vault_page.init();
+        self_.unlock_vault_page.call_unlock(row);
     }
 }

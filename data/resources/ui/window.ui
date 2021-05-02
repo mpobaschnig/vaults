@@ -60,6 +60,9 @@
                         <child>
                           <object class="VVaultsPage" id="vaults_page"/>
                         </child>
+                        <child>
+                          <object class="UnlockVaultPage" id="unlock_vault_page"/>
+                        </child>
                       </object>
                     </child>
                   </object>
