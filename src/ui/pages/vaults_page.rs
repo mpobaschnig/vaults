@@ -26,7 +26,7 @@ use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 
-use crate::{user_config_manager::UserConnfigManager, vault::*};
+use crate::{user_config_manager::UserConfigManager, vault::*};
 
 mod imp {
     use glib::once_cell::sync::Lazy;
@@ -69,7 +69,7 @@ mod imp {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
 
-            UserConnfigManager::instance().connect_add_vault(clone!(@weak obj => move || {
+            UserConfigManager::instance().connect_add_vault(clone!(@weak obj => move || {
                 obj.add_vault();
             }));
 
@@ -125,7 +125,7 @@ impl VVaultsPage {
 
     pub fn row_connect_save(&self, row: &VaultsPageRow) {
         row.connect_save(clone!(@weak self as obj, @weak row as r => move || {
-            let vault = UserConnfigManager::instance().get_current_vault();
+            let vault = UserConfigManager::instance().get_current_vault();
             if let Some(vault) = vault {
                 r.set_vault(vault);
                 obj.emit_by_name("refresh", &[]).unwrap();
@@ -144,7 +144,7 @@ impl VVaultsPage {
     pub fn init(&self) {
         let self_ = imp::VVaultsPage::from_instance(self);
 
-        let map = UserConnfigManager::instance().get_map();
+        let map = UserConfigManager::instance().get_map();
         for (k, v) in map.iter() {
             let vault = Vault::new(
                 k.to_owned(),
@@ -170,7 +170,7 @@ impl VVaultsPage {
     pub fn add_vault(&self) {
         let self_ = imp::VVaultsPage::from_instance(self);
 
-        let vault = UserConnfigManager::instance().get_current_vault();
+        let vault = UserConfigManager::instance().get_current_vault();
 
         if let Some(vault) = vault {
             let row = VaultsPageRow::new(vault.clone());

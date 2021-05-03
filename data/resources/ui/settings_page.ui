@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <template class="SettingsPage" parent="AdwBin">
+    <child>
+      <object class="GtkScrolledWindow">
+        <property name="hscrollbar-policy">never</property>
+        <child>
+          <object class="GtkViewport">
+            <property name="vexpand">True</property>
+            <property name="hexpand">True</property>
+            <child>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="vexpand">True</property>
+                <property name="hexpand">True</property>
+                <child>
+                  <object class="AdwCarousel" id="carousel">
+                    <property name="vexpand">True</property>
+                    <property name="hexpand">True</property>
+                    <property name="interactive">False</property>
+                    <child>
+                      <object class="GtkBox">
+                        <property name="hexpand">True</property>
+                        <property name="margin-start">6</property>
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="spacing">6</property>
+                        <child>
+                          <object class="AdwClamp">
+                            <property name="maximum-size">300</property>
+                            <property name="hexpand">True</property>
+                            <property name="vexpand">True</property>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="width-request">200</property>
+                                <property name="hexpand">True</property>
+                                <property name="vexpand">True</property>
+                                <property name="orientation">vertical</property>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="margin-top">6</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="label">Vault Name</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkEntry" id="vault_name_entry">
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="margin-top">12</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="label">Backend Type</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBoxText" id="backend_type_combo_box_text">
+                                   <property name="hexpand">True</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="margin-top">12</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="label">Encrypted Data Directory</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="hexpand">True</property>
+                                    <child>
+                                      <object class="GtkEntry" id="encrypted_data_directory_entry">
+                                        <property name="hexpand">True</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="encrypted_data_directory_button">
+                                        <property name="icon_name">document-open-symbolic</property>
+                                      </object>
+                                    </child>
+                                    <style>
+                                      <class name="linked"/>
+                                    </style>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel">
+                                    <property name="margin-top">12</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="hexpand">True</property>
+                                    <property name="halign">start</property>
+                                    <property name="label">Mount Directory</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="hexpand">True</property>
+                                    <child>
+                                      <object class="GtkEntry" id="mount_directory_entry">
+                                        <property name="hexpand">True</property>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="mount_directory_button">
+                                        <property name="icon_name">document-open-symbolic</property>
+                                      </object>
+                                    </child>
+                                    <style>
+                                      <class name="linked"/>
+                                    </style>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="info_label">
+                                    <property name="margin-top">12</property>
+                                    <property name="margin-bottom">6</property>
+                                    <property name="wrap">True</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkBox">
+                                    <property name="hexpand">True</property>
+                                    <property name="margin-start">24</property>
+                                    <property name="margin-end">24</property>
+                                    <property name="margin-bottom">6</property>
+                                    <child>
+                                      <object class="GtkButton" id="remove_button">
+                                        <property name="hexpand">True</property>
+                                        <property name="label" translatable="yes">Remove</property>
+                                        <style>
+                                          <class name="destructive-action"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkButton" id="save_button">
+                                        <property name="hexpand">True</property>
+                                        <property name="label" translatable="yes">Save</property>
+                                        <style>
+                                          <class name="suggested-action"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                    <style>
+                                      <class name="linked"/>
+                                    </style>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </child>
+      </object>
+    </child>
+  </template>
+</interface>

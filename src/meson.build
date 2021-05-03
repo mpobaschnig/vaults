@@ -24,20 +24,20 @@ sources = files(
   'backend/mod.rs',
 
   'ui/pages/mod.rs',
+  'ui/pages/add_page.rs',
+  'ui/pages/unlock_vault_page.rs',
+  'ui/pages/settings_page.rs',
   'ui/pages/start_page.rs',
   'ui/pages/vaults_page.rs',
   'ui/pages/vaults_page_row.rs',
-  'ui/pages/vaults_page_row_settings_dialog.rs',
-  'ui/pages/vaults_page_row_password_prompt_dialog.rs',
 
-  'ui/add_new_vault_dialog.rs',
-  'ui/import_vault_dialog.rs',
   'ui/mod.rs',
   'ui/window.rs',
 
   'application.rs',
   'config.rs',
   'main.rs',
+  'password_manager.rs',
   'vault.rs',
   'user_config_manager.rs',
 )

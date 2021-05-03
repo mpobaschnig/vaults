@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ApplicationWindow" parent="AdwApplicationWindow">
-    <property name="default-width">480</property>
-    <property name="default-height">360</property>
+    <property name="default-width">500</property>
+    <property name="default-height">400</property>
     <child>
       <object class="AdwSqueezer" id="window_squeezer">
         <property name="orientation">vertical</property>
@@ -10,22 +10,13 @@
         <property name="interpolate_size">True</property>
         <child>
           <object class="GtkBox">
-            <property name="width_request">350</property>
-            <property name="height_request">175</property>
             <property name="orientation">vertical</property>
             <child>
               <object class="AdwHeaderBar" id="headerbar">
                 <child>
-                  <object class="GtkMenuButton" id="add_menu_button">
+                  <object class="GtkButton" id="add_button">
                     <property name="icon_name">list-add-symbolic</property>
                     <property name="tooltip-text" translatable="yes">Add or Import New Vault</property>
-                    <property name="menu_model">add_menu</property>
-                  </object>
-                </child>
-                <child>
-                  <object class="GtkButton" id="refresh_button">
-                    <property name="icon_name">view-refresh-symbolic</property>
-                    <property name="tooltip-text" translatable="yes">Refresh</property>
                   </object>
                 </child>
                 <child type="end">
@@ -55,10 +46,19 @@
                         <property name="can_unfold">False</property>
                         <property name="hexpand">True</property>
                         <child>
+                          <object class="AddPage" id="add_page"/>
+                        </child>
+                        <child>
                           <object class="VStartPage" id="start_page"/>
                         </child>
                         <child>
                           <object class="VVaultsPage" id="vaults_page"/>
+                        </child>
+                        <child>
+                          <object class="UnlockVaultPage" id="unlock_vault_page"/>
+                        </child>
+                        <child>
+                          <object class="SettingsPage" id="settings_page"/>
                         </child>
                       </object>
                     </child>
