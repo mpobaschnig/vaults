@@ -30,6 +30,7 @@ use gtk::glib::subclass::Signal;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
+use std::cell::RefCell;
 
 mod imp {
     use super::*;
@@ -43,6 +44,8 @@ mod imp {
         pub unlock_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub password_entry: TemplateChild<gtk::Entry>,
+
+        pub current_row: RefCell<Option<VaultsPageRow>>,
     }
 
     #[glib::object_subclass]
@@ -56,6 +59,7 @@ mod imp {
                 password_label: TemplateChild::default(),
                 password_entry: TemplateChild::default(),
                 unlock_button: TemplateChild::default(),
+                current_row: RefCell::new(None),
             }
         }
 
@@ -166,6 +170,8 @@ impl UnlockVaultPage {
     pub fn call_unlock(&self, row: &VaultsPageRow) {
         let self_ = imp::UnlockVaultPage::from_instance(&self);
 
+        self_.current_row.borrow_mut().replace(row.clone());
+
         let name = row.get_name();
         let mut label_text = String::from(&gettext("Enter Password for"));
         label_text.push_str(" ");
@@ -184,7 +190,7 @@ impl UnlockVaultPage {
 
                 let password = self_.password_entry.get_text().to_string();
 
-                obj.disconnect(row.get_unlock_handler_id());
+                obj.disconnect_all_signals();
 
                 let ancestor = obj.get_ancestor(ApplicationWindow::static_type()).unwrap();
                 let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
@@ -193,5 +199,13 @@ impl UnlockVaultPage {
                 row.unlock(password);
             }),
         ));
+    }
+
+    pub fn disconnect_all_signals(&self) {
+        let self_ = imp::UnlockVaultPage::from_instance(&self);
+
+        if let Some(row) = self_.current_row.borrow().as_ref() {
+            self.disconnect(row.get_unlock_handler_id());
+        }
     }
 }

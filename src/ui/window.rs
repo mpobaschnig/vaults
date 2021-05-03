@@ -329,9 +329,11 @@ impl ApplicationWindow {
                 self.set_standard_window_view();
             }
             VView::UnlockVault => {
+                self_.unlock_vault_page.disconnect_all_signals();
                 self.set_standard_window_view();
             }
             VView::SettingsPage => {
+                self_.settings_page.disconnect_all_signals();
                 self.set_standard_window_view();
             }
             _ => {

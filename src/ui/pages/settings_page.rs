@@ -65,6 +65,8 @@ mod imp {
         pub info_label: TemplateChild<gtk::Label>,
 
         pub current_vault: RefCell<Option<Vault>>,
+
+        pub current_row: RefCell<Option<VaultsPageRow>>,
     }
 
     #[glib::object_subclass]
@@ -205,6 +207,8 @@ impl SettingsPage {
     pub fn call_settings(&self, row: &VaultsPageRow) {
         let self_ = imp::SettingsPage::from_instance(&self);
 
+        self_.current_row.borrow_mut().replace(row.clone());
+
         let vault = row.get_vault();
         let vault_config = vault.get_config().unwrap();
 
@@ -235,7 +239,7 @@ impl SettingsPage {
             clone!(@weak self as obj, @weak row, @weak window => move || {
                 let obj_ = imp::SettingsPage::from_instance(&obj);
 
-                obj.disconnect(row.get_save_handler_id());
+                obj.disconnect_all_signals();
 
                 let new_vault = Vault::new(
                     String::from(obj_.vault_name_entry.get_text().as_str()),
@@ -270,7 +274,7 @@ impl SettingsPage {
 
         row.set_remove_handler_id(self.connect_remove(
             clone!(@weak self as obj, @weak row => move || {
-                row.disconnect(row.get_remove_handler_id());
+                obj.disconnect_all_signals();
 
                 let vault = row.get_vault();
 
@@ -604,5 +608,14 @@ impl SettingsPage {
         }));
 
         dialog.show();
+    }
+
+    pub fn disconnect_all_signals(&self) {
+        let self_ = imp::SettingsPage::from_instance(&self);
+
+        if let Some(row) = self_.current_row.borrow().as_ref() {
+            self.disconnect(row.get_save_handler_id());
+            self.disconnect(row.get_remove_handler_id());
+        }
     }
 }
