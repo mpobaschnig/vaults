@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Martin Pobaschnig 2021 <mpobaschnig@posteo.de> -->
+<!-- Martin Pobaschnig 2021 <martin.pobaschnig@protonmail.com> -->
 <component type="desktop-application">
   <id>@app-id@</id>
   <metadata_license>CC0</metadata_license>
@@ -36,7 +36,7 @@
      <kudo>HiDpiIcon</kudo>
   </kudos>
   <developer_name>Martin Pobaschnig</developer_name>
-  <update_contact>mpobaschnig@posteo.de</update_contact>
+  <update_contact>martin.pobaschnig@protonmail.com</update_contact>
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
