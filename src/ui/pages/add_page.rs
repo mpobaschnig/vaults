@@ -22,7 +22,8 @@ use crate::password_manager::PasswordManager;
 use crate::user_config_manager::UserConfigManager;
 use crate::vault::*;
 use crate::VApplication;
-use adw::{subclass::prelude::*, ActionRowExt};
+use adw::prelude::ActionRowExt;
+use adw::subclass::prelude::BinImpl;
 use gettextrs::gettext;
 use glib::clone;
 use glib::once_cell::sync::Lazy;
@@ -169,7 +170,7 @@ mod imp {
                 }));
 
             obj_.vault_name_entry
-                .connect_property_text_notify(clone!(@weak obj => move |_| {
+                .connect_text_notify(clone!(@weak obj => move |_| {
                     obj.check_next_button_p_2_enable();
                 }));
 
@@ -185,15 +186,14 @@ mod imp {
                 }));
 
             obj_.password_entry
-                .connect_property_text_notify(clone!(@weak obj => move |_| {
+                .connect_text_notify(clone!(@weak obj => move |_| {
                     obj.check_next_button_p_2_enable();
                 }));
 
-            obj_.confirm_password_entry.connect_property_text_notify(
-                clone!(@weak obj => move |_| {
+            obj_.confirm_password_entry
+                .connect_text_notify(clone!(@weak obj => move |_| {
                     obj.check_next_button_p_2_enable();
-                }),
-            );
+                }));
 
             obj_.previous_button_p_3
                 .connect_clicked(clone!(@weak obj => move |_| {
@@ -201,12 +201,12 @@ mod imp {
                 }));
 
             obj_.encrypted_data_directory_entry
-                .connect_property_text_notify(clone!(@weak obj => move |_| {
+                .connect_text_notify(clone!(@weak obj => move |_| {
                     obj.check_add_import_button_enable();
                 }));
 
             obj_.mount_directory_entry
-                .connect_property_text_notify(clone!(@weak obj => move |_| {
+                .connect_text_notify(clone!(@weak obj => move |_| {
                     obj.check_add_import_button_enable();
                 }));
 
@@ -290,7 +290,7 @@ impl AddPage {
 
         self_
             .carousel
-            .scroll_to(&self_.carousel.get_nth_page(0).unwrap());
+            .scroll_to(&self_.carousel.nth_page(0).unwrap());
     }
 
     fn setup_combo_box(&self) {
@@ -333,7 +333,7 @@ impl AddPage {
         self_.vault_name_entry.grab_focus_without_selecting();
         self_
             .carousel
-            .scroll_to(&self_.carousel.get_nth_page(1).unwrap());
+            .scroll_to(&self_.carousel.nth_page(1).unwrap());
     }
 
     fn import_new_vault_action_row_clicked(&self) {
@@ -348,14 +348,14 @@ impl AddPage {
         self_.vault_name_entry.grab_focus_without_selecting();
         self_
             .carousel
-            .scroll_to(&self_.carousel.get_nth_page(1).unwrap());
+            .scroll_to(&self_.carousel.nth_page(1).unwrap());
     }
 
     fn previous_button_p_2_clicked(&self) {
         let self_ = imp::AddPage::from_instance(&self);
         self_
             .carousel
-            .scroll_to(&self_.carousel.get_nth_page(0).unwrap());
+            .scroll_to(&self_.carousel.nth_page(0).unwrap());
     }
 
     fn backend_type_info_button_clicked(&self) {
@@ -363,7 +363,7 @@ impl AddPage {
 
         self.set_info_label_text();
 
-        if self_.info_revealer.get_reveal_child() {
+        if self_.info_revealer.reveals_child() {
             self_.info_revealer.set_reveal_child(false);
         } else {
             self_.info_revealer.set_reveal_child(true);
@@ -376,7 +376,7 @@ impl AddPage {
         self_
             .name
             .borrow_mut()
-            .replace(self_.vault_name_entry.get_text().to_string());
+            .replace(self_.vault_name_entry.text().to_string());
 
         if let Some(is_add_new_vault) = *self_.is_add_new_vault.borrow() {
             if is_add_new_vault {
@@ -397,14 +397,14 @@ impl AddPage {
 
         self_
             .carousel
-            .scroll_to(&self_.carousel.get_nth_page(2).unwrap());
+            .scroll_to(&self_.carousel.nth_page(2).unwrap());
     }
 
     fn previous_button_p_3_clicked(&self) {
         let self_ = imp::AddPage::from_instance(&self);
         self_
             .carousel
-            .scroll_to(&self_.carousel.get_nth_page(1).unwrap());
+            .scroll_to(&self_.carousel.nth_page(1).unwrap());
     }
 
     fn add_import_button_clicked(&self) {
@@ -413,17 +413,17 @@ impl AddPage {
         self.set_last_page_sensitive(false);
 
         let vault = Vault::new(
-            String::from(self_.vault_name_entry.get_text().as_str()),
+            String::from(self_.vault_name_entry.text().as_str()),
             Backend::from_str(
                 self_
                     .backend_type_combo_box_text
-                    .get_active_text()
+                    .active_text()
                     .unwrap()
                     .as_str(),
             )
             .unwrap(),
-            String::from(self_.encrypted_data_directory_entry.get_text().as_str()),
-            String::from(self_.mount_directory_entry.get_text().as_str()),
+            String::from(self_.encrypted_data_directory_entry.text().as_str()),
+            String::from(self_.mount_directory_entry.text().as_str()),
         );
         let vault_config = vault.get_config().clone().unwrap();
 
@@ -443,7 +443,7 @@ impl AddPage {
                     log::error!("Could not create directories: {}", e);
                 };
 
-                let password = String::from(self_.password_entry.get_text().as_str());
+                let password = String::from(self_.password_entry.text().as_str());
                 PasswordManager::instance().set_current_password(password);
 
                 self.emit_by_name("add", &[]).unwrap();
@@ -512,9 +512,9 @@ impl AddPage {
         self_.info_label.set_text("");
         self_.next_button_p_2.set_sensitive(false);
 
-        let vault_name = self_.vault_name_entry.get_text();
-        let password = self_.password_entry.get_text();
-        let confirm_password = self_.confirm_password_entry.get_text();
+        let vault_name = self_.vault_name_entry.text();
+        let password = self_.password_entry.text();
+        let confirm_password = self_.confirm_password_entry.text();
 
         let is_valid_vault_name = self.is_valid_vault_name(vault_name.clone());
         if !is_valid_vault_name {
@@ -673,8 +673,8 @@ impl AddPage {
         self_.info_label.set_text("");
         self_.add_import_button.set_sensitive(false);
 
-        let encrypted_data_directory = self_.encrypted_data_directory_entry.get_text();
-        let mount_directory = self_.mount_directory_entry.get_text();
+        let encrypted_data_directory = self_.encrypted_data_directory_entry.text();
+        let mount_directory = self_.mount_directory_entry.text();
 
         let is_encrypted_data_directory_valid =
             self.is_encrypted_data_directory_valid(&encrypted_data_directory);
@@ -703,7 +703,7 @@ impl AddPage {
     fn set_info_label_text(&self) {
         let self_ = imp::AddPage::from_instance(&self);
 
-        let backend = self_.backend_type_combo_box_text.get_active_text().unwrap();
+        let backend = self_.backend_type_combo_box_text.active_text().unwrap();
 
         if backend.eq("Gocryptfs") {
             self_.info_revealer_label.set_text(&gettext("Fast and robust, gocryptfs works well in general cases where third-parties do not always have access to the encrypted data directory (e.g. file hosting services). It exposes directory structure, number of files and file sizes. Security audit in 2017 verified gocryptfs being safe against third-parties that can read or write to encrypted data."));
@@ -713,11 +713,11 @@ impl AddPage {
     }
 
     fn encrypted_data_directory_button_clicked(&self) {
-        let window = gio::Application::get_default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
-            .get_active_window()
+            .active_window()
             .unwrap();
 
         let dialog = gtk::FileChooserDialog::new(
@@ -734,8 +734,8 @@ impl AddPage {
 
         dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
             if response == gtk::ResponseType::Accept {
-                let file = dialog.get_file().unwrap();
-                let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
+                let file = dialog.file().unwrap();
+                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
                 let self_ = imp::AddPage::from_instance(&obj);
                 self_.encrypted_data_directory_entry.set_text(&path);
             }
@@ -747,11 +747,11 @@ impl AddPage {
     }
 
     fn mount_directory_button_clicked(&self) {
-        let window = gio::Application::get_default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
-            .get_active_window()
+            .active_window()
             .unwrap();
 
         let dialog = gtk::FileChooserDialog::new(
@@ -768,8 +768,8 @@ impl AddPage {
 
         dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
             if response == gtk::ResponseType::Accept {
-                let file = dialog.get_file().unwrap();
-                let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
+                let file = dialog.file().unwrap();
+                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
                 let self_ = imp::AddPage::from_instance(&obj);
                 self_.mount_directory_entry.set_text(&path);
             }

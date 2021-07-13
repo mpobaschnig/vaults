@@ -23,7 +23,7 @@ use crate::ui::ApplicationWindow;
 use crate::user_config_manager::UserConfigManager;
 use crate::vault::Vault;
 use crate::VApplication;
-use adw::subclass::prelude::*;
+use adw::subclass::prelude::BinImpl;
 use gettextrs::gettext;
 use glib::once_cell::sync::Lazy;
 use glib::subclass;
@@ -154,7 +154,7 @@ impl SettingsPage {
 
         self_
             .vault_name_entry
-            .connect_property_text_notify(clone!(@weak self as obj => move |_| {
+            .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
             }));
 
@@ -164,11 +164,11 @@ impl SettingsPage {
                 obj.check_add_button_enable_conditions();
             }));
 
-        self_
-            .encrypted_data_directory_entry
-            .connect_property_text_notify(clone!(@weak self as obj => move |_| {
+        self_.encrypted_data_directory_entry.connect_text_notify(
+            clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
-            }));
+            }),
+        );
 
         self_.encrypted_data_directory_button.connect_clicked(
             clone!(@weak self as obj => move |_| {
@@ -176,11 +176,11 @@ impl SettingsPage {
             }),
         );
 
-        self_.mount_directory_entry.connect_property_text_notify(
-            clone!(@weak self as obj => move |_| {
+        self_
+            .mount_directory_entry
+            .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
-            }),
-        );
+            }));
 
         self_
             .mount_directory_button
@@ -231,7 +231,7 @@ impl SettingsPage {
 
         UserConfigManager::instance().set_current_vault(vault);
 
-        let ancestor = self.get_ancestor(ApplicationWindow::static_type()).unwrap();
+        let ancestor = self.ancestor(ApplicationWindow::static_type()).unwrap();
         let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
         window.set_settings_page();
 
@@ -242,17 +242,17 @@ impl SettingsPage {
                 obj.disconnect_all_signals();
 
                 let new_vault = Vault::new(
-                    String::from(obj_.vault_name_entry.get_text().as_str()),
+                    String::from(obj_.vault_name_entry.text().as_str()),
                     Backend::from_str(
                         obj_
                             .backend_type_combo_box_text
-                            .get_active_text()
+                            .active_text()
                             .unwrap()
                             .as_str(),
                     )
                     .unwrap(),
-                    String::from(obj_.encrypted_data_directory_entry.get_text().as_str()),
-                    String::from(obj_.mount_directory_entry.get_text().as_str()),
+                    String::from(obj_.encrypted_data_directory_entry.text().as_str()),
+                    String::from(obj_.mount_directory_entry.text().as_str()),
                 );
 
                 let vault = &row.get_vault();
@@ -266,7 +266,7 @@ impl SettingsPage {
 
                 row.emit_by_name("save", &[]).unwrap();
 
-                let ancestor = obj.get_ancestor(ApplicationWindow::static_type()).unwrap();
+                let ancestor = obj.ancestor(ApplicationWindow::static_type()).unwrap();
                 let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
                 window.set_standard_window_view();
             }),
@@ -282,7 +282,7 @@ impl SettingsPage {
 
                 row.emit_by_name("remove", &[]).unwrap();
 
-                let ancestor = obj.get_ancestor(ApplicationWindow::static_type()).unwrap();
+                let ancestor = obj.ancestor(ApplicationWindow::static_type()).unwrap();
                 let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
                 window.set_standard_window_view();
             }),
@@ -487,11 +487,11 @@ impl SettingsPage {
         self_.info_label.set_text("");
         self_.save_button.set_sensitive(false);
 
-        let vault_name = self_.vault_name_entry.get_text();
-        let backend_str = self_.backend_type_combo_box_text.get_active_text().unwrap();
+        let vault_name = self_.vault_name_entry.text();
+        let backend_str = self_.backend_type_combo_box_text.active_text().unwrap();
         let backend = Backend::from_str(&backend_str.as_str()).unwrap();
-        let encrypted_data_directory = self_.encrypted_data_directory_entry.get_text();
-        let mount_directory = self_.mount_directory_entry.get_text();
+        let encrypted_data_directory = self_.encrypted_data_directory_entry.text();
+        let mount_directory = self_.mount_directory_entry.text();
 
         let is_valid_vault_name = self.is_valid_vault_name(vault_name.clone());
         if !is_valid_vault_name {
@@ -543,11 +543,11 @@ impl SettingsPage {
     }
 
     fn encrypted_data_directory_button_clicked(&self) {
-        let window = gio::Application::get_default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
-            .get_active_window()
+            .active_window()
             .unwrap();
 
         let dialog = gtk::FileChooserDialog::new(
@@ -564,8 +564,8 @@ impl SettingsPage {
 
         dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
             if response == gtk::ResponseType::Accept {
-                let file = dialog.get_file().unwrap();
-                let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
+                let file = dialog.file().unwrap();
+                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
                 let self_ = imp::SettingsPage::from_instance(&obj);
                 self_.encrypted_data_directory_entry.set_text(&path);
             }
@@ -577,11 +577,11 @@ impl SettingsPage {
     }
 
     fn mount_directory_button_clicked(&self) {
-        let window = gio::Application::get_default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
-            .get_active_window()
+            .active_window()
             .unwrap();
 
         let dialog = gtk::FileChooserDialog::new(
@@ -598,8 +598,8 @@ impl SettingsPage {
 
         dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
             if response == gtk::ResponseType::Accept {
-                let file = dialog.get_file().unwrap();
-                let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
+                let file = dialog.file().unwrap();
+                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
                 let self_ = imp::SettingsPage::from_instance(&obj);
                 self_.mount_directory_entry.set_text(&path);
             }

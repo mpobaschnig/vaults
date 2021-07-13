@@ -18,7 +18,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use super::VaultsPageRow;
-use adw::subclass::prelude::*;
+use adw::subclass::prelude::BinImpl;
 use glib::{clone, subclass};
 use gtk::gio::ListStore;
 use gtk::glib;

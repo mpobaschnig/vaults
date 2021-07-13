@@ -17,7 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use adw::subclass::prelude::*;
+use adw::subclass::prelude::BinImpl;
 use glib::subclass;
 use gtk::glib;
 use gtk::prelude::*;

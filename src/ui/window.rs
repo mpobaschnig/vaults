@@ -116,7 +116,7 @@ mod imp {
             self.parent_constructed(obj);
 
             if PROFILE == "Devel" {
-                obj.get_style_context().add_class("devel");
+                obj.style_context().add_class("devel");
             }
 
             self.add_page.init();
@@ -164,11 +164,11 @@ mod imp {
                         Message::Error(e) => {
                             add_button.set_icon_name(&"list-add-symbolic");
                             gtk::glib::MainContext::default().spawn_local(async move {
-                                let window = gtk::gio::Application::get_default()
+                                let window = gtk::gio::Application::default()
                                     .unwrap()
                                     .downcast_ref::<VApplication>()
                                     .unwrap()
-                                    .get_active_window()
+                                    .active_window()
                                     .unwrap()
                                     .clone();
                                 let info_dialog = gtk::MessageDialogBuilder::new()
@@ -215,7 +215,7 @@ mod imp {
 
         fn properties() -> &'static [ParamSpec] {
             static PROPERTIES: Lazy<Vec<ParamSpec>> = Lazy::new(|| {
-                vec![ParamSpec::enum_(
+                vec![ParamSpec::new_enum(
                     "view",
                     "View",
                     "View",
@@ -228,8 +228,8 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn get_property(&self, _obj: &Self::Type, _id: usize, pspec: &ParamSpec) -> glib::Value {
-            match pspec.get_name() {
+        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &ParamSpec) -> glib::Value {
+            match pspec.name() {
                 "view" => self.view.borrow().to_value(),
                 _ => unimplemented!(),
             }
@@ -242,10 +242,10 @@ mod imp {
             value: &glib::Value,
             pspec: &ParamSpec,
         ) {
-            match pspec.get_name() {
+            match pspec.name() {
                 "view" => {
-                    let view = value.get().unwrap();
-                    *self.view.borrow_mut() = view.unwrap();
+                    //let view = value.get().unwrap().to_value();
+                    *self.view.borrow_mut() = value.get().unwrap();
                     obj.update_view();
                 }
                 _ => unimplemented!(),
@@ -319,12 +319,13 @@ impl ApplicationWindow {
 
     fn add_button_clicked(&self) {
         let self_ = imp::ApplicationWindow::from_instance(self);
+        let view = *self_.view.borrow();
 
-        if self_.spinner.borrow().get_spinning() {
+        if self_.spinner.borrow().is_spinning() {
             return;
         }
 
-        match self.get_view().unwrap() {
+        match view {
             VView::Add => {
                 self.set_standard_window_view();
             }
@@ -395,10 +396,6 @@ impl ApplicationWindow {
 
     pub fn set_view(&self, view: VView) {
         self.set_property("view", &view).unwrap()
-    }
-
-    pub fn get_view(&self) -> Option<VView> {
-        self.get_property("view").unwrap().get().unwrap()
     }
 
     pub fn set_unlock_vault_view(&self) {

@@ -20,9 +20,7 @@
 use crate::vault::*;
 use gtk::{
     gio::subclass::prelude::*,
-    glib::{
-        self, get_home_dir, get_user_config_dir, get_user_data_dir, prelude::*, subclass::Signal,
-    },
+    glib::{self, home_dir, prelude::*, subclass::Signal, user_config_dir, user_data_dir},
 };
 use once_cell::sync::Lazy;
 use std::{cell::RefCell, collections::HashMap};
@@ -129,7 +127,7 @@ impl UserConfigManager {
     fn new() -> Self {
         let object: Self = glib::Object::new(&[]).expect("Failed to create UserConfigManager");
 
-        match get_user_config_dir().as_os_str().to_str() {
+        match user_config_dir().as_os_str().to_str() {
             Some(user_config_directory) => {
                 log::debug!("Got user config dir: {}", user_config_directory);
 
@@ -142,7 +140,7 @@ impl UserConfigManager {
             }
         }
 
-        match get_user_data_dir().as_os_str().to_str() {
+        match user_data_dir().as_os_str().to_str() {
             Some(user_data_directory) => {
                 log::debug!("Got user data dir: {}", user_data_directory);
 
@@ -155,16 +153,14 @@ impl UserConfigManager {
             }
         }
 
-        match get_home_dir() {
-            Some(path) => {
-                if let Some(home_directory) = path.to_str() {
-                    log::debug!("Got home dir: {}", home_directory);
-                    let self_ = &mut imp::UserConfigManager::from_instance(&object);
-                    *self_.vaults_home.borrow_mut() = Some(home_directory.to_owned() + "/Vaults/");
-                }
+        match home_dir().to_str() {
+            Some(home_directory) => {
+                log::debug!("Got home dir: {}", &home_directory);
+                let self_ = &mut imp::UserConfigManager::from_instance(&object);
+                *self_.vaults_home.borrow_mut() = Some(home_directory.to_owned() + "/Vaults/");
             }
             None => {
-                log::error!("Could not get user data directory");
+                log::error!("Could not get home directory");
             }
         }
 

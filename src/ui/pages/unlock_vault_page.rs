@@ -20,7 +20,7 @@
 use crate::password_manager::PasswordManager;
 use crate::ui::pages::VaultsPageRow;
 use crate::ui::ApplicationWindow;
-use adw::subclass::prelude::*;
+use adw::subclass::prelude::BinImpl;
 use gettextrs::gettext;
 use glib::once_cell::sync::Lazy;
 use glib::subclass;
@@ -126,7 +126,7 @@ impl UnlockVaultPage {
 
         self_
             .password_entry
-            .connect_property_text_notify(clone!(@weak self as obj => move |_| {
+            .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_unlock_button_enable_conditions();
             }));
 
@@ -140,7 +140,7 @@ impl UnlockVaultPage {
     fn unlock_button_clicked(&self) {
         let self_ = imp::UnlockVaultPage::from_instance(self);
 
-        let password = self_.password_entry.get_text().to_string();
+        let password = self_.password_entry.text().to_string();
 
         PasswordManager::instance().set_current_password(password);
 
@@ -150,7 +150,7 @@ impl UnlockVaultPage {
     fn check_unlock_button_enable_conditions(&self) {
         let self_ = imp::UnlockVaultPage::from_instance(self);
 
-        let password = self_.password_entry.get_text();
+        let password = self_.password_entry.text();
 
         if !password.is_empty() {
             self_.unlock_button.set_sensitive(true);
@@ -162,7 +162,7 @@ impl UnlockVaultPage {
     fn connect_activate(&self) {
         let self_ = imp::UnlockVaultPage::from_instance(self);
 
-        if !self_.password_entry.get_text().is_empty() {
+        if !self_.password_entry.text().is_empty() {
             self.unlock_button_clicked();
         }
     }
@@ -179,7 +179,7 @@ impl UnlockVaultPage {
 
         self_.password_label.set_text(&label_text);
 
-        let ancestor = self.get_ancestor(ApplicationWindow::static_type()).unwrap();
+        let ancestor = self.ancestor(ApplicationWindow::static_type()).unwrap();
         let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
 
         window.set_unlock_vault_view();
@@ -188,11 +188,11 @@ impl UnlockVaultPage {
             clone!(@weak self as obj, @weak row => move || {
                 let self_ = imp::UnlockVaultPage::from_instance(&obj);
 
-                let password = self_.password_entry.get_text().to_string();
+                let password = self_.password_entry.text().to_string();
 
                 obj.disconnect_all_signals();
 
-                let ancestor = obj.get_ancestor(ApplicationWindow::static_type()).unwrap();
+                let ancestor = obj.ancestor(ApplicationWindow::static_type()).unwrap();
                 let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
                 window.set_standard_window_view();
 

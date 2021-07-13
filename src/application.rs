@@ -103,7 +103,7 @@ impl VApplication {
     fn setup_css(&self) {
         let provider = gtk::CssProvider::new();
         provider.load_from_resource("/io/github/mpobaschnig/Vaults/style.css");
-        if let Some(display) = gdk::Display::get_default() {
+        if let Some(display) = gdk::Display::default() {
             gtk::StyleContext::add_provider_for_display(
                 &display,
                 &provider,
@@ -119,7 +119,7 @@ impl VApplication {
             .license_type(gtk::License::Gpl30)
             .website("https://github.com/mpobaschnig/Vaults")
             .version(config::VERSION)
-            .transient_for(&self.get_active_window().unwrap())
+            .transient_for(&self.active_window().unwrap())
             .modal(true)
             .authors(vec!["Martin Pobaschnig".into()])
             .artists(vec!["Martin Pobaschnig".into()])
