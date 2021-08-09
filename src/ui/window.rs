@@ -73,6 +73,12 @@ mod imp {
         #[template_child]
         pub add_button: TemplateChild<gtk::Button>,
         #[template_child]
+        pub previous_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub home_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub next_button: TemplateChild<gtk::Button>,
+        #[template_child]
         pub about_menu_button: TemplateChild<gtk::MenuButton>,
 
         pub spinner: RefCell<gtk::Spinner>,
@@ -98,6 +104,9 @@ mod imp {
                 unlock_vault_page: TemplateChild::default(),
                 headerbar: TemplateChild::default(),
                 add_button: TemplateChild::default(),
+                previous_button: TemplateChild::default(),
+                home_button: TemplateChild::default(),
+                next_button: TemplateChild::default(),
                 about_menu_button: TemplateChild::default(),
                 spinner: RefCell::new(gtk::Spinner::new()),
                 settings: gio::Settings::new(APP_ID),
