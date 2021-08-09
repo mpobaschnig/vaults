@@ -327,44 +327,58 @@ impl ApplicationWindow {
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.add_button_clicked();
             }));
+
+        self_
+            .home_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.home_button_clicked();
+            }));
     }
 
     fn add_button_clicked(&self) {
         let self_ = imp::ApplicationWindow::from_instance(self);
-        let view = *self_.view.borrow();
 
         if self_.spinner.borrow().is_spinning() {
             return;
         }
 
+        self_.add_button.hide();
+
+        self_.home_button.show();
+
+        self_.add_page.init();
+
+        self.set_view(VView::Add);
+    }
+
+    fn home_button_clicked(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+        let view = *self_.view.borrow();
+
         match view {
-            VView::Add => {
-                self.set_standard_window_view();
-            }
             VView::UnlockVault => {
                 self_.unlock_vault_page.disconnect_all_signals();
-                self.set_standard_window_view();
             }
             VView::SettingsPage => {
                 self_.settings_page.disconnect_all_signals();
-                self.set_standard_window_view();
             }
-            _ => {
-                self_.add_button.set_icon_name(&"go-previous-symbolic");
-                self_.add_button.set_tooltip_text(Some(&gettext("Go Back")));
-                self_.add_page.init();
-                self.set_view(VView::Add);
-            }
+            _ => {}
         }
+
+        self.set_standard_window_view();
     }
 
     pub fn set_standard_window_view(&self) {
         let self_ = imp::ApplicationWindow::from_instance(self);
 
-        self_.add_button.set_icon_name(&"list-add-symbolic");
-        self_
-            .add_button
-            .set_tooltip_text(Some(&gettext("Add or Import New Vault")));
+        self_.add_button.show();
+        self_.about_menu_button.show();
+        self_.headerbar.set_show_end_title_buttons(true);
+
+        self_.previous_button.hide();
+        self_.home_button.hide();
+        self_.next_button.hide();
+
         if UserConfigManager::instance().get_map().is_empty() {
             self.set_view(VView::Start);
         } else {
@@ -379,6 +393,8 @@ impl ApplicationWindow {
 
         match view {
             VView::Add => {
+                self_.add_button.hide();
+                self_.home_button.show();
                 self_.headerbar.set_show_end_title_buttons(false);
                 self_.about_menu_button.hide();
 
@@ -387,6 +403,8 @@ impl ApplicationWindow {
                     .set_visible_child(&self_.add_page.get());
             }
             VView::SettingsPage => {
+                self_.add_button.hide();
+                self_.home_button.show();
                 self_.headerbar.set_show_end_title_buttons(false);
                 self_.about_menu_button.hide();
 
@@ -395,6 +413,7 @@ impl ApplicationWindow {
                     .set_visible_child(&self_.settings_page.get());
             }
             VView::Start => {
+                self_.home_button.hide();
                 self_.headerbar.set_show_end_title_buttons(true);
                 self_.about_menu_button.show();
 
@@ -403,6 +422,7 @@ impl ApplicationWindow {
                     .set_visible_child(&self_.start_page.get());
             }
             VView::Vaults => {
+                self_.home_button.hide();
                 self_.headerbar.set_show_end_title_buttons(true);
                 self_.about_menu_button.show();
 
@@ -411,6 +431,8 @@ impl ApplicationWindow {
                     .set_visible_child(&self_.vaults_page.get());
             }
             VView::UnlockVault => {
+                self_.add_button.hide();
+                self_.home_button.show();
                 self_.headerbar.set_show_end_title_buttons(false);
                 self_.about_menu_button.hide();
 
@@ -428,8 +450,6 @@ impl ApplicationWindow {
     pub fn set_unlock_vault_view(&self) {
         let self_ = imp::ApplicationWindow::from_instance(self);
 
-        self_.add_button.set_icon_name(&"go-previous-symbolic");
-        self_.add_button.set_tooltip_text(Some(&gettext("Go Back")));
         self_.unlock_vault_page.init();
 
         self.set_view(VView::UnlockVault);
@@ -445,8 +465,6 @@ impl ApplicationWindow {
     pub fn set_settings_page(&self) {
         let self_ = imp::ApplicationWindow::from_instance(self);
 
-        self_.add_button.set_icon_name(&"go-previous-symbolic");
-        self_.add_button.set_tooltip_text(Some(&gettext("Go Back")));
         self_.unlock_vault_page.init();
 
         self.set_view(VView::SettingsPage);
