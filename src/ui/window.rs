@@ -370,26 +370,41 @@ impl ApplicationWindow {
 
         match view {
             VView::Add => {
+                self_.headerbar.set_show_end_title_buttons(false);
+                self_.about_menu_button.hide();
+
                 self_
                     .window_leaflet
                     .set_visible_child(&self_.add_page.get());
             }
             VView::SettingsPage => {
+                self_.headerbar.set_show_end_title_buttons(false);
+                self_.about_menu_button.hide();
+
                 self_
                     .window_leaflet
                     .set_visible_child(&self_.settings_page.get());
             }
             VView::Start => {
+                self_.headerbar.set_show_end_title_buttons(true);
+                self_.about_menu_button.show();
+
                 self_
                     .window_leaflet
                     .set_visible_child(&self_.start_page.get());
             }
             VView::Vaults => {
+                self_.headerbar.set_show_end_title_buttons(true);
+                self_.about_menu_button.show();
+
                 self_
                     .window_leaflet
                     .set_visible_child(&self_.vaults_page.get());
             }
             VView::UnlockVault => {
+                self_.headerbar.set_show_end_title_buttons(false);
+                self_.about_menu_button.hide();
+
                 self_
                     .window_leaflet
                     .set_visible_child(&self_.unlock_vault_page.get());
