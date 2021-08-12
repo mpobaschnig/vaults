@@ -19,6 +19,7 @@
 
 use crate::backend::*;
 use crate::password_manager::PasswordManager;
+use crate::ui::ApplicationWindow;
 use crate::user_config_manager::UserConfigManager;
 use crate::vault::*;
 use crate::VApplication;
@@ -68,10 +69,6 @@ mod imp {
         #[template_child]
         pub confirm_password_entry: TemplateChild<gtk::Entry>,
         #[template_child]
-        pub previous_button_p_2: TemplateChild<gtk::Button>,
-        #[template_child]
-        pub next_button_p_2: TemplateChild<gtk::Button>,
-        #[template_child]
         pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub encrypted_data_directory_button: TemplateChild<gtk::Button>,
@@ -81,8 +78,6 @@ mod imp {
         pub mount_directory_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub info_label: TemplateChild<gtk::Label>,
-        #[template_child]
-        pub previous_button_p_3: TemplateChild<gtk::Button>,
         #[template_child]
         pub add_import_button: TemplateChild<gtk::Button>,
 
@@ -114,14 +109,11 @@ mod imp {
                 password_entry: TemplateChild::default(),
                 confirm_password_label: TemplateChild::default(),
                 confirm_password_entry: TemplateChild::default(),
-                previous_button_p_2: TemplateChild::default(),
-                next_button_p_2: TemplateChild::default(),
                 encrypted_data_directory_entry: TemplateChild::default(),
                 encrypted_data_directory_button: TemplateChild::default(),
                 mount_directory_entry: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
                 info_label: TemplateChild::default(),
-                previous_button_p_3: TemplateChild::default(),
                 add_import_button: TemplateChild::default(),
                 is_add_new_vault: RefCell::new(None),
                 name: RefCell::new(None),
@@ -159,16 +151,6 @@ mod imp {
                     obj.import_new_vault_action_row_clicked();
                 }));
 
-            obj_.previous_button_p_2
-                .connect_clicked(clone!(@weak obj => move |_| {
-                    obj.previous_button_p_2_clicked();
-                }));
-
-            obj_.next_button_p_2
-                .connect_clicked(clone!(@weak obj => move |_| {
-                    obj.next_button_p_2_clicked();
-                }));
-
             obj_.vault_name_entry
                 .connect_text_notify(clone!(@weak obj => move |_| {
                     obj.check_next_button_p_2_enable();
@@ -193,11 +175,6 @@ mod imp {
             obj_.confirm_password_entry
                 .connect_text_notify(clone!(@weak obj => move |_| {
                     obj.check_next_button_p_2_enable();
-                }));
-
-            obj_.previous_button_p_3
-                .connect_clicked(clone!(@weak obj => move |_| {
-                    obj.previous_button_p_3_clicked();
                 }));
 
             obj_.encrypted_data_directory_entry
@@ -280,8 +257,11 @@ impl AddPage {
         self_.mount_directory_entry.set_text("");
         self_.info_label.set_text("");
 
-        self_.next_button_p_2.set_sensitive(false);
-        self_.previous_button_p_3.set_sensitive(true);
+        let ancestor = self.ancestor(ApplicationWindow::static_type()).unwrap();
+        let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
+        window.set_previous_button_sensitive(true);
+        window.set_next_button_sensitive(false);
+
         self_.encrypted_data_directory_entry.set_sensitive(true);
         self_.encrypted_data_directory_button.set_sensitive(true);
         self_.mount_directory_entry.set_sensitive(true);
@@ -334,6 +314,11 @@ impl AddPage {
         self_
             .carousel
             .scroll_to(&self_.carousel.nth_page(1).unwrap());
+
+        let ancestor = self.ancestor(ApplicationWindow::static_type()).unwrap();
+        let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
+        window.show_previous_button();
+        window.show_next_button();
     }
 
     fn import_new_vault_action_row_clicked(&self) {
@@ -349,9 +334,14 @@ impl AddPage {
         self_
             .carousel
             .scroll_to(&self_.carousel.nth_page(1).unwrap());
+
+        let ancestor = self.ancestor(ApplicationWindow::static_type()).unwrap();
+        let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
+        window.show_previous_button();
+        window.show_next_button();
     }
 
-    fn previous_button_p_2_clicked(&self) {
+    pub fn previous_button_p_2_clicked(&self) {
         let self_ = imp::AddPage::from_instance(&self);
         self_
             .carousel
@@ -370,7 +360,7 @@ impl AddPage {
         }
     }
 
-    fn next_button_p_2_clicked(&self) {
+    pub fn next_button_p_2_clicked(&self) {
         let self_ = imp::AddPage::from_instance(&self);
 
         self_
@@ -400,7 +390,7 @@ impl AddPage {
             .scroll_to(&self_.carousel.nth_page(2).unwrap());
     }
 
-    fn previous_button_p_3_clicked(&self) {
+    pub fn previous_button_p_3_clicked(&self) {
         let self_ = imp::AddPage::from_instance(&self);
         self_
             .carousel
@@ -510,7 +500,10 @@ impl AddPage {
         let self_ = imp::AddPage::from_instance(&self);
 
         self_.info_label.set_text("");
-        self_.next_button_p_2.set_sensitive(false);
+
+        let ancestor = self.ancestor(ApplicationWindow::static_type()).unwrap();
+        let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
+        window.set_next_button_sensitive(false);
 
         let vault_name = self_.vault_name_entry.text();
         let password = self_.password_entry.text();
@@ -544,7 +537,9 @@ impl AddPage {
             }
         }
 
-        self_.next_button_p_2.set_sensitive(true);
+        let ancestor = self.ancestor(ApplicationWindow::static_type()).unwrap();
+        let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
+        window.set_next_button_sensitive(true);
     }
 
     fn is_path_empty(&self, path: &GString) -> Result<bool, std::io::Error> {
@@ -783,7 +778,9 @@ impl AddPage {
     pub fn set_last_page_sensitive(&self, sensitive: bool) {
         let self_ = imp::AddPage::from_instance(&self);
 
-        self_.previous_button_p_3.set_sensitive(sensitive);
+        let ancestor = self.ancestor(ApplicationWindow::static_type()).unwrap();
+        let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
+        window.set_previous_button_sensitive(sensitive);
         self_
             .encrypted_data_directory_entry
             .set_sensitive(sensitive);
@@ -793,5 +790,11 @@ impl AddPage {
         self_.mount_directory_entry.set_sensitive(sensitive);
         self_.mount_directory_button.set_sensitive(sensitive);
         self_.add_import_button.set_sensitive(sensitive);
+    }
+
+    pub fn get_carousel_page_position(&self) -> f64 {
+        let self_ = imp::AddPage::from_instance(&self);
+
+        self_.carousel.position()
     }
 }

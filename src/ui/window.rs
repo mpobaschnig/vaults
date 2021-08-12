@@ -72,6 +72,14 @@ mod imp {
         pub headerbar: TemplateChild<adw::HeaderBar>,
         #[template_child]
         pub add_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub previous_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub home_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub next_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub about_menu_button: TemplateChild<gtk::MenuButton>,
 
         pub spinner: RefCell<gtk::Spinner>,
 
@@ -96,6 +104,10 @@ mod imp {
                 unlock_vault_page: TemplateChild::default(),
                 headerbar: TemplateChild::default(),
                 add_button: TemplateChild::default(),
+                previous_button: TemplateChild::default(),
+                home_button: TemplateChild::default(),
+                next_button: TemplateChild::default(),
+                about_menu_button: TemplateChild::default(),
                 spinner: RefCell::new(gtk::Spinner::new()),
                 settings: gio::Settings::new(APP_ID),
                 view: RefCell::new(VView::Start),
@@ -125,6 +137,9 @@ mod imp {
             self.add_page.connect_add(clone!(@weak obj => move || {
                 let self_ = imp::ApplicationWindow::from_instance(&obj);
 
+                self_.previous_button.hide();
+                self_.home_button.hide();
+
                 let vault = UserConfigManager::instance().get_current_vault().unwrap();
                 let password = PasswordManager::instance().get_current_password().unwrap();
                 PasswordManager::instance().clear_current_pssword();
@@ -133,6 +148,8 @@ mod imp {
                 *self_.spinner.borrow_mut() = gtk::Spinner::new();
                 let spinner = self_.spinner.borrow().clone();
                 self_.add_button.set_child(Some(&spinner));
+
+                self_.add_button.show();
 
                 spinner.start();
 
@@ -199,6 +216,10 @@ mod imp {
 
             self.add_page.connect_import(clone!(@weak obj => move || {
                 let self_ = imp::ApplicationWindow::from_instance(&obj);
+
+                self_.previous_button.hide();
+                self_.home_button.hide();
+                self_.add_button.show();
 
                 let vault = UserConfigManager::instance().get_current_vault().unwrap();
 
@@ -315,44 +336,106 @@ impl ApplicationWindow {
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.add_button_clicked();
             }));
+
+        self_
+            .home_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.home_button_clicked();
+            }));
+
+        self_
+            .previous_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.previous_button_clicked();
+            }));
+
+        self_
+            .next_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.next_button_clicked();
+            }));
     }
 
     fn add_button_clicked(&self) {
         let self_ = imp::ApplicationWindow::from_instance(self);
-        let view = *self_.view.borrow();
 
         if self_.spinner.borrow().is_spinning() {
             return;
         }
 
+        self_.add_button.hide();
+
+        self_.home_button.show();
+
+        self_.add_page.init();
+
+        self.set_view(VView::Add);
+    }
+
+    fn home_button_clicked(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+        let view = *self_.view.borrow();
+
         match view {
-            VView::Add => {
-                self.set_standard_window_view();
-            }
             VView::UnlockVault => {
                 self_.unlock_vault_page.disconnect_all_signals();
-                self.set_standard_window_view();
             }
             VView::SettingsPage => {
                 self_.settings_page.disconnect_all_signals();
-                self.set_standard_window_view();
             }
-            _ => {
-                self_.add_button.set_icon_name(&"go-previous-symbolic");
-                self_.add_button.set_tooltip_text(Some(&gettext("Go Back")));
-                self_.add_page.init();
-                self.set_view(VView::Add);
+            _ => {}
+        }
+
+        self.set_standard_window_view();
+    }
+
+    fn previous_button_clicked(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        let pos = self_.add_page.get_carousel_page_position() as i64;
+
+        match pos {
+            1 => {
+                self_.previous_button.hide();
+                self_.next_button.hide();
+                self_.add_page.previous_button_p_2_clicked();
             }
+            2 => {
+                self_.next_button.show();
+                self_.add_page.previous_button_p_3_clicked();
+            }
+            _ => {}
+        }
+    }
+
+    fn next_button_clicked(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        let pos = self_.add_page.get_carousel_page_position() as i64;
+
+        match pos {
+            0 => {
+                self_.previous_button.show();
+            }
+            1 => {
+                self_.next_button.hide();
+                self_.add_page.next_button_p_2_clicked();
+            }
+            _ => {}
         }
     }
 
     pub fn set_standard_window_view(&self) {
         let self_ = imp::ApplicationWindow::from_instance(self);
 
-        self_.add_button.set_icon_name(&"list-add-symbolic");
-        self_
-            .add_button
-            .set_tooltip_text(Some(&gettext("Add or Import New Vault")));
+        self_.add_button.show();
+        self_.about_menu_button.show();
+        self_.headerbar.set_show_end_title_buttons(true);
+
+        self_.previous_button.hide();
+        self_.home_button.hide();
+        self_.next_button.hide();
+
         if UserConfigManager::instance().get_map().is_empty() {
             self.set_view(VView::Start);
         } else {
@@ -367,26 +450,49 @@ impl ApplicationWindow {
 
         match view {
             VView::Add => {
+                self_.add_button.hide();
+                self_.home_button.show();
+                self_.headerbar.set_show_end_title_buttons(false);
+                self_.about_menu_button.hide();
+
                 self_
                     .window_leaflet
                     .set_visible_child(&self_.add_page.get());
             }
             VView::SettingsPage => {
+                self_.add_button.hide();
+                self_.home_button.show();
+                self_.headerbar.set_show_end_title_buttons(false);
+                self_.about_menu_button.hide();
+
                 self_
                     .window_leaflet
                     .set_visible_child(&self_.settings_page.get());
             }
             VView::Start => {
+                self_.home_button.hide();
+                self_.headerbar.set_show_end_title_buttons(true);
+                self_.about_menu_button.show();
+
                 self_
                     .window_leaflet
                     .set_visible_child(&self_.start_page.get());
             }
             VView::Vaults => {
+                self_.home_button.hide();
+                self_.headerbar.set_show_end_title_buttons(true);
+                self_.about_menu_button.show();
+
                 self_
                     .window_leaflet
                     .set_visible_child(&self_.vaults_page.get());
             }
             VView::UnlockVault => {
+                self_.add_button.hide();
+                self_.home_button.show();
+                self_.headerbar.set_show_end_title_buttons(false);
+                self_.about_menu_button.hide();
+
                 self_
                     .window_leaflet
                     .set_visible_child(&self_.unlock_vault_page.get());
@@ -401,8 +507,6 @@ impl ApplicationWindow {
     pub fn set_unlock_vault_view(&self) {
         let self_ = imp::ApplicationWindow::from_instance(self);
 
-        self_.add_button.set_icon_name(&"go-previous-symbolic");
-        self_.add_button.set_tooltip_text(Some(&gettext("Go Back")));
         self_.unlock_vault_page.init();
 
         self.set_view(VView::UnlockVault);
@@ -418,8 +522,6 @@ impl ApplicationWindow {
     pub fn set_settings_page(&self) {
         let self_ = imp::ApplicationWindow::from_instance(self);
 
-        self_.add_button.set_icon_name(&"go-previous-symbolic");
-        self_.add_button.set_tooltip_text(Some(&gettext("Go Back")));
         self_.unlock_vault_page.init();
 
         self.set_view(VView::SettingsPage);
@@ -430,5 +532,41 @@ impl ApplicationWindow {
 
         self_.settings_page.init();
         self_.settings_page.call_settings(row);
+    }
+
+    pub fn show_previous_button(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.previous_button.show();
+    }
+
+    pub fn hide_previous_button(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.previous_button.hide();
+    }
+
+    pub fn show_next_button(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.next_button.show();
+    }
+
+    pub fn hide_next_button(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.next_button.hide();
+    }
+
+    pub fn set_previous_button_sensitive(&self, sensitive: bool) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.previous_button.set_sensitive(sensitive);
+    }
+
+    pub fn set_next_button_sensitive(&self, sensitive: bool) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.next_button.set_sensitive(sensitive);
     }
 }

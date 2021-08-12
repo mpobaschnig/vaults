@@ -19,6 +19,27 @@
                     <property name="tooltip-text" translatable="yes">Add or Import New Vault</property>
                   </object>
                 </child>
+                <child>
+                  <object class="GtkButton" id="previous_button">
+                    <property name="icon_name">go-previous-symbolic</property>
+                    <property name="tooltip-text" translatable="yes">Previous Page</property>
+                    <property name="visible">false</property>"
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="home_button">
+                    <property name="icon_name">go-home-symbolic</property>
+                    <property name="tooltip-text" translatable="yes">Back To Start</property>
+                    <property name="visible">false</property>"
+                  </object>
+                </child>
+                <child type="end">
+                  <object class="GtkButton" id="next_button">
+                    <property name="icon_name">go-next-symbolic</property>
+                    <property name="tooltip-text" translatable="yes">Next Page</property>
+                    <property name="visible">false</property>"
+                  </object>
+                </child>
                 <child type="end">
                   <object class="GtkMenuButton" id="about_menu_button">
                     <property name="icon_name">open-menu-symbolic</property>
