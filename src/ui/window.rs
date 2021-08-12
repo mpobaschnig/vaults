@@ -333,6 +333,18 @@ impl ApplicationWindow {
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.home_button_clicked();
             }));
+
+        self_
+            .previous_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.previous_button_clicked();
+            }));
+
+        self_
+            .next_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.next_button_clicked();
+            }));
     }
 
     fn add_button_clicked(&self) {
@@ -366,6 +378,42 @@ impl ApplicationWindow {
         }
 
         self.set_standard_window_view();
+    }
+
+    fn previous_button_clicked(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        let pos = self_.add_page.get_carousel_page_position() as i64;
+
+        match pos {
+            1 => {
+                self_.previous_button.hide();
+                self_.next_button.hide();
+                self_.add_page.previous_button_p_2_clicked();
+            }
+            2 => {
+                self_.next_button.show();
+                self_.add_page.previous_button_p_3_clicked();
+            }
+            _ => {}
+        }
+    }
+
+    fn next_button_clicked(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        let pos = self_.add_page.get_carousel_page_position() as i64;
+
+        match pos {
+            0 => {
+                self_.previous_button.show();
+            }
+            1 => {
+                self_.next_button.hide();
+                self_.add_page.next_button_p_2_clicked();
+            }
+            _ => {}
+        }
     }
 
     pub fn set_standard_window_view(&self) {
@@ -475,5 +523,41 @@ impl ApplicationWindow {
 
         self_.settings_page.init();
         self_.settings_page.call_settings(row);
+    }
+
+    pub fn show_previous_button(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.previous_button.show();
+    }
+
+    pub fn hide_previous_button(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.previous_button.hide();
+    }
+
+    pub fn show_next_button(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.next_button.show();
+    }
+
+    pub fn hide_next_button(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.next_button.hide();
+    }
+
+    pub fn set_previous_button_sensitive(&self, sensitive: bool) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.previous_button.set_sensitive(sensitive);
+    }
+
+    pub fn set_next_button_sensitive(&self, sensitive: bool) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.next_button.set_sensitive(sensitive);
     }
 }

@@ -78,17 +78,6 @@
                         <property name="margin-top">6</property>
                         <property name="spacing">6</property>
                         <child>
-                          <object class="GtkButton" id="previous_button_p_2">
-                            <property name="margin-start">12</property>
-                            <property name="margin-end">12</property>
-                            <property name="icon_name">go-previous-symbolic</property>
-                            <property name="vexpand">True</property>
-                            <property name="valign">center</property>
-                            <property name="halign">center</property>
-                            <property name="tooltip-text" translatable="yes">Go To Previous Page</property>
-                          </object>
-                        </child>
-                        <child>
                           <object class="AdwClamp">
                             <property name="maximum-size">300</property>
                             <property name="hexpand">True</property>
@@ -187,17 +176,6 @@
                             </child>
                           </object>
                         </child>
-                        <child>
-                          <object class="GtkButton" id="next_button_p_2">
-                            <property name="margin-start">12</property>
-                            <property name="margin-end">12</property>
-                            <property name="icon_name">go-next-symbolic</property>
-                            <property name="vexpand">True</property>
-                            <property name="valign">center</property>
-                            <property name="halign">center</property>
-                            <property name="tooltip-text" translatable="yes">Go To Next Page</property>
-                          </object>
-                        </child>
                       </object>
                     </child>
                     <child>
@@ -207,17 +185,6 @@
                         <property name="margin-end">6</property>
                         <property name="margin-top">6</property>
                         <property name="spacing">6</property>
-                        <child>
-                          <object class="GtkButton" id="previous_button_p_3">
-                            <property name="margin-start">12</property>
-                            <property name="margin-end">12</property>
-                            <property name="icon_name">go-previous-symbolic</property>
-                            <property name="vexpand">True</property>
-                            <property name="valign">center</property>
-                            <property name="halign">center</property>
-                            <property name="tooltip-text" translatable="yes">Go To Previous Page</property>
-                          </object>
-                        </child>
                         <child>
                           <object class="GtkBox">
                             <property name="hexpand">True</property>
