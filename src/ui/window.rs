@@ -137,6 +137,9 @@ mod imp {
             self.add_page.connect_add(clone!(@weak obj => move || {
                 let self_ = imp::ApplicationWindow::from_instance(&obj);
 
+                self_.previous_button.hide();
+                self_.home_button.hide();
+
                 let vault = UserConfigManager::instance().get_current_vault().unwrap();
                 let password = PasswordManager::instance().get_current_password().unwrap();
                 PasswordManager::instance().clear_current_pssword();
@@ -145,6 +148,8 @@ mod imp {
                 *self_.spinner.borrow_mut() = gtk::Spinner::new();
                 let spinner = self_.spinner.borrow().clone();
                 self_.add_button.set_child(Some(&spinner));
+
+                self_.add_button.show();
 
                 spinner.start();
 
@@ -211,6 +216,10 @@ mod imp {
 
             self.add_page.connect_import(clone!(@weak obj => move || {
                 let self_ = imp::ApplicationWindow::from_instance(&obj);
+
+                self_.previous_button.hide();
+                self_.home_button.hide();
+                self_.add_button.show();
 
                 let vault = UserConfigManager::instance().get_current_vault().unwrap();
 
