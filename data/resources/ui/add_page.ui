@@ -270,15 +270,6 @@
                                 </child>
                               </object>
                             </child>
-                            <child>
-                              <object class="GtkButton">
-                                <property name="vexpand">True</property>
-                                <property name="halign">center</property>
-                                <property name="valign">center</property>
-                                <property name="opacity">0</property>
-                                <property name="sensitive">False</property>
-                              </object>
-                            </child>
                           </object>
                         </child>
                       </object>
