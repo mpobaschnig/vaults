@@ -75,7 +75,7 @@ mod imp {
         #[template_child]
         pub previous_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub home_button: TemplateChild<gtk::Button>,
+        pub back_home_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub next_button: TemplateChild<gtk::Button>,
         #[template_child]
@@ -105,7 +105,7 @@ mod imp {
                 headerbar: TemplateChild::default(),
                 add_button: TemplateChild::default(),
                 previous_button: TemplateChild::default(),
-                home_button: TemplateChild::default(),
+                back_home_button: TemplateChild::default(),
                 next_button: TemplateChild::default(),
                 about_menu_button: TemplateChild::default(),
                 spinner: RefCell::new(gtk::Spinner::new()),
@@ -138,7 +138,7 @@ mod imp {
                 let self_ = imp::ApplicationWindow::from_instance(&obj);
 
                 self_.previous_button.hide();
-                self_.home_button.hide();
+                self_.back_home_button.hide();
 
                 let vault = UserConfigManager::instance().get_current_vault().unwrap();
                 let password = PasswordManager::instance().get_current_password().unwrap();
@@ -218,7 +218,7 @@ mod imp {
                 let self_ = imp::ApplicationWindow::from_instance(&obj);
 
                 self_.previous_button.hide();
-                self_.home_button.hide();
+                self_.back_home_button.hide();
                 self_.add_button.show();
 
                 let vault = UserConfigManager::instance().get_current_vault().unwrap();
@@ -338,7 +338,7 @@ impl ApplicationWindow {
             }));
 
         self_
-            .home_button
+            .back_home_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.home_button_clicked();
             }));
@@ -365,7 +365,7 @@ impl ApplicationWindow {
 
         self_.add_button.hide();
 
-        self_.home_button.show();
+        self_.back_home_button.show();
 
         self_.add_page.init();
 
@@ -396,6 +396,7 @@ impl ApplicationWindow {
 
         match pos {
             1 => {
+                self_.back_home_button.show();
                 self_.previous_button.hide();
                 self_.next_button.hide();
                 self_.add_page.previous_button_p_2_clicked();
@@ -433,7 +434,7 @@ impl ApplicationWindow {
         self_.headerbar.set_show_end_title_buttons(true);
 
         self_.previous_button.hide();
-        self_.home_button.hide();
+        self_.back_home_button.hide();
         self_.next_button.hide();
 
         if UserConfigManager::instance().get_map().is_empty() {
@@ -451,7 +452,7 @@ impl ApplicationWindow {
         match view {
             VView::Add => {
                 self_.add_button.hide();
-                self_.home_button.show();
+                self_.back_home_button.show();
                 self_.headerbar.set_show_end_title_buttons(false);
                 self_.about_menu_button.hide();
 
@@ -461,7 +462,7 @@ impl ApplicationWindow {
             }
             VView::SettingsPage => {
                 self_.add_button.hide();
-                self_.home_button.show();
+                self_.back_home_button.show();
                 self_.headerbar.set_show_end_title_buttons(false);
                 self_.about_menu_button.hide();
 
@@ -470,7 +471,7 @@ impl ApplicationWindow {
                     .set_visible_child(&self_.settings_page.get());
             }
             VView::Start => {
-                self_.home_button.hide();
+                self_.back_home_button.hide();
                 self_.headerbar.set_show_end_title_buttons(true);
                 self_.about_menu_button.show();
 
@@ -479,7 +480,7 @@ impl ApplicationWindow {
                     .set_visible_child(&self_.start_page.get());
             }
             VView::Vaults => {
-                self_.home_button.hide();
+                self_.back_home_button.hide();
                 self_.headerbar.set_show_end_title_buttons(true);
                 self_.about_menu_button.show();
 
@@ -489,7 +490,7 @@ impl ApplicationWindow {
             }
             VView::UnlockVault => {
                 self_.add_button.hide();
-                self_.home_button.show();
+                self_.back_home_button.show();
                 self_.headerbar.set_show_end_title_buttons(false);
                 self_.about_menu_button.hide();
 
@@ -532,6 +533,12 @@ impl ApplicationWindow {
 
         self_.settings_page.init();
         self_.settings_page.call_settings(row);
+    }
+
+    pub fn hide_back_home_button(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.back_home_button.hide();
     }
 
     pub fn show_previous_button(&self) {
