@@ -27,8 +27,8 @@
                   </object>
                 </child>
                 <child>
-                  <object class="GtkButton" id="home_button">
-                    <property name="icon_name">go-home-symbolic</property>
+                  <object class="GtkButton" id="back_home_button">
+                    <property name="icon_name">go-previous-symbolic</property>
                     <property name="tooltip-text" translatable="yes">Back To Start</property>
                     <property name="visible">false</property>"
                   </object>

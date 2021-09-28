@@ -317,6 +317,7 @@ impl AddPage {
 
         let ancestor = self.ancestor(ApplicationWindow::static_type()).unwrap();
         let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
+        window.hide_back_home_button();
         window.show_previous_button();
         window.show_next_button();
     }
@@ -337,6 +338,7 @@ impl AddPage {
 
         let ancestor = self.ancestor(ApplicationWindow::static_type()).unwrap();
         let window = ancestor.downcast_ref::<ApplicationWindow>().unwrap();
+        window.hide_back_home_button();
         window.show_previous_button();
         window.show_next_button();
     }
