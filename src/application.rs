@@ -126,7 +126,7 @@ impl VApplication {
             .transient_for(&self.active_window().unwrap())
             .modal(true)
             .authors(vec!["Martin Pobaschnig".into()])
-            .artists(vec!["Martin Pobaschnig".into()])
+            .artists(vec!["Martin Pobaschnig".into(), "Jacson Hilgert".into()])
             .build();
 
         dialog.show();
