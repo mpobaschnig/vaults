@@ -143,7 +143,7 @@ impl VaultsPageRow {
 
         match (vault.get_name(), vault.get_config()) {
             (Some(name), Some(config)) => {
-                self_.vaults_page_row.set_title(Some(&name));
+                self_.vaults_page_row.set_title(&name);
                 self_.config.replace(Some(config));
             }
             (_, _) => {
@@ -424,7 +424,7 @@ impl VaultsPageRow {
         let config = vault.get_config();
         match (name, config) {
             (Some(name), Some(config)) => {
-                self_.vaults_page_row.set_title(Some(&name));
+                self_.vaults_page_row.set_title(&name);
                 self_.config.replace(Some(config));
             }
             (_, _) => {
@@ -477,14 +477,14 @@ impl VaultsPageRow {
 
         self_
             .vaults_page_row
-            .set_subtitle(Some(&gettext("Backend is not installed.")));
+            .set_subtitle(&gettext("Backend is not installed."));
         self_.locker_button.set_sensitive(false);
     }
 
     pub fn set_vault_row_state_backend_available(&self) {
         let self_ = imp::VaultsPageRow::from_instance(self);
 
-        self_.vaults_page_row.set_subtitle(Some(""));
+        self_.vaults_page_row.set_subtitle("");
         self_.locker_button.set_sensitive(true);
     }
 
