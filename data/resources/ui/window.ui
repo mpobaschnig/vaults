@@ -23,21 +23,21 @@
                   <object class="GtkButton" id="previous_button">
                     <property name="icon_name">go-previous-symbolic</property>
                     <property name="tooltip-text" translatable="yes">Previous Page</property>
-                    <property name="visible">false</property>"
+                    <property name="visible">false</property>
                   </object>
                 </child>
                 <child>
                   <object class="GtkButton" id="back_home_button">
                     <property name="icon_name">go-previous-symbolic</property>
                     <property name="tooltip-text" translatable="yes">Back To Start</property>
-                    <property name="visible">false</property>"
+                    <property name="visible">false</property>
                   </object>
                 </child>
                 <child type="end">
                   <object class="GtkButton" id="next_button">
                     <property name="icon_name">go-next-symbolic</property>
                     <property name="tooltip-text" translatable="yes">Next Page</property>
-                    <property name="visible">false</property>"
+                    <property name="visible">false</property>
                   </object>
                 </child>
                 <child type="end">
@@ -59,9 +59,6 @@
                     <property name="locked">True</property>
                     <property name="flap-position">end</property>
                     <property name="vexpand">True</property>
-                    <property name="separator">
-                      <object class="GtkSeparator"/>
-                    </property>
                     <child>
                       <object class="AdwLeaflet" id="window_leaflet">
                         <property name="can_unfold">False</property>
