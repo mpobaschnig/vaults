@@ -18,4 +18,3 @@ else
         cp "$CARGO_TARGET_DIR"/release/$5 $3
 fi
 
-
