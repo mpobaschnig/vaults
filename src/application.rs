@@ -55,6 +55,8 @@ mod imp {
                 return;
             }
 
+            app.setup_accels();
+
             app.set_resource_base_path(Some("/io/github/mpobaschnig/Vaults/"));
             app.setup_css();
 
@@ -98,6 +100,10 @@ impl VApplication {
                 obj.show_about_dialog();
             })
         );
+    }
+
+    fn setup_accels(&self) {
+        self.set_accels_for_action("win.show-help-overlay", &["<primary>h"]);
     }
 
     fn setup_css(&self) {
