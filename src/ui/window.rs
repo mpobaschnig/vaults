@@ -435,7 +435,6 @@ impl ApplicationWindow {
 
         self_.add_button.show();
         self_.about_menu_button.show();
-        self_.headerbar.set_show_end_title_buttons(true);
 
         self_.previous_button.hide();
         self_.back_home_button.hide();
@@ -457,7 +456,6 @@ impl ApplicationWindow {
             VView::Add => {
                 self_.add_button.hide();
                 self_.back_home_button.show();
-                self_.headerbar.set_show_end_title_buttons(false);
                 self_.about_menu_button.hide();
 
                 self_
@@ -467,7 +465,6 @@ impl ApplicationWindow {
             VView::SettingsPage => {
                 self_.add_button.hide();
                 self_.back_home_button.show();
-                self_.headerbar.set_show_end_title_buttons(false);
                 self_.about_menu_button.hide();
 
                 self_
@@ -476,7 +473,6 @@ impl ApplicationWindow {
             }
             VView::Start => {
                 self_.back_home_button.hide();
-                self_.headerbar.set_show_end_title_buttons(true);
                 self_.about_menu_button.show();
 
                 self_
@@ -485,7 +481,6 @@ impl ApplicationWindow {
             }
             VView::Vaults => {
                 self_.back_home_button.hide();
-                self_.headerbar.set_show_end_title_buttons(true);
                 self_.about_menu_button.show();
 
                 self_
@@ -495,7 +490,6 @@ impl ApplicationWindow {
             VView::UnlockVault => {
                 self_.add_button.hide();
                 self_.back_home_button.show();
-                self_.headerbar.set_show_end_title_buttons(false);
                 self_.about_menu_button.hide();
 
                 self_
