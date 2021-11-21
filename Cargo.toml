@@ -1,7 +1,6 @@
 [package]
 name = "vaults"
 version = "0.1.0"
-authors = ["Martin Pobaschnig <martin.pobaschnig@protonmail.com>"]
 edition = "2018"
 
 [dependencies]
