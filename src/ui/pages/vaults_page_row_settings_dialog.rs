@@ -1,6 +1,6 @@
 // vaults_page_row_settings_dialog.rs
 //
-// Copyright 2021 Martin Pobaschnig <mpobaschnig@posteo.de>
+// Copyright 2021 Martin Pobaschnig
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
