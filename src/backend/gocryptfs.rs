@@ -125,10 +125,7 @@ fn status_to_err(status: Option<i32>) -> BackendError {
     #[allow(dead_code)]
     impl GocryptfsExitStatus {
         pub const SUCCESS: i32 = 0;
-        // TODO: Change to correct error code once gocryptfs 2.0 is out
-        // see: https://github.com/rfjakob/gocryptfs/pull/503
-        pub const INVALID_CIPHER_DIR: i32 = 6;
-        pub const NON_EMPTY_CIPHER_DIR: i32 = 7;
+        pub const NON_EMPTY_CIPHER_DIR: i32 = 6;
         pub const NON_EMPTY_MOUNT_POINT: i32 = 10;
         pub const WRONG_PASSWORD: i32 = 12;
         pub const EMPTY_PASSWORD: i32 = 22;
@@ -139,9 +136,6 @@ fn status_to_err(status: Option<i32>) -> BackendError {
 
     match status {
         Some(status) => match status {
-            GocryptfsExitStatus::INVALID_CIPHER_DIR => {
-                BackendError::ToUser(gettext("The encrypted data directory is not valid."))
-            }
             GocryptfsExitStatus::NON_EMPTY_CIPHER_DIR => {
                 BackendError::ToUser(gettext("The encrypted data directory is not empty."))
             }
@@ -168,3 +162,4 @@ fn status_to_err(status: Option<i32>) -> BackendError {
         None => BackendError::Generic,
     }
 }
+
