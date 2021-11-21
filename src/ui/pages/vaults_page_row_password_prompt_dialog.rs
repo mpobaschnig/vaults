@@ -86,11 +86,11 @@ impl VaultsPageRowPasswordPromptDialog {
         let dialog: Self = glib::Object::new(&[("use-header-bar", &1)])
             .expect("Failed to create VaultsPageRowPasswordPromptDialog");
 
-        let window = gio::Application::get_default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
-            .get_active_window()
+            .active_window()
             .unwrap();
         dialog.set_transient_for(Some(&window));
 
@@ -114,7 +114,7 @@ impl VaultsPageRowPasswordPromptDialog {
 
         self_
             .password_entry
-            .connect_property_text_notify(clone!(@weak self as obj => move |_| {
+            .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_unlock_button_enable_conditions();
             }));
 
@@ -136,7 +136,7 @@ impl VaultsPageRowPasswordPromptDialog {
     fn check_unlock_button_enable_conditions(&self) {
         let self_ = imp::VaultsPageRowPasswordPromptDialog::from_instance(self);
 
-        let vault_name = self_.password_entry.get_text();
+        let vault_name = self_.password_entry.text();
 
         if !vault_name.is_empty() {
             self_.unlock_button.set_sensitive(true);
@@ -148,7 +148,7 @@ impl VaultsPageRowPasswordPromptDialog {
     fn connect_activate(&self) {
         let self_ = imp::VaultsPageRowPasswordPromptDialog::from_instance(self);
 
-        if !self_.password_entry.get_text().is_empty() {
+        if !self_.password_entry.text().is_empty() {
             self.unlock_button_clicked();
         }
     }
@@ -156,6 +156,6 @@ impl VaultsPageRowPasswordPromptDialog {
     pub fn get_password(&self) -> String {
         let self_ = imp::VaultsPageRowPasswordPromptDialog::from_instance(self);
 
-        self_.password_entry.get_text().to_string()
+        self_.password_entry.text().to_string()
     }
 }

@@ -20,7 +20,7 @@
 use crate::vault::*;
 use gtk::{
     gio::subclass::prelude::*,
-    glib::{self, get_user_config_dir, prelude::*, subclass::Signal},
+    glib::{self, prelude::*, subclass::Signal, user_config_dir},
 };
 use once_cell::sync::Lazy;
 use std::{cell::RefCell, collections::HashMap};
@@ -123,7 +123,7 @@ impl UserConnfigManager {
     fn new() -> Self {
         let object: Self = glib::Object::new(&[]).expect("Failed to create UserConnfigManager");
 
-        match get_user_config_dir().as_os_str().to_str() {
+        match user_config_dir().as_os_str().to_str() {
             Some(user_data_directory) => {
                 log::debug!("Got user config dir: {}", user_data_directory);
 

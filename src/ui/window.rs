@@ -103,7 +103,7 @@ mod imp {
             self.parent_constructed(obj);
 
             if PROFILE == "Devel" {
-                obj.get_style_context().add_class("devel");
+                obj.style_context().add_class("devel");
             }
 
             self.vaults_page.init();
@@ -114,7 +114,7 @@ mod imp {
 
         fn properties() -> &'static [ParamSpec] {
             static PROPERTIES: Lazy<Vec<ParamSpec>> = Lazy::new(|| {
-                vec![ParamSpec::enum_(
+                vec![ParamSpec::new_enum(
                     "view",
                     "View",
                     "View",
@@ -127,8 +127,8 @@ mod imp {
             PROPERTIES.as_ref()
         }
 
-        fn get_property(&self, _obj: &Self::Type, _id: usize, pspec: &ParamSpec) -> glib::Value {
-            match pspec.get_name() {
+        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &ParamSpec) -> glib::Value {
+            match pspec.name() {
                 "view" => self.view.borrow().to_value(),
                 _ => unimplemented!(),
             }
@@ -141,10 +141,9 @@ mod imp {
             value: &glib::Value,
             pspec: &ParamSpec,
         ) {
-            match pspec.get_name() {
+            match pspec.name() {
                 "view" => {
-                    let view = value.get().unwrap();
-                    *self.view.borrow_mut() = view.unwrap();
+                    *self.view.borrow_mut() = value.get().unwrap();
                     obj.update_view();
                 }
                 _ => unimplemented!(),
@@ -231,11 +230,11 @@ impl ApplicationWindow {
                     Err(e) => {
                         log::error!("Could not init vault: {}", e);
                         gtk::glib::MainContext::default().spawn_local(async move {
-                            let window = gtk::gio::Application::get_default()
+                            let window = gtk::gio::Application::default()
                                 .unwrap()
                                 .downcast_ref::<VApplication>()
                                 .unwrap()
-                                .get_active_window()
+                                .active_window()
                                 .unwrap()
                                 .clone();
                             let info_dialog = gtk::MessageDialogBuilder::new()

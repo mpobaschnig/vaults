@@ -25,7 +25,7 @@ use crate::{
     vault::*,
     VApplication,
 };
-use adw::{subclass::prelude::*, ActionRowExt};
+use adw::{prelude::ActionRowExt, subclass::prelude::*};
 use gettextrs::gettext;
 use gtk::gio;
 use gtk::{self, prelude::*};
@@ -130,11 +130,11 @@ impl AddNewVaultDialog {
         let dialog: Self = glib::Object::new(&[("use-header-bar", &1)])
             .expect("Failed to create AddNewVaultDialog");
 
-        let window = gio::Application::get_default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
-            .get_active_window()
+            .active_window()
             .unwrap();
         dialog.set_transient_for(Some(&window));
 
@@ -160,7 +160,7 @@ impl AddNewVaultDialog {
 
         self_
             .vault_name_entry
-            .connect_property_text_notify(clone!(@weak self as obj => move |_| {
+            .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
             }));
 
@@ -172,21 +172,21 @@ impl AddNewVaultDialog {
 
         self_
             .password_entry
-            .connect_property_text_notify(clone!(@weak self as obj => move |_| {
+            .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
             }));
 
-        self_.password_confirm_entry.connect_property_text_notify(
+        self_
+            .password_confirm_entry
+            .connect_text_notify(clone!(@weak self as obj => move |_| {
+                obj.check_add_button_enable_conditions();
+            }));
+
+        self_.encrypted_data_directory_entry.connect_text_notify(
             clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
             }),
         );
-
-        self_
-            .encrypted_data_directory_entry
-            .connect_property_text_notify(clone!(@weak self as obj => move |_| {
-                obj.check_add_button_enable_conditions();
-            }));
 
         self_.encrypted_data_directory_button.connect_clicked(
             clone!(@weak self as obj => move |_| {
@@ -194,11 +194,11 @@ impl AddNewVaultDialog {
             }),
         );
 
-        self_.mount_directory_entry.connect_property_text_notify(
-            clone!(@weak self as obj => move |_| {
+        self_
+            .mount_directory_entry
+            .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
-            }),
-        );
+            }));
 
         self_
             .mount_directory_button
@@ -222,8 +222,8 @@ impl AddNewVaultDialog {
 
         dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
             if response == gtk::ResponseType::Accept {
-                let file = dialog.get_file().unwrap();
-                let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
+                let file = dialog.file().unwrap();
+                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
                 let self_ = imp::AddNewVaultDialog::from_instance(&obj);
                 self_.encrypted_data_directory_entry.set_text(&path);
             }
@@ -249,8 +249,8 @@ impl AddNewVaultDialog {
 
         dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
             if response == gtk::ResponseType::Accept {
-                let file = dialog.get_file().unwrap();
-                let path = String::from(file.get_path().unwrap().as_os_str().to_str().unwrap());
+                let file = dialog.file().unwrap();
+                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
                 let self_ = imp::AddNewVaultDialog::from_instance(&obj);
                 self_.mount_directory_entry.set_text(&path);
             }
@@ -267,10 +267,10 @@ impl AddNewVaultDialog {
         if vault_name.is_empty() {
             self_
                 .vault_name_action_row
-                .set_subtitle(Some(&gettext("Name is not valid.")));
+                .set_subtitle(&gettext("Name is not valid."));
             false
         } else {
-            self_.vault_name_action_row.set_subtitle(Some(""));
+            self_.vault_name_action_row.set_subtitle("");
             true
         }
     }
@@ -284,7 +284,7 @@ impl AddNewVaultDialog {
         if !vault_name.is_empty() && is_duplicate_name {
             self_
                 .vault_name_action_row
-                .set_subtitle(Some(&gettext("Name already exists.")));
+                .set_subtitle(&gettext("Name already exists."));
             false
         } else {
             true
@@ -315,19 +315,19 @@ impl AddNewVaultDialog {
                 if is_empty {
                     self_
                         .encrypted_data_directory_action_row
-                        .set_subtitle(Some(&gettext("")));
+                        .set_subtitle(&gettext(""));
                     true
                 } else {
                     self_
                         .encrypted_data_directory_action_row
-                        .set_subtitle(Some(&gettext("Directory is not empty.")));
+                        .set_subtitle(&gettext("Directory is not empty."));
                     false
                 }
             }
             Err(_) => {
                 self_
                     .encrypted_data_directory_action_row
-                    .set_subtitle(Some(&gettext("Directory is not valid.")));
+                    .set_subtitle(&gettext("Directory is not valid."));
                 false
             }
         }
@@ -339,21 +339,19 @@ impl AddNewVaultDialog {
         match self.is_path_empty(mount_directory) {
             Ok(is_empty) => {
                 if is_empty {
-                    self_
-                        .mount_directory_action_row
-                        .set_subtitle(Some(&gettext("")));
+                    self_.mount_directory_action_row.set_subtitle(&gettext(""));
                     true
                 } else {
                     self_
                         .mount_directory_action_row
-                        .set_subtitle(Some(&gettext("Directory is not empty.")));
+                        .set_subtitle(&gettext("Directory is not empty."));
                     false
                 }
             }
             Err(_) => {
                 self_
                     .mount_directory_action_row
-                    .set_subtitle(Some(&gettext("Directory is not valid.")));
+                    .set_subtitle(&gettext("Directory is not valid."));
                 false
             }
         }
@@ -369,10 +367,10 @@ impl AddNewVaultDialog {
         if encrypted_data_directory.eq(mount_directory) {
             self_
                 .encrypted_data_directory_action_row
-                .set_subtitle(Some(&gettext("Directories must not be equal.")));
+                .set_subtitle(&gettext("Directories must not be equal."));
             self_
                 .mount_directory_action_row
-                .set_subtitle(Some(&gettext("Directories must not be equal.")));
+                .set_subtitle(&gettext("Directories must not be equal."));
             false
         } else {
             true
@@ -385,10 +383,10 @@ impl AddNewVaultDialog {
         if password.is_empty() && confirm_password.is_empty() {
             self_
                 .password_action_row
-                .set_subtitle(Some(&gettext("Password is empty")));
+                .set_subtitle(&gettext("Password is empty"));
             true
         } else {
-            self_.password_action_row.set_subtitle(Some(&gettext("")));
+            self_.password_action_row.set_subtitle(&gettext(""));
             false
         }
     }
@@ -397,12 +395,12 @@ impl AddNewVaultDialog {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
         if password.eq(confirm_password) {
-            self_.password_action_row.set_subtitle(Some(""));
+            self_.password_action_row.set_subtitle("");
             true
         } else {
             self_
                 .password_action_row
-                .set_subtitle(Some(&gettext("Passwords are not equal!")));
+                .set_subtitle(&gettext("Passwords are not equal!"));
             false
         }
     }
@@ -410,11 +408,11 @@ impl AddNewVaultDialog {
     fn check_add_button_enable_conditions(&self) {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
-        let vault_name = self_.vault_name_entry.get_text();
-        let password = self_.password_entry.get_text();
-        let confirm_password = self_.password_confirm_entry.get_text();
-        let encrypted_data_directory = self_.encrypted_data_directory_entry.get_text();
-        let mount_directory = self_.mount_directory_entry.get_text();
+        let vault_name = self_.vault_name_entry.text();
+        let password = self_.password_entry.text();
+        let confirm_password = self_.password_confirm_entry.text();
+        let encrypted_data_directory = self_.encrypted_data_directory_entry.text();
+        let mount_directory = self_.mount_directory_entry.text();
 
         let is_valid_vault_name = self.is_valid_vault_name(vault_name.clone());
         let is_different_vault_name = self.is_different_vault_name(vault_name);
@@ -450,18 +448,18 @@ impl AddNewVaultDialog {
     pub fn get_entry_values(&self) -> (String, String, String, String, String) {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
-        let vault_name = String::from(self_.vault_name_entry.get_text().as_str());
+        let vault_name = String::from(self_.vault_name_entry.text().as_str());
         let backend_type = String::from(
             self_
                 .backend_type_combo_box_text
-                .get_active_text()
+                .active_text()
                 .unwrap()
                 .as_str(),
         );
-        let password = String::from(self_.password_entry.get_text().as_str());
+        let password = String::from(self_.password_entry.text().as_str());
         let encrypted_data_directory =
-            String::from(self_.encrypted_data_directory_entry.get_text().as_str());
-        let mount_directory = String::from(self_.mount_directory_entry.get_text().as_str());
+            String::from(self_.encrypted_data_directory_entry.text().as_str());
+        let mount_directory = String::from(self_.mount_directory_entry.text().as_str());
 
         (
             vault_name,
@@ -476,23 +474,23 @@ impl AddNewVaultDialog {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
         Vault::new(
-            String::from(self_.vault_name_entry.get_text().as_str()),
+            String::from(self_.vault_name_entry.text().as_str()),
             Backend::from_str(
                 self_
                     .backend_type_combo_box_text
-                    .get_active_text()
+                    .active_text()
                     .unwrap()
                     .as_str(),
             )
             .unwrap(),
-            String::from(self_.encrypted_data_directory_entry.get_text().as_str()),
-            String::from(self_.mount_directory_entry.get_text().as_str()),
+            String::from(self_.encrypted_data_directory_entry.text().as_str()),
+            String::from(self_.mount_directory_entry.text().as_str()),
         )
     }
 
     pub fn get_password(&self) -> String {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
-        String::from(self_.password_entry.get_text().as_str())
+        String::from(self_.password_entry.text().as_str())
     }
 
     fn setup_combo_box(&self) {
@@ -518,9 +516,9 @@ impl AddNewVaultDialog {
                     combo_box_text.set_active(Some(0));
                 }
             } else {
-                self_.backend_type_action_row.set_subtitle(Some(&gettext(
+                self_.backend_type_action_row.set_subtitle(&gettext(
                     "No backend is installed. Please install gocryptfs or cryfs.",
-                )));
+                ));
             }
         }
     }

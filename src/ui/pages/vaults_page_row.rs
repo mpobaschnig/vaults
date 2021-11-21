@@ -17,7 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use adw::{subclass::prelude::*, ActionRowExt, PreferencesRowExt};
+use adw::{prelude::ActionRowExt, prelude::PreferencesRowExt, subclass::prelude::*};
 use gettextrs::gettext;
 use glib::once_cell::sync::Lazy;
 use glib::{clone, subclass};
@@ -134,7 +134,7 @@ impl VaultsPageRow {
 
         match (vault.get_name(), vault.get_config()) {
             (Some(name), Some(config)) => {
-                self_.vaults_page_row.set_title(Some(&name));
+                self_.vaults_page_row.set_title(&name);
                 self_.config.replace(Some(config));
             }
             (_, _) => {
@@ -195,7 +195,7 @@ impl VaultsPageRow {
             return;
         }
 
-        if self_.spinner.borrow().get_spinning() {
+        if self_.spinner.borrow().is_spinning() {
             return;
         }
 
@@ -245,13 +245,13 @@ impl VaultsPageRow {
                     open_folder_button.set_sensitive(true);
                     settings_button.set_sensitive(false);
 
-                    let vault_name = vaults_page_row.get_title().unwrap().to_string();
+                    let vault_name = vaults_page_row.title().unwrap().to_string();
                     gtk::glib::MainContext::default().spawn_local(async move {
-                        let window = gtk::gio::Application::get_default()
+                        let window = gtk::gio::Application::default()
                             .unwrap()
                             .downcast_ref::<VApplication>()
                             .unwrap()
-                            .get_active_window()
+                            .active_window()
                             .unwrap()
                             .clone();
                         let info_dialog = gtk::MessageDialogBuilder::new()
@@ -284,7 +284,7 @@ impl VaultsPageRow {
             return;
         }
 
-        if self_.spinner.borrow().get_spinning() {
+        if self_.spinner.borrow().is_spinning() {
             return;
         }
 
@@ -349,13 +349,13 @@ impl VaultsPageRow {
                         open_folder_button.set_sensitive(false);
                         settings_button.set_sensitive(true);
 
-                        let vault_name = vaults_page_row.get_title().unwrap().to_string();
+                        let vault_name = vaults_page_row.title().unwrap().to_string();
                         gtk::glib::MainContext::default().spawn_local(async move {
-                            let window = gtk::gio::Application::get_default()
+                            let window = gtk::gio::Application::default()
                                 .unwrap()
                                 .downcast_ref::<VApplication>()
                                 .unwrap()
-                                .get_active_window()
+                                .active_window()
                                 .unwrap()
                                 .clone();
                             let info_dialog = gtk::MessageDialogBuilder::new()
@@ -424,7 +424,7 @@ impl VaultsPageRow {
 
     pub fn get_vault(&self) -> Vault {
         let self_ = imp::VaultsPageRow::from_instance(&self);
-        let name = self_.vaults_page_row.get_title();
+        let name = self_.vaults_page_row.title();
         let config = self_.config.borrow().clone();
         match (name, config) {
             (Some(name), Some(config)) => Vault::new(
@@ -446,7 +446,7 @@ impl VaultsPageRow {
         let config = vault.get_config();
         match (name, config) {
             (Some(name), Some(config)) => {
-                self_.vaults_page_row.set_title(Some(&name));
+                self_.vaults_page_row.set_title(&name);
                 self_.config.replace(Some(config));
             }
             (_, _) => {
@@ -457,7 +457,7 @@ impl VaultsPageRow {
 
     pub fn get_name(&self) -> String {
         let self_ = imp::VaultsPageRow::from_instance(&self);
-        self_.vaults_page_row.get_title().unwrap().to_string()
+        self_.vaults_page_row.title().unwrap().to_string()
     }
 
     fn is_mounted(&self) -> bool {
@@ -499,14 +499,14 @@ impl VaultsPageRow {
 
         self_
             .vaults_page_row
-            .set_subtitle(Some(&gettext("Backend is not installed.")));
+            .set_subtitle(&gettext("Backend is not installed."));
         self_.locker_button.set_sensitive(false);
     }
 
     fn set_vault_row_state_backend_available(&self) {
         let self_ = imp::VaultsPageRow::from_instance(self);
 
-        self_.vaults_page_row.set_subtitle(Some(""));
+        self_.vaults_page_row.set_subtitle("");
         self_.locker_button.set_sensitive(true);
     }
 }

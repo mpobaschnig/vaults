@@ -45,7 +45,7 @@ quick_error! {
 #[derive(
     Debug,
     EnumIter,
-    strum_macros::ToString,
+    strum_macros::Display,
     Serialize,
     Deserialize,
     strum_macros::EnumString,
