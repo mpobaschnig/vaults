@@ -29,7 +29,20 @@ mod imp {
 
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/io/github/mpobaschnig/Vaults/preferences.ui")]
-    pub struct PreferencesWindow {}
+    pub struct PreferencesWindow {
+        #[template_child]
+        pub encrypted_data_directory_action_row: TemplateChild<adw::ActionRow>,
+        #[template_child]
+        pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub encrypted_data_directory_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub mount_directory_action_row: TemplateChild<adw::ActionRow>,
+        #[template_child]
+        pub mount_directory_entry: TemplateChild<gtk::Entry>,
+        #[template_child]
+        pub mount_directory_button: TemplateChild<gtk::Button>,
+    }
 
     #[glib::object_subclass]
     impl ObjectSubclass for PreferencesWindow {
@@ -38,7 +51,14 @@ mod imp {
         type Type = super::PreferencesWindow;
 
         fn new() -> Self {
-            Self {}
+            Self {
+                encrypted_data_directory_action_row: TemplateChild::default(),
+                encrypted_data_directory_entry: TemplateChild::default(),
+                encrypted_data_directory_button: TemplateChild::default(),
+                mount_directory_action_row: TemplateChild::default(),
+                mount_directory_entry: TemplateChild::default(),
+                mount_directory_button: TemplateChild::default(),
+            }
         }
 
         fn class_init(klass: &mut Self::Class) {
