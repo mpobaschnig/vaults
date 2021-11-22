@@ -20,6 +20,7 @@
 mod application;
 #[rustfmt::skip]
 mod config;
+mod global_config_manager;
 mod user_config_manager;
 mod vault;
 
@@ -35,6 +36,7 @@ extern crate toml;
 use application::VApplication;
 use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 use gettextrs::*;
+use global_config_manager::GlobalConfigManager;
 use gtk::gio;
 use user_config_manager::UserConnfigManager;
 
@@ -52,6 +54,8 @@ fn main() {
     }
 
     backend::probe_backends();
+
+    GlobalConfigManager::instance().read_config();
 
     UserConnfigManager::instance().read_config();
 

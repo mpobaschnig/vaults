@@ -21,6 +21,7 @@ use std::str::FromStr;
 
 use crate::{
     backend::{Backend, AVAILABLE_BACKENDS},
+    global_config_manager::GlobalConfigManager,
     user_config_manager::UserConnfigManager,
     vault::*,
     VApplication,
@@ -110,6 +111,8 @@ mod imp {
             self.parent_constructed(obj);
             obj.setup_actions();
             obj.setup_signals();
+
+            obj.set_global_config();
 
             obj.setup_combo_box();
         }
@@ -491,6 +494,20 @@ impl AddNewVaultDialog {
     pub fn get_password(&self) -> String {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
         String::from(self_.password_entry.text().as_str())
+    }
+
+    fn set_global_config(&self) {
+        let self_ = imp::AddNewVaultDialog::from_instance(self);
+
+        let global_config = GlobalConfigManager::instance().get_global_config();
+
+        self_
+            .encrypted_data_directory_entry
+            .set_text(&global_config.encrypted_data_directory.borrow().clone());
+
+        self_
+            .mount_directory_entry
+            .set_text(&global_config.mount_directory.borrow().clone());
     }
 
     fn setup_combo_box(&self) {

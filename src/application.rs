@@ -19,6 +19,7 @@
 
 use crate::config;
 use crate::ui::ApplicationWindow;
+use crate::ui::PreferencesWindow;
 
 use gio::ApplicationFlags;
 use glib::clone;
@@ -93,6 +94,14 @@ impl VApplication {
     fn setup_gactions(&self) {
         action!(
             self,
+            "preferences",
+            clone!(@weak self as obj => move |_, _| {
+                obj.show_preferences();
+            })
+        );
+
+        action!(
+            self,
             "about",
             clone!(@weak self as obj => move |_, _| {
                 obj.show_about_dialog();
@@ -110,6 +119,12 @@ impl VApplication {
                 gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
             );
         }
+    }
+
+    fn show_preferences(&self) {
+        let preferences = PreferencesWindow::new();
+
+        preferences.show();
     }
 
     fn show_about_dialog(&self) {
