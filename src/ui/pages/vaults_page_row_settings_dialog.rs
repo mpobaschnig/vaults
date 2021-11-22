@@ -28,7 +28,7 @@ use gtk::{
 use std::cell::RefCell;
 use strum::IntoEnumIterator;
 
-use crate::{backend::Backend, user_config_manager::UserConnfigManager, vault::*, VApplication};
+use crate::{backend::Backend, user_config_manager::UserConfigManager, vault::*, VApplication};
 
 mod imp {
     use super::*;
@@ -199,7 +199,7 @@ impl VaultsPageRowSettingsDialog {
     }
 
     fn remove_button_clicked(&self) {
-        UserConnfigManager::instance().remove_vault(self.get_vault());
+        UserConfigManager::instance().remove_vault(self.get_vault());
         self.response(gtk::ResponseType::Other(0));
     }
 
@@ -220,7 +220,7 @@ impl VaultsPageRowSettingsDialog {
             String::from(self_.mount_directory_entry.text().as_str()),
         );
 
-        UserConnfigManager::instance().change_vault(self.get_current_vault().unwrap(), new_vault);
+        UserConfigManager::instance().change_vault(self.get_current_vault().unwrap(), new_vault);
 
         self.response(gtk::ResponseType::Other(1));
     }
@@ -297,7 +297,7 @@ impl VaultsPageRowSettingsDialog {
         let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
         let is_same_name = vault_name.eq(&self.get_current_vault().unwrap().get_name().unwrap());
-        let is_duplicate_name = UserConnfigManager::instance()
+        let is_duplicate_name = UserConfigManager::instance()
             .get_map()
             .contains_key(&vault_name.to_string());
         if !vault_name.is_empty() && !is_same_name && is_duplicate_name {

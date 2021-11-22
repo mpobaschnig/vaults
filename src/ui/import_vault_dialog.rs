@@ -27,7 +27,7 @@ use gtk::{
 };
 use strum::IntoEnumIterator;
 
-use crate::{backend::Backend, user_config_manager::UserConnfigManager, vault::*, VApplication};
+use crate::{backend::Backend, user_config_manager::UserConfigManager, vault::*, VApplication};
 
 mod imp {
     use super::*;
@@ -254,7 +254,7 @@ impl ImportVaultDialog {
     fn is_different_vault_name(&self, vault_name: GString) -> bool {
         let self_ = imp::ImportVaultDialog::from_instance(self);
 
-        let is_duplicate_name = UserConnfigManager::instance()
+        let is_duplicate_name = UserConfigManager::instance()
             .get_map()
             .contains_key(&vault_name.to_string());
         if !vault_name.is_empty() && is_duplicate_name {

@@ -22,7 +22,7 @@ use std::str::FromStr;
 use crate::{
     backend::{Backend, AVAILABLE_BACKENDS},
     global_config_manager::GlobalConfigManager,
-    user_config_manager::UserConnfigManager,
+    user_config_manager::UserConfigManager,
     vault::*,
     VApplication,
 };
@@ -281,7 +281,7 @@ impl AddNewVaultDialog {
     fn is_different_vault_name(&self, vault_name: GString) -> bool {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
-        let is_duplicate_name = UserConnfigManager::instance()
+        let is_duplicate_name = UserConfigManager::instance()
             .get_map()
             .contains_key(&vault_name.to_string());
         if !vault_name.is_empty() && is_duplicate_name {

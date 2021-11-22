@@ -26,13 +26,13 @@ use once_cell::sync::Lazy;
 use std::{cell::RefCell, collections::HashMap};
 use toml::de::Error;
 
-static mut USER_CONFIG_MANAGER: Option<UserConnfigManager> = None;
+static mut USER_CONFIG_MANAGER: Option<UserConfigManager> = None;
 
 mod imp {
     use super::*;
 
     #[derive(Debug)]
-    pub struct UserConnfigManager {
+    pub struct UserConfigManager {
         pub vaults: RefCell<HashMap<String, VaultConfig>>,
         pub user_data_directory: RefCell<Option<String>>,
 
@@ -40,10 +40,10 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for UserConnfigManager {
-        const NAME: &'static str = "UserConnfigManager";
+    impl ObjectSubclass for UserConfigManager {
+        const NAME: &'static str = "UserConfigManager";
         type ParentType = glib::Object;
-        type Type = super::UserConnfigManager;
+        type Type = super::UserConfigManager;
 
         fn new() -> Self {
             Self {
@@ -54,7 +54,7 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for UserConnfigManager {
+    impl ObjectImpl for UserConfigManager {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
                 vec![
@@ -71,10 +71,10 @@ mod imp {
 }
 
 glib::wrapper! {
-    pub struct UserConnfigManager(ObjectSubclass<imp::UserConnfigManager>);
+    pub struct UserConfigManager(ObjectSubclass<imp::UserConfigManager>);
 }
 
-impl UserConnfigManager {
+impl UserConfigManager {
     pub fn connect_refresh<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
         self.connect_local("refresh", false, move |_| {
             callback();
@@ -112,7 +112,7 @@ impl UserConnfigManager {
             match USER_CONFIG_MANAGER.as_ref() {
                 Some(user_config) => user_config.clone(),
                 None => {
-                    let user_config = UserConnfigManager::new();
+                    let user_config = UserConfigManager::new();
                     USER_CONFIG_MANAGER = Some(user_config.clone());
                     user_config
                 }
@@ -121,13 +121,13 @@ impl UserConnfigManager {
     }
 
     fn new() -> Self {
-        let object: Self = glib::Object::new(&[]).expect("Failed to create UserConnfigManager");
+        let object: Self = glib::Object::new(&[]).expect("Failed to create UserConfigManager");
 
         match user_config_dir().as_os_str().to_str() {
             Some(user_data_directory) => {
                 log::debug!("Got user config dir: {}", user_data_directory);
 
-                let self_ = &mut imp::UserConnfigManager::from_instance(&object);
+                let self_ = &mut imp::UserConfigManager::from_instance(&object);
                 *self_.user_data_directory.borrow_mut() =
                     Some(user_data_directory.to_owned() + "/user_config.toml");
             }
@@ -140,13 +140,13 @@ impl UserConnfigManager {
     }
 
     pub fn get_map(&self) -> HashMap<String, VaultConfig> {
-        let self_ = &mut imp::UserConnfigManager::from_instance(&self);
+        let self_ = &mut imp::UserConfigManager::from_instance(&self);
 
         self_.vaults.borrow().clone()
     }
 
     pub fn read_config(&self) {
-        let self_ = &mut imp::UserConnfigManager::from_instance(&self);
+        let self_ = &mut imp::UserConfigManager::from_instance(&self);
 
         if let Some(path) = self_.user_data_directory.borrow().as_ref() {
             let map = &mut *self_.vaults.borrow_mut();
@@ -175,7 +175,7 @@ impl UserConnfigManager {
     }
 
     pub fn write_config(&self, map: &mut HashMap<String, VaultConfig>) {
-        let self_ = &mut imp::UserConnfigManager::from_instance(&self);
+        let self_ = &mut imp::UserConfigManager::from_instance(&self);
 
         if let Some(path) = self_.user_data_directory.borrow().as_ref() {
             match toml::to_string_pretty(&map) {
@@ -195,19 +195,19 @@ impl UserConnfigManager {
     }
 
     pub fn get_current_vault(&self) -> Option<Vault> {
-        let self_ = imp::UserConnfigManager::from_instance(&self);
+        let self_ = imp::UserConfigManager::from_instance(&self);
 
         self_.current_vault.borrow().clone()
     }
 
     pub fn set_current_vault(&self, vault: Vault) {
-        let self_ = imp::UserConnfigManager::from_instance(&self);
+        let self_ = imp::UserConfigManager::from_instance(&self);
 
         self_.current_vault.borrow_mut().replace(vault);
     }
 
     pub fn add_vault(&self, vault: Vault) {
-        let self_ = &mut imp::UserConnfigManager::from_instance(&self);
+        let self_ = &mut imp::UserConfigManager::from_instance(&self);
 
         let map = &mut self_.vaults.borrow_mut();
         match (vault.get_name(), vault.get_config()) {
@@ -226,7 +226,7 @@ impl UserConnfigManager {
     }
 
     pub fn remove_vault(self, vault: Vault) {
-        let self_ = &mut imp::UserConnfigManager::from_instance(&self);
+        let self_ = &mut imp::UserConfigManager::from_instance(&self);
 
         let map = &mut self_.vaults.borrow_mut();
         match vault.get_name() {
@@ -246,7 +246,7 @@ impl UserConnfigManager {
     }
 
     pub fn change_vault(&self, old_vault: Vault, new_vault: Vault) {
-        let self_ = &mut imp::UserConnfigManager::from_instance(&self);
+        let self_ = &mut imp::UserConfigManager::from_instance(&self);
 
         match (
             old_vault.get_name(),

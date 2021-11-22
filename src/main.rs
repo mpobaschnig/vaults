@@ -38,7 +38,7 @@ use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 use gettextrs::*;
 use global_config_manager::GlobalConfigManager;
 use gtk::gio;
-use user_config_manager::UserConnfigManager;
+use user_config_manager::UserConfigManager;
 
 fn main() {
     pretty_env_logger::init();
@@ -57,7 +57,7 @@ fn main() {
 
     GlobalConfigManager::instance().read_config();
 
-    UserConnfigManager::instance().read_config();
+    UserConfigManager::instance().read_config();
 
     gtk::glib::set_application_name("Vaults");
     gtk::glib::set_prgname(Some("vaults"));
