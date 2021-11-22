@@ -213,4 +213,14 @@ impl GlobalConfigManager {
             .encrypted_data_directory
             .borrow_mut() = path;
     }
+
+    pub fn set_mount_directory(&self, path: String) {
+        let self_ = &mut imp::GlobalConfigManager::from_instance(&self);
+
+        *self_
+            .global_config
+            .borrow_mut()
+            .mount_directory
+            .borrow_mut() = path;
+    }
 }
