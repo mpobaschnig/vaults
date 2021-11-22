@@ -3,7 +3,7 @@
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
   <template class="VaultsPreferencesWindow" parent="AdwPreferencesWindow">
-    <property name="title" translatable="yes">Vaults Preferences</property>
+    <property name="title" translatable="yes">Preferences</property>
     <property name="destroy-with-parent">1</property>
     <property name="search-enabled">0</property>
     <child>
