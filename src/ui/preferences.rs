@@ -18,9 +18,14 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use adw::prelude::*;
+use gettextrs::gettext;
 use gtk::gio;
 use gtk::glib;
+use gtk::glib::clone;
+use gtk::glib::GString;
+use gtk::subclass::prelude::*;
 
+use crate::GlobalConfigManager;
 use crate::VApplication;
 
 mod imp {
@@ -29,7 +34,7 @@ mod imp {
 
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/io/github/mpobaschnig/Vaults/preferences.ui")]
-    pub struct PreferencesWindow {
+    pub struct VaultsPreferencesWindow {
         #[template_child]
         pub encrypted_data_directory_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
@@ -47,7 +52,7 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for PreferencesWindow {
+    impl ObjectSubclass for VaultsPreferencesWindow {
         const NAME: &'static str = "VaultsPreferencesWindow";
         type ParentType = adw::PreferencesWindow;
         type Type = super::PreferencesWindow;
@@ -73,20 +78,20 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for PreferencesWindow {
+    impl ObjectImpl for VaultsPreferencesWindow {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
         }
     }
 
-    impl WidgetImpl for PreferencesWindow {}
-    impl WindowImpl for PreferencesWindow {}
-    impl adw::subclass::window::AdwWindowImpl for PreferencesWindow {}
-    impl adw::subclass::preferences_window::PreferencesWindowImpl for PreferencesWindow {}
+    impl WidgetImpl for VaultsPreferencesWindow {}
+    impl WindowImpl for VaultsPreferencesWindow {}
+    impl adw::subclass::window::AdwWindowImpl for VaultsPreferencesWindow {}
+    impl adw::subclass::preferences_window::PreferencesWindowImpl for VaultsPreferencesWindow {}
 }
 
 glib::wrapper! {
-    pub struct PreferencesWindow(ObjectSubclass<imp::PreferencesWindow>)
+    pub struct PreferencesWindow(ObjectSubclass<imp::VaultsPreferencesWindow>)
         @extends gtk::Widget, gtk::Window, adw::Window, adw::PreferencesWindow,
         @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Native, gtk::Root, gtk::ShortcutManager;
 }
@@ -103,6 +108,160 @@ impl PreferencesWindow {
             .unwrap();
         o.set_transient_for(Some(&window));
 
+        o.init();
+
+        o.setup_signals();
+
         o
+    }
+
+    fn init(&self) {
+        let self_ = imp::VaultsPreferencesWindow::from_instance(self);
+
+        let global_config = GlobalConfigManager::instance().get_global_config();
+
+        self_
+            .encrypted_data_directory_entry
+            .set_text(&global_config.encrypted_data_directory.borrow());
+
+        self_
+            .mount_directory_entry
+            .set_text(&global_config.mount_directory.borrow());
+    }
+
+    fn setup_signals(&self) {
+        let self_ = imp::VaultsPreferencesWindow::from_instance(self);
+
+        self_.encrypted_data_directory_entry.connect_text_notify(
+            clone!(@weak self as obj => move |_| {
+                obj.check_apply_changes_button_enable_conditions();
+            }),
+        );
+
+        self_.encrypted_data_directory_button.connect_clicked(
+            clone!(@weak self as obj => move |_| {
+                obj.encrypted_data_directory_button_clicked();
+            }),
+        );
+
+        self_
+            .mount_directory_entry
+            .connect_text_notify(clone!(@weak self as obj => move |_| {
+                obj.check_apply_changes_button_enable_conditions();
+            }));
+
+        self_
+            .mount_directory_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.mount_directory_button_clicked();
+            }));
+
+        self_
+            .general_apply_changes_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.general_apply_changes_button_clicked();
+            }));
+    }
+
+    fn encrypted_data_directory_button_clicked(&self) {
+        let dialog = gtk::FileChooserDialog::new(
+            Some(&gettext("Choose Encrypted Data Directory")),
+            Some(self),
+            gtk::FileChooserAction::SelectFolder,
+            &[
+                (&gettext("Cancel"), gtk::ResponseType::Cancel),
+                (&gettext("Select"), gtk::ResponseType::Accept),
+            ],
+        );
+
+        dialog.set_transient_for(Some(self));
+
+        dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
+            if response == gtk::ResponseType::Accept {
+                let file = dialog.file().unwrap();
+                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
+                let self_ = imp::VaultsPreferencesWindow::from_instance(&obj);
+                self_.encrypted_data_directory_entry.set_text(&path);
+            }
+
+            dialog.destroy();
+        }));
+
+        dialog.show();
+    }
+
+    fn mount_directory_button_clicked(&self) {
+        let dialog = gtk::FileChooserDialog::new(
+            Some(&gettext("Choose Mount Directory")),
+            Some(self),
+            gtk::FileChooserAction::SelectFolder,
+            &[
+                (&gettext("Cancel"), gtk::ResponseType::Cancel),
+                (&gettext("Select"), gtk::ResponseType::Accept),
+            ],
+        );
+
+        dialog.set_transient_for(Some(self));
+
+        dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
+            if response == gtk::ResponseType::Accept {
+                let file = dialog.file().unwrap();
+                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
+                let self_ = imp::VaultsPreferencesWindow::from_instance(&obj);
+                self_.mount_directory_entry.set_text(&path);
+            }
+
+            dialog.destroy();
+        }));
+
+        dialog.show();
+    }
+
+    fn general_apply_changes_button_clicked(&self) {
+        let self_ = imp::VaultsPreferencesWindow::from_instance(self);
+
+        let encrypted_data_directory = self_.encrypted_data_directory_entry.text().to_string();
+        let mount_directory = self_.mount_directory_entry.text().to_string();
+
+        GlobalConfigManager::instance().set_encrypted_data_directory(encrypted_data_directory);
+        GlobalConfigManager::instance().set_mount_directory(mount_directory);
+
+        GlobalConfigManager::instance().write_config();
+    }
+
+    fn are_directories_different(
+        &self,
+        encrypted_data_directory: &GString,
+        mount_directory: &GString,
+    ) -> bool {
+        let self_ = imp::VaultsPreferencesWindow::from_instance(self);
+
+        if encrypted_data_directory.eq(mount_directory) {
+            self_
+                .encrypted_data_directory_action_row
+                .set_subtitle(&gettext("Directories must not be equal."));
+            self_
+                .mount_directory_action_row
+                .set_subtitle(&gettext("Directories must not be equal."));
+            false
+        } else {
+            true
+        }
+    }
+
+    fn check_apply_changes_button_enable_conditions(&self) {
+        let self_ = imp::VaultsPreferencesWindow::from_instance(self);
+
+        let encrypted_data_directory = self_.encrypted_data_directory_entry.text();
+        let mount_directory = self_.mount_directory_entry.text();
+
+        let are_directories_different =
+            self.are_directories_different(&encrypted_data_directory, &mount_directory);
+
+        if are_directories_different {
+            self_.general_apply_changes_button.set_sensitive(true);
+        } else {
+            self_.general_apply_changes_button.set_sensitive(false);
+        }
     }
 }
