@@ -19,6 +19,7 @@
                 <child>
                   <object class="GtkListBox" id="vaults_list_box">
                     <property name="selection-mode">none</property>
+                    <property name="valign">start</property>
                     <property name="margin-start">12</property>
                     <property name="margin-end">12</property>
                     <property name="margin-top">12</property>

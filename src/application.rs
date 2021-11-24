@@ -25,10 +25,11 @@ use gio::ApplicationFlags;
 use glib::clone;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
-use gtk::{gdk, gio, glib};
+use gtk::{gio, glib};
 use gtk_macros::action;
 use log::{debug, info};
 use std::cell::RefCell;
+use adw::subclass::prelude::*;
 
 mod imp {
     use super::*;
@@ -42,7 +43,7 @@ mod imp {
     impl ObjectSubclass for VApplication {
         const NAME: &'static str = "VApplication";
         type Type = super::VApplication;
-        type ParentType = gtk::Application;
+        type ParentType = adw::Application;
     }
 
     impl ObjectImpl for VApplication {}
@@ -57,7 +58,6 @@ mod imp {
             }
 
             app.set_resource_base_path(Some("/io/github/mpobaschnig/Vaults/"));
-            app.setup_css();
 
             let window = ApplicationWindow::new(app);
 
@@ -75,11 +75,12 @@ mod imp {
     }
 
     impl GtkApplicationImpl for VApplication {}
+    impl AdwApplicationImpl for VApplication {}
 }
 
 glib::wrapper! {
     pub struct VApplication(ObjectSubclass<imp::VApplication>)
-        @extends gio::Application, gtk::Application, @implements gio::ActionMap, gio::ActionGroup;
+    @extends gio::Application, gtk::Application, adw::Application, @implements gio::ActionMap, gio::ActionGroup;
 }
 
 impl VApplication {
@@ -107,18 +108,6 @@ impl VApplication {
                 obj.show_about_dialog();
             })
         );
-    }
-
-    fn setup_css(&self) {
-        let provider = gtk::CssProvider::new();
-        provider.load_from_resource("/io/github/mpobaschnig/Vaults/style.css");
-        if let Some(display) = gdk::Display::default() {
-            gtk::StyleContext::add_provider_for_display(
-                &display,
-                &provider,
-                gtk::STYLE_PROVIDER_PRIORITY_APPLICATION,
-            );
-        }
     }
 
     fn show_preferences(&self) {
