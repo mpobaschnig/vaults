@@ -33,7 +33,7 @@ mod imp {
         #[template_child]
         pub unlock_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub password_entry: TemplateChild<gtk::Entry>,
+        pub password_entry: TemplateChild<gtk::PasswordEntry>,
     }
 
     #[glib::object_subclass]
@@ -64,7 +64,7 @@ mod imp {
 
             obj.setup_signals();
 
-            self.password_entry.grab_focus_without_selecting();
+            //self.password_entry.grab_focus_without_selecting();
         }
     }
 
