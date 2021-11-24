@@ -31,8 +31,6 @@ mod imp {
     )]
     pub struct VaultsPageRowPasswordPromptDialog {
         #[template_child]
-        pub cancel_button: TemplateChild<gtk::Button>,
-        #[template_child]
         pub unlock_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub password_entry: TemplateChild<gtk::Entry>,
@@ -46,7 +44,6 @@ mod imp {
 
         fn new() -> Self {
             Self {
-                cancel_button: TemplateChild::default(),
                 unlock_button: TemplateChild::default(),
                 password_entry: TemplateChild::default(),
             }
@@ -101,12 +98,6 @@ impl VaultsPageRowPasswordPromptDialog {
         let self_ = imp::VaultsPageRowPasswordPromptDialog::from_instance(self);
 
         self_
-            .cancel_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.cancel_button_clicked();
-            }));
-
-        self_
             .unlock_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.unlock_button_clicked();
@@ -123,10 +114,6 @@ impl VaultsPageRowPasswordPromptDialog {
             .connect_activate(clone!(@weak self as obj => move |_| {
                 obj.connect_activate();
             }));
-    }
-
-    fn cancel_button_clicked(&self) {
-        self.response(gtk::ResponseType::Cancel);
     }
 
     fn unlock_button_clicked(&self) {
