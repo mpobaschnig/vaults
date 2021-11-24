@@ -37,8 +37,6 @@ mod imp {
     #[template(resource = "/io/github/mpobaschnig/Vaults/vaults_page_row_settings_dialog.ui")]
     pub struct VaultsPageRowSettingsDialog {
         #[template_child]
-        pub cancel_button: TemplateChild<gtk::Button>,
-        #[template_child]
         pub remove_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub save_button: TemplateChild<gtk::Button>,
@@ -75,7 +73,6 @@ mod imp {
 
         fn new() -> Self {
             Self {
-                cancel_button: TemplateChild::default(),
                 remove_button: TemplateChild::default(),
                 save_button: TemplateChild::default(),
                 vault_name_action_row: TemplateChild::default(),
@@ -142,12 +139,6 @@ impl VaultsPageRowSettingsDialog {
 
     fn setup_signals(&self) {
         let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
-
-        self_
-            .cancel_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.response(gtk::ResponseType::Cancel);
-            }));
 
         self_
             .remove_button

@@ -12,147 +12,134 @@
       <object class="GtkHeaderBar">
         <property name="title-widget">
           <object class="AdwWindowTitle">
-            <property name="title" translatable="yes">Import Vault</property>
+            <property name="title" translatable="yes">Vault Settings</property>
           </object>
         </property>
-        <child>
-          <object class="GtkButton" id="cancel_button">
-            <property name="label" translatable="yes">_Cancel</property>
-            <property name="use_underline">True</property>
-          </object>
-        </child>
-        <child type="end">
-          <object class="GtkButton" id="save_button">
-            <property name="label" translatable="yes">_Save</property>
-            <property name="use_underline">True</property>
-            <property name="sensitive">False</property>
-            <style>
-              <class name="suggested-action"/>
-            </style>
-          </object>
-        </child>
-        <child type="end">
-          <object class="GtkButton" id="remove_button">
-            <property name="label" translatable="yes">_Remove</property>
-            <property name="use_underline">True</property>
-            <style>
-              <class name="destructive-action"/>
-            </style>
-          </object>
-        </child>
       </object>
     </child>
     <child>
-      <object class="GtkScrolledWindow">
-        <property name="propagate-natural-height">1</property>
+      <object class="AdwPreferencesPage">
         <child>
-          <object class="AdwClamp">
-            <property name="valign">center</property>
+          <object class="AdwPreferencesGroup">
+            <property name="title" translatable="yes">General</property>
             <property name="vexpand">True</property>
-            <property name="hexpand">True</property>
-            <property name="margin-start">12</property>
-            <property name="margin-end">12</property>
-            <property name="margin-top">12</property>
-            <property name="margin-bottom">12</property>
             <child>
-              <object class="GtkListBox" id="vaults_list_box">
-                <property name="selection-mode">none</property>
-                <property name="margin-start">12</property>
-                <property name="margin-end">12</property>
-                <property name="margin-top">12</property>
-                <property name="margin-bottom">12</property>
-                <style>
-                  <class name="content"/>
-                </style>
+              <object class="AdwActionRow" id="vault_name_action_row">
+                <property name="title" translatable="yes">Vault Name</property>
                 <child>
-                  <object class="AdwActionRow" id="vault_name_action_row">
-                    <property name="title" translatable="yes">Vault Name</property>
+                  <object class="GtkEntry" id="vault_name_entry">
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="margin-top">6</property>
+                    <property name="margin-bottom">6</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow" id="backend_type_action_row">
+                <property name="title" translatable="yes">Backend Type</property>
+                <child>
+                  <object class="GtkComboBoxText" id="backend_type_combo_box_text">
+                    <property name="margin-start">6</property>
+                    <property name="margin-end">6</property>
+                    <property name="margin-top">6</property>
+                    <property name="margin-bottom">6</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow" id="encrypted_data_directory_action_row">
+                <property name="title" translatable="yes">Encrypted Data Directory</property>
+                <child>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="valign">center</property>
                     <child>
-                      <object class="GtkEntry" id="vault_name_entry">
+                      <object class="GtkEntry" id="encrypted_data_directory_entry">
                         <property name="margin-start">6</property>
-                        <property name="margin-end">6</property>
                         <property name="margin-top">6</property>
                         <property name="margin-bottom">6</property>
                       </object>
                     </child>
+                    <child>
+                      <object class="GtkButton" id="encrypted_data_directory_button">
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="icon_name">document-open-symbolic</property>
+                        <property name="tooltip-text" translatable="yes">Choose Encrypted Data Directory</property>
+                      </object>
+                    </child>
+                    <style>
+                      <class name="linked"/>
+                    </style>
                   </object>
                 </child>
+              </object>
+            </child>
+            <child>
+              <object class="AdwActionRow" id="mount_directory_action_row">
+                <property name="title" translatable="yes">Mount Directory</property>
                 <child>
-                  <object class="AdwActionRow" id="backend_type_action_row">
-                    <property name="title" translatable="yes">Backend Type</property>
+                  <object class="GtkBox">
+                    <property name="visible">True</property>
+                    <property name="valign">center</property>
                     <child>
-                      <object class="GtkComboBoxText" id="backend_type_combo_box_text">
+                      <object class="GtkEntry" id="mount_directory_entry">
                         <property name="margin-start">6</property>
-                        <property name="margin-end">6</property>
                         <property name="margin-top">6</property>
                         <property name="margin-bottom">6</property>
                       </object>
                     </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="AdwActionRow" id="encrypted_data_directory_action_row">
-                    <property name="title" translatable="yes">Encrypted Data Directory</property>
                     <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="valign">center</property>
-                        <child>
-                          <object class="GtkEntry" id="encrypted_data_directory_entry">
-                            <property name="margin-start">6</property>
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">6</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="encrypted_data_directory_button">
-                            <property name="margin-end">6</property>
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">6</property>
-                            <property name="icon_name">document-open-symbolic</property>
-                            <property name="tooltip-text" translatable="yes">Choose Encrypted Data Directory</property>
-                          </object>
-                        </child>
-                        <style>
-                          <class name="linked"/>
-                        </style>
+                      <object class="GtkButton" id="mount_directory_button">
+                        <property name="margin-end">6</property>
+                        <property name="margin-top">6</property>
+                        <property name="margin-bottom">6</property>
+                        <property name="icon_name">document-open-symbolic</property>
+                        <property name="tooltip-text" translatable="yes">Choose Mount Directory</property>
                       </object>
                     </child>
-                  </object>
-                </child>
-                <child>
-                  <object class="AdwActionRow" id="mount_directory_action_row">
-                    <property name="title" translatable="yes">Mount Directory</property>
-                    <child>
-                      <object class="GtkBox">
-                        <property name="visible">True</property>
-                        <property name="valign">center</property>
-                        <child>
-                          <object class="GtkEntry" id="mount_directory_entry">
-                            <property name="margin-start">6</property>
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">6</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkButton" id="mount_directory_button">
-                            <property name="margin-end">6</property>
-                            <property name="margin-top">6</property>
-                            <property name="margin-bottom">6</property>
-                            <property name="icon_name">document-open-symbolic</property>
-                            <property name="tooltip-text" translatable="yes">Choose Mount Directory</property>
-                          </object>
-                        </child>
-                        <style>
-                          <class name="linked"/>
-                        </style>
-                      </object>
-                    </child>
+                    <style>
+                      <class name="linked"/>
+                    </style>
                   </object>
                 </child>
               </object>
             </child>
           </object>
+        </child>
+        <child>
+          <object class="AdwPreferencesGroup">
+            <property name="halign">end</property>
+            <property name="valign">end</property>
+            <child>
+              <object class="GtkBox">
+                <property name="spacing">12</property>
+                <child>
+                  <object class="GtkButton" id="remove_button">
+                    <property name="label" translatable="yes">_Remove</property>
+                    <property name="use_underline">True</property>
+                    <style>
+                      <class name="destructive-action"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkButton" id="save_button">
+                    <property name="label" translatable="yes">_Apply Changes</property>
+                    <property name="use_underline">True</property>
+                    <property name="sensitive">False</property>
+                    <style>
+                      <class name="suggested-action"/>
+                    </style>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object> 
         </child>
       </object>
     </child>
