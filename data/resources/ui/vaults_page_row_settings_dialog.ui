@@ -15,7 +15,6 @@
             <property name="title" translatable="yes">Import Vault</property>
           </object>
         </property>
-        <property name="show-title-buttons">False</property>
         <child>
           <object class="GtkButton" id="cancel_button">
             <property name="label" translatable="yes">_Cancel</property>
