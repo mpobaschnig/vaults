@@ -7,7 +7,7 @@
   <summary>An application for creating encrypted vaults for the GNOME desktop.</summary>
   <description>
     <p>
-      Vaults lets you create encrypted vaults in which you can safely store files. It uses Gocryptfs and CryFS for encryption.
+      Vaults lets you create encrypted vaults in which you can safely store files. It uses gocryptfs and CryFS for encryption.
     </p>
     <p>
       Note: This version is sandboxed, to use Vaults you need to install:
