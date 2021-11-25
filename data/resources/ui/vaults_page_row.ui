@@ -27,7 +27,6 @@
         </child>
         <child>
           <object class="GtkButton" id="settings_button">
-            <property name="margin-end">6</property>
             <property name="margin-top">6</property>
             <property name="margin-bottom">6</property>
             <property name="icon_name">emblem-system-symbolic</property>
