@@ -94,12 +94,13 @@
                   <object class="AdwActionRow" id="password_action_row">
                     <property name="title" translatable="yes">Password</property>
                     <child>
-                      <object class="GtkEntry" id="password_entry">
+                      <object class="GtkPasswordEntry" id="password_entry">
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
                         <property name="margin-top">6</property>
                         <property name="margin-bottom">6</property>
-                        <property name="visibility">False</property>
+                        <property name="placeholder_text">Password</property>
+                        <property name="show-peek-icon">True</property>
                       </object>
                     </child>
                   </object>
@@ -108,12 +109,13 @@
                   <object class="AdwActionRow">
                     <property name="title" translatable="yes">Confirm Password</property>
                     <child>
-                      <object class="GtkEntry" id="password_confirm_entry">
+                      <object class="GtkPasswordEntry" id="password_confirm_entry">
                         <property name="margin-start">6</property>
                         <property name="margin-end">6</property>
                         <property name="margin-top">6</property>
                         <property name="margin-bottom">6</property>
-                        <property name="visibility">False</property>
+                        <property name="placeholder_text">Confirm Password</property>
+                        <property name="show-peek-icon">True</property>
                       </object>
                     </child>
                   </object>

@@ -54,9 +54,9 @@ mod imp {
         #[template_child]
         pub password_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
-        pub password_entry: TemplateChild<gtk::Entry>,
+        pub password_entry: TemplateChild<gtk::PasswordEntry>,
         #[template_child]
-        pub password_confirm_entry: TemplateChild<gtk::Entry>,
+        pub password_confirm_entry: TemplateChild<gtk::PasswordEntry>,
         #[template_child]
         pub encrypted_data_directory_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
