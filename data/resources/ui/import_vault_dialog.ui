@@ -2,6 +2,14 @@
 <interface>
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
+  <object class="GtkSizeGroup">
+    <property name="mode">horizontal</property>
+    <widgets>
+      <widget name="vault_name_entry"/>
+      <widget name="edd_box"/>
+      <widget name="md_box"/>
+    </widgets>
+  </object>
   <template class="ImportVaultDialog" parent="GtkDialog">
     <property name="default-height">480</property>
     <property name="default-width">640</property>
@@ -84,7 +92,7 @@
                   <object class="AdwActionRow" id="encrypted_data_directory_action_row">
                     <property name="title" translatable="yes">Encrypted Data Directory</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="edd_box">
                         <property name="visible">True</property>
                         <property name="valign">center</property>
                         <child>
@@ -114,7 +122,7 @@
                   <object class="AdwActionRow" id="mount_directory_action_row">
                     <property name="title" translatable="yes">Mount Directory</property>
                     <child>
-                      <object class="GtkBox">
+                      <object class="GtkBox" id="md_box">
                         <property name="visible">True</property>
                         <property name="valign">center</property>
                         <child>
