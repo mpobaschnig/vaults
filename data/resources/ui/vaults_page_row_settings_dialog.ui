@@ -8,15 +8,7 @@
     <property name="use-header-bar">1</property>
     <property name="modal">1</property>
     <property name="destroy-with-parent">1</property>
-    <child type="titlebar">
-      <object class="GtkHeaderBar">
-        <property name="title-widget">
-          <object class="AdwWindowTitle">
-            <property name="title" translatable="yes">Vault Settings</property>
-          </object>
-        </property>
-      </object>
-    </child>
+    <property name="title">Vault Settings</property>
     <child>
       <object class="AdwPreferencesPage">
         <child>
