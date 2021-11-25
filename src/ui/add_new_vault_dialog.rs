@@ -435,6 +435,14 @@ impl AddNewVaultDialog {
             false
         };
 
+        if !are_passwords_empty && !are_passwords_equal {
+            self_.password_entry.add_css_class("error");
+            self_.password_confirm_entry.add_css_class("error");
+        } else {
+            self_.password_entry.remove_css_class("error");
+            self_.password_confirm_entry.remove_css_class("error");
+        }
+
         if is_valid_vault_name
             && is_different_vault_name
             && is_encrypted_data_directory_valid
