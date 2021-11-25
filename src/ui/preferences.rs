@@ -34,7 +34,7 @@ mod imp {
 
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/io/github/mpobaschnig/Vaults/preferences.ui")]
-    pub struct VaultsPreferencesWindow {
+    pub struct VaultSettingsDialog {
         #[template_child]
         pub encrypted_data_directory_action_row: TemplateChild<adw::ActionRow>,
         #[template_child]
@@ -52,9 +52,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for VaultsPreferencesWindow {
-        const NAME: &'static str = "VaultsPreferencesWindow";
-        type ParentType = adw::PreferencesWindow;
+    impl ObjectSubclass for VaultSettingsDialog {
+        const NAME: &'static str = "VaultSettingsDialog";
+        type ParentType = gtk::Dialog;
         type Type = super::PreferencesWindow;
 
         fn new() -> Self {
@@ -78,27 +78,26 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for VaultsPreferencesWindow {
+    impl ObjectImpl for VaultSettingsDialog {
         fn constructed(&self, obj: &Self::Type) {
             self.parent_constructed(obj);
         }
     }
 
-    impl WidgetImpl for VaultsPreferencesWindow {}
-    impl WindowImpl for VaultsPreferencesWindow {}
-    impl adw::subclass::window::AdwWindowImpl for VaultsPreferencesWindow {}
-    impl adw::subclass::preferences_window::PreferencesWindowImpl for VaultsPreferencesWindow {}
+    impl WidgetImpl for VaultSettingsDialog {}
+    impl WindowImpl for VaultSettingsDialog {}
+    impl DialogImpl for VaultSettingsDialog {}
 }
 
 glib::wrapper! {
-    pub struct PreferencesWindow(ObjectSubclass<imp::VaultsPreferencesWindow>)
-        @extends gtk::Widget, gtk::Window, adw::Window, adw::PreferencesWindow,
-        @implements gtk::Accessible, gtk::Buildable, gtk::ConstraintTarget, gtk::Native, gtk::Root, gtk::ShortcutManager;
+    pub struct PreferencesWindow(ObjectSubclass<imp::VaultSettingsDialog>)
+        @extends gtk::Widget, gtk::Window, gtk::Dialog;
 }
 
 impl PreferencesWindow {
     pub fn new() -> Self {
-        let o: Self = glib::Object::new(&[]).expect("Failed to create PreferencesWindow");
+        let o: Self = glib::Object::new(&[("use-header-bar", &1)])
+            .expect("Failed to create PreferencesWindow");
 
         let window = gio::Application::default()
             .unwrap()
@@ -116,7 +115,7 @@ impl PreferencesWindow {
     }
 
     fn init(&self) {
-        let self_ = imp::VaultsPreferencesWindow::from_instance(self);
+        let self_ = imp::VaultSettingsDialog::from_instance(self);
 
         let global_config = GlobalConfigManager::instance().get_global_config();
 
@@ -130,7 +129,7 @@ impl PreferencesWindow {
     }
 
     fn setup_signals(&self) {
-        let self_ = imp::VaultsPreferencesWindow::from_instance(self);
+        let self_ = imp::VaultSettingsDialog::from_instance(self);
 
         self_.encrypted_data_directory_entry.connect_text_notify(
             clone!(@weak self as obj => move |_| {
@@ -180,7 +179,7 @@ impl PreferencesWindow {
             if response == gtk::ResponseType::Accept {
                 let file = dialog.file().unwrap();
                 let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
-                let self_ = imp::VaultsPreferencesWindow::from_instance(&obj);
+                let self_ = imp::VaultSettingsDialog::from_instance(&obj);
                 self_.encrypted_data_directory_entry.set_text(&path);
             }
 
@@ -207,7 +206,7 @@ impl PreferencesWindow {
             if response == gtk::ResponseType::Accept {
                 let file = dialog.file().unwrap();
                 let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
-                let self_ = imp::VaultsPreferencesWindow::from_instance(&obj);
+                let self_ = imp::VaultSettingsDialog::from_instance(&obj);
                 self_.mount_directory_entry.set_text(&path);
             }
 
@@ -218,7 +217,7 @@ impl PreferencesWindow {
     }
 
     fn general_apply_changes_button_clicked(&self) {
-        let self_ = imp::VaultsPreferencesWindow::from_instance(self);
+        let self_ = imp::VaultSettingsDialog::from_instance(self);
 
         let encrypted_data_directory = self_.encrypted_data_directory_entry.text().to_string();
         let mount_directory = self_.mount_directory_entry.text().to_string();
@@ -234,7 +233,7 @@ impl PreferencesWindow {
         encrypted_data_directory: &GString,
         mount_directory: &GString,
     ) -> bool {
-        let self_ = imp::VaultsPreferencesWindow::from_instance(self);
+        let self_ = imp::VaultSettingsDialog::from_instance(self);
 
         if encrypted_data_directory.eq(mount_directory) {
             self_
@@ -250,7 +249,7 @@ impl PreferencesWindow {
     }
 
     fn check_apply_changes_button_enable_conditions(&self) {
-        let self_ = imp::VaultsPreferencesWindow::from_instance(self);
+        let self_ = imp::VaultSettingsDialog::from_instance(self);
 
         let encrypted_data_directory = self_.encrypted_data_directory_entry.text();
         let mount_directory = self_.mount_directory_entry.text();
