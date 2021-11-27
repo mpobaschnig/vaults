@@ -10,7 +10,6 @@
         <property name="title" translatable="yes">Vault X</property>
         <child>
           <object class="GtkButton" id="open_folder_button">
-            <property name="margin-start">6</property>
             <property name="margin-top">6</property>
             <property name="margin-bottom">6</property>
             <property name="icon_name">folder-symbolic</property>
