@@ -45,7 +45,6 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
         .arg("--host")
         .arg("--env=CRYFS_FRONTEND=noninteractive")
         .arg("cryfs")
-        .arg("--allow-replaced-filesystem")
         .arg(&vault_config.encrypted_data_directory)
         .arg(&vault_config.mount_directory)
         .spawn()?;
