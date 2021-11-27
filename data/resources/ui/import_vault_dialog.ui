@@ -32,7 +32,7 @@
         </child>
         <child type="end">
           <object class="GtkButton" id="import_vault_button">
-            <property name="label" translatable="yes">_Add</property>
+            <property name="label" translatable="yes">_Import</property>
             <property name="use_underline">True</property>
             <property name="sensitive">False</property>
             <style>
