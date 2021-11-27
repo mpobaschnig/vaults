@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- 
+   Original author: Jakub Steiner
+   Adjusted from https://gitlab.gnome.org/World/secrets/-/blob/master/data/icons/hicolor/scalable/apps/org.gnome.World.Secrets.svg
+-->
 <svg
    height="128px"
    viewBox="0 0 128 128"
