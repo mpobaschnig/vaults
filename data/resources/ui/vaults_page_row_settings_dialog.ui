@@ -28,8 +28,7 @@
                 <property name="title" translatable="yes">Vault Name</property>
                 <child>
                   <object class="GtkEntry" id="vault_name_entry">
-                    <property name="margin-top">6</property>
-                    <property name="margin-bottom">6</property>
+                    <property name="valign">center</property>
                   </object>
                 </child>
               </object>
@@ -39,8 +38,7 @@
                 <property name="title" translatable="yes">Backend Type</property>
                 <child>
                   <object class="GtkComboBoxText" id="backend_type_combo_box_text">
-                    <property name="margin-top">6</property>
-                    <property name="margin-bottom">6</property>
+                    <property name="valign">center</property>
                   </object>
                 </child>
               </object>
@@ -54,14 +52,12 @@
                     <property name="valign">center</property>
                     <child>
                       <object class="GtkEntry" id="encrypted_data_directory_entry">
-                        <property name="margin-top">6</property>
-                        <property name="margin-bottom">6</property>
+                        <property name="valign">center</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkButton" id="encrypted_data_directory_button">
-                        <property name="margin-top">6</property>
-                        <property name="margin-bottom">6</property>
+                        <property name="valign">center</property>
                         <property name="icon_name">document-open-symbolic</property>
                         <property name="tooltip-text" translatable="yes">Choose Encrypted Data Directory</property>
                       </object>
@@ -82,14 +78,12 @@
                     <property name="valign">center</property>
                     <child>
                       <object class="GtkEntry" id="mount_directory_entry">
-                        <property name="margin-top">6</property>
-                        <property name="margin-bottom">6</property>
+                        <property name="valign">center</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkButton" id="mount_directory_button">
-                        <property name="margin-top">6</property>
-                        <property name="margin-bottom">6</property>
+                        <property name="valign">center</property>
                         <property name="icon_name">document-open-symbolic</property>
                         <property name="tooltip-text" translatable="yes">Choose Mount Directory</property>
                       </object>
