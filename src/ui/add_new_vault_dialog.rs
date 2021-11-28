@@ -32,6 +32,8 @@ use gtk::gio;
 use gtk::{self, prelude::*};
 use gtk::{glib, CompositeTemplate};
 use gtk::{glib::clone, glib::GString, subclass::prelude::*};
+use std::cell::RefCell;
+use gtk::EntryIconPosition;
 
 mod imp {
     use super::*;
@@ -40,35 +42,39 @@ mod imp {
     #[template(resource = "/io/github/mpobaschnig/Vaults/add_new_vault_dialog.ui")]
     pub struct AddNewVaultDialog {
         #[template_child]
+        pub carousel: TemplateChild<adw::Carousel>,
+        #[template_child]
         pub cancel_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub add_new_vault_button: TemplateChild<gtk::Button>,
+        pub next_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub vault_name_action_row: TemplateChild<adw::ActionRow>,
+        pub previous_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub vault_name_entry: TemplateChild<gtk::Entry>,
+        pub add_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub backend_type_action_row: TemplateChild<adw::ActionRow>,
+        pub name_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub backend_type_combo_box_text: TemplateChild<gtk::ComboBoxText>,
         #[template_child]
-        pub password_action_row: TemplateChild<adw::ActionRow>,
+        pub name_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub password_entry: TemplateChild<gtk::PasswordEntry>,
         #[template_child]
         pub password_confirm_entry: TemplateChild<gtk::PasswordEntry>,
         #[template_child]
-        pub encrypted_data_directory_action_row: TemplateChild<adw::ActionRow>,
-        #[template_child]
         pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub encrypted_data_directory_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub mount_directory_action_row: TemplateChild<adw::ActionRow>,
-        #[template_child]
         pub mount_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub mount_directory_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub encrypted_data_directory_error_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub mount_directory_error_label: TemplateChild<gtk::Label>,
+
+        pub current_page: RefCell<u32>,
     }
 
     #[glib::object_subclass]
@@ -79,21 +85,24 @@ mod imp {
 
         fn new() -> Self {
             Self {
+                carousel: TemplateChild::default(),
                 cancel_button: TemplateChild::default(),
-                add_new_vault_button: TemplateChild::default(),
-                vault_name_action_row: TemplateChild::default(),
-                vault_name_entry: TemplateChild::default(),
-                backend_type_action_row: TemplateChild::default(),
+                previous_button: TemplateChild::default(),
+                next_button: TemplateChild::default(),
+                add_button: TemplateChild::default(),
+                name_entry: TemplateChild::default(),
                 backend_type_combo_box_text: TemplateChild::default(),
-                password_action_row: TemplateChild::default(),
+                name_error_label: TemplateChild::default(),
                 password_entry: TemplateChild::default(),
                 password_confirm_entry: TemplateChild::default(),
-                encrypted_data_directory_action_row: TemplateChild::default(),
                 encrypted_data_directory_entry: TemplateChild::default(),
                 encrypted_data_directory_button: TemplateChild::default(),
-                mount_directory_action_row: TemplateChild::default(),
                 mount_directory_entry: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
+                encrypted_data_directory_error_label: TemplateChild::default(),
+                mount_directory_error_label: TemplateChild::default(),
+
+                current_page: RefCell::new(0),
             }
         }
 
@@ -111,8 +120,6 @@ mod imp {
             self.parent_constructed(obj);
             obj.setup_actions();
             obj.setup_signals();
-
-            obj.set_global_config();
 
             obj.setup_combo_box();
         }
@@ -156,38 +163,44 @@ impl AddNewVaultDialog {
             }));
 
         self_
-            .add_new_vault_button
+            .previous_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.previous_button_clicked();
+            }));
+
+        self_
+            .next_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.next_button_clicked();
+            }));
+
+        self_
+            .add_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.response(gtk::ResponseType::Ok);
             }));
 
         self_
-            .vault_name_entry
+            .name_entry
             .connect_text_notify(clone!(@weak self as obj => move |_| {
-                obj.check_add_button_enable_conditions();
-            }));
-
-        self_
-            .backend_type_combo_box_text
-            .connect_changed(clone!(@weak self as obj => move |_| {
-                obj.check_add_button_enable_conditions();
+                obj.validate_name();
             }));
 
         self_
             .password_entry
             .connect_text_notify(clone!(@weak self as obj => move |_| {
-                obj.check_add_button_enable_conditions();
+                obj.validate_passwords();
             }));
 
         self_
             .password_confirm_entry
             .connect_text_notify(clone!(@weak self as obj => move |_| {
-                obj.check_add_button_enable_conditions();
+                obj.validate_passwords();
             }));
 
         self_.encrypted_data_directory_entry.connect_text_notify(
             clone!(@weak self as obj => move |_| {
-                obj.check_add_button_enable_conditions();
+                obj.validate_directories();
             }),
         );
 
@@ -200,7 +213,7 @@ impl AddNewVaultDialog {
         self_
             .mount_directory_entry
             .connect_text_notify(clone!(@weak self as obj => move |_| {
-                obj.check_add_button_enable_conditions();
+                obj.validate_directories();
             }));
 
         self_
@@ -210,7 +223,130 @@ impl AddNewVaultDialog {
             }));
     }
 
-    fn encrypted_data_directory_button_clicked(&self) {
+    pub fn next_button_clicked(&self) {
+        let self_ = imp::AddNewVaultDialog::from_instance(self);
+
+        *self_.current_page.borrow_mut() += 1;
+
+        self_
+            .carousel
+            .scroll_to(&self_.carousel.nth_page(*self_.current_page.borrow()).unwrap());
+
+        self.update_headerbar_buttons();
+    }
+
+    pub fn previous_button_clicked(&self) {
+        let self_ = &mut imp::AddNewVaultDialog::from_instance(self);
+
+        *self_.current_page.borrow_mut() -= 1;
+
+        self_
+            .carousel
+            .scroll_to(&self_.carousel.nth_page(*self_.current_page.borrow()).unwrap());
+
+        self.update_headerbar_buttons();
+    }
+
+    fn update_headerbar_buttons(&self) {
+        let self_ = &mut imp::AddNewVaultDialog::from_instance(self);
+
+        match  *self_.current_page.borrow() {
+            0 => {
+                self_.cancel_button.set_visible(true);
+                self_.previous_button.set_visible(false);
+
+                self.validate_name();
+            }
+            1 => {
+                self_.cancel_button.set_visible(false);
+                self_.previous_button.set_visible(true);
+                self_.next_button.set_visible(true);
+                self_.add_button.set_visible(false);
+
+                self.validate_passwords();
+            }
+            2 => {
+                self_.next_button.set_visible(false);
+                self_.add_button.set_visible(true);
+            }
+            _ => {}
+        }
+    }
+
+    pub fn validate_name(&self) {
+        let self_ = imp::AddNewVaultDialog::from_instance(self);
+
+        let combo_box_text = self_.backend_type_combo_box_text.active_text();
+
+        if combo_box_text.is_none() {
+            self_.next_button.set_sensitive(false);
+
+            self_.name_error_label.set_visible(true);
+            self_.name_error_label.set_text(&gettext("No backend installed. Please install gocryptfs or CryFS."));
+
+            return;
+        }
+
+        let vault_name = self_.name_entry.text();
+
+        if vault_name.is_empty() {
+            self_.next_button.set_sensitive(false);
+
+            self_.name_entry.remove_css_class("error");
+            self_.name_error_label.set_visible(false);
+            self_.name_error_label.set_text("");
+
+            return;
+        }
+
+        let is_duplicate = UserConfigManager::instance()
+            .get_map()
+            .contains_key(&vault_name.to_string());
+
+        if is_duplicate {
+            self_.next_button.set_sensitive(false);
+
+            self_.name_entry.add_css_class("error");
+            self_.name_error_label.set_visible(true);
+            self_.name_error_label.set_text(&gettext("Name is already taken."));
+        } else {
+            self_.next_button.set_sensitive(true);
+
+            self_.name_entry.remove_css_class("error");
+            self_.name_error_label.set_visible(false);
+            self_.name_error_label.set_text("");
+        }
+    }
+
+    pub fn validate_passwords(&self) {
+        let self_ = imp::AddNewVaultDialog::from_instance(self);
+
+        let password = self_.password_entry.text();
+        let confirm_password = self_.password_confirm_entry.text();
+
+        if password.is_empty() && confirm_password.is_empty() {
+            self_.next_button.set_sensitive(false);
+
+            self_.password_entry.remove_css_class("error");
+            self_.password_confirm_entry.remove_css_class("error");
+
+            return;
+        }
+
+        if password.eq(&confirm_password) {
+            self_.next_button.set_sensitive(true);
+
+            self_.password_entry.remove_css_class("error");
+            self_.password_confirm_entry.remove_css_class("error");
+        } else {
+            self_.next_button.set_sensitive(false);
+
+            self_.password_entry.add_css_class("error");
+            self_.password_confirm_entry.add_css_class("error");
+        }
+    }
+
+    pub fn encrypted_data_directory_button_clicked(&self) {
         let dialog = gtk::FileChooserDialog::new(
             Some(&gettext("Choose Encrypted Data Directory")),
             Some(self),
@@ -237,7 +373,7 @@ impl AddNewVaultDialog {
         dialog.show();
     }
 
-    fn mount_directory_button_clicked(&self) {
+    pub fn mount_directory_button_clicked(&self) {
         let dialog = gtk::FileChooserDialog::new(
             Some(&gettext("Choose Mount Directory")),
             Some(self),
@@ -264,33 +400,146 @@ impl AddNewVaultDialog {
         dialog.show();
     }
 
-    fn is_valid_vault_name(&self, vault_name: GString) -> bool {
+    pub fn validate_directories(&self) {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
-        if vault_name.is_empty() {
+        self_.add_button.set_sensitive(false);
+
+        let encrypted_data_directory = self_.encrypted_data_directory_entry.text();
+        let mount_directory = self_.mount_directory_entry.text();
+
+        let is_edd_valid = self.is_encrypted_data_directory_valid(&encrypted_data_directory);
+
+        let is_md_valid = self.is_mount_directory_valid(&mount_directory);
+
+        if !is_edd_valid || !is_md_valid {
+            return;
+        }
+
+        if encrypted_data_directory.eq(&mount_directory) {
+            self_.encrypted_data_directory_entry.add_css_class("error");
+            self_.mount_directory_entry.add_css_class("error");
+
+            self_.mount_directory_error_label.set_text(&gettext("Directories must not be equal."));
+            self_.mount_directory_error_label.set_visible(true);
+
+            return;
+        }
+
+        self_.add_button.set_sensitive(true);
+    }
+
+    fn is_encrypted_data_directory_valid(&self, encrypted_data_directory: &GString) -> bool {
+        let self_ = imp::AddNewVaultDialog::from_instance(self);
+
+        if encrypted_data_directory.is_empty() {
             self_
-                .vault_name_action_row
-                .set_subtitle(&gettext("Name is not valid."));
-            false
-        } else {
-            self_.vault_name_action_row.set_subtitle("");
-            true
+                .encrypted_data_directory_error_label
+                .set_visible(false);
+
+            self_.encrypted_data_directory_entry.remove_css_class("error");
+
+            return false;
+        }
+
+        match self.is_path_empty(&encrypted_data_directory) {
+            Ok(is_empty) => {
+                if is_empty {
+                    self_
+                        .encrypted_data_directory_error_label
+                        .set_visible(false);
+
+                    self_
+                        .encrypted_data_directory_entry
+                        .remove_css_class("error");
+
+                    true
+                } else {
+                    self_
+                        .encrypted_data_directory_error_label
+                        .set_text(&gettext("Encrypted data directory is not empty."));
+                    self_
+                        .encrypted_data_directory_error_label
+                        .set_visible(true);
+
+                    self_
+                        .encrypted_data_directory_entry
+                        .add_css_class("error");
+
+                    false
+                }
+            }
+            Err(e) => {
+                self_
+                    .encrypted_data_directory_error_label
+                    .set_text(&gettext("Encrypted data directory is not valid."));
+                self_
+                    .encrypted_data_directory_error_label
+                    .set_visible(true);
+
+                self_
+                    .encrypted_data_directory_entry
+                    .add_css_class("error");
+
+                false
+            }
         }
     }
 
-    fn is_different_vault_name(&self, vault_name: GString) -> bool {
+    fn is_mount_directory_valid(&self, mount_directory: &GString) -> bool {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
-        let is_duplicate_name = UserConfigManager::instance()
-            .get_map()
-            .contains_key(&vault_name.to_string());
-        if !vault_name.is_empty() && is_duplicate_name {
+        if mount_directory.is_empty() {
             self_
-                .vault_name_action_row
-                .set_subtitle(&gettext("Name already exists."));
-            false
-        } else {
-            true
+                .mount_directory_error_label
+                .set_visible(false);
+
+            self_.mount_directory_entry.remove_css_class("error");
+
+            return false;
+        }
+
+        match self.is_path_empty(&mount_directory) {
+            Ok(is_empty) => {
+                if is_empty {
+                    self_
+                        .mount_directory_error_label
+                        .set_visible(false);
+
+                    self_
+                        .mount_directory_entry
+                        .remove_css_class("error");
+
+                    true
+                } else {
+                    self_
+                        .mount_directory_error_label
+                        .set_text(&gettext("Mount directory is not empty."));
+                    self_
+                        .mount_directory_error_label
+                        .set_visible(true);
+
+                    self_
+                        .mount_directory_entry
+                        .add_css_class("error");
+
+                    false
+                }
+            }
+            Err(e) => {
+                self_
+                    .mount_directory_error_label
+                    .set_text(&gettext("Mount directory is not valid."));
+                self_
+                    .mount_directory_error_label
+                    .set_visible(true);
+
+                self_
+                    .mount_directory_entry
+                    .add_css_class("error");
+
+                false
+            }
         }
     }
 
@@ -310,182 +559,16 @@ impl AddNewVaultDialog {
         }
     }
 
-    fn is_encrypted_data_directory_valid(&self, encrypted_data_directory: &GString) -> bool {
+    pub fn get_password(&self) -> String {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
-
-        match self.is_path_empty(encrypted_data_directory) {
-            Ok(is_empty) => {
-                if is_empty {
-                    self_
-                        .encrypted_data_directory_action_row
-                        .set_subtitle(&gettext(""));
-                    true
-                } else {
-                    self_
-                        .encrypted_data_directory_action_row
-                        .set_subtitle(&gettext("Directory is not empty."));
-                    false
-                }
-            }
-            Err(_) => {
-                self_
-                    .encrypted_data_directory_action_row
-                    .set_subtitle(&gettext("Directory is not valid."));
-                false
-            }
-        }
-    }
-
-    fn is_mount_directory_valid(&self, mount_directory: &GString) -> bool {
-        let self_ = imp::AddNewVaultDialog::from_instance(self);
-
-        match self.is_path_empty(mount_directory) {
-            Ok(is_empty) => {
-                if is_empty {
-                    self_.mount_directory_action_row.set_subtitle(&gettext(""));
-                    true
-                } else {
-                    self_
-                        .mount_directory_action_row
-                        .set_subtitle(&gettext("Directory is not empty."));
-                    false
-                }
-            }
-            Err(_) => {
-                self_
-                    .mount_directory_action_row
-                    .set_subtitle(&gettext("Directory is not valid."));
-                false
-            }
-        }
-    }
-
-    fn are_directories_different(
-        &self,
-        encrypted_data_directory: &GString,
-        mount_directory: &GString,
-    ) -> bool {
-        let self_ = imp::AddNewVaultDialog::from_instance(self);
-
-        if encrypted_data_directory.eq(mount_directory) {
-            self_
-                .encrypted_data_directory_action_row
-                .set_subtitle(&gettext("Directories must not be equal."));
-            self_
-                .mount_directory_action_row
-                .set_subtitle(&gettext("Directories must not be equal."));
-            false
-        } else {
-            true
-        }
-    }
-
-    fn are_passwords_empty(&self, password: &GString, confirm_password: &GString) -> bool {
-        let self_ = imp::AddNewVaultDialog::from_instance(self);
-
-        if password.is_empty() && confirm_password.is_empty() {
-            self_
-                .password_action_row
-                .set_subtitle(&gettext("Password is empty"));
-            true
-        } else {
-            self_.password_action_row.set_subtitle(&gettext(""));
-            false
-        }
-    }
-
-    fn are_passwords_equal(&self, password: &GString, confirm_password: &GString) -> bool {
-        let self_ = imp::AddNewVaultDialog::from_instance(self);
-
-        if password.eq(confirm_password) {
-            self_.password_action_row.set_subtitle("");
-            true
-        } else {
-            self_
-                .password_action_row
-                .set_subtitle(&gettext("Passwords are not equal!"));
-            false
-        }
-    }
-
-    fn check_add_button_enable_conditions(&self) {
-        let self_ = imp::AddNewVaultDialog::from_instance(self);
-
-        let vault_name = self_.vault_name_entry.text();
-        let password = self_.password_entry.text();
-        let confirm_password = self_.password_confirm_entry.text();
-        let encrypted_data_directory = self_.encrypted_data_directory_entry.text();
-        let mount_directory = self_.mount_directory_entry.text();
-
-        let is_valid_vault_name = self.is_valid_vault_name(vault_name.clone());
-        let is_different_vault_name = self.is_different_vault_name(vault_name);
-        let is_encrypted_data_directory_valid =
-            self.is_encrypted_data_directory_valid(&encrypted_data_directory);
-        let is_mount_directory_valid = self.is_mount_directory_valid(&mount_directory);
-        let are_directories_different =
-            if is_encrypted_data_directory_valid && is_mount_directory_valid {
-                self.are_directories_different(&encrypted_data_directory, &mount_directory)
-            } else {
-                false
-            };
-        let are_passwords_empty = self.are_passwords_empty(&password, &confirm_password);
-        let are_passwords_equal = if !are_passwords_empty {
-            self.are_passwords_equal(&password, &confirm_password)
-        } else {
-            false
-        };
-
-        if !are_passwords_empty && !are_passwords_equal {
-            self_.password_entry.add_css_class("error");
-            self_.password_confirm_entry.add_css_class("error");
-        } else {
-            self_.password_entry.remove_css_class("error");
-            self_.password_confirm_entry.remove_css_class("error");
-        }
-
-        if is_valid_vault_name
-            && is_different_vault_name
-            && is_encrypted_data_directory_valid
-            && is_mount_directory_valid
-            && are_directories_different
-            && are_passwords_equal
-        {
-            self_.add_new_vault_button.set_sensitive(true);
-        } else {
-            self_.add_new_vault_button.set_sensitive(false);
-        }
-    }
-
-    pub fn get_entry_values(&self) -> (String, String, String, String, String) {
-        let self_ = imp::AddNewVaultDialog::from_instance(self);
-
-        let vault_name = String::from(self_.vault_name_entry.text().as_str());
-        let backend_type = String::from(
-            self_
-                .backend_type_combo_box_text
-                .active_text()
-                .unwrap()
-                .as_str(),
-        );
-        let password = String::from(self_.password_entry.text().as_str());
-        let encrypted_data_directory =
-            String::from(self_.encrypted_data_directory_entry.text().as_str());
-        let mount_directory = String::from(self_.mount_directory_entry.text().as_str());
-
-        (
-            vault_name,
-            backend_type,
-            password,
-            encrypted_data_directory,
-            mount_directory,
-        )
+        String::from(self_.password_entry.text().as_str())
     }
 
     pub fn get_vault(&self) -> Vault {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
         Vault::new(
-            String::from(self_.vault_name_entry.text().as_str()),
+            String::from(self_.name_entry.text().as_str()),
             Backend::from_str(
                 self_
                     .backend_type_combo_box_text
@@ -497,25 +580,6 @@ impl AddNewVaultDialog {
             String::from(self_.encrypted_data_directory_entry.text().as_str()),
             String::from(self_.mount_directory_entry.text().as_str()),
         )
-    }
-
-    pub fn get_password(&self) -> String {
-        let self_ = imp::AddNewVaultDialog::from_instance(self);
-        String::from(self_.password_entry.text().as_str())
-    }
-
-    fn set_global_config(&self) {
-        let self_ = imp::AddNewVaultDialog::from_instance(self);
-
-        let global_config = GlobalConfigManager::instance().get_global_config();
-
-        self_
-            .encrypted_data_directory_entry
-            .set_text(&global_config.encrypted_data_directory.borrow().clone());
-
-        self_
-            .mount_directory_entry
-            .set_text(&global_config.mount_directory.borrow().clone());
     }
 
     fn setup_combo_box(&self) {
@@ -541,9 +605,7 @@ impl AddNewVaultDialog {
                     combo_box_text.set_active(Some(0));
                 }
             } else {
-                self_.backend_type_action_row.set_subtitle(&gettext(
-                    "No backend is installed. Please install gocryptfs or cryfs.",
-                ));
+
             }
         }
     }
