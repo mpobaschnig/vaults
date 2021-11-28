@@ -52,12 +52,10 @@
                     <property name="valign">center</property>
                     <child>
                       <object class="GtkEntry" id="encrypted_data_directory_entry">
-                        <property name="valign">center</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkButton" id="encrypted_data_directory_button">
-                        <property name="valign">center</property>
                         <property name="icon_name">document-open-symbolic</property>
                         <property name="tooltip-text" translatable="yes">Choose Encrypted Data Directory</property>
                       </object>
@@ -78,12 +76,10 @@
                     <property name="valign">center</property>
                     <child>
                       <object class="GtkEntry" id="mount_directory_entry">
-                        <property name="valign">center</property>
                       </object>
                     </child>
                     <child>
                       <object class="GtkButton" id="mount_directory_button">
-                        <property name="valign">center</property>
                         <property name="icon_name">document-open-symbolic</property>
                         <property name="tooltip-text" translatable="yes">Choose Mount Directory</property>
                       </object>
