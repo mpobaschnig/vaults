@@ -18,7 +18,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::backend::{Backend, BackendError};
+use gio::prelude::*;
 use gio::subclass::prelude::*;
+use gio::VolumeMonitor;
 use gtk::{gio, glib};
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
@@ -152,26 +154,35 @@ impl Vault {
     }
 
     pub fn is_mounted(&self) -> bool {
-        use proc_mounts::*;
+        let config_mount_directory = self.get_config().unwrap().mount_directory;
 
-        let mount_list = MountList::new();
-        match mount_list {
-            Ok(mount_list) => {
-                let is_mounted = MountList::get_mount_by_dest(
-                    &mount_list,
-                    self.get_config().unwrap().mount_directory,
-                );
+        let config_mount_directory_path = std::path::Path::new(&config_mount_directory);
 
-                match is_mounted {
-                    Some(_) => true,
-                    None => false,
+        let config_mount_directory_file_name = config_mount_directory_path.file_name();
+
+        match config_mount_directory_file_name {
+            Some(config_mount_directory_file_name) => {
+                match config_mount_directory_file_name.to_str() {
+                    Some(file_name) => {
+                        let volume_monitor = VolumeMonitor::get();
+
+                        for mount in volume_monitor.mounts() {
+                            if mount.name() == file_name {
+                                return true;
+                            }
+                        }
+                    }
+                    None => {
+                        log::debug!("Could not get mount directory path");
+                    }
                 }
             }
-            Err(e) => {
-                log::error!("Could not check if mounted: {}", e);
-                false
+            None => {
+                log::debug!("Could not get config mount directory file name");
             }
         }
+
+        false
     }
 
     pub fn is_backend_available(&self) -> bool {
