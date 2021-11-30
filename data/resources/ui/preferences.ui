@@ -10,20 +10,50 @@
     <property name="destroy-with-parent">1</property>
     <property name="title">Preferences</property>
     <child>
-      <object class="AdwPreferencesPage">
+      <object class="GtkScrolledWindow">
+        <property name="hexpand">True</property>
+        <property name="hscrollbar_policy">never</property>
+        <property name="vscrollbar_policy">automatic</property>
         <child>
-          <object class="AdwPreferencesGroup">
-            <property name="title" translatable="yes">Default Paths</property>
-            <property name="vexpand">True</property>
+          <object class="AdwClamp">
+            <property name="margin-top">30</property>
+            <property name="margin-bottom">30</property>
+            <property name="margin-start">12</property>
+            <property name="margin-end">12</property>
+            <property name="hexpand">True</property>
             <child>
-              <object class="AdwActionRow" id="encrypted_data_directory_action_row">
-                <property name="title" translatable="yes">Encrypted Data Directory</property>
+              <object class="GtkBox">
+                <property name="orientation">vertical</property>
+                <property name="vexpand">True</property>
+                <property name="hexpand">True</property>
+                <property name="spacing">6</property>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">_Default Paths</property>
+                    <property name="use_underline">True</property>
+                    <property name="margin-bottom">6</property>
+                    <style>
+                      <class name="heading"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">_Encrypted Data Directory</property>
+                    <property name="use_underline">True</property>
+                    <style>
+                      <class name="dim-label"/>
+                    </style>
+                  </object>
+                </child>
                 <child>
                   <object class="GtkBox">
-                    <property name="visible">True</property>
-                    <property name="valign">center</property>
+                    <property name="hexpand">True</property>
                     <child>
                       <object class="GtkEntry" id="encrypted_data_directory_entry">
+                        <property name="hexpand">True</property>
                       </object>
                     </child>
                     <child>
@@ -37,17 +67,31 @@
                     </style>
                   </object>
                 </child>
-              </object>
-            </child>
-            <child>
-              <object class="AdwActionRow" id="mount_directory_action_row">
-                <property name="title" translatable="yes">Mount Directory</property>
+                <child>
+                  <object class="GtkLabel" id="encrypted_data_directory_error_label">
+                    <property name="visible">False</property>
+                    <property name="wrap">True</property>
+                    <style>
+                      <class name="error"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkLabel">
+                    <property name="halign">start</property>
+                    <property name="label" translatable="yes">_Mount Directory</property>
+                    <property name="use_underline">True</property>
+                    <style>
+                      <class name="dim-label"/>
+                    </style>
+                  </object>
+                </child>
                 <child>
                   <object class="GtkBox">
-                    <property name="visible">True</property>
-                    <property name="valign">center</property>
+                    <property name="hexpand">True</property>
                     <child>
                       <object class="GtkEntry" id="mount_directory_entry">
+                        <property name="hexpand">True</property>
                       </object>
                     </child>
                     <child>
@@ -61,22 +105,32 @@
                     </style>
                   </object>
                 </child>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child>
-          <object class="AdwPreferencesGroup">
-            <property name="halign">end</property>
-            <property name="valign">end</property>
-            <child>
-              <object class="GtkButton" id="general_apply_changes_button">
-                <property name="label" translatable="yes">_Apply Changes</property>
-                <property name="use_underline">True</property>
-                <property name="sensitive">False</property>
-                <style>
-                  <class name="suggested-action"/>
-                </style>
+                <child>
+                  <object class="GtkLabel" id="mount_directory_error_label">
+                    <property name="visible">False</property>
+                    <property name="wrap">True</property>
+                    <style>
+                      <class name="error"/>
+                    </style>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkBox">
+                    <property name="halign">end</property>
+                    <property name="valign">end</property>
+                    <property name="vexpand">True</property>
+                    <child>
+                      <object class="GtkButton" id="general_apply_changes_button">
+                        <property name="label" translatable="yes">_Apply Changes</property>
+                        <property name="use_underline">True</property>
+                        <property name="sensitive">False</property>
+                        <style>
+                          <class name="suggested-action"/>
+                        </style>
+                      </object>
+                    </child>
+                  </object>
+                </child>
               </object>
             </child>
           </object>

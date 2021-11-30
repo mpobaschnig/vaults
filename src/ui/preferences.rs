@@ -36,17 +36,17 @@ mod imp {
     #[template(resource = "/io/github/mpobaschnig/Vaults/preferences.ui")]
     pub struct VaultSettingsDialog {
         #[template_child]
-        pub encrypted_data_directory_action_row: TemplateChild<adw::ActionRow>,
-        #[template_child]
         pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub encrypted_data_directory_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub mount_directory_action_row: TemplateChild<adw::ActionRow>,
+        pub encrypted_data_directory_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub mount_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub mount_directory_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub mount_directory_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub general_apply_changes_button: TemplateChild<gtk::Button>,
     }
@@ -60,12 +60,12 @@ mod imp {
         fn new() -> Self {
             Self {
                 general_apply_changes_button: TemplateChild::default(),
-                encrypted_data_directory_action_row: TemplateChild::default(),
                 encrypted_data_directory_entry: TemplateChild::default(),
                 encrypted_data_directory_button: TemplateChild::default(),
-                mount_directory_action_row: TemplateChild::default(),
+                encrypted_data_directory_error_label: TemplateChild::default(),
                 mount_directory_entry: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
+                mount_directory_error_label: TemplateChild::default(),
             }
         }
 
@@ -237,13 +237,14 @@ impl PreferencesWindow {
 
         if encrypted_data_directory.eq(mount_directory) {
             self_
-                .encrypted_data_directory_action_row
-                .set_subtitle(&gettext("Directories must not be equal."));
-            self_
-                .mount_directory_action_row
-                .set_subtitle(&gettext("Directories must not be equal."));
+                .mount_directory_error_label
+                .set_text(&gettext("Directories must not be equal."));
+            self_.mount_directory_error_label.set_visible(true);
+
             false
         } else {
+            self_.mount_directory_error_label.set_visible(false);
+
             true
         }
     }
