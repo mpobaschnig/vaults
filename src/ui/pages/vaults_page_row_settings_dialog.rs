@@ -19,7 +19,7 @@
 
 use std::str::FromStr;
 
-use adw::{prelude::ActionRowExt, subclass::prelude::*};
+use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::{
     self, gio, glib, glib::clone, glib::GString, prelude::*, subclass::prelude::*,
@@ -39,27 +39,27 @@ mod imp {
         #[template_child]
         pub remove_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub save_button: TemplateChild<gtk::Button>,
+        pub apply_changes_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub vault_name_action_row: TemplateChild<adw::ActionRow>,
+        pub name_entry: TemplateChild<gtk::Entry>,
         #[template_child]
-        pub vault_name_entry: TemplateChild<gtk::Entry>,
-        #[template_child]
-        pub backend_type_action_row: TemplateChild<adw::ActionRow>,
+        pub name_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub backend_type_combo_box_text: TemplateChild<gtk::ComboBoxText>,
         #[template_child]
-        pub encrypted_data_directory_action_row: TemplateChild<adw::ActionRow>,
+        pub backend_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub encrypted_data_directory_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub mount_directory_action_row: TemplateChild<adw::ActionRow>,
+        pub encrypted_data_directory_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub mount_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
         pub mount_directory_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub mount_directory_error_label: TemplateChild<gtk::Label>,
 
         pub current_vault: RefCell<Option<Vault>>,
         pub to_remove: RefCell<bool>,
@@ -74,17 +74,17 @@ mod imp {
         fn new() -> Self {
             Self {
                 remove_button: TemplateChild::default(),
-                save_button: TemplateChild::default(),
-                vault_name_action_row: TemplateChild::default(),
-                vault_name_entry: TemplateChild::default(),
-                backend_type_action_row: TemplateChild::default(),
+                apply_changes_button: TemplateChild::default(),
+                name_entry: TemplateChild::default(),
+                name_error_label: TemplateChild::default(),
                 backend_type_combo_box_text: TemplateChild::default(),
-                encrypted_data_directory_action_row: TemplateChild::default(),
+                backend_error_label: TemplateChild::default(),
                 encrypted_data_directory_entry: TemplateChild::default(),
                 encrypted_data_directory_button: TemplateChild::default(),
-                mount_directory_action_row: TemplateChild::default(),
+                encrypted_data_directory_error_label: TemplateChild::default(),
                 mount_directory_entry: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
+                mount_directory_error_label: TemplateChild::default(),
                 current_vault: RefCell::new(None),
                 to_remove: RefCell::new(false),
             }
@@ -147,13 +147,13 @@ impl VaultsPageRowSettingsDialog {
             }));
 
         self_
-            .save_button
+            .apply_changes_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.save_button_clicked();
+                obj.apply_changes_button_clicked();
             }));
 
         self_
-            .vault_name_entry
+            .name_entry
             .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
             }));
@@ -194,11 +194,11 @@ impl VaultsPageRowSettingsDialog {
         self.response(gtk::ResponseType::Other(0));
     }
 
-    fn save_button_clicked(&self) {
+    fn apply_changes_button_clicked(&self) {
         let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
         let new_vault = Vault::new(
-            String::from(self_.vault_name_entry.text().as_str()),
+            String::from(self_.name_entry.text().as_str()),
             Backend::from_str(
                 self_
                     .backend_type_combo_box_text
@@ -275,11 +275,15 @@ impl VaultsPageRowSettingsDialog {
 
         if vault_name.is_empty() {
             self_
-                .vault_name_action_row
-                .set_subtitle(&gettext("Name is not valid."));
+                .name_error_label
+                .set_text(&gettext("Name is not valid."));
+
+            self_.name_error_label.set_visible(true);
+
             false
         } else {
-            self_.vault_name_action_row.set_subtitle("");
+            self_.name_error_label.set_visible(false);
+
             true
         }
     }
@@ -293,10 +297,15 @@ impl VaultsPageRowSettingsDialog {
             .contains_key(&vault_name.to_string());
         if !vault_name.is_empty() && !is_same_name && is_duplicate_name {
             self_
-                .vault_name_action_row
-                .set_subtitle(&gettext("Name already exists."));
+                .name_error_label
+                .set_text(&gettext("Name already exists."));
+
+            self_.name_error_label.set_visible(true);
+
             false
         } else {
+            self_.name_error_label.set_visible(false);
+
             true
         }
     }
@@ -324,20 +333,27 @@ impl VaultsPageRowSettingsDialog {
             Ok(is_empty) => {
                 if is_empty {
                     self_
-                        .encrypted_data_directory_action_row
-                        .set_subtitle(&gettext("Directory is empty."));
+                        .encrypted_data_directory_error_label
+                        .set_text(&gettext("Directory is empty."));
+
+                    self_
+                        .encrypted_data_directory_error_label
+                        .set_visible(true);
+
                     false
                 } else {
                     self_
-                        .encrypted_data_directory_action_row
-                        .set_subtitle(&gettext(""));
+                        .encrypted_data_directory_error_label
+                        .set_visible(false);
+
                     true
                 }
             }
             Err(_) => {
                 self_
-                    .encrypted_data_directory_action_row
-                    .set_subtitle(&gettext("Directory is not valid."));
+                    .encrypted_data_directory_error_label
+                    .set_text(&gettext("Directory is not valid."));
+
                 false
             }
         }
@@ -349,19 +365,27 @@ impl VaultsPageRowSettingsDialog {
         match self.is_path_empty(mount_directory) {
             Ok(is_empty) => {
                 if is_empty {
-                    self_.mount_directory_action_row.set_subtitle(&gettext(""));
+                    self_.mount_directory_error_label.set_text(&gettext(""));
+                    self_.mount_directory_error_label.set_visible(true);
+
                     true
                 } else {
                     self_
-                        .mount_directory_action_row
-                        .set_subtitle(&gettext("Directory is not empty."));
+                        .mount_directory_error_label
+                        .set_text(&gettext("Directory is not empty."));
+
+                    self_.mount_directory_error_label.set_visible(true);
+
                     false
                 }
             }
             Err(_) => {
                 self_
-                    .mount_directory_action_row
-                    .set_subtitle(&gettext("Directory is not valid."));
+                    .mount_directory_error_label
+                    .set_text(&gettext("Directory is not valid."));
+
+                self_.mount_directory_error_label.set_visible(true);
+
                 false
             }
         }
@@ -376,13 +400,15 @@ impl VaultsPageRowSettingsDialog {
 
         if encrypted_data_directory.eq(mount_directory) {
             self_
-                .encrypted_data_directory_action_row
-                .set_subtitle(&gettext("Directories must not be equal."));
-            self_
-                .mount_directory_action_row
-                .set_subtitle(&gettext("Directories must not be equal."));
+                .mount_directory_error_label
+                .set_text(&gettext("Directories must not be equal."));
+
+            self_.mount_directory_error_label.set_visible(true);
+
             false
         } else {
+            self_.mount_directory_error_label.set_visible(false);
+
             true
         }
     }
@@ -425,7 +451,8 @@ impl VaultsPageRowSettingsDialog {
         let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
         if !self.is_encrypted_data_directory_valid(&encrypted_data_directory) {
-            self_.backend_type_action_row.set_subtitle(&"");
+            self_.backend_error_label.set_visible(false);
+
             return false;
         }
 
@@ -442,12 +469,13 @@ impl VaultsPageRowSettingsDialog {
 
         let path = std::path::Path::new(&path_str);
         if path.exists() {
-            self_.backend_type_action_row.set_subtitle(&"");
+            self_.backend_error_label.set_visible(false);
+
             true
         } else {
-            self_
-                .backend_type_action_row
-                .set_subtitle(&gettext("No configuration file found."));
+            self_.backend_error_label.set_text(&gettext("No configuration file found."));
+            self_.backend_error_label.set_visible(true);
+
             false
         }
     }
@@ -455,7 +483,7 @@ impl VaultsPageRowSettingsDialog {
     fn check_add_button_enable_conditions(&self) {
         let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
-        let vault_name = self_.vault_name_entry.text();
+        let vault_name = self_.name_entry.text();
         let backend_str = self_.backend_type_combo_box_text.active_text().unwrap();
         let backend = Backend::from_str(&backend_str.as_str()).unwrap();
         let encrypted_data_directory = self_.encrypted_data_directory_entry.text();
@@ -488,9 +516,9 @@ impl VaultsPageRowSettingsDialog {
             && has_something_changed
             && exists_config_file
         {
-            self_.save_button.set_sensitive(true);
+            self_.apply_changes_button.set_sensitive(true);
         } else {
-            self_.save_button.set_sensitive(false);
+            self_.apply_changes_button.set_sensitive(false);
         }
     }
 
@@ -522,7 +550,7 @@ impl VaultsPageRowSettingsDialog {
         let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
         Vault::new(
-            String::from(self_.vault_name_entry.text().as_str()),
+            String::from(self_.name_entry.text().as_str()),
             Backend::from_str(
                 self_
                     .backend_type_combo_box_text
@@ -549,7 +577,7 @@ impl VaultsPageRowSettingsDialog {
             (Some(name), Some(config)) => {
                 self_.current_vault.replace(Some(vault.clone()));
 
-                self_.vault_name_entry.set_text(&name);
+                self_.name_entry.set_text(&name);
                 self_
                     .backend_type_combo_box_text
                     .set_active_id(Some(&config.backend.to_string()));
