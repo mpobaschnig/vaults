@@ -21,6 +21,8 @@ use adw::{prelude::ActionRowExt, prelude::PreferencesRowExt, subclass::prelude::
 use gettextrs::gettext;
 use glib::once_cell::sync::Lazy;
 use glib::{clone, subclass};
+use gtk::gio::Mount;
+use gtk::gio::VolumeMonitor;
 use gtk::glib;
 use gtk::glib::subclass::Signal;
 use gtk::prelude::*;
@@ -54,6 +56,8 @@ mod imp {
         pub spinner: RefCell<gtk::Spinner>,
 
         pub config: RefCell<Option<VaultConfig>>,
+
+        pub volume_monitor: RefCell<VolumeMonitor>,
     }
 
     #[glib::object_subclass]
@@ -70,6 +74,7 @@ mod imp {
                 settings_button: TemplateChild::default(),
                 config: RefCell::new(None),
                 spinner: RefCell::new(gtk::Spinner::new()),
+                volume_monitor: RefCell::new(VolumeMonitor::get()),
             }
         }
 
@@ -173,6 +178,19 @@ impl VaultsPageRow {
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.settings_button_clicked();
             }));
+
+        self_
+            .volume_monitor
+            .borrow()
+            .connect_mount_added(clone!(@weak self as obj=> move |_, m| {
+                obj.mount_added_triggered(&m);
+            }));
+
+        self_.volume_monitor.borrow().connect_mount_removed(
+            clone!(@weak self as obj=> move |_, m| {
+                obj.mount_removed_triggered(&m);
+            }),
+        );
     }
 
     fn open_folder_button_clicked(&self) {
@@ -508,5 +526,61 @@ impl VaultsPageRow {
 
         self_.vaults_page_row.set_subtitle("");
         self_.locker_button.set_sensitive(true);
+    }
+
+    fn mount_added_triggered(&self, mount: &Mount) {
+        let self_ = imp::VaultsPageRow::from_instance(self);
+
+        let config_mount_directory = self_.config.borrow().clone().unwrap().mount_directory;
+
+        let config_mount_directory_path = std::path::Path::new(&config_mount_directory);
+
+        let config_mount_directory_file_name = config_mount_directory_path.file_name();
+
+        match config_mount_directory_file_name {
+            Some(config_mount_directory_file_name) => {
+                match config_mount_directory_file_name.to_str() {
+                    Some(file_name) => {
+                        if mount.name() == file_name {
+                            self.set_vault_row_state_opened();
+                        }
+                    }
+                    None => {
+                        log::debug!("Could not get mount directory path");
+                    }
+                }
+            }
+            None => {
+                log::debug!("Could not get config mount directory file name");
+            }
+        }
+    }
+
+    fn mount_removed_triggered(&self, mount: &Mount) {
+        let self_ = imp::VaultsPageRow::from_instance(self);
+
+        let config_mount_directory = self_.config.borrow().clone().unwrap().mount_directory;
+
+        let config_mount_directory_path = std::path::Path::new(&config_mount_directory);
+
+        let config_mount_directory_file_name = config_mount_directory_path.file_name();
+
+        match config_mount_directory_file_name {
+            Some(config_mount_directory_file_name) => {
+                match config_mount_directory_file_name.to_str() {
+                    Some(file_name) => {
+                        if mount.name() == file_name {
+                            self.set_vault_row_state_closed();
+                        }
+                    }
+                    None => {
+                        log::debug!("Could not get mount directory path");
+                    }
+                }
+            }
+            None => {
+                log::debug!("Could not get config mount directory file name");
+            }
+        }
     }
 }
