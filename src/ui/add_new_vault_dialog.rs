@@ -26,14 +26,12 @@ use crate::{
     vault::*,
     VApplication,
 };
-use adw::{prelude::ActionRowExt, subclass::prelude::*};
 use gettextrs::gettext;
 use gtk::gio;
 use gtk::{self, prelude::*};
 use gtk::{glib, CompositeTemplate};
 use gtk::{glib::clone, glib::GString, subclass::prelude::*};
 use std::cell::RefCell;
-use gtk::EntryIconPosition;
 
 mod imp {
     use super::*;
@@ -469,7 +467,7 @@ impl AddNewVaultDialog {
                     false
                 }
             }
-            Err(e) => {
+            Err(_) => {
                 self_
                     .encrypted_data_directory_error_label
                     .set_text(&gettext("Encrypted data directory is not valid."));
@@ -526,7 +524,7 @@ impl AddNewVaultDialog {
                     false
                 }
             }
-            Err(e) => {
+            Err(_) => {
                 self_
                     .mount_directory_error_label
                     .set_text(&gettext("Mount directory is not valid."));
