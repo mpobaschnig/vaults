@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ApplicationWindow" parent="AdwApplicationWindow">
-    <property name="default-width">480</property>
-    <property name="default-height">360</property>
+    <property name="default-width">640</property>
+    <property name="default-height">480</property>
     <child>
       <object class="AdwSqueezer" id="window_squeezer">
         <property name="orientation">vertical</property>
