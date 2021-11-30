@@ -11,19 +11,15 @@
             <property name="scroll-to-focus">True</property>
             <child>
               <object class="AdwClamp">
-                <property name="maximum_size">1600</property>
                 <property name="margin-top">12</property>
                 <property name="margin-bottom">12</property>
                 <property name="margin-start">12</property>
                 <property name="margin-end">12</property>
+                <property name="hexpand">True</property>
                 <child>
                   <object class="GtkListBox" id="vaults_list_box">
                     <property name="selection-mode">none</property>
                     <property name="valign">start</property>
-                    <property name="margin-start">12</property>
-                    <property name="margin-end">12</property>
-                    <property name="margin-top">12</property>
-                    <property name="margin-bottom">12</property>
                     <style>
                       <class name="content"/>
                     </style>
