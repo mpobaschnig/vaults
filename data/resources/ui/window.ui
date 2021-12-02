@@ -68,7 +68,7 @@
   <menu id="add_menu">
     <section>
       <item>
-        <attribute name="label" translatable="yes">_Add New Vault</attribute>
+        <attribute name="label" translatable="yes">_New Vault</attribute>
         <attribute name="action">win.add_new_vault</attribute>
       </item>
       <item>
