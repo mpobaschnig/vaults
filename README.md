@@ -25,7 +25,6 @@ Since the Flatpak version is sandboxed, you need following components installed 
 
 - [gocryptfs](https://github.com/rfjakob/gocryptfs)
 - [CryFS](https://github.com/cryfs/cryfs/)
-- [libfuse](https://github.com/libfuse/libfuse)
 
 ## How to build
 
