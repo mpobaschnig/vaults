@@ -63,8 +63,6 @@ mod imp {
 
         #[template_child]
         pub headerbar: TemplateChild<adw::HeaderBar>,
-        #[template_child]
-        pub refresh_button: TemplateChild<gtk::Button>,
 
         pub settings: gio::Settings,
 
@@ -83,7 +81,6 @@ mod imp {
                 start_page: TemplateChild::default(),
                 vaults_page: TemplateChild::default(),
                 headerbar: TemplateChild::default(),
-                refresh_button: TemplateChild::default(),
                 settings: gio::Settings::new(APP_ID),
                 view: RefCell::new(VView::Start),
             }
@@ -108,7 +105,6 @@ mod imp {
 
             self.vaults_page.init();
 
-            obj.setup_connect_handlers();
             obj.setup_gactions();
         }
 
@@ -186,17 +182,15 @@ impl ApplicationWindow {
         object
     }
 
-    fn setup_connect_handlers(&self) {
-        let self_ = imp::ApplicationWindow::from_instance(self);
-
-        self_
-            .refresh_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.refresh_button_clicked();
-            }));
-    }
-
     fn setup_gactions(&self) {
+        action!(
+            self,
+            "refresh",
+            clone!(@weak self as obj => move |_, _| {
+                obj.refresh_clicked();
+            })
+        );
+
         action!(
             self,
             "add_new_vault",
@@ -279,7 +273,7 @@ impl ApplicationWindow {
         dialog.show();
     }
 
-    fn refresh_button_clicked(&self) {
+    fn refresh_clicked(&self) {
         let self_ = imp::ApplicationWindow::from_instance(self);
 
         self_.vaults_page.clear();

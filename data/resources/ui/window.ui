@@ -22,12 +22,6 @@
                     <property name="menu_model">add_menu</property>
                   </object>
                 </child>
-                <child>
-                  <object class="GtkButton" id="refresh_button">
-                    <property name="icon_name">view-refresh-symbolic</property>
-                    <property name="tooltip-text" translatable="yes">Refresh</property>
-                  </object>
-                </child>
                 <child type="end">
                   <object class="GtkMenuButton" id="about_menu_button">
                     <property name="icon_name">open-menu-symbolic</property>
@@ -84,6 +78,12 @@
     </section>
   </menu>
   <menu id="menu">
+    <section>
+      <item>
+        <attribute name="label" translatable="yes">_Refresh</attribute>
+        <attribute name="action">win.refresh</attribute>
+      </item>
+    </section>
     <section>
       <item>
         <attribute name="label" translatable="yes">_Preferences</attribute>
