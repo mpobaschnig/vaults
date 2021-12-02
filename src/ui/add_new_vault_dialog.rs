@@ -589,7 +589,7 @@ impl AddNewVaultDialog {
             let mut gocryptfs_index: Option<u32> = None;
 
             for (i, backend) in available_backends.iter().enumerate() {
-                if backend.eq("Gocryptfs") {
+                if backend.eq("gocryptfs") {
                     gocryptfs_index = Some(i as u32);
                 }
 

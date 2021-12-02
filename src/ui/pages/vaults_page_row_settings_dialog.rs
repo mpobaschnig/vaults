@@ -440,7 +440,7 @@ impl VaultsPageRowSettingsDialog {
         let prev_config = &prev_vault.get_config().unwrap();
 
         let prev_vault_name = &prev_vault.get_name().unwrap();
-        let prev_backend = &prev_config.backend.to_string();
+        let prev_backend = &prev_config.backend.get_ui_string();
         let prev_encrypted_data_directory = &prev_config.encrypted_data_directory;
         let prev_mount_directory = &prev_config.mount_directory;
 
@@ -552,7 +552,7 @@ impl VaultsPageRowSettingsDialog {
         let combo_box_text = &self_.backend_type_combo_box_text;
 
         for (i, backend) in Backend::iter().enumerate() {
-            let backend = backend.to_string();
+            let backend = backend.get_ui_string();
 
             combo_box_text.append_text(&backend);
 
@@ -596,7 +596,7 @@ impl VaultsPageRowSettingsDialog {
                 self_.name_entry.set_text(&name);
                 self_
                     .backend_type_combo_box_text
-                    .set_active_id(Some(&config.backend.to_string()));
+                    .set_active_id(Some(&config.backend.get_ui_string()));
                 self_
                     .encrypted_data_directory_entry
                     .set_text(&config.encrypted_data_directory.to_string());

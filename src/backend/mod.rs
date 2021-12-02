@@ -85,6 +85,13 @@ impl Backend {
             Backend::Gocryptfs => gocryptfs::close(vault_config),
         }
     }
+
+    pub fn get_ui_string(&self) -> String {
+        match self {
+            Backend::Cryfs => String::from("CryFS"),
+            Backend::Gocryptfs => String::from("gocryptfs"),
+        }
+    }
 }
 
 pub fn probe_backends() {
@@ -94,7 +101,7 @@ pub fn probe_backends() {
         for backend in Backend::iter() {
             if let Ok(success) = backend.is_available() {
                 if success {
-                    available_backends.push(backend.to_string());
+                    available_backends.push(backend.get_ui_string());
                 }
             }
         }
