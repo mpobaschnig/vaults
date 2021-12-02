@@ -113,7 +113,6 @@ pub fn probe_backends() {
             if let Ok(success) = backend.is_available() {
                 if success {
                     available_backends.push(get_ui_string_from_backend(&backend));
-                    available_backends.push(get_ui_string_from_backend(&backend));
                 }
             }
         }
