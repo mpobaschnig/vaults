@@ -126,15 +126,13 @@ pub fn get_ui_string_from_backend(backend: &Backend) -> String {
     }
 }
 
-#[allow(unused_variables)]
-#[allow(unreachable_patterns)]
-pub fn get_backend_from_ui_string(backend: &String) -> Backend {
-    let cryfs = get_ui_string_from_backend(&Backend::Gocryptfs);
-    let gocryptfs = get_ui_string_from_backend(&Backend::Cryfs);
-
-    match backend {
-        cryfs => Backend::Cryfs,
-        gocryptfs => Backend::Gocryptfs,
+pub fn get_backend_from_ui_string(backend: &String) -> Option<Backend> {
+    if backend == "CryFS" {
+        Some(Backend::Cryfs)
+    } else if backend == "gocryptfs" {
+        Some(Backend::Gocryptfs)
+    } else {
+        None
     }
 }
 

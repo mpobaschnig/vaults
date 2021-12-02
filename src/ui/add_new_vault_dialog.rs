@@ -564,17 +564,11 @@ impl AddNewVaultDialog {
     pub fn get_vault(&self) -> Vault {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
-        let b = self_.backend_type_combo_box_text.active_text().unwrap();
-
         Vault::new(
             String::from(self_.name_entry.text().as_str()),
             backend::get_backend_from_ui_string(
-                &self_
-                    .backend_type_combo_box_text
-                    .active_text()
-                    .unwrap()
-                    .to_string(),
-            ),
+                &self_.backend_type_combo_box_text.active_text().unwrap().to_string()
+            ).unwrap(),
             String::from(self_.encrypted_data_directory_entry.text().as_str()),
             String::from(self_.mount_directory_entry.text().as_str()),
         )

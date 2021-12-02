@@ -17,8 +17,6 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use std::str::FromStr;
-
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::{
@@ -27,7 +25,7 @@ use gtk::{
 };
 use std::cell::RefCell;
 
-use crate::{backend::AVAILABLE_BACKENDS, backend::Backend, user_config_manager::UserConfigManager,
+use crate::{backend, backend::AVAILABLE_BACKENDS, user_config_manager::UserConfigManager,
             vault::*, VApplication};
 
 mod imp {
@@ -540,14 +538,9 @@ impl ImportVaultDialog {
 
         Vault::new(
             String::from(self_.name_entry.text().as_str()),
-            Backend::from_str(
-                self_
-                    .backend_type_combo_box_text
-                    .active_text()
-                    .unwrap()
-                    .as_str(),
-            )
-            .unwrap(),
+            backend::get_backend_from_ui_string(
+                &self_.backend_type_combo_box_text.active_text().unwrap().to_string()
+            ).unwrap(),
             String::from(self_.encrypted_data_directory_entry.text().as_str()),
             String::from(self_.mount_directory_entry.text().as_str()),
         )

@@ -17,8 +17,6 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use std::str::FromStr;
-
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::{
@@ -200,14 +198,9 @@ impl VaultsPageRowSettingsDialog {
 
         let new_vault = Vault::new(
             String::from(self_.name_entry.text().as_str()),
-            Backend::from_str(
-                self_
-                    .backend_type_combo_box_text
-                    .active_text()
-                    .unwrap()
-                    .as_str(),
-            )
-            .unwrap(),
+            backend::get_backend_from_ui_string(
+                &self_.backend_type_combo_box_text.active_text().unwrap().to_string()
+            ).unwrap(),
             String::from(self_.encrypted_data_directory_entry.text().as_str()),
             String::from(self_.mount_directory_entry.text().as_str()),
         );
@@ -502,8 +495,10 @@ impl VaultsPageRowSettingsDialog {
         let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
         let vault_name = self_.name_entry.text();
-        let backend_str = self_.backend_type_combo_box_text.active_text().unwrap();
-        let backend = Backend::from_str(&backend_str.as_str()).unwrap();
+        let backend_str = &self_.backend_type_combo_box_text.active_text().unwrap();
+        let backend = backend::get_backend_from_ui_string(
+            &backend_str.to_string()
+        ).unwrap();
         let encrypted_data_directory = self_.encrypted_data_directory_entry.text();
         let mount_directory = self_.mount_directory_entry.text();
 
@@ -543,13 +538,9 @@ impl VaultsPageRowSettingsDialog {
     fn fill_combo_box_text(&self) {
         let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
-        let curr_backend = self
-            .get_current_vault()
-            .unwrap()
-            .get_config()
-            .unwrap()
-            .backend
-            .to_string();
+        let curr_backend = backend::get_ui_string_from_backend(
+            &self.get_current_vault().unwrap().get_config().unwrap().backend
+        );
 
         let combo_box_text = &self_.backend_type_combo_box_text;
 
@@ -569,14 +560,9 @@ impl VaultsPageRowSettingsDialog {
 
         Vault::new(
             String::from(self_.name_entry.text().as_str()),
-            Backend::from_str(
-                self_
-                    .backend_type_combo_box_text
-                    .active_text()
-                    .unwrap()
-                    .as_str(),
-            )
-            .unwrap(),
+            backend::get_backend_from_ui_string(
+                &self_.backend_type_combo_box_text.active_text().unwrap().to_string()
+            ).unwrap(),
             String::from(self_.encrypted_data_directory_entry.text().as_str()),
             String::from(self_.mount_directory_entry.text().as_str()),
         )
