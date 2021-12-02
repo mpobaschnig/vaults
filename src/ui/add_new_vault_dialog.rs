@@ -17,14 +17,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use std::str::FromStr;
-
 use crate::{
-    backend::{Backend, AVAILABLE_BACKENDS},
-    global_config_manager::GlobalConfigManager,
-    user_config_manager::UserConfigManager,
-    vault::*,
-    VApplication,
+    backend, backend::AVAILABLE_BACKENDS, global_config_manager::GlobalConfigManager,
+    user_config_manager::UserConfigManager, vault::*, VApplication,
 };
 use gettextrs::gettext;
 use gtk::gio;
@@ -226,9 +221,12 @@ impl AddNewVaultDialog {
 
         *self_.current_page.borrow_mut() += 1;
 
-        self_
-            .carousel
-            .scroll_to(&self_.carousel.nth_page(*self_.current_page.borrow()).unwrap());
+        self_.carousel.scroll_to(
+            &self_
+                .carousel
+                .nth_page(*self_.current_page.borrow())
+                .unwrap(),
+        );
 
         self.update_headerbar_buttons();
     }
@@ -238,9 +236,12 @@ impl AddNewVaultDialog {
 
         *self_.current_page.borrow_mut() -= 1;
 
-        self_
-            .carousel
-            .scroll_to(&self_.carousel.nth_page(*self_.current_page.borrow()).unwrap());
+        self_.carousel.scroll_to(
+            &self_
+                .carousel
+                .nth_page(*self_.current_page.borrow())
+                .unwrap(),
+        );
 
         self.update_headerbar_buttons();
     }
@@ -248,7 +249,7 @@ impl AddNewVaultDialog {
     fn update_headerbar_buttons(&self) {
         let self_ = &mut imp::AddNewVaultDialog::from_instance(self);
 
-        match  *self_.current_page.borrow() {
+        match *self_.current_page.borrow() {
             0 => {
                 self_.cancel_button.set_visible(true);
                 self_.previous_button.set_visible(false);
@@ -266,6 +267,8 @@ impl AddNewVaultDialog {
             2 => {
                 self_.next_button.set_visible(false);
                 self_.add_button.set_visible(true);
+
+                self.fill_directories();
             }
             _ => {}
         }
@@ -280,7 +283,9 @@ impl AddNewVaultDialog {
             self_.next_button.set_sensitive(false);
 
             self_.name_error_label.set_visible(true);
-            self_.name_error_label.set_text(&gettext("No backend installed. Please install gocryptfs or CryFS."));
+            self_.name_error_label.set_text(&gettext(
+                "No backend installed. Please install gocryptfs or CryFS.",
+            ));
 
             return;
         }
@@ -306,7 +311,9 @@ impl AddNewVaultDialog {
 
             self_.name_entry.add_css_class("error");
             self_.name_error_label.set_visible(true);
-            self_.name_error_label.set_text(&gettext("Name is already taken."));
+            self_
+                .name_error_label
+                .set_text(&gettext("Name is already taken."));
         } else {
             self_.next_button.set_sensitive(true);
 
@@ -418,7 +425,9 @@ impl AddNewVaultDialog {
             self_.encrypted_data_directory_entry.add_css_class("error");
             self_.mount_directory_entry.add_css_class("error");
 
-            self_.mount_directory_error_label.set_text(&gettext("Directories must not be equal."));
+            self_
+                .mount_directory_error_label
+                .set_text(&gettext("Directories must not be equal."));
             self_.mount_directory_error_label.set_visible(true);
 
             return;
@@ -435,7 +444,9 @@ impl AddNewVaultDialog {
                 .encrypted_data_directory_error_label
                 .set_visible(false);
 
-            self_.encrypted_data_directory_entry.remove_css_class("error");
+            self_
+                .encrypted_data_directory_entry
+                .remove_css_class("error");
 
             return false;
         }
@@ -456,31 +467,28 @@ impl AddNewVaultDialog {
                     self_
                         .encrypted_data_directory_error_label
                         .set_text(&gettext("Encrypted data directory is not empty."));
-                    self_
-                        .encrypted_data_directory_error_label
-                        .set_visible(true);
+                    self_.encrypted_data_directory_error_label.set_visible(true);
 
-                    self_
-                        .encrypted_data_directory_entry
-                        .add_css_class("error");
+                    self_.encrypted_data_directory_entry.add_css_class("error");
 
                     false
                 }
             }
-            Err(_) => {
-                self_
-                    .encrypted_data_directory_error_label
-                    .set_text(&gettext("Encrypted data directory is not valid."));
-                self_
-                    .encrypted_data_directory_error_label
-                    .set_visible(true);
+            Err(e) => match e.kind() {
+                std::io::ErrorKind::NotFound => true,
+                _ => {
+                    log::debug!("Encrypted data directory is not valid: {}", e);
 
-                self_
-                    .encrypted_data_directory_entry
-                    .add_css_class("error");
+                    self_
+                        .encrypted_data_directory_error_label
+                        .set_text(&gettext("Encrypted data directory is not valid."));
+                    self_.encrypted_data_directory_error_label.set_visible(true);
 
-                false
-            }
+                    self_.encrypted_data_directory_entry.add_css_class("error");
+
+                    false
+                }
+            },
         }
     }
 
@@ -488,9 +496,7 @@ impl AddNewVaultDialog {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
         if mount_directory.is_empty() {
-            self_
-                .mount_directory_error_label
-                .set_visible(false);
+            self_.mount_directory_error_label.set_visible(false);
 
             self_.mount_directory_entry.remove_css_class("error");
 
@@ -500,44 +506,37 @@ impl AddNewVaultDialog {
         match self.is_path_empty(&mount_directory) {
             Ok(is_empty) => {
                 if is_empty {
-                    self_
-                        .mount_directory_error_label
-                        .set_visible(false);
+                    self_.mount_directory_error_label.set_visible(false);
 
-                    self_
-                        .mount_directory_entry
-                        .remove_css_class("error");
+                    self_.mount_directory_entry.remove_css_class("error");
 
                     true
                 } else {
                     self_
                         .mount_directory_error_label
                         .set_text(&gettext("Mount directory is not empty."));
-                    self_
-                        .mount_directory_error_label
-                        .set_visible(true);
+                    self_.mount_directory_error_label.set_visible(true);
 
-                    self_
-                        .mount_directory_entry
-                        .add_css_class("error");
+                    self_.mount_directory_entry.add_css_class("error");
 
                     false
                 }
             }
-            Err(_) => {
-                self_
-                    .mount_directory_error_label
-                    .set_text(&gettext("Mount directory is not valid."));
-                self_
-                    .mount_directory_error_label
-                    .set_visible(true);
+            Err(e) => match e.kind() {
+                std::io::ErrorKind::NotFound => true,
+                _ => {
+                    log::debug!("Mount directory is not valid: {}", e);
 
-                self_
-                    .mount_directory_entry
-                    .add_css_class("error");
+                    self_
+                        .mount_directory_error_label
+                        .set_text(&gettext("Mount directory is not valid."));
+                    self_.mount_directory_error_label.set_visible(true);
 
-                false
-            }
+                    self_.mount_directory_entry.add_css_class("error");
+
+                    false
+                }
+            },
         }
     }
 
@@ -565,16 +564,18 @@ impl AddNewVaultDialog {
     pub fn get_vault(&self) -> Vault {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
+        let b = self_.backend_type_combo_box_text.active_text().unwrap();
+        println!("Got: {:?}", b);
+
         Vault::new(
             String::from(self_.name_entry.text().as_str()),
-            Backend::from_str(
-                self_
+            backend::get_backend_from_ui_string(
+                &self_
                     .backend_type_combo_box_text
                     .active_text()
                     .unwrap()
-                    .as_str(),
-            )
-            .unwrap(),
+                    .to_string(),
+            ),
             String::from(self_.encrypted_data_directory_entry.text().as_str()),
             String::from(self_.mount_directory_entry.text().as_str()),
         )
@@ -603,8 +604,22 @@ impl AddNewVaultDialog {
                     combo_box_text.set_active(Some(0));
                 }
             } else {
-
             }
         }
+    }
+
+    fn fill_directories(&self) {
+        let self_ = imp::AddNewVaultDialog::from_instance(self);
+
+        let vault_name = self_.name_entry.text().to_string();
+        let global_config = GlobalConfigManager::instance().get_global_config();
+        let encrypted_data_directory =
+            global_config.encrypted_data_directory.borrow().clone() + &vault_name;
+        let mount_directory = global_config.mount_directory.borrow().clone() + &vault_name;
+
+        self_
+            .encrypted_data_directory_entry
+            .set_text(&encrypted_data_directory);
+        self_.mount_directory_entry.set_text(&mount_directory);
     }
 }

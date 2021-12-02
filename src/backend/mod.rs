@@ -21,6 +21,7 @@ pub mod cryfs;
 pub mod gocryptfs;
 
 use crate::vault::VaultConfig;
+use gettextrs::gettext;
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::string::String;
@@ -66,6 +67,23 @@ impl Backend {
     }
 
     pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
+        let encrypted_data_directory = &vault_config.encrypted_data_directory;
+        let mount_directory = &vault_config.mount_directory;
+
+        match create_edd_if_not_exists(&encrypted_data_directory) {
+            Ok(_) => {}
+            Err(e) => {
+                return Err(e);
+            }
+        }
+
+        match create_md_if_not_exists(&mount_directory) {
+            Ok(_) => {}
+            Err(e) => {
+                return Err(e);
+            }
+        }
+
         match vault_config.backend {
             Backend::Cryfs => cryfs::init(vault_config, password),
             Backend::Gocryptfs => gocryptfs::init(vault_config, password),
@@ -85,13 +103,6 @@ impl Backend {
             Backend::Gocryptfs => gocryptfs::close(vault_config),
         }
     }
-
-    pub fn get_ui_string(&self) -> String {
-        match self {
-            Backend::Cryfs => String::from("CryFS"),
-            Backend::Gocryptfs => String::from("gocryptfs"),
-        }
-    }
 }
 
 pub fn probe_backends() {
@@ -101,8 +112,86 @@ pub fn probe_backends() {
         for backend in Backend::iter() {
             if let Ok(success) = backend.is_available() {
                 if success {
-                    available_backends.push(backend.get_ui_string());
+                    available_backends.push(get_ui_string_from_backend(&backend));
+                    available_backends.push(get_ui_string_from_backend(&backend));
                 }
+            }
+        }
+    }
+}
+
+pub fn get_ui_string_from_backend(backend: &Backend) -> String {
+    match backend {
+        Backend::Cryfs => String::from("CryFS"),
+        Backend::Gocryptfs => String::from("gocryptfs"),
+    }
+}
+
+pub fn get_backend_from_ui_string(backend: &String) -> Backend {
+    let cryfs = get_ui_string_from_backend(&Backend::Gocryptfs);
+    let gocryptfs = get_ui_string_from_backend(&Backend::Cryfs);
+
+    match backend {
+        cryfs => Backend::Cryfs,
+        gocryptfs => Backend::Gocryptfs,
+    }
+}
+
+fn create_edd_if_not_exists(encrypted_data_directory: &String) -> Result<(), BackendError> {
+    match std::fs::create_dir_all(encrypted_data_directory) {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            log::debug!("Failed to create encrypted data directory: {}", e);
+
+            match e.kind() {
+                std::io::ErrorKind::PermissionDenied => Err(BackendError::ToUser(gettext(
+                    "Failed to create encrypted data directory: Permission denied.",
+                ))),
+                std::io::ErrorKind::ConnectionRefused => Err(BackendError::ToUser(gettext(
+                    "Failed to create encrypted data directory: Connection refused.",
+                ))),
+                std::io::ErrorKind::ConnectionReset => Err(BackendError::ToUser(gettext(
+                    "Failed to create encrypted data directory: Connection reset.",
+                ))),
+                std::io::ErrorKind::ConnectionAborted => Err(BackendError::ToUser(gettext(
+                    "Failed to create encrypted data directory: Connection aborted.",
+                ))),
+                std::io::ErrorKind::NotConnected => Err(BackendError::ToUser(gettext(
+                    "Failed to create encrypted data directory: Not connected.",
+                ))),
+                _ => Err(BackendError::ToUser(gettext(
+                    "Failed to create encrypted data directory.",
+                ))),
+            }
+        }
+    }
+}
+
+fn create_md_if_not_exists(mount_directory: &String) -> Result<(), BackendError> {
+    match std::fs::create_dir_all(mount_directory) {
+        Ok(_) => Ok(()),
+        Err(e) => {
+            log::debug!("Failed to create encrypted data directory: {}", e);
+
+            match e.kind() {
+                std::io::ErrorKind::PermissionDenied => Err(BackendError::ToUser(gettext(
+                    "Failed to create mount directory: Permission denied.",
+                ))),
+                std::io::ErrorKind::ConnectionRefused => Err(BackendError::ToUser(gettext(
+                    "Failed to create mount directory: Connection refused.",
+                ))),
+                std::io::ErrorKind::ConnectionReset => Err(BackendError::ToUser(gettext(
+                    "Failed to create mount directory: Connection reset.",
+                ))),
+                std::io::ErrorKind::ConnectionAborted => Err(BackendError::ToUser(gettext(
+                    "Failed to create mount directory: Connection aborted.",
+                ))),
+                std::io::ErrorKind::NotConnected => Err(BackendError::ToUser(gettext(
+                    "Failed to create mount directory: Not connected.",
+                ))),
+                _ => Err(BackendError::ToUser(gettext(
+                    "Failed to create mount directory.",
+                ))),
             }
         }
     }

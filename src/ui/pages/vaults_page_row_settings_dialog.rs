@@ -28,7 +28,8 @@ use gtk::{
 use std::cell::RefCell;
 use strum::IntoEnumIterator;
 
-use crate::{backend::Backend, user_config_manager::UserConfigManager, vault::*, VApplication};
+use crate::{backend, backend::Backend, user_config_manager::UserConfigManager, vault::*,
+            VApplication};
 
 mod imp {
     use super::*;
@@ -440,7 +441,8 @@ impl VaultsPageRowSettingsDialog {
         let prev_config = &prev_vault.get_config().unwrap();
 
         let prev_vault_name = &prev_vault.get_name().unwrap();
-        let prev_backend = &prev_config.backend.get_ui_string();
+        let prev_backend = backend::get_ui_string_from_backend(&prev_config.backend);
+
         let prev_encrypted_data_directory = &prev_config.encrypted_data_directory;
         let prev_mount_directory = &prev_config.mount_directory;
 
@@ -448,7 +450,7 @@ impl VaultsPageRowSettingsDialog {
             return true;
         }
 
-        if !curr_backend.eq(prev_backend) {
+        if !curr_backend.eq(&prev_backend) {
             return true;
         }
 
@@ -552,7 +554,7 @@ impl VaultsPageRowSettingsDialog {
         let combo_box_text = &self_.backend_type_combo_box_text;
 
         for (i, backend) in Backend::iter().enumerate() {
-            let backend = backend.get_ui_string();
+            let backend = backend::get_ui_string_from_backend(&backend);
 
             combo_box_text.append_text(&backend);
 
@@ -596,7 +598,7 @@ impl VaultsPageRowSettingsDialog {
                 self_.name_entry.set_text(&name);
                 self_
                     .backend_type_combo_box_text
-                    .set_active_id(Some(&config.backend.get_ui_string()));
+                    .set_active_id(Some(&backend::get_ui_string_from_backend(&config.backend)));
                 self_
                     .encrypted_data_directory_entry
                     .set_text(&config.encrypted_data_directory.to_string());
