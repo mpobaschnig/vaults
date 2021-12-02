@@ -275,13 +275,21 @@ impl VaultsPageRowSettingsDialog {
 
         if vault_name.is_empty() {
             self_
+                .name_entry
+                .add_css_class("error");
+
+            self_
                 .name_error_label
                 .set_text(&gettext("Name is not valid."));
-
+            
             self_.name_error_label.set_visible(true);
 
             false
         } else {
+            self_
+                .name_entry
+                .remove_css_class("error");
+
             self_.name_error_label.set_visible(false);
 
             true
@@ -297,6 +305,10 @@ impl VaultsPageRowSettingsDialog {
             .contains_key(&vault_name.to_string());
         if !vault_name.is_empty() && !is_same_name && is_duplicate_name {
             self_
+                .name_entry
+                .add_css_class("error");
+
+            self_
                 .name_error_label
                 .set_text(&gettext("Name already exists."));
 
@@ -304,6 +316,10 @@ impl VaultsPageRowSettingsDialog {
 
             false
         } else {
+            self_
+                .name_entry
+                .remove_css_class("error");
+
             self_.name_error_label.set_visible(false);
 
             true
