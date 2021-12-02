@@ -565,7 +565,6 @@ impl AddNewVaultDialog {
         let self_ = imp::AddNewVaultDialog::from_instance(self);
 
         let b = self_.backend_type_combo_box_text.active_text().unwrap();
-        println!("Got: {:?}", b);
 
         Vault::new(
             String::from(self_.name_entry.text().as_str()),
