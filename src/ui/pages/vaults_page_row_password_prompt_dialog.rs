@@ -34,6 +34,8 @@ mod imp {
         pub unlock_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub password_entry: TemplateChild<gtk::PasswordEntry>,
+        #[template_child]
+        pub status_page: TemplateChild<adw::StatusPage>,
     }
 
     #[glib::object_subclass]
@@ -46,6 +48,7 @@ mod imp {
             Self {
                 unlock_button: TemplateChild::default(),
                 password_entry: TemplateChild::default(),
+                status_page: TemplateChild::default(),
             }
         }
 
@@ -112,6 +115,15 @@ impl VaultsPageRowPasswordPromptDialog {
             .connect_activate(clone!(@weak self as obj => move |_| {
                 obj.connect_activate();
             }));
+    }
+
+    pub fn set_name(&self, name: &String) {
+        let self_ = imp::VaultsPageRowPasswordPromptDialog::from_instance(self);
+
+        self_
+            .status_page
+            .set_title(name);
+
     }
 
     fn unlock_button_clicked(&self) {

@@ -307,6 +307,7 @@ impl VaultsPageRow {
         }
 
         let dialog = VaultsPageRowPasswordPromptDialog::new();
+        dialog.set_name(&vault.get_name().unwrap());
         dialog.connect_response(clone!(@weak self as obj => move |dialog, id| {
             let password = dialog.get_password();
 
