@@ -23,19 +23,29 @@ use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
+use crate::config::APP_ID;
 
 mod imp {
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
     #[template(resource = "/io/github/mpobaschnig/Vaults/start_page.ui")]
-    pub struct VStartPage {}
+    pub struct VStartPage {
+        #[template_child]
+        pub status_page: TemplateChild<adw::StatusPage>,
+    }
 
     #[glib::object_subclass]
     impl ObjectSubclass for VStartPage {
         const NAME: &'static str = "VStartPage";
         type ParentType = adw::Bin;
         type Type = super::VStartPage;
+
+        fn new() -> Self {
+            Self {
+                status_page: TemplateChild::default(),
+            }
+        }
 
         fn class_init(klass: &mut Self::Class) {
             Self::bind_template(klass);
@@ -46,7 +56,11 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for VStartPage {}
+    impl ObjectImpl for VStartPage {
+        fn constructed(&self, _obj: &Self::Type) {
+            self.status_page.set_icon_name(Some(APP_ID));
+        }
+    }
 
     impl WidgetImpl for VStartPage {}
 
