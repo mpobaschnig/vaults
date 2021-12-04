@@ -327,7 +327,6 @@ impl ImportVaultDialog {
                 let self_ = imp::ImportVaultDialog::from_instance(&obj);
                 self_.encrypted_data_directory_entry.set_text(&path);
 
-                obj.guess_name(&file);
                 obj.validate_directories();
             }
 
@@ -357,6 +356,7 @@ impl ImportVaultDialog {
                 let self_ = imp::ImportVaultDialog::from_instance(&obj);
                 self_.mount_directory_entry.set_text(&path);
                 
+                obj.guess_name(&file);
                 obj.validate_directories();
             }
 
