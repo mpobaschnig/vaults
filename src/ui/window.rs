@@ -156,7 +156,7 @@ mod imp {
 
 glib::wrapper! {
     pub struct ApplicationWindow(ObjectSubclass<imp::ApplicationWindow>)
-        @extends gtk::Widget, gtk::Window, adw::ApplicationWindow, @implements gio::ActionMap, gio::ActionGroup;
+        @extends gtk::Widget, gtk::Window, gtk::ApplicationWindow, adw::ApplicationWindow, @implements gio::ActionMap, gio::ActionGroup;
 }
 
 impl ApplicationWindow {
@@ -178,6 +178,10 @@ impl ApplicationWindow {
                     object.set_view(VView::Start);
                 }
             }));
+        
+        let builder = gtk::Builder::from_resource("/io/github/mpobaschnig/Vaults/shortcuts.ui");
+        gtk_macros::get_widget!(builder, gtk::ShortcutsWindow, shortcuts);
+        object.set_help_overlay(Some(&shortcuts));
 
         object
     }

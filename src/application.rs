@@ -57,6 +57,8 @@ mod imp {
                 return;
             }
 
+            app.setup_accels();
+
             app.set_resource_base_path(Some("/io/github/mpobaschnig/Vaults/"));
 
             let window = ApplicationWindow::new(app);
@@ -80,7 +82,7 @@ mod imp {
 
 glib::wrapper! {
     pub struct VApplication(ObjectSubclass<imp::VApplication>)
-    @extends gio::Application, gtk::Application, adw::Application, @implements gio::ActionMap, gio::ActionGroup;
+    @extends gio::Application, gtk::ApplicationWindow, gtk::Application, adw::Application, @implements gio::ActionMap, gio::ActionGroup;
 }
 
 impl VApplication {
@@ -108,6 +110,25 @@ impl VApplication {
                 obj.show_about_dialog();
             })
         );
+
+         action!(
+            self,
+            "quit",
+            clone!(@weak self as obj => move |_, _| {
+                obj.quit();
+            })
+        );
+
+   }
+
+    fn setup_accels(&self) {
+        self.set_accels_for_action("win.add_new_vault", &["<primary>a"]);
+        self.set_accels_for_action("win.import_vault", &["<primary>i"]);
+        self.set_accels_for_action("win.refresh", &["<primary>r"]);
+
+        self.set_accels_for_action("app.preferences", &["<primary>p"]);
+        self.set_accels_for_action("win.show-help-overlay", &["<primary>question"]);
+        self.set_accels_for_action("app.quit", &["<primary>q"]);
     }
 
     fn show_preferences(&self) {
