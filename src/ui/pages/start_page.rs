@@ -17,15 +17,18 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use crate::backend::AVAILABLE_BACKENDS;
+use crate::config::APP_ID;
 use adw::subclass::prelude::*;
+use gettextrs::gettext;
 use glib::subclass;
 use gtk::glib;
 use gtk::prelude::*;
 use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
-use crate::config::APP_ID;
 
 mod imp {
+
     use super::*;
 
     #[derive(Debug, Default, CompositeTemplate)]
@@ -59,6 +62,14 @@ mod imp {
     impl ObjectImpl for VStartPage {
         fn constructed(&self, _obj: &Self::Type) {
             self.status_page.set_icon_name(Some(APP_ID));
+
+            if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
+                if available_backends.is_empty() {
+                    self.status_page.set_description(Some(&gettext(
+                        "No backends available. Please install gocryptfs or CryFS on your system.",
+                    )));
+                }
+            }
         }
     }
 
