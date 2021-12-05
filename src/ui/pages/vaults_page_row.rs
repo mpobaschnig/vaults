@@ -435,6 +435,9 @@ impl VaultsPageRow {
                 },
                 _ => {},
             };
+
+            obj.set_vault(dialog.get_vault());
+
             dialog.destroy();
         ));
 
