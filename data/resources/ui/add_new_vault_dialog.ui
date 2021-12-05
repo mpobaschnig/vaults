@@ -113,8 +113,28 @@
                           </object>
                         </child>
                         <child>
-                          <object class="GtkComboBoxText" id="backend_type_combo_box_text">
-                            <property name="valign">center</property>
+                          <object class="GtkBox">
+                            <property name="hexpand">True</property>
+                            <child>
+                              <object class="GtkComboBoxText" id="backend_type_combo_box_text">
+                                <property name="valign">center</property>
+                                <property name="hexpand">True</property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkToggleButton" id="info_button">
+                                <property name="icon_name">dialog-information-symbolic</property>
+                              </object>
+                            </child>
+                            <style>
+                              <class name="linked"/>
+                            </style>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="info_label">
+                            <property name="halign">start</property>
+                            <property name="wrap">True</property>
                           </object>
                         </child>
                       </object>

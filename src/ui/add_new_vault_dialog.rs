@@ -49,6 +49,10 @@ mod imp {
         #[template_child]
         pub backend_type_combo_box_text: TemplateChild<gtk::ComboBoxText>,
         #[template_child]
+        pub info_button: TemplateChild<gtk::ToggleButton>,
+        #[template_child]
+        pub info_label: TemplateChild<gtk::Label>,
+        #[template_child]
         pub name_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub password_entry: TemplateChild<gtk::PasswordEntry>,
@@ -85,6 +89,8 @@ mod imp {
                 add_button: TemplateChild::default(),
                 name_entry: TemplateChild::default(),
                 backend_type_combo_box_text: TemplateChild::default(),
+                info_button: TemplateChild::default(),
+                info_label: TemplateChild::default(),
                 name_error_label: TemplateChild::default(),
                 password_entry: TemplateChild::default(),
                 password_confirm_entry: TemplateChild::default(),
@@ -177,6 +183,18 @@ impl AddNewVaultDialog {
             .name_entry
             .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.validate_name();
+            }));
+
+        self_
+            .backend_type_combo_box_text
+            .connect_changed(clone!(@weak self as obj => move |_| {
+                obj.combo_box_changed();
+            }));
+
+        self_
+            .info_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.info_button_clicked();
             }));
 
         self_
@@ -320,6 +338,38 @@ impl AddNewVaultDialog {
             self_.name_entry.remove_css_class("error");
             self_.name_error_label.set_visible(false);
             self_.name_error_label.set_text("");
+        }
+    }
+
+    pub fn combo_box_changed(&self) {
+        self.info_button_clicked();
+    }
+
+    pub fn info_button_clicked(&self) {
+        let self_ = imp::AddNewVaultDialog::from_instance(self);
+
+        let backend = backend::get_backend_from_ui_string(
+            &self_
+                .backend_type_combo_box_text
+                .active_text()
+                .unwrap()
+                .to_string(),
+        )
+        .unwrap();
+
+        match backend {
+            backend::Backend::Cryfs => {
+                self_.info_label.set_text("CryFS works well together with cloud services like Dropbox, iCloud, OneDrive and others. It does not expose directory structure, number of files or file sizes in the encrypted data directory. While being considered safe, there is no independent audit of CryFS.")
+            },
+            backend::Backend::Gocryptfs => {
+                self_.info_label.set_text("Fast and robust, gocryptfs works well in general cases where third-parties do not always have access to the encrypted data directory (e.g. file hosting services). It exposes directory structure, number of files and file sizes. Security audit in 2017 verified gocryptfs being safe against third-parties that can read or write to encrypted data.");
+            }
+        }
+
+        if self_.info_button.is_active() {
+            self_.info_label.set_visible(true);
+        } else {
+            self_.info_label.set_visible(false);
         }
     }
 
@@ -567,8 +617,13 @@ impl AddNewVaultDialog {
         Vault::new(
             String::from(self_.name_entry.text().as_str()),
             backend::get_backend_from_ui_string(
-                &self_.backend_type_combo_box_text.active_text().unwrap().to_string()
-            ).unwrap(),
+                &self_
+                    .backend_type_combo_box_text
+                    .active_text()
+                    .unwrap()
+                    .to_string(),
+            )
+            .unwrap(),
             String::from(self_.encrypted_data_directory_entry.text().as_str()),
             String::from(self_.mount_directory_entry.text().as_str()),
         )

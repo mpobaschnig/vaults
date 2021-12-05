@@ -26,8 +26,9 @@ use gtk::{
 use std::cell::RefCell;
 use strum::IntoEnumIterator;
 
-use crate::{backend, backend::Backend, user_config_manager::UserConfigManager, vault::*,
-            VApplication};
+use crate::{
+    backend, backend::Backend, user_config_manager::UserConfigManager, vault::*, VApplication,
+};
 
 mod imp {
     use super::*;
@@ -199,15 +200,21 @@ impl VaultsPageRowSettingsDialog {
         let new_vault = Vault::new(
             String::from(self_.name_entry.text().as_str()),
             backend::get_backend_from_ui_string(
-                &self_.backend_type_combo_box_text.active_text().unwrap().to_string()
-            ).unwrap(),
+                &self_
+                    .backend_type_combo_box_text
+                    .active_text()
+                    .unwrap()
+                    .to_string(),
+            )
+            .unwrap(),
             String::from(self_.encrypted_data_directory_entry.text().as_str()),
             String::from(self_.mount_directory_entry.text().as_str()),
         );
 
-        UserConfigManager::instance().change_vault(self.get_current_vault().unwrap(), new_vault);
+        UserConfigManager::instance()
+            .change_vault(self.get_current_vault().unwrap(), new_vault.clone());
 
-        self.response(gtk::ResponseType::Other(1));
+        *self_.current_vault.borrow_mut() = Some(new_vault);
     }
 
     fn encrypted_data_directory_button_clicked(&self) {
@@ -268,21 +275,17 @@ impl VaultsPageRowSettingsDialog {
         let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
         if vault_name.is_empty() {
-            self_
-                .name_entry
-                .add_css_class("error");
+            self_.name_entry.add_css_class("error");
 
             self_
                 .name_error_label
                 .set_text(&gettext("Name is not valid."));
-            
+
             self_.name_error_label.set_visible(true);
 
             false
         } else {
-            self_
-                .name_entry
-                .remove_css_class("error");
+            self_.name_entry.remove_css_class("error");
 
             self_.name_error_label.set_visible(false);
 
@@ -298,9 +301,7 @@ impl VaultsPageRowSettingsDialog {
             .get_map()
             .contains_key(&vault_name.to_string());
         if !vault_name.is_empty() && !is_same_name && is_duplicate_name {
-            self_
-                .name_entry
-                .add_css_class("error");
+            self_.name_entry.add_css_class("error");
 
             self_
                 .name_error_label
@@ -310,9 +311,7 @@ impl VaultsPageRowSettingsDialog {
 
             false
         } else {
-            self_
-                .name_entry
-                .remove_css_class("error");
+            self_.name_entry.remove_css_class("error");
 
             self_.name_error_label.set_visible(false);
 
@@ -346,9 +345,7 @@ impl VaultsPageRowSettingsDialog {
                         .encrypted_data_directory_error_label
                         .set_text(&gettext("Directory is empty."));
 
-                    self_
-                        .encrypted_data_directory_error_label
-                        .set_visible(true);
+                    self_.encrypted_data_directory_error_label.set_visible(true);
 
                     false
                 } else {
@@ -484,7 +481,9 @@ impl VaultsPageRowSettingsDialog {
 
             true
         } else {
-            self_.backend_error_label.set_text(&gettext("No configuration file found."));
+            self_
+                .backend_error_label
+                .set_text(&gettext("No configuration file found."));
             self_.backend_error_label.set_visible(true);
 
             false
@@ -496,9 +495,7 @@ impl VaultsPageRowSettingsDialog {
 
         let vault_name = self_.name_entry.text();
         let backend_str = &self_.backend_type_combo_box_text.active_text().unwrap();
-        let backend = backend::get_backend_from_ui_string(
-            &backend_str.to_string()
-        ).unwrap();
+        let backend = backend::get_backend_from_ui_string(&backend_str.to_string()).unwrap();
         let encrypted_data_directory = self_.encrypted_data_directory_entry.text();
         let mount_directory = self_.mount_directory_entry.text();
 
@@ -539,7 +536,12 @@ impl VaultsPageRowSettingsDialog {
         let self_ = imp::VaultsPageRowSettingsDialog::from_instance(self);
 
         let curr_backend = backend::get_ui_string_from_backend(
-            &self.get_current_vault().unwrap().get_config().unwrap().backend
+            &self
+                .get_current_vault()
+                .unwrap()
+                .get_config()
+                .unwrap()
+                .backend,
         );
 
         let combo_box_text = &self_.backend_type_combo_box_text;
@@ -561,8 +563,13 @@ impl VaultsPageRowSettingsDialog {
         Vault::new(
             String::from(self_.name_entry.text().as_str()),
             backend::get_backend_from_ui_string(
-                &self_.backend_type_combo_box_text.active_text().unwrap().to_string()
-            ).unwrap(),
+                &self_
+                    .backend_type_combo_box_text
+                    .active_text()
+                    .unwrap()
+                    .to_string(),
+            )
+            .unwrap(),
             String::from(self_.encrypted_data_directory_entry.text().as_str()),
             String::from(self_.mount_directory_entry.text().as_str()),
         )
