@@ -60,7 +60,7 @@ meson.add_dist_script(
 if get_option('profile') == 'development'
   # Setup pre-commit hook for ensuring coding style is always consistent
   message('Setting up git pre-commit hook..')
-  run_command('cp', '-f', 'hooks/pre-commit.hook', '.git/hooks/pre-commit')
+  run_command('cp', '-f', 'build-aux/pre-commit.hook', '.git/hooks/pre-commit')
 endif
 
 subdir('data')
