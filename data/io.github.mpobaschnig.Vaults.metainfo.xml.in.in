@@ -15,7 +15,6 @@
     <ul>
       <li>gocryptfs</li>
       <li>CryFS</li>
-      <li>fuse</li>
     </ul>
   </description>
   <screenshots>
