@@ -38,6 +38,7 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 
 pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
     let mut child = Command::new("cryfs")
+        .env("CRYFS_FRONTEND", "noninteractive")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .arg(&vault_config.encrypted_data_directory)
