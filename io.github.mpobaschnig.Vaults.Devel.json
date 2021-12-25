@@ -29,6 +29,65 @@
     },
     "modules": [
         {
+            "name": "libfuse",
+            "config-opts": [
+                "MOUNT_FUSE_PATH=/app/bin"
+            ],
+            "post-install": [
+                "install fusermount-wrapper.sh /app/bin/fusermount"
+            ],
+            "sources": [
+                {
+                    "type": "archive",
+                    "url": "https://github.com/libfuse/libfuse/releases/download/fuse-2.9.9/fuse-2.9.9.tar.gz",
+                    "sha256": "d0e69d5d608cc22ff4843791ad097f554dd32540ddc9bed7638cc6fea7c1b4b5"
+                },
+                {
+                    "type": "file",
+                    "path": "build-aux/fusermount-wrapper.sh"
+                }
+            ]
+        },
+        {
+            "name": "cryfs",
+            "buildsystem": "simple",
+            "build-commands": [
+                "install cryfs-wrapper.sh /app/bin/cryfs"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "build-aux/cryfs-wrapper.sh"
+                }
+            ]
+        },
+        {
+            "name": "cryfs-unmount",
+            "buildsystem": "simple",
+            "build-commands": [
+                "install cryfs-unmount-wrapper.sh /app/bin/cryfs-unmount"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "build-aux/cryfs-unmount-wrapper.sh"
+                }
+            ]
+        },
+            {
+            "name": "gocryptfs",
+            "buildsystem": "simple",
+            "build-commands": [
+                "install gocryptfs-wrapper.sh /app/bin/gocryptfs"
+            ],
+            "sources": [
+                {
+                    "type": "file",
+                    "path": "build-aux/gocryptfs-wrapper.sh"
+                }
+            ]
+        },
+        {
             "name": "vaults",
             "buildsystem": "meson",
             "run-tests": true,
