@@ -24,9 +24,7 @@ use std::process::Command;
 use std::{self, io::Write, process::Stdio};
 
 pub fn is_available() -> Result<bool, BackendError> {
-    let output = Command::new("flatpak-spawn")
-        .arg("--host")
-        .arg("cryfs")
+    let output = Command::new("cryfs")
         .arg("--version")
         .output()?;
 
@@ -39,12 +37,9 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 }
 
 pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
-    let mut child = Command::new("flatpak-spawn")
+    let mut child = Command::new("cryfs")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
-        .arg("--host")
-        .arg("--env=CRYFS_FRONTEND=noninteractive")
-        .arg("cryfs")
         .arg(&vault_config.encrypted_data_directory)
         .arg(&vault_config.mount_directory)
         .spawn()?;
@@ -70,10 +65,8 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 }
 
 pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
-    let child = Command::new("flatpak-spawn")
+    let child = Command::new("cryfs-unmount")
         .stdout(Stdio::piped())
-        .arg("--host")
-        .arg("cryfs-unmount")
         .arg(&vault_config.mount_directory)
         .spawn()?;
 
