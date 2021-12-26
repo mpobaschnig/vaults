@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <img src="data/resources/screenshots/vaults.png" alt="Main Window"/>
+  <img src="data/resources/screenshots/main.png" alt="Main Window"/>
 </p>
 
 It currently uses [gocryptfs](https://github.com/rfjakob/gocryptfs) and [CryFS](https://github.com/cryfs/cryfs/) for encryption.
