@@ -244,7 +244,6 @@ impl AddNewVaultDialog {
                 .carousel
                 .nth_page(*self_.current_page.borrow())
                 .unwrap(),
-            false
         );
 
         self.update_headerbar_buttons();
@@ -260,7 +259,6 @@ impl AddNewVaultDialog {
                 .carousel
                 .nth_page(*self_.current_page.borrow())
                 .unwrap(),
-            false
         );
 
         self.update_headerbar_buttons();
