@@ -120,10 +120,7 @@ impl VaultsPageRowPasswordPromptDialog {
     pub fn set_name(&self, name: &String) {
         let self_ = imp::VaultsPageRowPasswordPromptDialog::from_instance(self);
 
-        self_
-            .status_page
-            .set_title(name);
-
+        self_.status_page.set_title(name);
     }
 
     fn unlock_button_clicked(&self) {
