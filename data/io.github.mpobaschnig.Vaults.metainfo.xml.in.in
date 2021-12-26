@@ -19,7 +19,11 @@
   </description>
   <screenshots>
     <screenshot type="default">
-      <image>https://raw.githubusercontent.com/mpobaschnig/Vaults/master/data/resources/screenshots/vaults.png</image>
+      <image>https://raw.githubusercontent.com/mpobaschnig/Vaults/master/data/resources/screenshots/welcome.png</image>
+      <caption>Welcome Window</caption>
+    </screenshot>
+    <screenshot type="default">
+      <image>https://raw.githubusercontent.com/mpobaschnig/Vaults/master/data/resources/screenshots/main.png</image>
       <caption>Main Window</caption>
     </screenshot>
   </screenshots>
