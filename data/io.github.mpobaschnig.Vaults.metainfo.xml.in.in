@@ -31,6 +31,19 @@
   <url type="bugtracker">https://github.com/mpobaschnig/Vaults/issues</url>
   <content_rating type="oars-1.0" />
   <releases>
+    <release version="0.2.0" date="2021-12-26">
+      <p>
+        This release introduces various changes, in particular:
+      </p>
+      <ul>
+        <li>New application icon</li>
+        <li>New responsive design and style based on libadwaita</li>
+        <li>Preferences to change default directories</li>
+        <li>Automatically adapt the state of the vault row if it gets opened or closed outside the app</li>
+        <li>Add shortcuts for more keyboard friendly interaction</li>
+        <li>Various bug fixes</li>
+      </ul>
+    </release>
     <release version="0.1.0" date="2021-04-23" />
   </releases>
   <kudos>
