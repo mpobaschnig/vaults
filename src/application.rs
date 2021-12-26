@@ -21,6 +21,7 @@ use crate::config;
 use crate::ui::ApplicationWindow;
 use crate::ui::PreferencesWindow;
 
+use adw::subclass::prelude::*;
 use gio::ApplicationFlags;
 use glib::clone;
 use gtk::prelude::*;
@@ -29,7 +30,6 @@ use gtk::{gio, glib};
 use gtk_macros::action;
 use log::{debug, info};
 use std::cell::RefCell;
-use adw::subclass::prelude::*;
 
 mod imp {
     use super::*;
@@ -111,15 +111,14 @@ impl VApplication {
             })
         );
 
-         action!(
+        action!(
             self,
             "quit",
             clone!(@weak self as obj => move |_, _| {
                 obj.quit();
             })
         );
-
-   }
+    }
 
     fn setup_accels(&self) {
         self.set_accels_for_action("win.add_new_vault", &["<primary>a"]);

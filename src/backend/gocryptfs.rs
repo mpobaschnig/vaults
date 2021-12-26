@@ -24,9 +24,7 @@ use std::process::Command;
 use std::{io::Write, process::Stdio};
 
 pub fn is_available() -> Result<bool, BackendError> {
-    let output = Command::new("gocryptfs")
-        .arg("--version")
-        .output()?;
+    let output = Command::new("gocryptfs").arg("--version").output()?;
 
     Ok(output.status.success())
 }
@@ -154,4 +152,3 @@ fn status_to_err(status: Option<i32>) -> BackendError {
         None => BackendError::Generic,
     }
 }
-

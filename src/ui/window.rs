@@ -178,7 +178,7 @@ impl ApplicationWindow {
                     object.set_view(VView::Start);
                 }
             }));
-        
+
         let builder = gtk::Builder::from_resource("/io/github/mpobaschnig/Vaults/shortcuts.ui");
         gtk_macros::get_widget!(builder, gtk::ShortcutsWindow, shortcuts);
         object.set_help_overlay(Some(&shortcuts));
