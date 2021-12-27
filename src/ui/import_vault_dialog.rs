@@ -582,7 +582,9 @@ impl ImportVaultDialog {
 
                                 self_.encrypted_data_directory_info_label.set_visible(true);
 
-                                self_.backend_type_combo_box_text.set_active(Some(1));
+                                self_
+                                    .backend_type_combo_box_text
+                                    .set_active_id(Some("gocryptfs"));
 
                                 return true;
                             }
@@ -594,7 +596,9 @@ impl ImportVaultDialog {
 
                                 self_.encrypted_data_directory_info_label.set_visible(true);
 
-                                self_.backend_type_combo_box_text.set_active(Some(0));
+                                self_
+                                    .backend_type_combo_box_text
+                                    .set_active_id(Some("CryFS"));
 
                                 return true;
                             }
