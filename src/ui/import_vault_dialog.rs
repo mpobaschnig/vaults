@@ -24,11 +24,9 @@ use gtk::{
     CompositeTemplate,
 };
 use std::cell::RefCell;
+use strum::IntoEnumIterator;
 
-use crate::{
-    backend, backend::AVAILABLE_BACKENDS, user_config_manager::UserConfigManager, vault::*,
-    VApplication,
-};
+use crate::{backend, user_config_manager::UserConfigManager, vault::*, VApplication};
 
 mod imp {
     use super::*;
@@ -550,16 +548,12 @@ impl ImportVaultDialog {
     fn fill_combo_box_text(&self) {
         let self_ = imp::ImportVaultDialog::from_instance(self);
 
-        let combo_box_text = &self_.backend_type_combo_box_text;
+        for backend in backend::Backend::iter() {
+            let value = &backend::get_ui_string_from_backend(&backend);
 
-        if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
-            for backend in available_backends.iter() {
-                combo_box_text.append_text(backend);
-            }
-
-            if !available_backends.is_empty() {
-                combo_box_text.set_active(Some(0));
-            }
+            self_
+                .backend_type_combo_box_text
+                .append(Some(&value), &value);
         }
     }
 
