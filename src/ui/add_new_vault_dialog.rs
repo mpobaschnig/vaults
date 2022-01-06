@@ -663,13 +663,24 @@ impl AddNewVaultDialog {
 
         let vault_name = self_.name_entry.text().to_string();
         let global_config = GlobalConfigManager::instance().get_global_config();
-        let encrypted_data_directory =
-            global_config.encrypted_data_directory.borrow().clone() + &vault_name;
-        let mount_directory = global_config.mount_directory.borrow().clone() + &vault_name;
+
+        let mut path = global_config.encrypted_data_directory.borrow().clone();
+        if !path.ends_with("/") {
+            path.push_str("/");
+        }
+        let encrypted_data_directory = path + &vault_name;
+
+        path = global_config.mount_directory.borrow().clone();
+        if !path.ends_with("/") {
+            path.push_str("/");
+        }
+        let mount_directory = path + &vault_name;
 
         self_
             .encrypted_data_directory_entry
             .set_text(&encrypted_data_directory);
         self_.mount_directory_entry.set_text(&mount_directory);
+
+        self.validate_directories();
     }
 }
