@@ -6,11 +6,13 @@ data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in
 # data/resources/ui/
 data/resources/ui/add_new_vault_dialog.ui
 data/resources/ui/import_vault_dialog.ui
+data/resources/ui/preferences.ui
 data/resources/ui/shortcuts.ui
 data/resources/ui/start_page.ui
+data/resources/ui/vaults_page.ui
+data/resources/ui/vaults_page_row.ui
 data/resources/ui/vaults_page_row_password_prompt_dialog.ui
 data/resources/ui/vaults_page_row_settings_dialog.ui
-data/resources/ui/vaults_page_row.ui
 data/resources/ui/window.ui
 
 # src/
