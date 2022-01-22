@@ -1,0 +1,545 @@
+# Spanish translations for vaults package.
+# Copyright (C) 2022 THE vaults'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the vaults package.
+# Automatically generated, 2022.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: vaults\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2022-01-22 17:04+0100\n"
+"PO-Revision-Date: 2022-01-22 17:09+0100\n"
+"Last-Translator: Automatically generated\n"
+"Language-Team: none\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:3
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:6
+msgid "Vaults"
+msgstr "Vaults"
+
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:4
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:7
+msgid "An application for creating encrypted vaults for the GNOME desktop."
+msgstr ""
+"Una aplicación para crear cajas fuertes cifradas para el escritorio GNOME."
+
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:9
+msgid "Gnome;GTK;"
+msgstr "Gnome;GTK;"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:6
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:7
+msgid "Default window width"
+msgstr "Ancho de ventana predeterminado"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:11
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:12
+msgid "Default window height"
+msgstr "Alto de ventana predeterminado"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:16
+msgid "Default window maximized behaviour"
+msgstr "Comportamiento predeterminado de la ventana maximizada"
+
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:9
+msgid ""
+"Vaults lets you create encrypted vaults in which you can safely store files. "
+"It uses gocryptfs and CryFS for encryption."
+msgstr ""
+"Vaults le permite crear cajas fuertes cifradas en las que puede almacenar "
+"archivos de forma segura. Usa gocryptfs y CryFS para el cifrado."
+
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:12
+msgid "Note: This version is sandboxed, to use Vaults you need to install:"
+msgstr ""
+"Nota: Esta versión es aislada, para usar las cajas fuertes es necesario "
+"instalar:"
+
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:16
+msgid "gocryptfs"
+msgstr "gocryptfs"
+
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:17
+msgid "CryFS"
+msgstr "CryFS"
+
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:23
+msgid "Welcome Window"
+msgstr "Ventana de bienvenida"
+
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:27
+msgid "Main Window"
+msgstr "Ventana principal"
+
+#: data/resources/ui/add_new_vault_dialog.ui:15
+msgid "New Vault"
+msgstr "Caja fuerte nueva"
+
+#: data/resources/ui/add_new_vault_dialog.ui:21
+#: data/resources/ui/import_vault_dialog.ui:21
+msgid "_Cancel"
+msgstr "_Cancelar"
+
+#: data/resources/ui/add_new_vault_dialog.ui:27
+#: data/resources/ui/import_vault_dialog.ui:27
+msgid "_Previous"
+msgstr "_Anterior"
+
+#: data/resources/ui/add_new_vault_dialog.ui:34
+#: data/resources/ui/import_vault_dialog.ui:34
+msgid "_Next"
+msgstr "_Siguiente"
+
+#: data/resources/ui/add_new_vault_dialog.ui:45
+msgid "_Add"
+msgstr "Aña_dir"
+
+#: data/resources/ui/add_new_vault_dialog.ui:85
+#: data/resources/ui/import_vault_dialog.ui:182
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:33
+msgid "_Name"
+msgstr "_Nombre"
+
+#: data/resources/ui/add_new_vault_dialog.ui:108
+#: data/resources/ui/import_vault_dialog.ui:205
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:56
+msgid "_Backend"
+msgstr "Ci_frado"
+
+#: data/resources/ui/add_new_vault_dialog.ui:158
+msgid "_Password"
+msgstr "Con_traseña"
+
+#: data/resources/ui/add_new_vault_dialog.ui:197
+#: data/resources/ui/import_vault_dialog.ui:85
+#: data/resources/ui/preferences.ui:44
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:80
+msgid "_Encrypted Data Directory"
+msgstr "_Directorio de datos cifrados"
+
+#: data/resources/ui/add_new_vault_dialog.ui:215
+#: data/resources/ui/import_vault_dialog.ui:103
+#: data/resources/ui/preferences.ui:62
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:98
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:222
+#: src/ui/import_vault_dialog.rs:324 src/ui/add_new_vault_dialog.rs:408
+msgid "Choose Encrypted Data Directory"
+msgstr "Elegir el directorio de datos cifrados"
+
+#: data/resources/ui/add_new_vault_dialog.ui:235
+#: data/resources/ui/import_vault_dialog.ui:129
+#: data/resources/ui/preferences.ui:82
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:118
+msgid "_Mount Directory"
+msgstr "Directorio de _montaje"
+
+#: data/resources/ui/add_new_vault_dialog.ui:253
+#: data/resources/ui/import_vault_dialog.ui:147
+#: data/resources/ui/preferences.ui:100
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:136
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:249
+#: src/ui/import_vault_dialog.rs:353 src/ui/add_new_vault_dialog.rs:435
+msgid "Choose Mount Directory"
+msgstr "Elegir el directorio de montaje"
+
+#: data/resources/ui/import_vault_dialog.ui:15
+msgid "Import Vault"
+msgstr "Importar caja fuerte"
+
+#: data/resources/ui/import_vault_dialog.ui:45
+msgid "_Import"
+msgstr "_Importar"
+
+#: data/resources/ui/preferences.ui:11
+msgid "Preferences"
+msgstr "Preferencias"
+
+#: data/resources/ui/preferences.ui:33
+msgid "_Default Paths"
+msgstr "_Rutas predeterminadas"
+
+#: data/resources/ui/preferences.ui:124
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:171
+msgid "_Apply Changes"
+msgstr "A_plicar cambios"
+
+#: data/resources/ui/shortcuts.ui:11
+msgctxt "shortcut window"
+msgid "General"
+msgstr "General"
+
+#: data/resources/ui/shortcuts.ui:14
+msgctxt "preferences"
+msgid "Show Preferences"
+msgstr "Mostrar preferencias"
+
+#: data/resources/ui/shortcuts.ui:20
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Mostrar atajos"
+
+#: data/resources/ui/shortcuts.ui:26
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Salir"
+
+#: data/resources/ui/shortcuts.ui:34
+msgctxt "shortcut window"
+msgid "Vaults"
+msgstr "Cajas fuertes"
+
+#: data/resources/ui/shortcuts.ui:37
+msgctxt "vaults"
+msgid "Add New Vault"
+msgstr "Añadir caja fuerte nueva"
+
+#: data/resources/ui/shortcuts.ui:43
+msgctxt "vaults"
+msgid "Import Vault"
+msgstr "Importar caja fuerte"
+
+#: data/resources/ui/shortcuts.ui:49
+msgctxt "vaults"
+msgid "Refresh"
+msgstr "Refrescar"
+
+#: data/resources/ui/start_page.ui:15
+msgid "Welcome to Vaults"
+msgstr "Bienvenido/a a Vaults"
+
+#: data/resources/ui/start_page.ui:16
+msgid "Add or Import a Vault."
+msgstr "Añada o importe una caja fuerte."
+
+#: data/resources/ui/vaults_page_row.ui:10
+msgid "Vault X"
+msgstr "Caja fuerte X"
+
+#: data/resources/ui/vaults_page_row.ui:15
+msgid "Open Folder"
+msgstr "Abrir carpeta"
+
+#: data/resources/ui/vaults_page_row.ui:22 src/ui/pages/vaults_page_row.rs:252
+#: src/ui/pages/vaults_page_row.rs:366 src/ui/pages/vaults_page_row.rs:513
+msgid "Open Vault"
+msgstr "Abrir caja fuerte"
+
+#: data/resources/ui/vaults_page_row.ui:29
+msgid "Open Settings"
+msgstr "Abrir configuración"
+
+#: data/resources/ui/vaults_page_row_password_prompt_dialog.ui:14
+msgid "Unlock Vault"
+msgstr "Desbloquear caja fuerte"
+
+#: data/resources/ui/vaults_page_row_password_prompt_dialog.ui:15
+msgid "Enter the password to unlock the Vault."
+msgstr "Introduzca la contraseña para desbloquear la caja fuerte."
+
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:161
+msgid "_Remove"
+msgstr "_Quitar"
+
+#: data/resources/ui/window.ui:21
+msgid "Add or Import New Vault"
+msgstr "Añadir o importar caja fuerte nueva"
+
+#: data/resources/ui/window.ui:71
+msgid "_New Vault"
+msgstr "Caja fuerte _nueva"
+
+#: data/resources/ui/window.ui:75
+msgid "_Import Vault"
+msgstr "Importar ca_ja fuerte"
+
+#: data/resources/ui/window.ui:83
+msgid "_Refresh"
+msgstr "_Refrescar"
+
+#: data/resources/ui/window.ui:89
+msgid "_Preferences"
+msgstr "_Preferencias"
+
+#: data/resources/ui/window.ui:93
+msgid "_Keyboard Shortcuts"
+msgstr "Atajos del _teclado"
+
+#: data/resources/ui/window.ui:97
+msgid "_About Vaults"
+msgstr "_Acerca de Vaults"
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:226
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:253
+#: src/ui/import_vault_dialog.rs:328 src/ui/import_vault_dialog.rs:357
+#: src/ui/add_new_vault_dialog.rs:412 src/ui/add_new_vault_dialog.rs:439
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:227
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:254
+#: src/ui/import_vault_dialog.rs:329 src/ui/import_vault_dialog.rs:358
+#: src/ui/add_new_vault_dialog.rs:413 src/ui/add_new_vault_dialog.rs:440
+msgid "Select"
+msgstr "Seleccionar"
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:282
+msgid "Name is not valid."
+msgstr "El nombre no es válido."
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:308
+msgid "Name already exists."
+msgstr "El nombre ya existe."
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:346
+msgid "Directory is empty."
+msgstr "El directorio está vacío."
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:362
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:392
+msgid "Directory is not valid."
+msgstr "El directorio no es válido."
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:382
+msgid "Directory is not empty."
+msgstr "El directorio no está vacío."
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:411
+#: src/ui/import_vault_dialog.rs:405 src/ui/add_new_vault_dialog.rs:482
+msgid "Directories must not be equal."
+msgstr "Los directorios no deben ser iguales."
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:486
+#: src/ui/import_vault_dialog.rs:619
+msgid "No configuration file found."
+msgstr "No se ha encontrado ningún archivo de configuración."
+
+#: src/ui/pages/vaults_page_row.rs:261 src/ui/pages/vaults_page_row.rs:357
+#: src/ui/pages/vaults_page_row.rs:499
+msgid "Close Vault"
+msgstr "Cerrar caja fuerte"
+
+#: src/ui/pages/vaults_page_row.rs:524
+msgid "Backend is not installed."
+msgstr "El componente no está instalado."
+
+#: src/ui/pages/start_page.rs:69
+msgid ""
+"No backends available. Please install gocryptfs or CryFS on your system."
+msgstr ""
+"No hay componentes disponibles. Por favor, instale gocryptfs o CryFS en su "
+"sistema."
+
+#: src/ui/import_vault_dialog.rs:269 src/ui/add_new_vault_dialog.rs:307
+msgid "No backend installed. Please install gocryptfs or CryFS."
+msgstr ""
+"No hay ningún componente instalado. Por favor, instale gocryptfs o CryFS."
+
+#: src/ui/import_vault_dialog.rs:310 src/ui/add_new_vault_dialog.rs:336
+msgid "Name is already taken."
+msgstr "El nombre ya está en uso."
+
+#: src/ui/import_vault_dialog.rs:438
+msgid "Encrypted data directory is empty."
+msgstr "El directorio de datos cifrados está vacío."
+
+#: src/ui/import_vault_dialog.rs:461 src/ui/add_new_vault_dialog.rs:536
+msgid "Encrypted data directory is not valid."
+msgstr "El directorio de datos cifrados no es válido."
+
+#: src/ui/import_vault_dialog.rs:493 src/ui/add_new_vault_dialog.rs:569
+msgid "Mount directory is not empty."
+msgstr "El directorio de montaje no está vacío."
+
+#: src/ui/import_vault_dialog.rs:504 src/ui/add_new_vault_dialog.rs:584
+msgid "Mount directory is not valid."
+msgstr "El directorio de montaje no es válido."
+
+#: src/ui/import_vault_dialog.rs:581
+msgid "Found gocryptfs configuration file."
+msgstr "Encontrado el archivo de configuración de gocryptfs."
+
+#: src/ui/import_vault_dialog.rs:595
+msgid "Found CryFS configuration file."
+msgstr "Encontrado el archivo de configuración de CryFS."
+
+#: src/ui/add_new_vault_dialog.rs:521
+msgid "Encrypted data directory is not empty."
+msgstr "El directorio de datos cifrados no está vacío."
+
+#: src/backend/cryfs.rs:128 src/backend/cryfs.rs:145
+#: src/backend/gocryptfs.rs:150
+msgid "An unknown error occurred."
+msgstr "Se ha producido un error desconocido."
+
+#: src/backend/cryfs.rs:129
+msgid "Invalid arguments were given."
+msgstr "Se han dado argumentos no válidos."
+
+#: src/backend/cryfs.rs:130 src/backend/gocryptfs.rs:136
+msgid "The password is wrong."
+msgstr "La contraseña es incorrecta."
+
+#: src/backend/cryfs.rs:131 src/backend/gocryptfs.rs:139
+msgid "The password is empty."
+msgstr "La contraseña está vacía."
+
+#: src/backend/cryfs.rs:132
+msgid ""
+"The format of the encrypted data directory is too new for this CryFS "
+"version. Please update CryFS."
+msgstr ""
+"El formato del directorio de datos cifrados es demasiado nuevo para esta "
+"versión de CryFS. Por favor, actualice CryFS."
+
+#: src/backend/cryfs.rs:133
+msgid ""
+"The format of the encrypted data directory is too old for this CryFS version."
+msgstr ""
+"El formato del directorio de datos cifrados es demasiado antiguo para esta "
+"versión de CryFS."
+
+#: src/backend/cryfs.rs:134
+msgid "The vault uses a different cipher than the default of CryFS."
+msgstr "La caja fuerte usa un cifrado diferente al predeterminado de CryFS."
+
+#: src/backend/cryfs.rs:135
+msgid "The encrypted data directory does not exist or is inaccessible."
+msgstr "El directorio de datos cifrados no existe o es inaccesible."
+
+#: src/backend/cryfs.rs:136
+msgid "The mount directory does not exist or is inaccessible."
+msgstr "El directorio de montaje no existe o es inaccesible."
+
+#: src/backend/cryfs.rs:137
+msgid "The mount directory is inside the encrypted data directory."
+msgstr "El directorio de montaje está dentro del directorio de datos cifrados."
+
+#: src/backend/cryfs.rs:138
+msgid "The encrypted data directory is invalid."
+msgstr "El directorio de datos cifrados no es válido."
+
+#: src/backend/cryfs.rs:139
+msgid ""
+"The encrypted data id in the configuration file is different to the last "
+"time this vault was opened. This could mean someone replaced files in the "
+"encrypted data directory with different ones."
+msgstr ""
+"El identificador de datos cifrados en el archivo de configuración es "
+"diferente a la última vez que se abrió este almacén. Esto podría significar "
+"que alguien sustituyó los archivos del directorio de datos cifrados por "
+"otros diferentes."
+
+#: src/backend/cryfs.rs:140
+msgid ""
+"The encryption key for your encrypted files is different to the last time "
+"this vault was opened. This could mean someone replaced files in the "
+"encrypted data directory with different ones."
+msgstr ""
+"La clave de cifrado de sus archivos cifrados es diferente a la última vez "
+"que se abrió este almacén. Esto podría significar que alguien reemplazó los "
+"archivos del directorio de datos cifrados por otros diferentes."
+
+#: src/backend/cryfs.rs:141
+msgid "Vaults' configuration and the encrypted data configuration mismatches."
+msgstr ""
+"La configuración de las cajas fuertes y la configuración de los datos "
+"cifrados no coinciden."
+
+#: src/backend/cryfs.rs:142
+msgid ""
+"The encrypted data directory is in single-user mode and can only be used "
+"from the user that created it."
+msgstr ""
+"El directorio de datos cifrados está en modo monousuario y sólo puede ser "
+"usado desde el usuario que lo creó."
+
+#: src/backend/cryfs.rs:143
+msgid ""
+"CryFS detected an integrity violation. The encrypted data directory will be "
+"accessible again after the integrity state file has been deleted."
+msgstr ""
+"CryFS ha detectado una violación de la integridad. El directorio de datos "
+"cifrados volverá a ser accesible una vez eliminado el archivo de estado de "
+"integridad."
+
+#: src/backend/cryfs.rs:144
+msgid "An integrity violation was detected. Vault will be unmounted."
+msgstr ""
+"Se ha detectado una violación de la integridad. La caja fuerte será "
+"desmontada."
+
+#: src/backend/mod.rs:147
+msgid "Failed to create encrypted data directory: Permission denied."
+msgstr "Fallo al crear el directorio de datos cifrados: Permiso denegado."
+
+#: src/backend/mod.rs:150
+msgid "Failed to create encrypted data directory: Connection refused."
+msgstr "Error al crear el directorio de datos cifrados: Conexión rechazada."
+
+#: src/backend/mod.rs:153
+msgid "Failed to create encrypted data directory: Connection reset."
+msgstr ""
+"Fallo en la creación del directorio de datos cifrados: Conexión reiniciada."
+
+#: src/backend/mod.rs:156
+msgid "Failed to create encrypted data directory: Connection aborted."
+msgstr ""
+"No se ha podido crear un directorio de datos cifrados: Conexión abortada."
+
+#: src/backend/mod.rs:159
+msgid "Failed to create encrypted data directory: Not connected."
+msgstr "Error al crear el directorio de datos cifrados: No conectado."
+
+#: src/backend/mod.rs:162
+msgid "Failed to create encrypted data directory."
+msgstr "Fallo al crear el directorio de datos cifrados."
+
+#: src/backend/mod.rs:177
+msgid "Failed to create mount directory: Permission denied."
+msgstr "Fallo al crear el directorio de montaje: Permiso denegado."
+
+#: src/backend/mod.rs:180
+msgid "Failed to create mount directory: Connection refused."
+msgstr "No se ha podido crear el directorio de montaje: Conexión rechazada."
+
+#: src/backend/mod.rs:183
+msgid "Failed to create mount directory: Connection reset."
+msgstr "No se ha podido crear el directorio de montaje: Conexión reiniciada."
+
+#: src/backend/mod.rs:186
+msgid "Failed to create mount directory: Connection aborted."
+msgstr "No se ha podido crear el directorio de montaje: Conexión abortada."
+
+#: src/backend/mod.rs:189
+msgid "Failed to create mount directory: Not connected."
+msgstr "No se ha podido crear el directorio de montaje: No conectado."
+
+#: src/backend/mod.rs:192
+msgid "Failed to create mount directory."
+msgstr "Fallo al crear el directorio de montaje."
+
+#: src/backend/gocryptfs.rs:130
+msgid "The encrypted data directory is not empty."
+msgstr "El directorio de datos cifrados no está vacío."
+
+#: src/backend/gocryptfs.rs:133
+msgid "The mount directory is not empty."
+msgstr "El directorio de montaje no está vacío."
+
+#: src/backend/gocryptfs.rs:142
+msgid "Vaults cannot read configuration file."
+msgstr "Las cajas fuertes no pueden leer el archivo de configuración."
+
+#: src/backend/gocryptfs.rs:145
+msgid "Vaults cannot write configuration file."
+msgstr "Las cajas fuertes no pueden escribir el archivo de configuración."
+
+#: src/backend/gocryptfs.rs:148
+msgid "The file system check reported an error."
+msgstr "La comprobación del sistema de archivos informó de un error."
