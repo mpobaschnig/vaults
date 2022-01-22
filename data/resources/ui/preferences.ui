@@ -8,7 +8,7 @@
     <property name="use-header-bar">1</property>
     <property name="modal">1</property>
     <property name="destroy-with-parent">1</property>
-    <property name="title">Preferences</property>
+    <property name="title" translatable="yes">Preferences</property>
     <child>
       <object class="GtkScrolledWindow">
         <property name="hexpand">True</property>
