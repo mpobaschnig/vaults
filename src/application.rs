@@ -137,17 +137,17 @@ impl VApplication {
     }
 
     fn show_about_dialog(&self) {
-        let dialog = gtk::AboutDialogBuilder::new()
-            .program_name("Vaults")
-            .logo_icon_name(config::APP_ID)
-            .license_type(gtk::License::Gpl30)
-            .website("https://github.com/mpobaschnig/Vaults")
-            .version(config::VERSION)
-            .transient_for(&self.active_window().unwrap())
-            .modal(true)
-            .authors(vec!["Martin Pobaschnig".into()])
-            .artists(vec!["Martin Pobaschnig".into(), "Jacson Hilgert".into()])
-            .build();
+        let dialog = gtk::AboutDialog::new();
+
+        dialog.set_program_name(Some("Vaults"));
+        dialog.set_logo_icon_name(Some(config::APP_ID));
+        dialog.set_license_type(gtk::License::Gpl30);
+        dialog.set_website(Some("https://github.com/mpobaschnig/Vaults"));
+        dialog.set_version(Some(config::VERSION));
+        dialog.set_transient_for(Some(&self.active_window().unwrap()));
+        dialog.set_modal(true);
+        dialog.set_authors(&vec!["Martin Pobaschnig".into()]);
+        dialog.set_artists(&vec!["Martin Pobaschnig".into(), "Jacson Hilgert".into()]);
 
         dialog.show();
     }

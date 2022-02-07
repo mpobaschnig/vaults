@@ -106,7 +106,6 @@ impl VVaultsPage {
             callback();
             None
         })
-        .unwrap()
     }
 
     pub fn row_connect_remove(&self, row: &VaultsPageRow) {
@@ -115,7 +114,7 @@ impl VVaultsPage {
             let index = obj_.list_store.find(&row);
             if let Some(index) = index {
                 obj_.list_store.remove(index);
-                obj.emit_by_name("refresh", &[]).unwrap();
+                obj.emit_by_name::<()>("refresh", &[]);
             } else {
                 log::error!("Vault not initialised!");
             }
@@ -128,7 +127,7 @@ impl VVaultsPage {
             let vault = UserConfigManager::instance().get_current_vault();
             if let Some(vault) = vault {
                 r.set_vault(vault);
-                obj.emit_by_name("refresh", &[]).unwrap();
+                obj.emit_by_name::<()>("refresh", &[]);
             } else {
                 log::error!("Vault not initialised!");
             }

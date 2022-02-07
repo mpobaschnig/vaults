@@ -121,7 +121,6 @@ impl VaultsPageRow {
             callback();
             None
         })
-        .unwrap()
     }
 
     pub fn connect_save<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
@@ -129,7 +128,6 @@ impl VaultsPageRow {
             callback();
             None
         })
-        .unwrap()
     }
 
     pub fn new(vault: Vault) -> Self {
@@ -263,7 +261,7 @@ impl VaultsPageRow {
                     open_folder_button.set_sensitive(true);
                     settings_button.set_sensitive(false);
 
-                    let vault_name = vaults_page_row.title().unwrap().to_string();
+                    let vault_name = vaults_page_row.title().to_string();
                     gtk::glib::MainContext::default().spawn_local(async move {
                         let window = gtk::gio::Application::default()
                             .unwrap()
@@ -272,7 +270,7 @@ impl VaultsPageRow {
                             .active_window()
                             .unwrap()
                             .clone();
-                        let info_dialog = gtk::MessageDialogBuilder::new()
+                        let info_dialog = gtk::MessageDialog::builder()
                             .message_type(gtk::MessageType::Error)
                             .transient_for(&window)
                             .modal(true)
@@ -368,7 +366,7 @@ impl VaultsPageRow {
                         open_folder_button.set_sensitive(false);
                         settings_button.set_sensitive(true);
 
-                        let vault_name = vaults_page_row.title().unwrap().to_string();
+                        let vault_name = vaults_page_row.title().to_string();
                         gtk::glib::MainContext::default().spawn_local(async move {
                             let window = gtk::gio::Application::default()
                                 .unwrap()
@@ -377,7 +375,7 @@ impl VaultsPageRow {
                                 .active_window()
                                 .unwrap()
                                 .clone();
-                            let info_dialog = gtk::MessageDialogBuilder::new()
+                            let info_dialog = gtk::MessageDialog::builder()
                                 .message_type(gtk::MessageType::Error)
                                 .transient_for(&window)
                                 .modal(true)
@@ -423,9 +421,9 @@ impl VaultsPageRow {
         let dialog = VaultsPageRowSettingsDialog::new(self.get_vault());
         dialog.connect_response(clone!(@weak self as obj => move |dialog, id|
             match id {
-                gtk::ResponseType::Other(0) => {obj.emit_by_name("remove", &[]).unwrap();},
+                gtk::ResponseType::Other(0) => {obj.emit_by_name::<()>("remove", &[]);},
                 gtk::ResponseType::Other(1) => {
-                    obj.emit_by_name("save", &[]).unwrap();
+                    obj.emit_by_name::<()>("save", &[]);
                     let vault = &obj.get_vault();
                     if !vault.is_backend_available() {
                         obj.set_vault_row_state_backend_unavailable();
@@ -448,14 +446,14 @@ impl VaultsPageRow {
         let self_ = imp::VaultsPageRow::from_instance(&self);
         let name = self_.vaults_page_row.title();
         let config = self_.config.borrow().clone();
-        match (name, config) {
-            (Some(name), Some(config)) => Vault::new(
+        match config {
+            Some(config) => Vault::new(
                 name.to_string(),
                 config.backend,
                 config.encrypted_data_directory,
                 config.mount_directory,
             ),
-            (_, _) => {
+            _ => {
                 log::error!("Vault not initialised!");
                 Vault::new_none()
             }
@@ -479,7 +477,7 @@ impl VaultsPageRow {
 
     pub fn get_name(&self) -> String {
         let self_ = imp::VaultsPageRow::from_instance(&self);
-        self_.vaults_page_row.title().unwrap().to_string()
+        self_.vaults_page_row.title().to_string()
     }
 
     fn is_mounted(&self) -> bool {

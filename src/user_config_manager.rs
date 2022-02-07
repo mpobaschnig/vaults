@@ -80,7 +80,6 @@ impl UserConfigManager {
             callback();
             None
         })
-        .unwrap()
     }
 
     pub fn connect_add_vault<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
@@ -88,7 +87,6 @@ impl UserConfigManager {
             callback();
             None
         })
-        .unwrap()
     }
 
     pub fn connect_remove_vault<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
@@ -96,7 +94,6 @@ impl UserConfigManager {
             callback();
             None
         })
-        .unwrap()
     }
 
     pub fn connect_change_vault<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
@@ -104,7 +101,6 @@ impl UserConfigManager {
             callback();
             None
         })
-        .unwrap()
     }
 
     pub fn instance() -> Self {
@@ -217,7 +213,7 @@ impl UserConfigManager {
 
                 self.write_config(map);
 
-                self.emit_by_name("add-vault", &[]).unwrap();
+                self.emit_by_name::<()>("add-vault", &[]);
             }
             (_, _) => {
                 log::error!("Vault not initalised!");
@@ -237,7 +233,7 @@ impl UserConfigManager {
 
                 self.write_config(map);
 
-                self.emit_by_name("remove-vault", &[]).unwrap();
+                self.emit_by_name::<()>("remove-vault", &[]);
             }
             None => {
                 log::error!("Vault not initialised!");
@@ -264,7 +260,7 @@ impl UserConfigManager {
 
                 *self_.current_vault.borrow_mut() = Some(new_vault);
 
-                self.emit_by_name("change-vault", &[]).unwrap();
+                self.emit_by_name::<()>("change-vault", &[]);
             }
             (_, _, _) => {
                 log::error!("Vault(s) not initialised!");

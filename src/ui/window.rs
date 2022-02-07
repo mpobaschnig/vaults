@@ -25,7 +25,7 @@ use crate::{
 };
 
 use adw::subclass::prelude::*;
-use glib::{clone, GEnum, ParamSpec, ToValue};
+use glib::{clone, Enum, ParamSpec, ParamSpecEnum};
 use gtk::subclass::prelude::*;
 use gtk::{self, prelude::*};
 use gtk::{gio, glib, CompositeTemplate};
@@ -34,9 +34,9 @@ use log::*;
 use once_cell::sync::Lazy;
 use std::cell::RefCell;
 
-#[derive(Copy, Debug, Clone, PartialEq, GEnum)]
+#[derive(Copy, Debug, Clone, PartialEq, Enum)]
 #[repr(u32)]
-#[genum(type_name = "VVView")]
+#[enum_type(name = "VVView")]
 pub enum VView {
     Start,
     Vaults,
@@ -110,7 +110,7 @@ mod imp {
 
         fn properties() -> &'static [ParamSpec] {
             static PROPERTIES: Lazy<Vec<ParamSpec>> = Lazy::new(|| {
-                vec![ParamSpec::new_enum(
+                vec![ParamSpecEnum::new(
                     "view",
                     "View",
                     "View",
@@ -235,7 +235,7 @@ impl ApplicationWindow {
                                 .active_window()
                                 .unwrap()
                                 .clone();
-                            let info_dialog = gtk::MessageDialogBuilder::new()
+                            let info_dialog = gtk::MessageDialog::builder()
                                 .message_type(gtk::MessageType::Error)
                                 .transient_for(&window)
                                 .modal(true)
@@ -315,6 +315,6 @@ impl ApplicationWindow {
     }
 
     pub fn set_view(&self, view: VView) {
-        self.set_property("view", &view).unwrap()
+        self.set_property("view", &view)
     }
 }

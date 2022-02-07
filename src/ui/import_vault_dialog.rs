@@ -216,10 +216,7 @@ impl ImportVaultDialog {
         *self_.current_page.borrow_mut() += 1;
 
         self_.carousel.scroll_to(
-            &self_
-                .carousel
-                .nth_page(*self_.current_page.borrow())
-                .unwrap(),
+            &self_.carousel.nth_page(*self_.current_page.borrow()),
             false,
         );
 
@@ -232,10 +229,7 @@ impl ImportVaultDialog {
         *self_.current_page.borrow_mut() -= 1;
 
         self_.carousel.scroll_to(
-            &self_
-                .carousel
-                .nth_page(*self_.current_page.borrow())
-                .unwrap(),
+            &self_.carousel.nth_page(*self_.current_page.borrow()),
             false,
         );
 
