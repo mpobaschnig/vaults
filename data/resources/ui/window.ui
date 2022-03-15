@@ -36,14 +36,42 @@
             <child>
               <object class="GtkOverlay" id="overlay">
                 <child>
-                  <object class="AdwLeaflet" id="window_leaflet">
-                    <property name="can_unfold">False</property>
-                    <property name="hexpand">True</property>
+                  <object class="GtkStack" id="window_stack">
+                    <property name="transition-type">crossfade</property>
                     <child>
-                      <object class="VStartPage" id="start_page"/>
+                      <object class="GtkStackPage">
+                        <property name="name">start</property>
+                        <property name="child">
+                          <object class="AdwStatusPage" id="start_page_status_page">
+                            <property name="vexpand">True</property>
+                            <property name="title" translatable="yes">Welcome to Vaults</property>
+                            <property name="description" translatable="yes">Add or Import a Vault.</property>
+                          </object>
+                        </property>
+                      </object>
                     </child>
                     <child>
-                      <object class="VVaultsPage" id="vaults_page"/>
+                      <object class="GtkStackPage">
+                        <property name="name">vaults</property>
+                        <property name="child">
+                          <object class="AdwClamp">
+                            <property name="margin-top">12</property>
+                            <property name="margin-bottom">12</property>
+                            <property name="margin-start">12</property>
+                            <property name="margin-end">12</property>
+                            <property name="hexpand">True</property>
+                            <child>
+                              <object class="GtkListBox" id="vaults_list_box">
+                                <property name="selection-mode">none</property>
+                                <property name="valign">start</property>
+                                <style>
+                                  <class name="content"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
                     </child>
                   </object>
                 </child>

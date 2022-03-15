@@ -58,7 +58,12 @@ mod imp {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
                 vec![
-                    Signal::builder("refresh", &[], glib::Type::UNIT.into()).build(),
+                    Signal::builder(
+                        "refresh",
+                        &[bool::static_type().into()],
+                        glib::Type::UNIT.into(),
+                    )
+                    .build(),
                     Signal::builder("add-vault", &[], glib::Type::UNIT.into()).build(),
                     Signal::builder("remove-vault", &[], glib::Type::UNIT.into()).build(),
                     Signal::builder("change-vault", &[], glib::Type::UNIT.into()).build(),
@@ -75,9 +80,10 @@ glib::wrapper! {
 }
 
 impl UserConfigManager {
-    pub fn connect_refresh<F: Fn() + 'static>(&self, callback: F) -> glib::SignalHandlerId {
-        self.connect_local("refresh", false, move |_| {
-            callback();
+    pub fn connect_refresh<F: Fn(bool) + 'static>(&self, callback: F) -> glib::SignalHandlerId {
+        self.connect_local("refresh", false, move |args| {
+            let map_is_empty = args.get(1).unwrap().get::<bool>().unwrap();
+            callback(map_is_empty);
             None
         })
     }
@@ -234,6 +240,7 @@ impl UserConfigManager {
                 self.write_config(map);
 
                 self.emit_by_name::<()>("remove-vault", &[]);
+                self.emit_by_name::<()>("refresh", &[&map.is_empty()]);
             }
             None => {
                 log::error!("Vault not initialised!");

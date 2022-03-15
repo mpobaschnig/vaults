@@ -9,4 +9,4 @@ pub use add_new_vault_dialog::AddNewVaultDialog;
 pub use import_vault_dialog::ImportVaultDialog;
 pub use preferences::PreferencesWindow;
 pub use window::ApplicationWindow;
-pub use window::VView;
+pub use window::View;

@@ -17,35 +17,28 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use crate::backend::AVAILABLE_BACKENDS;
 use crate::config::{APP_ID, PROFILE};
 use crate::ui::pages::*;
 use crate::ui::{AddNewVaultDialog, ImportVaultDialog};
 use crate::{
     application::VApplication, backend, backend::Backend, user_config_manager::UserConfigManager,
+    vault::*,
 };
 
 use adw::subclass::prelude::*;
-use glib::{clone, Enum, ParamSpec, ParamSpecEnum};
+use gettextrs::gettext;
+use glib::clone;
+use gtk::gio::ListStore;
 use gtk::subclass::prelude::*;
 use gtk::{self, prelude::*};
 use gtk::{gio, glib, CompositeTemplate};
 use gtk_macros::action;
-use log::*;
-use once_cell::sync::Lazy;
-use std::cell::RefCell;
 
-#[derive(Copy, Debug, Clone, PartialEq, Enum)]
-#[repr(u32)]
-#[enum_type(name = "VVView")]
-pub enum VView {
+#[derive(PartialEq, Debug)]
+pub enum View {
     Start,
     Vaults,
-}
-
-impl Default for VView {
-    fn default() -> Self {
-        VView::Start
-    }
 }
 
 mod imp {
@@ -55,18 +48,15 @@ mod imp {
     #[template(resource = "/io/github/mpobaschnig/Vaults/window.ui")]
     pub struct ApplicationWindow {
         #[template_child]
-        pub window_leaflet: TemplateChild<adw::Leaflet>,
+        pub window_stack: TemplateChild<gtk::Stack>,
         #[template_child]
-        pub start_page: TemplateChild<VStartPage>,
+        pub start_page_status_page: TemplateChild<adw::StatusPage>,
         #[template_child]
-        pub vaults_page: TemplateChild<VVaultsPage>,
-
+        pub vaults_list_box: TemplateChild<gtk::ListBox>,
+        pub list_store: ListStore,
         #[template_child]
         pub headerbar: TemplateChild<adw::HeaderBar>,
-
         pub settings: gio::Settings,
-
-        pub view: RefCell<VView>,
     }
 
     #[glib::object_subclass]
@@ -77,12 +67,12 @@ mod imp {
 
         fn new() -> Self {
             Self {
-                window_leaflet: TemplateChild::default(),
-                start_page: TemplateChild::default(),
-                vaults_page: TemplateChild::default(),
+                window_stack: TemplateChild::default(),
+                start_page_status_page: TemplateChild::default(),
+                vaults_list_box: TemplateChild::default(),
+                list_store: ListStore::new(gtk::Widget::static_type()),
                 headerbar: TemplateChild::default(),
                 settings: gio::Settings::new(APP_ID),
-                view: RefCell::new(VView::Start),
             }
         }
 
@@ -103,47 +93,7 @@ mod imp {
                 obj.style_context().add_class("devel");
             }
 
-            self.vaults_page.init();
-
             obj.setup_gactions();
-        }
-
-        fn properties() -> &'static [ParamSpec] {
-            static PROPERTIES: Lazy<Vec<ParamSpec>> = Lazy::new(|| {
-                vec![ParamSpecEnum::new(
-                    "view",
-                    "View",
-                    "View",
-                    VView::static_type(),
-                    VView::default() as i32,
-                    glib::ParamFlags::READWRITE,
-                )]
-            });
-
-            PROPERTIES.as_ref()
-        }
-
-        fn property(&self, _obj: &Self::Type, _id: usize, pspec: &ParamSpec) -> glib::Value {
-            match pspec.name() {
-                "view" => self.view.borrow().to_value(),
-                _ => unimplemented!(),
-            }
-        }
-
-        fn set_property(
-            &self,
-            obj: &Self::Type,
-            _id: usize,
-            value: &glib::Value,
-            pspec: &ParamSpec,
-        ) {
-            match pspec.name() {
-                "view" => {
-                    *self.view.borrow_mut() = value.get().unwrap();
-                    obj.update_view();
-                }
-                _ => unimplemented!(),
-            }
         }
     }
 
@@ -167,23 +117,55 @@ impl ApplicationWindow {
         gtk::Window::set_default_icon_name(APP_ID);
 
         if !UserConfigManager::instance().get_map().is_empty() {
-            object.set_view(VView::Vaults);
+            object.set_view(View::Vaults);
+        } else {
+            object.set_view(View::Start);
         }
 
-        let self_ = imp::ApplicationWindow::from_instance(&object);
-        self_
-            .vaults_page
-            .connect_refresh(clone!(@weak object => move || {
-                if UserConfigManager::instance().get_map().is_empty() {
-                    object.set_view(VView::Start);
-                }
-            }));
+        object.setup_start_page();
+        object.setup_vaults_page();
 
         let builder = gtk::Builder::from_resource("/io/github/mpobaschnig/Vaults/shortcuts.ui");
         gtk_macros::get_widget!(builder, gtk::ShortcutsWindow, shortcuts);
         object.set_help_overlay(Some(&shortcuts));
 
         object
+    }
+
+    fn setup_start_page(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        self_.start_page_status_page.set_icon_name(Some(APP_ID));
+
+        if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
+            if available_backends.is_empty() {
+                self_.start_page_status_page.set_description(Some(&gettext(
+                    "No backends available. Please install gocryptfs or CryFS on your system.",
+                )));
+            }
+        }
+    }
+
+    fn setup_vaults_page(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        UserConfigManager::instance().connect_add_vault(clone!(@weak self as obj => move || {
+            obj.add_vault();
+        }));
+
+        UserConfigManager::instance().connect_refresh(
+            clone!(@weak self as obj => move |map_is_empty| {
+                obj.refresh(map_is_empty);
+            }),
+        );
+
+        self_
+            .vaults_list_box
+            .bind_model(Some(&self_.list_store), |obj| {
+                obj.clone().downcast::<gtk::Widget>().unwrap()
+            });
+
+        self.fill_list_store();
     }
 
     fn setup_gactions(&self) {
@@ -212,6 +194,90 @@ impl ApplicationWindow {
         );
     }
 
+    fn fill_list_store(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        let map = UserConfigManager::instance().get_map();
+        for (k, v) in map.iter() {
+            let vault = Vault::new(
+                k.to_owned(),
+                v.backend,
+                v.encrypted_data_directory.to_owned(),
+                v.mount_directory.to_owned(),
+            );
+
+            let row = VaultsPageRow::new(vault);
+            self.row_connect_remove(&row);
+            self.row_connect_save(&row);
+
+            self_.list_store.insert_sorted(&row, |v1, v2| {
+                let row1 = v1.downcast_ref::<VaultsPageRow>().unwrap();
+                let name1 = row1.get_name();
+                let row2 = v2.downcast_ref::<VaultsPageRow>().unwrap();
+                let name2 = row2.get_name();
+                name1.cmp(&name2)
+            });
+        }
+    }
+
+    pub fn row_connect_remove(&self, row: &VaultsPageRow) {
+        row.connect_remove(clone!(@weak self as obj, @weak row => move || {
+            let obj_ = imp::ApplicationWindow::from_instance(&obj);
+            let index = obj_.list_store.find(&row);
+            if let Some(index) = index {
+                obj_.list_store.remove(index);
+            } else {
+                log::error!("Vault not initialised!");
+            }
+        }));
+    }
+
+    pub fn row_connect_save(&self, row: &VaultsPageRow) {
+        row.connect_save(clone!(@weak self as obj, @weak row as r => move || {
+            let vault = UserConfigManager::instance().get_current_vault();
+            if let Some(vault) = vault {
+                r.set_vault(vault);
+            } else {
+                log::error!("Vault not initialised!");
+            }
+        }));
+    }
+
+    pub fn add_vault(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+
+        let vault = UserConfigManager::instance().get_current_vault();
+
+        if let Some(vault) = vault {
+            let row = VaultsPageRow::new(vault.clone());
+            self.row_connect_remove(&row);
+            self.row_connect_save(&row);
+
+            self_.list_store.insert_sorted(&row, |v1, v2| {
+                let row1 = v1.downcast_ref::<VaultsPageRow>().unwrap();
+                let name1 = row1.get_name();
+                let row2 = v2.downcast_ref::<VaultsPageRow>().unwrap();
+                let name2 = row2.get_name();
+                name1.cmp(&name2)
+            });
+        } else {
+            log::error!("Vault not initialised!");
+        }
+    }
+
+    pub fn refresh(&self, map_is_empty: bool) {
+        if map_is_empty {
+            self.set_view(View::Start);
+        } else {
+            self.set_view(View::Vaults);
+        }
+    }
+
+    pub fn clear(&self) {
+        let self_ = imp::ApplicationWindow::from_instance(self);
+        self_.list_store.remove_all();
+    }
+
     fn add_new_vault_clicked(&self) {
         backend::probe_backends();
 
@@ -223,7 +289,7 @@ impl ApplicationWindow {
                 match Backend::init(&vault.get_config().unwrap(), password) {
                     Ok(_) => {
                         UserConfigManager::instance().add_vault(vault);
-                        obj.set_view(VView::Vaults);
+                        obj.set_view(View::Vaults);
                     }
                     Err(e) => {
                         log::error!("Could not init vault: {}", e);
@@ -265,7 +331,7 @@ impl ApplicationWindow {
 
                 UserConfigManager::instance().add_vault(vault);
 
-                obj.set_view(VView::Vaults);
+                obj.set_view(View::Vaults);
 
                 dialog.destroy();
             }
@@ -278,43 +344,29 @@ impl ApplicationWindow {
     }
 
     fn refresh_clicked(&self) {
-        let self_ = imp::ApplicationWindow::from_instance(self);
-
-        self_.vaults_page.clear();
+        self.clear();
 
         backend::probe_backends();
 
         UserConfigManager::instance().read_config();
 
-        self_.vaults_page.init();
+        self.fill_list_store();
 
         if UserConfigManager::instance().get_map().is_empty() {
-            self.set_view(VView::Start);
+            self.set_view(View::Start);
         } else {
-            self.set_view(VView::Vaults);
+            self.set_view(View::Vaults);
         }
     }
 
-    fn update_view(&self) {
+    pub fn set_view(&self, view: View) {
         let self_ = imp::ApplicationWindow::from_instance(self);
-        let view = *self_.view.borrow();
-        debug!("Set view to {:?}", view);
 
         match view {
-            VView::Start => {
-                self_
-                    .window_leaflet
-                    .set_visible_child(&self_.start_page.get());
-            }
-            VView::Vaults => {
-                self_
-                    .window_leaflet
-                    .set_visible_child(&self_.vaults_page.get());
+            View::Start => self_.window_stack.set_visible_child_name("start"),
+            View::Vaults => {
+                self_.window_stack.set_visible_child_name("vaults");
             }
         }
-    }
-
-    pub fn set_view(&self, view: VView) {
-        self.set_property("view", &view)
     }
 }
