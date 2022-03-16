@@ -22,10 +22,39 @@
                     <property name="menu_model">add_menu</property>
                   </object>
                 </child>
+                <child type="title">
+                  <object class="GtkStack" id="title_stack">
+                    <property name="transition-type">crossfade</property>
+                    <child>
+                      <object class="GtkStackPage">
+                        <property name="name">title</property>
+                        <property name="child">
+                          <object class="AdwWindowTitle" id="window_title">
+                            <property name="title">Vaults</property>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkStackPage">
+                        <property name="name">search</property>
+                        <property name="child">
+                            <object class="GtkSearchEntry" id="search_entry"/>
+                        </property>
+                      </object>
+                    </child>
+                  </object>
+                </child>
                 <child type="end">
                   <object class="GtkMenuButton" id="about_menu_button">
                     <property name="icon_name">open-menu-symbolic</property>
                     <property name="menu_model">menu</property>
+                  </object>
+                </child>
+                <child type="end">
+                  <object class="GtkToggleButton" id="search_toggle_button">
+                    <property name="icon_name">system-search-symbolic</property>
+                    <property name="tooltip-text" translatable="yes">Toggle Search</property>
                   </object>
                 </child>
                 <style>
@@ -38,6 +67,61 @@
                 <child>
                   <object class="GtkStack" id="window_stack">
                     <property name="transition-type">crossfade</property>
+                    <child>
+                      <object class="GtkStackPage">
+                        <property name="name">search</property>
+                        <property name="child">
+                          <object class="GtkStack" id="search_stack">
+                            <property name="transition-type">crossfade</property>
+                            <child>
+                              <object class="GtkStackPage">
+                                <property name="name">start</property>
+                                <property name="child">
+                                  <object class="GtkBox">
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkStackPage">
+                                <property name="name">no-results</property>
+                                <property name="child">
+                                  <object class="AdwStatusPage" id="search_no_results">
+                                    <property name="vexpand">True</property>
+                                    <property name="icon_name">system-search-symbolic</property>
+                                    <property name="title" translatable="yes">No Results</property>
+                                    <property name="description" translatable="yes">No Vault matching your search was found.</property>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkStackPage">
+                                <property name="name">results</property>
+                                <property name="child">
+                                  <object class="AdwClamp">
+                                    <property name="margin-top">12</property>
+                                    <property name="margin-bottom">12</property>
+                                    <property name="margin-start">12</property>
+                                    <property name="margin-end">12</property>
+                                    <property name="hexpand">True</property>
+                                    <child>
+                                      <object class="GtkListBox" id="search_vaults_list_box">
+                                        <property name="selection-mode">none</property>
+                                        <property name="valign">start</property>
+                                        <style>
+                                          <class name="content"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                          </object>
+                        </property>
+                      </object>
+                    </child>
                     <child>
                       <object class="GtkStackPage">
                         <property name="name">start</property>

@@ -123,6 +123,8 @@ impl VApplication {
     fn setup_accels(&self) {
         self.set_accels_for_action("win.add_new_vault", &["<primary>a"]);
         self.set_accels_for_action("win.import_vault", &["<primary>i"]);
+        self.set_accels_for_action("win.search", &["<primary>f"]);
+        self.set_accels_for_action("win.escape", &["Escape"]);
         self.set_accels_for_action("win.refresh", &["<primary>r"]);
 
         self.set_accels_for_action("app.preferences", &["<primary>p"]);
