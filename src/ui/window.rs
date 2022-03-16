@@ -294,7 +294,7 @@ impl ApplicationWindow {
             clone!(@weak self as obj => move |_, _| {
                 let self_ = imp::ApplicationWindow::from_instance(&obj);
                 if self_.search_toggle_button.is_sensitive() {
-                    self_.search_toggle_button.set_active(true);
+                    self_.search_toggle_button.set_active(!self_.search_toggle_button.is_active());
                 }
             })
         );
