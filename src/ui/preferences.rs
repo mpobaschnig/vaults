@@ -49,6 +49,8 @@ mod imp {
         pub mount_directory_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub general_apply_changes_button: TemplateChild<gtk::Button>,
+        #[template_child]
+        pub toast_overlay: TemplateChild<adw::ToastOverlay>,
     }
 
     #[glib::object_subclass]
@@ -66,6 +68,7 @@ mod imp {
                 mount_directory_entry: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
                 mount_directory_error_label: TemplateChild::default(),
+                toast_overlay: TemplateChild::default(),
             }
         }
 
@@ -226,6 +229,9 @@ impl PreferencesWindow {
         GlobalConfigManager::instance().set_mount_directory(mount_directory);
 
         GlobalConfigManager::instance().write_config();
+
+        let toast = adw::Toast::new(&gettext("Saved preferences successfully!"));
+        self_.toast_overlay.add_toast(&toast)
     }
 
     fn are_directories_different(
