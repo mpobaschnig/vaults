@@ -60,6 +60,8 @@ mod imp {
         pub mount_directory_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub mount_directory_error_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub toast_overlay: TemplateChild<adw::ToastOverlay>,
 
         pub current_vault: RefCell<Option<Vault>>,
         pub to_remove: RefCell<bool>,
@@ -85,6 +87,7 @@ mod imp {
                 mount_directory_entry: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
                 mount_directory_error_label: TemplateChild::default(),
+                toast_overlay: TemplateChild::default(),
                 current_vault: RefCell::new(None),
                 to_remove: RefCell::new(false),
             }
@@ -215,6 +218,9 @@ impl VaultsPageRowSettingsDialog {
             .change_vault(self.get_current_vault().unwrap(), new_vault.clone());
 
         *self_.current_vault.borrow_mut() = Some(new_vault);
+
+        let toast = adw::Toast::new(&gettext("Saved settings successfully!"));
+        self_.toast_overlay.add_toast(&toast)
     }
 
     fn encrypted_data_directory_button_clicked(&self) {
