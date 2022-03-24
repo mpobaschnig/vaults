@@ -63,44 +63,44 @@
               </object>
             </child>
             <child>
-              <object class="GtkScrolledWindow">
+              <object class="GtkOverlay" id="overlay">
                 <child>
-                  <object class="GtkOverlay" id="overlay">
+                  <object class="GtkStack" id="window_stack">
+                    <property name="transition-type">crossfade</property>
                     <child>
-                      <object class="GtkStack" id="window_stack">
-                        <property name="transition-type">crossfade</property>
-                        <child>
-                          <object class="GtkStackPage">
-                            <property name="name">search</property>
-                            <property name="child">
-                              <object class="GtkStack" id="search_stack">
-                                <property name="transition-type">crossfade</property>
-                                <child>
-                                  <object class="GtkStackPage">
-                                    <property name="name">start</property>
-                                    <property name="child">
-                                      <object class="GtkBox">
-                                      </object>
-                                    </property>
+                      <object class="GtkStackPage">
+                        <property name="name">search</property>
+                        <property name="child">
+                          <object class="GtkStack" id="search_stack">
+                            <property name="transition-type">crossfade</property>
+                            <child>
+                              <object class="GtkStackPage">
+                                <property name="name">start</property>
+                                <property name="child">
+                                  <object class="GtkBox">
                                   </object>
-                                </child>
-                                <child>
-                                  <object class="GtkStackPage">
-                                    <property name="name">no-results</property>
-                                    <property name="child">
-                                      <object class="AdwStatusPage" id="search_no_results">
-                                        <property name="vexpand">True</property>
-                                        <property name="icon_name">system-search-symbolic</property>
-                                        <property name="title" translatable="yes">No Results</property>
-                                        <property name="description" translatable="yes">No Vault matching your search was found.</property>
-                                      </object>
-                                    </property>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkStackPage">
+                                <property name="name">no-results</property>
+                                <property name="child">
+                                  <object class="AdwStatusPage" id="search_no_results">
+                                    <property name="vexpand">True</property>
+                                    <property name="icon_name">system-search-symbolic</property>
+                                    <property name="title" translatable="yes">No Results</property>
+                                    <property name="description" translatable="yes">No Vault matching your search was found.</property>
                                   </object>
-                                </child>
-                                <child>
-                                  <object class="GtkStackPage">
-                                    <property name="name">results</property>
-                                    <property name="child">
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkStackPage">
+                                <property name="name">results</property>
+                                <property name="child">
+                                  <object class="GtkScrolledWindow">
+                                    <child>
                                       <object class="AdwClamp">
                                         <property name="margin-top">12</property>
                                         <property name="margin-bottom">12</property>
@@ -117,29 +117,33 @@
                                           </object>
                                         </child>
                                       </object>
-                                    </property>
+                                    </child>
                                   </object>
-                                </child>
+                                </property>
                               </object>
-                            </property>
+                            </child>
                           </object>
-                        </child>
-                        <child>
-                          <object class="GtkStackPage">
-                            <property name="name">start</property>
-                            <property name="child">
-                              <object class="AdwStatusPage" id="start_page_status_page">
-                                <property name="vexpand">True</property>
-                                <property name="title" translatable="yes">Welcome to Vaults</property>
-                                <property name="description" translatable="yes">Add or Import a Vault.</property>
-                              </object>
-                            </property>
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkStackPage">
+                        <property name="name">start</property>
+                        <property name="child">
+                          <object class="AdwStatusPage" id="start_page_status_page">
+                            <property name="vexpand">True</property>
+                            <property name="title" translatable="yes">Welcome to Vaults</property>
+                            <property name="description" translatable="yes">Add or Import a Vault.</property>
                           </object>
-                        </child>
-                        <child>
-                          <object class="GtkStackPage">
-                            <property name="name">vaults</property>
-                            <property name="child">
+                        </property>
+                      </object>
+                    </child>
+                    <child>
+                      <object class="GtkStackPage">
+                        <property name="name">vaults</property>
+                        <property name="child">
+                          <object class="GtkScrolledWindow">
+                            <child>
                               <object class="AdwClamp">
                                 <property name="margin-top">12</property>
                                 <property name="margin-bottom">12</property>
@@ -156,9 +160,9 @@
                                   </object>
                                 </child>
                               </object>
-                            </property>
+                            </child>
                           </object>
-                        </child>
+                        </property>
                       </object>
                     </child>
                   </object>
