@@ -120,7 +120,7 @@
                       <object class="GtkBox">
                         <property name="halign">end</property>
                         <property name="valign">end</property>
-                        <property name="vexpand">True</property>
+                        <property name="margin-top">18</property>
                         <child>
                           <object class="GtkButton" id="general_apply_changes_button">
                             <property name="label" translatable="yes">_Apply Changes</property>
