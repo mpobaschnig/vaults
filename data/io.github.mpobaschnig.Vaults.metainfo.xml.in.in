@@ -35,7 +35,7 @@
      <kudo>HiDpiIcon</kudo>
   </kudos>
   <developer_name translatable="no">Martin Pobaschnig</developer_name>
-  <update_contact>martin.pobaschnig@protonmail.com</update_contact>
+  <update_contact>mpobaschnig@protonmail.com</update_contact>
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
