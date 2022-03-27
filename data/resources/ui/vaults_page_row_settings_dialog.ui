@@ -156,7 +156,7 @@
                       <object class="GtkBox">
                         <property name="halign">end</property>
                         <property name="valign">end</property>
-                        <property name="vexpand">True</property>
+                        <property name="margin-top">18</property>
                         <property name="spacing">6</property>
                         <child>
                           <object class="GtkButton" id="remove_button">
