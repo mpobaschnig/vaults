@@ -10,7 +10,7 @@
       Vaults lets you create encrypted vaults in which you can safely store files. It uses gocryptfs and CryFS for encryption.
     </p>
     <p>
-      Note: This version is sandboxed, to use Vaults you need to install:
+      Note: This version does not bundle gocryptfs and CryFS yet, so you need to install them on the host.
     </p>
     <ul>
       <li>gocryptfs</li>
