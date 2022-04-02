@@ -21,10 +21,7 @@ Note: This is an early release. It should work fine, however, UI might be incons
 
 ## Dependencies
 
-Since the Flatpak version is sandboxed, you need following components installed on your system:
-
-- [gocryptfs](https://github.com/rfjakob/gocryptfs)
-- [CryFS](https://github.com/cryfs/cryfs/)
+This version does not bundle [gocryptfs](https://github.com/rfjakob/gocryptfs) and [CryFS](https://github.com/cryfs/cryfs/) yet, so you need to install them on the host.
 
 ## How to build
 
