@@ -210,7 +210,9 @@ impl ApplicationWindow {
         let mut found = false;
         let map = UserConfigManager::instance().get_map();
         for (k, v) in &map {
-            if k.contains(&text.to_string()) {
+            let k_search = &k.to_lowercase();
+
+            if k_search.contains(&text.to_string().to_lowercase()) {
                 if !found {
                     self_.search_list_store.remove_all();
                     found = true;
