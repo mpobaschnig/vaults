@@ -39,6 +39,14 @@
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
+    <release version="0.2.1" date="2021-12-27">
+      <p>
+        Bug fix release:
+      </p>
+      <ul>
+        <li>Fix importing of vaults where gocryptfs and CryFS is not installed</li>
+      </ul>
+    </release>
     <release version="0.2.0" date="2021-12-26">
       <p>
         This release introduces various changes, in particular:
