@@ -39,6 +39,11 @@
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
+    <release version="0.3.0" date="2022-04-02">
+      <p>
+        This release adds search functionality and toasts, and updates the libadwaita theme.
+      </p>
+    </release>
     <release version="0.2.1" date="2021-12-27">
       <p>
         Bug fix release:
