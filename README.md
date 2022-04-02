@@ -13,9 +13,7 @@
   <img src="data/resources/screenshots/main.png" alt="Main Window"/>
 </p>
 
-It currently uses [gocryptfs](https://github.com/rfjakob/gocryptfs) and [CryFS](https://github.com/cryfs/cryfs/) for encryption.
-
-Please always keep a backup of your encrypted files.
+It currently uses [gocryptfs](https://github.com/rfjakob/gocryptfs) and [CryFS](https://github.com/cryfs/cryfs/) for encryption.  Please always keep a backup of your encrypted files.
 
 Note: This is an early release. It should work fine, however, UI might be inconsistent and is about to be polished in following releases.
 
