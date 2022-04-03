@@ -4,7 +4,7 @@
   <metadata_license>CC0</metadata_license>
   <project_license>GPL-3.0+</project_license>
   <name>Vaults</name>
-  <summary>An application for creating encrypted vaults for the GNOME desktop.</summary>
+  <summary>Keep important files safe</summary>
   <description>
     <p>
       Vaults lets you create encrypted vaults in which you can safely store files. It uses gocryptfs and CryFS for encryption.
