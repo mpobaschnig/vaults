@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: vaults\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-22 17:04+0100\n"
-"PO-Revision-Date: 2022-04-02 19:09+0100\n"
+"PO-Revision-Date: 2022-04-03 12:09+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -331,7 +331,7 @@ msgstr "Il backend non è installato."
 #: src/ui/pages/start_page.rs:69
 msgid ""
 "No backends available. Please install gocryptfs or CryFS on your system."
-msgstr"" 
+msgstr "" 
 "Nessun backend disponibile. Installa gocryptfs o CryFS sul tuo sistema."
 
 #: src/ui/import_vault_dialog.rs:269 src/ui/add_new_vault_dialog.rs:307
