@@ -12,10 +12,6 @@
     <p>
       Note: This version does not bundle gocryptfs and CryFS yet, so you need to install them on the host.
     </p>
-    <ul>
-      <li>gocryptfs</li>
-      <li>CryFS</li>
-    </ul>
   </description>
   <screenshots>
     <screenshot type="default">
