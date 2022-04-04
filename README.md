@@ -3,7 +3,7 @@
   Vaults
 </h1>
 
-<p align="center"><strong>An application for creating encrypted vaults for the GNOME desktop.</strong></p>
+<p align="center"><strong>Keep important files safe</strong></p>
 
 <p align="center">
  <a href="https://flathub.org/apps/details/io.github.mpobaschnig.Vaults"><img width="200" alt="Download on Flathub" src="https://flathub.org/assets/badges/flathub-badge-en.png"/></a>
