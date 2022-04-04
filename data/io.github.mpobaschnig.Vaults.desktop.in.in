@@ -1,6 +1,6 @@
 [Desktop Entry]
 Name=Vaults
-Comment=An application for creating encrypted vaults for the GNOME desktop.
+Comment=Keep important files safe
 Type=Application
 Exec=vaults
 Terminal=false
