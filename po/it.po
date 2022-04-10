@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: vaults\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-01-22 17:04+0100\n"
-"PO-Revision-Date: 2022-04-03 12:09+0100\n"
+"PO-Revision-Date: 2022-04-10 12:09+0100\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: Italian\n"
 "Language: it\n"
@@ -272,7 +272,7 @@ msgstr "Scorciatoie da Tastiera"
 
 #: data/resources/ui/window.ui:97
 msgid "_About Vaults"
-msgstr "_Informazioni Vaults"
+msgstr "_Informazioni su Vaults"
 
 #: src/ui/pages/vaults_page_row_settings_dialog.rs:226
 #: src/ui/pages/vaults_page_row_settings_dialog.rs:253
@@ -286,7 +286,7 @@ msgstr "Cancella"
 #: src/ui/import_vault_dialog.rs:329 src/ui/import_vault_dialog.rs:358
 #: src/ui/add_new_vault_dialog.rs:413 src/ui/add_new_vault_dialog.rs:440
 msgid "Select"
-msgstr "Selezionare"
+msgstr "Seleziona"
 
 #: src/ui/pages/vaults_page_row_settings_dialog.rs:282
 msgid "Name is not valid."
@@ -483,7 +483,7 @@ msgstr "Impossibile creare la directory dei dati crittografati: Connessione ripr
 #: src/backend/mod.rs:156
 msgid "Failed to create encrypted data directory: Connection aborted."
 msgstr ""
-"No se ha podido crear un directorio de datos cifrados: Conexión abortada."
+"Impossibile creare la directory dei dati crittografati: connessione interrotta."
 
 #: src/backend/mod.rs:159
 msgid "Failed to create encrypted data directory: Not connected."
