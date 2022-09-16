@@ -1,7 +1,7 @@
 {
     "app-id": "io.github.mpobaschnig.Vaults.Devel",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "master",
+    "runtime-version": "43beta",
     "sdk": "org.gnome.Sdk",
     "sdk-extensions": [
         "org.freedesktop.Sdk.Extension.rust-stable"
