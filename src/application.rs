@@ -139,19 +139,22 @@ impl VApplication {
     }
 
     fn show_about_dialog(&self) {
-        let dialog = gtk::AboutDialog::new();
+        let about_window = adw::AboutWindow::new();
 
-        dialog.set_program_name(Some("Vaults"));
-        dialog.set_logo_icon_name(Some(config::APP_ID));
-        dialog.set_license_type(gtk::License::Gpl30);
-        dialog.set_website(Some("https://github.com/mpobaschnig/Vaults"));
-        dialog.set_version(Some(config::VERSION));
-        dialog.set_transient_for(Some(&self.active_window().unwrap()));
-        dialog.set_modal(true);
-        dialog.set_authors(&vec!["Martin Pobaschnig".into()]);
-        dialog.set_artists(&vec!["Martin Pobaschnig".into(), "Jacson Hilgert".into()]);
+        about_window.set_application_icon(config::APP_ID);
+        about_window.set_application_name("Vaults");
+        about_window.set_artists(&["Martin Pobaschnig", "Jacson Hilgert"]);
+        about_window.set_copyright("© 2022 Martin Pobaschnig");
+        about_window.set_developer_name("Martin Pobschnig");
+        about_window.set_issue_url("https://github.com/mpobaschnig/Vaults/issues");
+        about_window.set_license_type(gtk::License::Gpl30);
+        about_window.set_modal(true);
+        about_window.set_support_url("https://github.com/mpobaschnig/Vaults/discussions");
+        about_window.set_transient_for(Some(&self.active_window().unwrap()));
+        about_window.set_version(config::VERSION);
+        about_window.set_website("https://github.com/mpobaschnig/Vaults");
 
-        dialog.show();
+        about_window.show();
     }
 
     pub fn run(&self) {
