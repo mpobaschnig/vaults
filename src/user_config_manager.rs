@@ -222,7 +222,7 @@ impl UserConfigManager {
                 self.emit_by_name::<()>("add-vault", &[]);
             }
             (_, _) => {
-                log::error!("Vault not initalised!");
+                log::error!("Vault not initialised!");
             }
         }
     }

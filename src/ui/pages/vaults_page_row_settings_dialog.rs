@@ -606,7 +606,7 @@ impl VaultsPageRowSettingsDialog {
                     .set_text(&config.mount_directory.to_string());
             }
             (_, _) => {
-                log::error!("Vault not initalised!");
+                log::error!("Vault not initialised!");
                 return;
             }
         }
