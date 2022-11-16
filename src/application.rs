@@ -25,7 +25,6 @@ use adw::subclass::prelude::*;
 use gio::ApplicationFlags;
 use glib::clone;
 use gtk::prelude::*;
-use gtk::subclass::prelude::*;
 use gtk::{gio, glib};
 use gtk_macros::action;
 use log::{debug, info};
@@ -49,7 +48,7 @@ mod imp {
     impl ObjectImpl for VApplication {}
 
     impl gio::subclass::prelude::ApplicationImpl for VApplication {
-        fn activate(&self, app: &Self::Type) {
+        fn activate(&self) {
             debug!("GtkApplication<VApplication>::activate");
 
             if let Some(ref window) = *self.window.borrow() {
@@ -57,11 +56,13 @@ mod imp {
                 return;
             }
 
+            let app = self.obj();
+
             app.setup_accels();
 
             app.set_resource_base_path(Some("/io/github/mpobaschnig/Vaults/"));
 
-            let window = ApplicationWindow::new(app);
+            let window = ApplicationWindow::new(&app);
 
             window.present();
 
@@ -70,9 +71,9 @@ mod imp {
             app.setup_gactions();
         }
 
-        fn startup(&self, app: &Self::Type) {
+        fn startup(&self) {
             debug!("GtkApplication<VApplication>::startup");
-            self.parent_startup(app);
+            self.parent_startup();
         }
     }
 
@@ -91,7 +92,6 @@ impl VApplication {
             ("application-id", &Some(config::APP_ID)),
             ("flags", &ApplicationFlags::empty()),
         ])
-        .expect("Application initialization failed...")
     }
 
     fn setup_gactions(&self) {

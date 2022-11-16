@@ -93,7 +93,7 @@ impl GlobalConfigManager {
     }
 
     fn new() -> Self {
-        let object: Self = glib::Object::new(&[]).expect("Failed to create GlobalConfigManager");
+        let object: Self = glib::Object::new(&[]);
 
         match user_config_dir().as_os_str().to_str() {
             Some(user_config_directory) => {

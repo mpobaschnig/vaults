@@ -19,10 +19,7 @@
 
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
-use gtk::{
-    self, gio, glib, glib::clone, glib::GString, prelude::*, subclass::prelude::*,
-    CompositeTemplate,
-};
+use gtk::{self, gio, glib, glib::clone, glib::GString, prelude::*, CompositeTemplate};
 use std::cell::RefCell;
 use strum::IntoEnumIterator;
 
@@ -103,8 +100,8 @@ mod imp {
     }
 
     impl ObjectImpl for VaultsPageRowSettingsDialog {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
         }
     }
 
@@ -120,8 +117,7 @@ glib::wrapper! {
 
 impl VaultsPageRowSettingsDialog {
     pub fn new(vault: Vault) -> Self {
-        let dialog: Self = glib::Object::new(&[("use-header-bar", &1)])
-            .expect("Failed to create VaultsPageRowSettingsDialog");
+        let dialog: Self = glib::Object::new(&[("use-header-bar", &1)]);
 
         let window = gio::Application::default()
             .unwrap()

@@ -26,7 +26,6 @@ use gtk::gio::VolumeMonitor;
 use gtk::glib;
 use gtk::glib::subclass::Signal;
 use gtk::prelude::*;
-use gtk::subclass::prelude::*;
 use gtk::CompositeTemplate;
 use std::cell::RefCell;
 use std::process::Command;
@@ -88,8 +87,9 @@ mod imp {
     }
 
     impl ObjectImpl for VaultsPageRow {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            let obj = self.obj();
+            self.parent_constructed();
 
             obj.setup_connect_handlers();
 
@@ -99,8 +99,8 @@ mod imp {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
                 vec![
-                    Signal::builder("remove", &[], glib::Type::UNIT.into()).build(),
-                    Signal::builder("save", &[], glib::Type::UNIT.into()).build(),
+                    Signal::builder("remove").build(),
+                    Signal::builder("save").build(),
                 ]
             });
             SIGNALS.as_ref()
@@ -131,7 +131,7 @@ impl VaultsPageRow {
     }
 
     pub fn new(vault: Vault) -> Self {
-        let object: Self = glib::Object::new(&[]).expect("Failed to create VaultsPageRow");
+        let object: Self = glib::Object::new(&[]);
 
         let self_ = &imp::VaultsPageRow::from_instance(&object);
 

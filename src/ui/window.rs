@@ -31,7 +31,6 @@ use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
 use gtk::gio::ListStore;
-use gtk::subclass::prelude::*;
 use gtk::{self, prelude::*};
 use gtk::{gio, glib, CompositeTemplate};
 use gtk_macros::action;
@@ -112,8 +111,9 @@ mod imp {
     }
 
     impl ObjectImpl for ApplicationWindow {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            let obj = self.obj();
+            self.parent_constructed();
 
             if PROFILE == "Devel" {
                 obj.style_context().add_class("devel");
@@ -137,7 +137,7 @@ glib::wrapper! {
 
 impl ApplicationWindow {
     pub fn new(app: &VApplication) -> Self {
-        let object: Self = glib::Object::new(&[]).expect("Failed to create ApplicationWindow");
+        let object: Self = glib::Object::new(&[]);
         object.set_application(Some(app));
 
         gtk::Window::set_default_icon_name(APP_ID);

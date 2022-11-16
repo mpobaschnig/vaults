@@ -115,8 +115,10 @@ mod imp {
     }
 
     impl ObjectImpl for AddNewVaultDialog {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            let obj = self.obj();
+            self.parent_constructed();
+
             obj.setup_actions();
             obj.setup_signals();
 
@@ -136,8 +138,7 @@ glib::wrapper! {
 
 impl AddNewVaultDialog {
     pub fn new() -> Self {
-        let dialog: Self = glib::Object::new(&[("use-header-bar", &1)])
-            .expect("Failed to create AddNewVaultDialog");
+        let dialog: Self = glib::Object::new(&[("use-header-bar", &1)]);
 
         let window = gio::Application::default()
             .unwrap()

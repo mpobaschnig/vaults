@@ -18,7 +18,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use adw::subclass::prelude::*;
-use gtk::{self, gio, glib, glib::clone, prelude::*, subclass::prelude::*, CompositeTemplate};
+use gtk::{self, gio, glib, glib::clone, prelude::*, CompositeTemplate};
 
 use crate::VApplication;
 
@@ -62,8 +62,9 @@ mod imp {
     }
 
     impl ObjectImpl for VaultsPageRowPasswordPromptDialog {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            let obj = self.obj();
+            self.parent_constructed();
 
             obj.setup_signals();
         }
@@ -81,8 +82,7 @@ glib::wrapper! {
 
 impl VaultsPageRowPasswordPromptDialog {
     pub fn new() -> Self {
-        let dialog: Self = glib::Object::new(&[("use-header-bar", &1)])
-            .expect("Failed to create VaultsPageRowPasswordPromptDialog");
+        let dialog: Self = glib::Object::new(&[("use-header-bar", &1)]);
 
         let window = gio::Application::default()
             .unwrap()

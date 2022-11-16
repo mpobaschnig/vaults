@@ -58,15 +58,10 @@ mod imp {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
                 vec![
-                    Signal::builder(
-                        "refresh",
-                        &[bool::static_type().into()],
-                        glib::Type::UNIT.into(),
-                    )
-                    .build(),
-                    Signal::builder("add-vault", &[], glib::Type::UNIT.into()).build(),
-                    Signal::builder("remove-vault", &[], glib::Type::UNIT.into()).build(),
-                    Signal::builder("change-vault", &[], glib::Type::UNIT.into()).build(),
+                    Signal::builder("refresh").build(),
+                    Signal::builder("add-vault").build(),
+                    Signal::builder("remove-vault").build(),
+                    Signal::builder("change-vault").build(),
                 ]
             });
 
@@ -123,7 +118,7 @@ impl UserConfigManager {
     }
 
     fn new() -> Self {
-        let object: Self = glib::Object::new(&[]).expect("Failed to create UserConfigManager");
+        let object: Self = glib::Object::new(&[]);
 
         match user_config_dir().as_os_str().to_str() {
             Some(user_config_directory) => {

@@ -65,15 +65,6 @@ mod imp {
         }
     }
 
-    impl Clone for Vault {
-        fn clone(&self) -> Vault {
-            Vault {
-                name: self.name.clone(),
-                config: self.config.clone(),
-            }
-        }
-    }
-
     impl Default for Vault {
         fn default() -> Self {
             Vault {
@@ -97,7 +88,7 @@ impl Vault {
         encrypted_data_directory: String,
         mount_directory: String,
     ) -> Vault {
-        let object: Self = glib::Object::new(&[]).expect("Failed to create UserConfigManager");
+        let object: Self = glib::Object::new(&[]);
 
         let self_ = imp::Vault::from_instance(&object);
 
@@ -112,7 +103,7 @@ impl Vault {
     }
 
     pub fn new_none() -> Vault {
-        let object: Self = glib::Object::new(&[]).expect("Failed to create UserConfigManager");
+        let object: Self = glib::Object::new(&[]);
 
         object
     }

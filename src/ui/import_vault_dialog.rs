@@ -19,10 +19,7 @@
 
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
-use gtk::{
-    self, gio, gio::File, glib, glib::clone, glib::GString, prelude::*, subclass::prelude::*,
-    CompositeTemplate,
-};
+use gtk::{self, gio, gio::File, glib, glib::clone, glib::GString, prelude::*, CompositeTemplate};
 use std::cell::RefCell;
 use strum::IntoEnumIterator;
 
@@ -109,8 +106,10 @@ mod imp {
     }
 
     impl ObjectImpl for ImportVaultDialog {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            let obj = self.obj();
+            self.parent_constructed();
+
             obj.setup_actions();
             obj.setup_signals();
 
@@ -130,8 +129,7 @@ glib::wrapper! {
 
 impl ImportVaultDialog {
     pub fn new() -> Self {
-        let dialog: Self = glib::Object::new(&[("use-header-bar", &1)])
-            .expect("Failed to create ImportVaultDialog");
+        let dialog: Self = glib::Object::new(&[("use-header-bar", &1)]);
 
         let window = gio::Application::default()
             .unwrap()

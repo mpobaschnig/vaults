@@ -82,8 +82,8 @@ mod imp {
     }
 
     impl ObjectImpl for VaultSettingsDialog {
-        fn constructed(&self, obj: &Self::Type) {
-            self.parent_constructed(obj);
+        fn constructed(&self) {
+            self.parent_constructed();
         }
     }
 
@@ -99,8 +99,7 @@ glib::wrapper! {
 
 impl PreferencesWindow {
     pub fn new() -> Self {
-        let o: Self = glib::Object::new(&[("use-header-bar", &1)])
-            .expect("Failed to create PreferencesWindow");
+        let o: Self = glib::Object::new(&[("use-header-bar", &1)]);
 
         let window = gio::Application::default()
             .unwrap()

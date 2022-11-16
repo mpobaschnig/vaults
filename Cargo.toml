@@ -15,5 +15,5 @@ strum = "0.24"
 strum_macros = "0.24"
 toml = "0.5.0"
 serde = { version = "1.0", features = ["derive"] }
-adw = { version = "0.2.0-alpha.3", package = "libadwaita", features = ["v1_2"] }
-gtk = { version = "0.4", package = "gtk4"}
+adw = { version = "0.2", package = "libadwaita", features = ["v1_2"] }
+gtk = { version = "0.5", package = "gtk4", features = ["v4_8"]}
