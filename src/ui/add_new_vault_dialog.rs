@@ -522,7 +522,17 @@ impl AddNewVaultDialog {
                 }
             }
             Err(e) => match e.kind() {
-                std::io::ErrorKind::NotFound => true,
+                std::io::ErrorKind::NotFound => {
+                    self_
+                        .encrypted_data_directory_error_label
+                        .set_visible(false);
+
+                    self_
+                        .encrypted_data_directory_entry
+                        .remove_css_class("error");
+
+                    true
+                }
                 _ => {
                     log::debug!("Encrypted data directory is not valid: {}", e);
 
@@ -570,7 +580,13 @@ impl AddNewVaultDialog {
                 }
             }
             Err(e) => match e.kind() {
-                std::io::ErrorKind::NotFound => true,
+                std::io::ErrorKind::NotFound => {
+                    self_.mount_directory_error_label.set_visible(false);
+
+                    self_.mount_directory_entry.remove_css_class("error");
+
+                    true
+                }
                 _ => {
                     log::debug!("Mount directory is not valid: {}", e);
 
