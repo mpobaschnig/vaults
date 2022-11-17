@@ -58,7 +58,9 @@ mod imp {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
                 vec![
-                    Signal::builder("refresh").build(),
+                    Signal::builder("refresh")
+                        .param_types([bool::static_type()])
+                        .build(),
                     Signal::builder("add-vault").build(),
                     Signal::builder("remove-vault").build(),
                     Signal::builder("change-vault").build(),
