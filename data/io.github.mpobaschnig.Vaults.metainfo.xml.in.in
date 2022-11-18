@@ -35,6 +35,16 @@
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
+    <release version="0.4.0" date="2022-11-18">
+      <p>
+        This is a smaller release and includes:
+      </p>
+      <ul>
+        <li>Support for manually mounting/unmounting Vaults in hidden paths</li>
+        <li>Updated libadwaita about window</li>
+        <li>Updated dependencies, GNOME 43 runtime</li>
+      </ul>
+    </release>
     <release version="0.3.0" date="2022-04-02">
       <p>
         This release adds search functionality and toasts, and updates the libadwaita theme.
