@@ -92,9 +92,8 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 }
 
 pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
-    let child = Command::new("fusermount3")
+    let child = Command::new("umount")
         .stdout(Stdio::piped())
-        .arg("-u")
         .arg(&vault_config.mount_directory)
         .spawn()?;
 
