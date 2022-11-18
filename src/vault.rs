@@ -151,6 +151,10 @@ impl Vault {
 
         let config_mount_directory_file_name = config_mount_directory_path.file_name();
 
+        if self.is_mount_hidden() {
+            return self.is_mounted_all();
+        }
+
         match config_mount_directory_file_name {
             Some(config_mount_directory_file_name) => {
                 match config_mount_directory_file_name.to_str() {
@@ -174,6 +178,37 @@ impl Vault {
         }
 
         false
+    }
+
+    pub fn is_mount_hidden(&self) -> bool {
+        let vault_config = self.get_config().unwrap();
+
+        let components: Vec<_> = std::path::Path::new(&vault_config.mount_directory)
+            .components()
+            .map(|c| c.as_os_str().to_str())
+            .collect();
+
+        components
+            .iter()
+            .flatten()
+            .any(|c| c.starts_with(".") && !c.eq(&"..".to_string()) && c.len() > 1)
+    }
+
+    pub fn is_mounted_all(&self) -> bool {
+        use proc_mounts::*;
+
+        let mount_list = MountList::new();
+        match mount_list {
+            Ok(mount_list) => MountList::get_mount_by_dest(
+                &mount_list,
+                &self.get_config().unwrap().mount_directory,
+            )
+            .is_some(),
+            Err(e) => {
+                log::error!("Could not check if there exists any mounted vaults: {}", e);
+                false
+            }
+        }
     }
 
     pub fn is_backend_available(&self) -> bool {
