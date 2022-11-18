@@ -220,3 +220,68 @@ impl Vault {
         false
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn check_hidden_paths() {
+        let vault = Vault::new(
+            "".to_string(),
+            Backend::Gocryptfs,
+            "".to_string(),
+            "".to_string(),
+        );
+        assert_eq!(vault.is_mount_hidden(), false);
+
+        vault.set_config(VaultConfig {
+            backend: Backend::Gocryptfs,
+            encrypted_data_directory: "".to_string(),
+            mount_directory: ".".to_string(),
+        });
+        assert_eq!(vault.is_mount_hidden(), false);
+
+        vault.set_config(VaultConfig {
+            backend: Backend::Gocryptfs,
+            encrypted_data_directory: "".to_string(),
+            mount_directory: "..".to_string(),
+        });
+        assert_eq!(vault.is_mount_hidden(), false);
+
+        vault.set_config(VaultConfig {
+            backend: Backend::Gocryptfs,
+            encrypted_data_directory: "".to_string(),
+            mount_directory: "./".to_string(),
+        });
+        assert_eq!(vault.is_mount_hidden(), false);
+
+        vault.set_config(VaultConfig {
+            backend: Backend::Gocryptfs,
+            encrypted_data_directory: "".to_string(),
+            mount_directory: "./Hidden".to_string(),
+        });
+        assert_eq!(vault.is_mount_hidden(), false);
+
+        vault.set_config(VaultConfig {
+            backend: Backend::Gocryptfs,
+            encrypted_data_directory: "".to_string(),
+            mount_directory: "tets/.Test".to_string(),
+        });
+        assert_eq!(vault.is_mount_hidden(), true);
+
+        vault.set_config(VaultConfig {
+            backend: Backend::Gocryptfs,
+            encrypted_data_directory: "".to_string(),
+            mount_directory: "./Test/.Test".to_string(),
+        });
+        assert_eq!(vault.is_mount_hidden(), true);
+
+        vault.set_config(VaultConfig {
+            backend: Backend::Gocryptfs,
+            encrypted_data_directory: "".to_string(),
+            mount_directory: "../.Test".to_string(),
+        });
+        assert_eq!(vault.is_mount_hidden(), true);
+    }
+}
