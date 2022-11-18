@@ -29,6 +29,7 @@ mod ui;
 
 #[macro_use]
 extern crate quick_error;
+extern crate proc_mounts;
 extern crate serde;
 extern crate toml;
 
