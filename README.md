@@ -13,6 +13,7 @@
   <img src="data/resources/screenshots/main.png" alt="Main Window"/>
 </p>
 
+Vaults lets you create encrypted vaults in which you can safely store files.
 It currently uses [gocryptfs](https://github.com/rfjakob/gocryptfs) and [CryFS](https://github.com/cryfs/cryfs/) for encryption.  Please always keep a backup of your encrypted files.
 
 ## Dependencies
