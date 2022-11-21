@@ -16,21 +16,19 @@ data/resources/ui/vaults_page_row_settings_dialog.ui
 data/resources/ui/window.ui
 
 # src/
-src/ui/pages/mod.rs
-src/ui/pages/vaults_page_row_settings_dialog.rs
-src/ui/pages/vaults_page.rs
-src/ui/pages/vaults_page_row_password_prompt_dialog.rs
-src/ui/pages/vaults_page_row.rs
-src/ui/pages/start_page.rs
-src/ui/mod.rs
-src/ui/import_vault_dialog.rs
+src/application.rs
+src/backend/cryfs.rs
+src/backend/gocryptfs.rs
+src/backend/mod.rs
+src/config.rs
+src/main.rs
+src/mod.rs
 src/ui/add_new_vault_dialog.rs
+src/ui/import_vault_dialog.rs
+src/ui/mod.rs
+src/ui/pages/mod.rs
+src/ui/pages/vaults_page_row.rs
+src/ui/pages/vaults_page_row_password_prompt_dialog.rs
+src/ui/pages/vaults_page_row_settings_dialog.rs
 src/ui/window.rs
 src/user_config_manager.rs
-src/mod.rs
-src/main.rs
-src/config.rs
-src/backend/cryfs.rs
-src/backend/mod.rs
-src/backend/gocryptfs.rs
-src/application.rs
