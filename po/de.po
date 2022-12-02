@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Vaults\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2022-11-22 12:52+0100\n"
-"PO-Revision-Date: 2022-11-25 13:12+0100\n"
+"PO-Revision-Date: 2022-12-02 15:32+0100\n"
 "Last-Translator: \n"
 "Language-Team: none\n"
 "Language: de\n"
@@ -242,6 +242,10 @@ msgstr "Tresor entsperren"
 #: data/resources/ui/vaults_page_row_password_prompt_dialog.ui:15
 msgid "Enter the password to unlock the Vault."
 msgstr "Geben Sie das Passwort ein, um den Tresor zu entsperren."
+
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:11
+msgid "Vault Settings"
+msgstr "Tresor-Einstellungen"
 
 #: data/resources/ui/vaults_page_row_settings_dialog.ui:163
 msgid "_Remove"
@@ -484,6 +488,33 @@ msgstr ""
 #: src/ui/add_new_vault_dialog.rs:331 src/ui/import_vault_dialog.rs:302
 msgid "Name is already taken."
 msgstr "Der Name ist bereits vergeben."
+
+#: src/ui/add_new_vault_dialog.rs:359
+msgid ""
+"CryFS works well together with cloud services like Dropbox, iCloud, OneDrive "
+"and others. It does not expose directory structure, number of files or file "
+"sizes in the encrypted data directory. While being considered safe, there is "
+"no independent audit of CryFS."
+msgstr ""
+"CryFS funktioniert gut mit Cloud-Diensten wie Dropbox, iCloud, OneDrive und "
+"anderen. Die Verzeichnisstruktur, die Anzahl der Dateien oder die "
+"Dateigrößen im verschlüsselten Datenverzeichnis werden nicht offengelegt. Es "
+"gilt zwar als sicher, es gibt jedoch kein unabhängiges Audit von CryFS."
+
+#: src/ui/add_new_vault_dialog.rs:362
+msgid ""
+"Fast and robust, gocryptfs works well in general cases where third-parties "
+"do not always have access to the encrypted data directory (e.g. file hosting "
+"services). It exposes directory structure, number of files and file sizes. A "
+"security audit in 2017 verified gocryptfs is safe against third-parties that "
+"can read or write to encrypted data."
+msgstr ""
+"Schnell und robust. Gocryptfs eignet sich gut für allgemeine Fälle, in denen "
+"Dritte nicht immer Zugriff auf das verschlüsselte Datenverzeichnis haben (z. "
+"B. Filehosting-Dienste). Es legt die Verzeichnisstruktur, die Anzahl der "
+"Dateien und die Dateigrößen offen. 2017 hat ein Sicherheitsaudit bestätigt, "
+"dass gocryptfs sicher gegen Dritte ist, die die verschlüsselten Daten lesen "
+"oder schreiben können."
 
 #: src/ui/add_new_vault_dialog.rs:407 src/ui/add_new_vault_dialog.rs:434
 #: src/ui/import_vault_dialog.rs:320 src/ui/import_vault_dialog.rs:349
