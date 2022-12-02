@@ -356,10 +356,10 @@ impl AddNewVaultDialog {
 
         match backend {
             backend::Backend::Cryfs => {
-                self_.info_label.set_text("CryFS works well together with cloud services like Dropbox, iCloud, OneDrive and others. It does not expose directory structure, number of files or file sizes in the encrypted data directory. While being considered safe, there is no independent audit of CryFS.")
+                self_.info_label.set_text(&gettext("CryFS works well together with cloud services like Dropbox, iCloud, OneDrive and others. It does not expose directory structure, number of files or file sizes in the encrypted data directory. While being considered safe, there is no independent audit of CryFS."))
             },
             backend::Backend::Gocryptfs => {
-                self_.info_label.set_text("Fast and robust, gocryptfs works well in general cases where third-parties do not always have access to the encrypted data directory (e.g. file hosting services). It exposes directory structure, number of files and file sizes. A security audit in 2017 verified gocryptfs is safe against third-parties that can read or write to encrypted data.");
+                self_.info_label.set_text(&gettext("Fast and robust, gocryptfs works well in general cases where third-parties do not always have access to the encrypted data directory (e.g. file hosting services). It exposes directory structure, number of files and file sizes. A security audit in 2017 verified gocryptfs is safe against third-parties that can read or write to encrypted data."));
             }
         }
 
