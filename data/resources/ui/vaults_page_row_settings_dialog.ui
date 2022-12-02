@@ -8,7 +8,7 @@
     <property name="use-header-bar">1</property>
     <property name="modal">1</property>
     <property name="destroy-with-parent">1</property>
-    <property name="title">Vault Settings</property>
+    <property name="title" translatable="yes">Vault Settings</property>
     <child>
       <object class="AdwToastOverlay" id="toast_overlay">
         <child>
