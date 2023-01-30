@@ -10,7 +10,7 @@ jobs:
       image: bilelmoussaoui/flatpak-github-actions:gnome-43
       options: --privileged
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v5
       with:
         bundle: vaults.flatpak
