@@ -11,7 +11,7 @@ jobs:
       options: --privileged
     steps:
     - uses: actions/checkout@v2
-    - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v3
+    - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v5
       with:
         bundle: vaults.flatpak
         manifest-path: io.github.mpobaschnig.Vaults.Devel.json
