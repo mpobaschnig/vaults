@@ -1,6 +1,7 @@
+name: flatpak
+
 on: [push]
 
-name: CI
 jobs:
   flatpak:
     name: "Flatpak"
