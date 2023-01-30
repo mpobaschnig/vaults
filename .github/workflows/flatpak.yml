@@ -5,7 +5,7 @@ on: [push]
 jobs:
   flatpak:
     name: "Flatpak"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     container:
       image: bilelmoussaoui/flatpak-github-actions:gnome-40
       options: --privileged
