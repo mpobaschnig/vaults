@@ -1,0 +1,582 @@
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the vaults package.
+#
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:377
+# Heimen Stoffels <vistausss@fastmail.com>, 2023.
+msgid ""
+msgstr ""
+"Project-Id-Version: vaults\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-02-10 17:42+0100\n"
+"PO-Revision-Date: 2023-02-21 11:59+0100\n"
+"Last-Translator: Heimen Stoffels <vistausss@fastmail.com>\n"
+"Language-Team: Dutch\n"
+"Language: nl\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Lokalize 22.12.2\n"
+
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:3
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:6
+msgid "Vaults"
+msgstr "Kluizen"
+
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:4
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:7
+msgid "Keep important files safe"
+msgstr "Beveilig uw belangrijkste bestanden"
+
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:9
+msgid "Gnome;GTK;"
+msgstr "Gnome;GTK;"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:6
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:7
+msgid "Default window width"
+msgstr "Standaard vensterbreedte"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:11
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:12
+msgid "Default window height"
+msgstr "Standaard vensterhoogte"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:16
+msgid "Default window maximized behaviour"
+msgstr "Standaard maximalisatiegedrag"
+
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:9
+msgid ""
+"Vaults lets you create encrypted vaults in which you can safely store files. "
+"It uses gocryptfs and CryFS for encryption."
+msgstr ""
+"Met Kluizen kunt u uw belangrijkste bestanden veilig opslaan in versleutelde"
+" kluizen. Hiervoor wordt gebruikgemaakt van gocryptfs en CryFS."
+
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:12
+msgid ""
+"Note: This version does not bundle gocryptfs and CryFS yet, so you need to "
+"install them on the host."
+msgstr ""
+"Let op: deze versie wordt niet geleverd met gocryptfs en CryFS yet, dus u"
+" dient die pakketten zelf te installeren."
+
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:19
+msgid "Welcome Window"
+msgstr "Welkomstvenster"
+
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:23
+msgid "Main Window"
+msgstr "Hoofdvenster"
+
+#: data/resources/ui/add_new_vault_dialog.ui:15
+msgid "New Vault"
+msgstr "Nieuwe kluis"
+
+#: data/resources/ui/add_new_vault_dialog.ui:21
+#: data/resources/ui/import_vault_dialog.ui:21
+msgid "_Cancel"
+msgstr "_Annuleren"
+
+#: data/resources/ui/add_new_vault_dialog.ui:27
+#: data/resources/ui/import_vault_dialog.ui:27
+msgid "_Previous"
+msgstr "_Vorige"
+
+#: data/resources/ui/add_new_vault_dialog.ui:34
+#: data/resources/ui/import_vault_dialog.ui:34
+msgid "_Next"
+msgstr "Volge_nde"
+
+#: data/resources/ui/add_new_vault_dialog.ui:45
+msgid "_Add"
+msgstr "_Toevoegen"
+
+#: data/resources/ui/add_new_vault_dialog.ui:85
+#: data/resources/ui/import_vault_dialog.ui:182
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:35
+msgid "_Name"
+msgstr "_Naam"
+
+#: data/resources/ui/add_new_vault_dialog.ui:108
+#: data/resources/ui/import_vault_dialog.ui:205
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:58
+msgid "_Backend"
+msgstr "_Backend"
+
+#: data/resources/ui/add_new_vault_dialog.ui:158
+msgid "_Password"
+msgstr "_Wachtwoord"
+
+#: data/resources/ui/add_new_vault_dialog.ui:197
+#: data/resources/ui/import_vault_dialog.ui:85
+#: data/resources/ui/preferences.ui:46
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:82
+msgid "_Encrypted Data Directory"
+msgstr "V_ersleutelde gegevensmap"
+
+#: data/resources/ui/add_new_vault_dialog.ui:215
+#: data/resources/ui/import_vault_dialog.ui:103
+#: data/resources/ui/preferences.ui:64
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:100
+#: src/ui/add_new_vault_dialog.rs:403 src/ui/import_vault_dialog.rs:316
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:224
+msgid "Choose Encrypted Data Directory"
+msgstr "Kies een versleutelde gegevensmap"
+
+#: data/resources/ui/add_new_vault_dialog.ui:235
+#: data/resources/ui/import_vault_dialog.ui:129
+#: data/resources/ui/preferences.ui:84
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:120
+msgid "_Mount Directory"
+msgstr "Aankoppel_map"
+
+#: data/resources/ui/add_new_vault_dialog.ui:253
+#: data/resources/ui/import_vault_dialog.ui:147
+#: data/resources/ui/preferences.ui:102
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:138
+#: src/ui/add_new_vault_dialog.rs:430 src/ui/import_vault_dialog.rs:345
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:251
+msgid "Choose Mount Directory"
+msgstr "Kies een aankoppelmap"
+
+#: data/resources/ui/import_vault_dialog.ui:15
+msgid "Import Vault"
+msgstr "Kluis importeren"
+
+#: data/resources/ui/import_vault_dialog.ui:45
+msgid "_Import"
+msgstr "_Importeren"
+
+#: data/resources/ui/preferences.ui:11
+msgid "Preferences"
+msgstr "Voorkeuren"
+
+#: data/resources/ui/preferences.ui:35
+msgid "_Default Paths"
+msgstr "Stan_daardlocaties"
+
+#: data/resources/ui/preferences.ui:126
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:173
+msgid "_Apply Changes"
+msgstr "Wijzigingen toep_assen"
+
+#: data/resources/ui/shortcuts.ui:11
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Algemeen"
+
+#: data/resources/ui/shortcuts.ui:14
+msgctxt "preferences"
+msgid "Show Preferences"
+msgstr "Voorkeuren openen"
+
+#: data/resources/ui/shortcuts.ui:20
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Sneltoetsen tonen"
+
+#: data/resources/ui/shortcuts.ui:26
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Afsluiten"
+
+#: data/resources/ui/shortcuts.ui:34
+msgctxt "shortcut window"
+msgid "Vaults"
+msgstr "Kluizen"
+
+#: data/resources/ui/shortcuts.ui:37
+msgctxt "vaults"
+msgid "Add New Vault"
+msgstr "Nieuwe kluis"
+
+#: data/resources/ui/shortcuts.ui:43
+msgctxt "vaults"
+msgid "Import Vault"
+msgstr "Kluis importeren"
+
+#: data/resources/ui/shortcuts.ui:49
+msgctxt "vaults"
+msgid "Search"
+msgstr "Zoeken"
+
+#: data/resources/ui/shortcuts.ui:55
+msgctxt "vaults"
+msgid "Refresh"
+msgstr "Herladen"
+
+#: data/resources/ui/start_page.ui:15 data/resources/ui/window.ui:135
+msgid "Welcome to Vaults"
+msgstr "Welkom in Kluizen"
+
+#: data/resources/ui/start_page.ui:16 data/resources/ui/window.ui:136
+msgid "Add or Import a Vault."
+msgstr "Voeg een kluis toe of importeer er een."
+
+#: data/resources/ui/vaults_page_row.ui:10
+msgid "Vault X"
+msgstr "Kluis X"
+
+#: data/resources/ui/vaults_page_row.ui:15
+msgid "Open Folder"
+msgstr "Map openen"
+
+#: data/resources/ui/vaults_page_row.ui:22 src/ui/pages/vaults_page_row.rs:250
+#: src/ui/pages/vaults_page_row.rs:364 src/ui/pages/vaults_page_row.rs:511
+msgid "Open Vault"
+msgstr "Kluis openen"
+
+#: data/resources/ui/vaults_page_row.ui:29
+msgid "Open Settings"
+msgstr "Voorkeuren openen"
+
+#: data/resources/ui/vaults_page_row_password_prompt_dialog.ui:14
+msgid "Unlock Vault"
+msgstr "Kluis ontgrendelen"
+
+#: data/resources/ui/vaults_page_row_password_prompt_dialog.ui:15
+msgid "Enter the password to unlock the Vault."
+msgstr "Voer het wachtwoord in om de kluis te ontgrendelen."
+
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:11
+msgid "Vault Settings"
+msgstr "Kluisvoorkeuren"
+
+#: data/resources/ui/vaults_page_row_settings_dialog.ui:163
+msgid "_Remove"
+msgstr "Ve_rwijderen"
+
+#: data/resources/ui/window.ui:21
+msgid "Add or Import New Vault"
+msgstr "Voeg een kluis toe of importeer er een"
+
+#: data/resources/ui/window.ui:57
+msgid "Toggle Search"
+msgstr "Zoekbalk tonen/verbergen"
+
+#: data/resources/ui/window.ui:92
+msgid "No Results"
+msgstr "Geen zoekresultaten"
+
+#: data/resources/ui/window.ui:93
+msgid "No Vault matching your search was found."
+msgstr "Er is geen kluis die overeenkomt met uw zoekopdracht."
+
+#: data/resources/ui/window.ui:180
+msgid "_New Vault"
+msgstr "_Nieuwe kluis"
+
+#: data/resources/ui/window.ui:184
+msgid "_Import Vault"
+msgstr "Kluis _importeren"
+
+#: data/resources/ui/window.ui:192
+msgid "_Refresh"
+msgstr "He_rladen"
+
+#: data/resources/ui/window.ui:198
+msgid "_Preferences"
+msgstr "_Voorkeuren"
+
+#: data/resources/ui/window.ui:202
+msgid "_Keyboard Shortcuts"
+msgstr "_Sneltoetsen"
+
+#: data/resources/ui/window.ui:206
+msgid "_About Vaults"
+msgstr "_Over Kluizen"
+
+#: src/backend/cryfs.rs:128 src/backend/cryfs.rs:145
+#: src/backend/gocryptfs.rs:149
+msgid "An unknown error occurred."
+msgstr "Er is een onbekende fout opgetreden."
+
+#: src/backend/cryfs.rs:129
+msgid "Invalid arguments were given."
+msgstr "Er zijn ongeldige opties opgegeven."
+
+#: src/backend/cryfs.rs:130 src/backend/gocryptfs.rs:135
+msgid "The password is wrong."
+msgstr "Het wachtwoord is onjuist."
+
+#: src/backend/cryfs.rs:131 src/backend/gocryptfs.rs:138
+msgid "The password is empty."
+msgstr "Het wachtwoord is blanco."
+
+#: src/backend/cryfs.rs:132
+msgid ""
+"The format of the encrypted data directory is too new for this CryFS "
+"version. Please update CryFS."
+msgstr ""
+"Het formaat van de versleutelde gegevensmap is te nieuw voor deze versie van"
+" CryFS. Werk CryFS bij."
+
+#: src/backend/cryfs.rs:133
+msgid ""
+"The format of the encrypted data directory is too old for this CryFS version."
+msgstr ""
+"Het formaat van de versleutelde gegevensmap is te oud voor deze versie van"
+" CryFS."
+
+#: src/backend/cryfs.rs:134
+msgid "The vault uses a different cipher than the default of CryFS."
+msgstr "De kluis maakt gebruik van een andere vercijfering dan die van CryFS."
+
+#: src/backend/cryfs.rs:135
+msgid "The encrypted data directory does not exist or is inaccessible."
+msgstr "De versleutelde gegevensmap bestaat niet of is ontoegankelijk."
+
+#: src/backend/cryfs.rs:136
+msgid "The mount directory does not exist or is inaccessible."
+msgstr "De aankoppelmap bestaat niet of is ontoegankelijk."
+
+#: src/backend/cryfs.rs:137
+msgid "The mount directory is inside the encrypted data directory."
+msgstr "De aankoppelmap bevindt zich in de versleutelde gegevensmap."
+
+#: src/backend/cryfs.rs:138
+msgid "The encrypted data directory is invalid."
+msgstr "De versleutelde gegevensmap is ongeldig."
+
+#: src/backend/cryfs.rs:139
+msgid ""
+"The encrypted data id in the configuration file is different to the last "
+"time this vault was opened. This could mean someone replaced files in the "
+"encrypted data directory with different ones."
+msgstr ""
+"De versleutelde gegevens-id in het configuratiebestand verschilt met het"
+" tijdstip waarop de kluis voor het laatst werd geopend. Dit kan er op wijzen"
+" dat iemand de bestanden vervangen heeft."
+
+#: src/backend/cryfs.rs:140
+msgid ""
+"The encryption key for your encrypted files is different to the last time "
+"this vault was opened. This could mean someone replaced files in the "
+"encrypted data directory with different ones."
+msgstr ""
+"De toegangssleutel verschilt met het tijdstip waarop de kluis voor het laatst"
+" werd geopend. Dit kan er op wijzen dat iemand de bestanden vervangen heeft."
+
+#: src/backend/cryfs.rs:141
+msgid "Vaults' configuration and the encrypted data configuration mismatches."
+msgstr ""
+"De kluisvoorkeuren en versleutelde gegevensconfiguratie komen niet overeen."
+
+#: src/backend/cryfs.rs:142
+msgid ""
+"The encrypted data directory is in single-user mode and can only be used "
+"from the user that created it."
+msgstr ""
+"De versleutelde gegevensmap kan alleen worden geopend door de aanmaker ervan."
+
+#: src/backend/cryfs.rs:143
+msgid ""
+"CryFS detected an integrity violation. The encrypted data directory will be "
+"accessible again after the integrity state file has been deleted."
+msgstr ""
+"CryFS heeft een integriteitsprobleem ontdekt. De versleutelde gegevensmap is"
+" pas weer beschikbaar als het integriteitsstatusbestand verwijderd wordt."
+
+#: src/backend/cryfs.rs:144
+msgid "An integrity violation was detected. Vault will be unmounted."
+msgstr "Er is een integriteitsprobleem ontdekt - de kluis wordt afgekoppeld."
+
+#: src/backend/gocryptfs.rs:129
+msgid "The encrypted data directory is not empty."
+msgstr "De versleutelde gegevensmap is niet leeg."
+
+#: src/backend/gocryptfs.rs:132
+msgid "The mount directory is not empty."
+msgstr "De aankoppelmap is niet leeg."
+
+#: src/backend/gocryptfs.rs:141
+msgid "Vaults cannot read configuration file."
+msgstr "Het configuratiebestand kan niet worden uitgelezen."
+
+#: src/backend/gocryptfs.rs:144
+msgid "Vaults cannot write configuration file."
+msgstr "Het configuratiebestand kan niet worden weggeschreven."
+
+#: src/backend/gocryptfs.rs:147
+msgid "The file system check reported an error."
+msgstr "Er is een fout opgetreden tijdens de bestandssysteemcontrole."
+
+#: src/backend/mod.rs:147
+msgid "Failed to create encrypted data directory: Permission denied."
+msgstr ""
+"De versleutelde gegevensmap kan niet worden aangemaakt: toegang geweigerd."
+
+#: src/backend/mod.rs:150
+msgid "Failed to create encrypted data directory: Connection refused."
+msgstr ""
+"De versleutelde gegevensmap kan niet worden aangemaakt: verbinding geweigerd."
+
+#: src/backend/mod.rs:153
+msgid "Failed to create encrypted data directory: Connection reset."
+msgstr ""
+"De versleutelde gegevensmap kan niet worden aangemaakt: verbinding hersteld."
+
+#: src/backend/mod.rs:156
+msgid "Failed to create encrypted data directory: Connection aborted."
+msgstr ""
+"De versleutelde gegevensmap kan niet worden aangemaakt: verbinding afgebroken."
+
+#: src/backend/mod.rs:159
+msgid "Failed to create encrypted data directory: Not connected."
+msgstr ""
+"De versleutelde gegevensmap kan niet worden aangemaakt: niet verbonden."
+
+#: src/backend/mod.rs:162
+msgid "Failed to create encrypted data directory."
+msgstr "De versleutelde gegevensmap kan niet worden aangemaakt."
+
+#: src/backend/mod.rs:177
+msgid "Failed to create mount directory: Permission denied."
+msgstr "De aankoppelmap kan niet worden aangemaakt: toegang geweigerd."
+
+#: src/backend/mod.rs:180
+msgid "Failed to create mount directory: Connection refused."
+msgstr "De aankoppelmap kan niet worden aangemaakt: verbinding geweigerd."
+
+#: src/backend/mod.rs:183
+msgid "Failed to create mount directory: Connection reset."
+msgstr "De aankoppelmap kan niet worden aangemaakt: verbinding hersteld."
+
+#: src/backend/mod.rs:186
+msgid "Failed to create mount directory: Connection aborted."
+msgstr "De aankoppelmap kan niet worden aangemaakt: verbinding afgebroken."
+
+#: src/backend/mod.rs:189
+msgid "Failed to create mount directory: Not connected."
+msgstr "De aankoppelmap kan niet worden aangemaakt: niet verbonden."
+
+#: src/backend/mod.rs:192
+msgid "Failed to create mount directory."
+msgstr "De aankoppelmap kan niet worden aangemaakt."
+
+#: src/ui/add_new_vault_dialog.rs:302 src/ui/import_vault_dialog.rs:261
+msgid "No backend installed. Please install gocryptfs or CryFS."
+msgstr "Er is geen backend geïnstalleerd. Installeer gocryptfs of CryFS."
+
+#: src/ui/add_new_vault_dialog.rs:331 src/ui/import_vault_dialog.rs:302
+msgid "Name is already taken."
+msgstr "Deze naam is al in gebruik."
+
+#: src/ui/add_new_vault_dialog.rs:359
+msgid ""
+"CryFS works well together with cloud services like Dropbox, iCloud, OneDrive "
+"and others. It does not expose directory structure, number of files or file "
+"sizes in the encrypted data directory. While being considered safe, there is "
+"no independent audit of CryFS."
+msgstr ""
+"CryFS werkt goed samen met clouddiensten als Dropbox, iCloud, OneDrive, etc."
+" De mappenstructuur, het aantal bestanden en de bestandsgroottes worden niet"
+" gedeeld. CryFS wordt beschouwd als veilig, maar er is geen"
+" veiligheidsonderzoek gedaan."
+
+#: src/ui/add_new_vault_dialog.rs:362
+msgid ""
+"Fast and robust, gocryptfs works well in general cases where third-parties "
+"do not always have access to the encrypted data directory (e.g. file hosting "
+"services). It exposes directory structure, number of files and file sizes. A "
+"security audit in 2017 verified gocryptfs is safe against third-parties that "
+"can read or write to encrypted data."
+msgstr ""
+"gocryptfs is snel en robuust, en werkt goed voor algemene hosting (bijv."
+" bestandshostingdiensten). De mappenstructuur, het aantal bestanden en de"
+" bestandsgroottes worden gedeeld. In 2017 is uit een veiligheidsonderzoek"
+" gebleken dat gocryptfs veilig is en geen toegang biedt tot externe partijen"
+" die u geen toestemming hebt gegeven."
+
+#: src/ui/add_new_vault_dialog.rs:407 src/ui/add_new_vault_dialog.rs:434
+#: src/ui/import_vault_dialog.rs:320 src/ui/import_vault_dialog.rs:349
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:228
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:255
+msgid "Cancel"
+msgstr "Annuleren"
+
+#: src/ui/add_new_vault_dialog.rs:408 src/ui/add_new_vault_dialog.rs:435
+#: src/ui/import_vault_dialog.rs:321 src/ui/import_vault_dialog.rs:350
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:229
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:256
+msgid "Select"
+msgstr "Kiezen"
+
+#: src/ui/add_new_vault_dialog.rs:477 src/ui/import_vault_dialog.rs:397
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:413
+msgid "Directories must not be equal."
+msgstr "De mappen dienen gelijk te zijn."
+
+#: src/ui/add_new_vault_dialog.rs:516
+msgid "Encrypted data directory is not empty."
+msgstr "De versleutelde gegevensmap is niet leeg."
+
+#: src/ui/add_new_vault_dialog.rs:541 src/ui/import_vault_dialog.rs:453
+msgid "Encrypted data directory is not valid."
+msgstr "De versleutelde gegevensmap is ongeldig."
+
+#: src/ui/add_new_vault_dialog.rs:574 src/ui/import_vault_dialog.rs:485
+msgid "Mount directory is not empty."
+msgstr "De aankoppelmap is niet leeg."
+
+#: src/ui/add_new_vault_dialog.rs:595 src/ui/import_vault_dialog.rs:496
+msgid "Mount directory is not valid."
+msgstr "De aankoppelmap is ongeldig."
+
+#: src/ui/import_vault_dialog.rs:430
+msgid "Encrypted data directory is empty."
+msgstr "De versleutelde gegevensmap is leeg."
+
+#: src/ui/import_vault_dialog.rs:573
+msgid "Found gocryptfs configuration file."
+msgstr "Het gocryptfs-configuratiebestand is aangetroffen."
+
+#: src/ui/import_vault_dialog.rs:587
+msgid "Found CryFS configuration file."
+msgstr "Het CryFS-configuratiebestand is aangetroffen."
+
+#: src/ui/import_vault_dialog.rs:611
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:488
+msgid "No configuration file found."
+msgstr "Er is geen configuratiebestand aangetroffen."
+
+#: src/ui/pages/vaults_page_row.rs:259 src/ui/pages/vaults_page_row.rs:355
+#: src/ui/pages/vaults_page_row.rs:497
+msgid "Close Vault"
+msgstr "Kluis sluiten"
+
+#: src/ui/pages/vaults_page_row.rs:522
+msgid "Backend is not installed."
+msgstr "Er is geen backend geïnstalleerd."
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:218
+msgid "Saved settings successfully!"
+msgstr "De voorkeuren zijn opgeslagen!"
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:284
+msgid "Name is not valid."
+msgstr "Deze naam is ongeldig."
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:310
+msgid "Name already exists."
+msgstr "Deze naam is al in gebruik."
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:348
+msgid "Directory is empty."
+msgstr "De map is leeg."
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:364
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:394
+msgid "Directory is not valid."
+msgstr "De map is ongeldig."
+
+#: src/ui/pages/vaults_page_row_settings_dialog.rs:384
+msgid "Directory is not empty."
+msgstr "De map is niet leeg."
+
+#: src/ui/window.rs:264
+msgid ""
+"No backends available. Please install gocryptfs or CryFS on your system."
+msgstr "Er is geen backend geïnstalleerd Installeer gocryptfs of CryFS."
