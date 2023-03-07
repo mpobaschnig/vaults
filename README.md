@@ -24,4 +24,6 @@ Open GNOME Builder (or Visual Studio Code with the Flatpak extension), clone the
 
 # Translations
 
-Vaults is translated using [Transifex](https://www.transifex.com/mpobaschnig/vaults/).
+From version 0.5.0 on, Vaults is also on [Transifex](https://www.transifex.com/mpobaschnig/vaults/).
+I'm using this for the first time, so if there's anything left to do on my side to fully use Transifex, please open an issue.
+Translations via Github PRs will still be accepted, if you prefer to do so.
