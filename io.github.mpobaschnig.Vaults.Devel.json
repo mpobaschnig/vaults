@@ -16,7 +16,8 @@
         "--filesystem=host",
         "--env=RUST_LOG=vaults=debug",
         "--env=G_MESSAGES_DEBUG=none",
-        "--filesystem=xdg-run/gvfsd"
+        "--filesystem=xdg-run/gvfsd",
+        "--talk-name=org.gtk.vfs.*"
     ],
     "cleanup": [
         "/include",
