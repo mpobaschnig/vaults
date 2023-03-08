@@ -4,7 +4,8 @@
     "runtime-version": "43",
     "sdk": "org.gnome.Sdk",
     "sdk-extensions": [
-        "org.freedesktop.Sdk.Extension.rust-stable"
+        "org.freedesktop.Sdk.Extension.rust-stable",
+        "org.freedesktop.Sdk.Extension.golang"
     ],
     "command": "vaults",
     "finish-args": [
@@ -94,12 +95,13 @@
             "name": "gocryptfs",
             "buildsystem": "simple",
             "build-commands": [
-                "install gocryptfs-wrapper.sh /app/bin/gocryptfs"
+                "PATH=/usr/lib/sdk/golang/bin:$PATH bash build-without-openssl.bash"
             ],
             "sources": [
                 {
-                    "type": "file",
-                    "path": "build-aux/gocryptfs-wrapper.sh"
+                    "type": "archive",
+                    "url": "https://github.com/rfjakob/gocryptfs/releases/download/v2.3.1/gocryptfs_v2.3.1_src.tar.gz",
+                    "sha256": "837068892e1a01f14bbfa3234dda8d94628f7dc59b51df2395b659279363ef20"
                 }
             ]
         },
