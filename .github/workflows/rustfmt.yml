@@ -1,6 +1,6 @@
-on: [push, pull_request]
-
 name: rustfmt
+
+on: [push, pull_request]
 
 jobs:
   check:

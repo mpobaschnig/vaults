@@ -10,10 +10,10 @@ jobs:
       image: bilelmoussaoui/flatpak-github-actions:gnome-43
       options: --privileged
     steps:
-    - uses: actions/checkout@v3
-    - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v5
-      with:
-        bundle: vaults.flatpak
-        manifest-path: io.github.mpobaschnig.Vaults.Devel.json
-        run-tests: true
-        cache-key: flatpak-builder-${{ github.sha }}
+      - uses: actions/checkout@v3
+      - uses: bilelmoussaoui/flatpak-github-actions/flatpak-builder@v5
+        with:
+          bundle: vaults.flatpak
+          manifest-path: io.github.mpobaschnig.Vaults.Devel.json
+          run-tests: true
+          cache-key: flatpak-builder-${{ github.sha }}
