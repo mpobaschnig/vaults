@@ -93,14 +93,13 @@ impl GlobalConfigManager {
     }
 
     fn new() -> Self {
-        let object: Self = glib::Object::new(&[]);
+        let object: Self = glib::Object::new();
 
         match user_config_dir().as_os_str().to_str() {
             Some(user_config_directory) => {
                 log::debug!("Got user data dir: {}", user_config_directory);
 
-                let self_ = &mut imp::GlobalConfigManager::from_instance(&object);
-                *self_.user_config_directory.borrow_mut() =
+                *object.imp().user_config_directory.borrow_mut() =
                     Some(user_config_directory.to_owned() + "/global_config.toml");
             }
             None => {
@@ -112,10 +111,8 @@ impl GlobalConfigManager {
     }
 
     pub fn read_config(&self) {
-        let self_ = &mut imp::GlobalConfigManager::from_instance(&self);
-
-        if let Some(path) = self_.user_config_directory.borrow().as_ref() {
-            let global_config = &mut *self_.global_config.borrow_mut();
+        if let Some(path) = self.imp().user_config_directory.borrow().as_ref() {
+            let global_config = &mut *self.imp().global_config.borrow_mut();
 
             let contents = std::fs::read_to_string(path);
             match contents {
@@ -179,10 +176,8 @@ impl GlobalConfigManager {
     }
 
     pub fn write_config(&self) {
-        let self_ = &mut imp::GlobalConfigManager::from_instance(&self);
-
-        if let Some(path) = self_.user_config_directory.borrow().as_ref() {
-            match toml::to_string_pretty(&self_.global_config.borrow().clone()) {
+        if let Some(path) = self.imp().user_config_directory.borrow().as_ref() {
+            match toml::to_string_pretty(&self.imp().global_config.borrow().clone()) {
                 Ok(contents) => match std::fs::write(path, &contents) {
                     Ok(_) => {
                         log::debug!("Successfully wrote user config: {}", &contents);
@@ -199,15 +194,12 @@ impl GlobalConfigManager {
     }
 
     pub fn get_global_config(&self) -> GlobalConfig {
-        let self_ = &mut imp::GlobalConfigManager::from_instance(&self);
-
-        self_.global_config.borrow().clone()
+        self.imp().global_config.borrow().clone()
     }
 
     pub fn set_encrypted_data_directory(&self, path: String) {
-        let self_ = &mut imp::GlobalConfigManager::from_instance(&self);
-
-        *self_
+        *self
+            .imp()
             .global_config
             .borrow_mut()
             .encrypted_data_directory
@@ -215,9 +207,8 @@ impl GlobalConfigManager {
     }
 
     pub fn set_mount_directory(&self, path: String) {
-        let self_ = &mut imp::GlobalConfigManager::from_instance(&self);
-
-        *self_
+        *self
+            .imp()
             .global_config
             .borrow_mut()
             .mount_directory

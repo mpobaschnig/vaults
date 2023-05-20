@@ -131,14 +131,12 @@ impl VaultsPageRow {
     }
 
     pub fn new(vault: Vault) -> Self {
-        let object: Self = glib::Object::new(&[]);
-
-        let self_ = &imp::VaultsPageRow::from_instance(&object);
+        let object: Self = glib::Object::new();
 
         match (vault.get_name(), vault.get_config()) {
             (Some(name), Some(config)) => {
-                self_.vaults_page_row.set_title(&name);
-                self_.config.replace(Some(config));
+                object.imp().vaults_page_row.set_title(&name);
+                object.imp().config.replace(Some(config));
             }
             (_, _) => {
                 log::error!("Vault(s) not initialised!");
@@ -157,34 +155,31 @@ impl VaultsPageRow {
     }
 
     pub fn setup_connect_handlers(&self) {
-        let self_ = imp::VaultsPageRow::from_instance(&self);
-
-        self_
+        self.imp()
             .open_folder_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.open_folder_button_clicked();
             }));
 
-        self_
+        self.imp()
             .locker_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.locker_button_clicked();
             }));
 
-        self_
+        self.imp()
             .settings_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.settings_button_clicked();
             }));
 
-        self_
-            .volume_monitor
-            .borrow()
-            .connect_mount_added(clone!(@weak self as obj=> move |_, m| {
+        self.imp().volume_monitor.borrow().connect_mount_added(
+            clone!(@weak self as obj=> move |_, m| {
                 obj.mount_added_triggered(&m);
-            }));
+            }),
+        );
 
-        self_.volume_monitor.borrow().connect_mount_removed(
+        self.imp().volume_monitor.borrow().connect_mount_removed(
             clone!(@weak self as obj=> move |_, m| {
                 obj.mount_removed_triggered(&m);
             }),
@@ -192,10 +187,8 @@ impl VaultsPageRow {
     }
 
     fn open_folder_button_clicked(&self) {
-        let self_ = imp::VaultsPageRow::from_instance(&self);
-
         let output_res = Command::new("xdg-open")
-            .arg(&self_.config.borrow().as_ref().unwrap().mount_directory)
+            .arg(&self.imp().config.borrow().as_ref().unwrap().mount_directory)
             .output();
 
         if let Err(e) = output_res {
@@ -204,22 +197,20 @@ impl VaultsPageRow {
     }
 
     fn locker_button_clicked_is_mounted(&self, vault: Vault) {
-        let self_ = imp::VaultsPageRow::from_instance(self);
-
-        if !self_.open_folder_button.is_visible() {
+        if !self.imp().open_folder_button.is_visible() {
             self.set_vault_row_state_opened();
             return;
         }
 
-        if self_.spinner.borrow().is_spinning() {
+        if self.imp().spinner.borrow().is_spinning() {
             return;
         }
 
-        self_.open_folder_button.set_sensitive(false);
+        self.imp().open_folder_button.set_sensitive(false);
 
-        *self_.spinner.borrow_mut() = gtk::Spinner::new();
-        let spinner = self_.spinner.borrow().clone();
-        self_.locker_button.set_child(Some(&spinner));
+        *self.imp().spinner.borrow_mut() = gtk::Spinner::new();
+        let spinner = self.imp().spinner.borrow().clone();
+        self.imp().locker_button.set_child(Some(&spinner));
 
         spinner.start();
 
@@ -239,10 +230,10 @@ impl VaultsPageRow {
             }
         });
 
-        let locker_button = self_.locker_button.clone();
-        let open_folder_button = self_.open_folder_button.clone();
-        let settings_button = self_.settings_button.clone();
-        let vaults_page_row = self_.vaults_page_row.clone();
+        let locker_button = self.imp().locker_button.clone();
+        let open_folder_button = self.imp().open_folder_button.clone();
+        let settings_button = self.imp().settings_button.clone();
+        let vaults_page_row = self.imp().vaults_page_row.clone();
         receiver.attach(None, move |message| {
             match message {
                 Message::Finished => {
@@ -293,14 +284,12 @@ impl VaultsPageRow {
     }
 
     fn locker_button_clicked_is_not_mounted(&self, vault: Vault) {
-        let self_ = imp::VaultsPageRow::from_instance(self);
-
-        if self_.open_folder_button.is_visible() {
+        if self.imp().open_folder_button.is_visible() {
             self.set_vault_row_state_closed();
             return;
         }
 
-        if self_.spinner.borrow().is_spinning() {
+        if self.imp().spinner.borrow().is_spinning() {
             return;
         }
 
@@ -315,14 +304,12 @@ impl VaultsPageRow {
                 return;
             }
 
-            let obj_ = imp::VaultsPageRow::from_instance(&obj);
+            obj.imp().settings_button.set_sensitive(false);
+            obj.imp().open_folder_button.set_sensitive(false);
 
-            obj_.settings_button.set_sensitive(false);
-            obj_.open_folder_button.set_sensitive(false);
-
-            *obj_.spinner.borrow_mut() = gtk::Spinner::new();
-            let spinner = obj_.spinner.borrow().clone();
-            obj_.locker_button.set_child(Some(&spinner));
+            *obj.imp().spinner.borrow_mut() = gtk::Spinner::new();
+            let spinner = obj.imp().spinner.borrow().clone();
+            obj.imp().locker_button.set_child(Some(&spinner));
 
             spinner.start();
 
@@ -344,10 +331,10 @@ impl VaultsPageRow {
                 }
             });
 
-            let locker_button = obj_.locker_button.clone();
-            let open_folder_button = obj_.open_folder_button.clone();
-            let settings_button = obj_.settings_button.clone();
-            let vaults_page_row = obj_.vaults_page_row.clone();
+            let locker_button = obj.imp().locker_button.clone();
+            let open_folder_button = obj.imp().open_folder_button.clone();
+            let settings_button = obj.imp().settings_button.clone();
+            let vaults_page_row = obj.imp().vaults_page_row.clone();
             receiver.attach(None, move |message| {
                 match message {
                     Message::Finished => {
@@ -443,9 +430,8 @@ impl VaultsPageRow {
     }
 
     pub fn get_vault(&self) -> Vault {
-        let self_ = imp::VaultsPageRow::from_instance(&self);
-        let name = self_.vaults_page_row.title();
-        let config = self_.config.borrow().clone();
+        let name = self.imp().vaults_page_row.title();
+        let config = self.imp().config.borrow().clone();
         match config {
             Some(config) => Vault::new(
                 name.to_string(),
@@ -461,13 +447,12 @@ impl VaultsPageRow {
     }
 
     pub fn set_vault(&self, vault: Vault) {
-        let self_ = imp::VaultsPageRow::from_instance(&self);
         let name = vault.get_name();
         let config = vault.get_config();
         match (name, config) {
             (Some(name), Some(config)) => {
-                self_.vaults_page_row.set_title(&name);
-                self_.config.replace(Some(config));
+                self.imp().vaults_page_row.set_title(&name);
+                self.imp().config.replace(Some(config));
             }
             (_, _) => {
                 log::error!("Vault not initialised!");
@@ -476,8 +461,7 @@ impl VaultsPageRow {
     }
 
     pub fn get_name(&self) -> String {
-        let self_ = imp::VaultsPageRow::from_instance(&self);
-        self_.vaults_page_row.title().to_string()
+        self.imp().vaults_page_row.title().to_string()
     }
 
     fn is_mounted(&self) -> bool {
@@ -489,51 +473,43 @@ impl VaultsPageRow {
     }
 
     fn set_vault_row_state_opened(&self) {
-        let self_ = imp::VaultsPageRow::from_instance(self);
-
-        self_.locker_button.set_icon_name(&"changes-allow-symbolic");
-        self_
+        self.imp()
+            .locker_button
+            .set_icon_name(&"changes-allow-symbolic");
+        self.imp()
             .locker_button
             .set_tooltip_text(Some(&gettext("Close Vault")));
-        self_.open_folder_button.set_visible(true);
-        self_.open_folder_button.set_sensitive(true);
-        self_.settings_button.set_sensitive(false);
+        self.imp().open_folder_button.set_visible(true);
+        self.imp().open_folder_button.set_sensitive(true);
+        self.imp().settings_button.set_sensitive(false);
     }
 
     fn set_vault_row_state_closed(&self) {
-        let self_ = imp::VaultsPageRow::from_instance(self);
-
-        self_
+        self.imp()
             .locker_button
             .set_icon_name(&"changes-prevent-symbolic");
-        self_
+        self.imp()
             .locker_button
             .set_tooltip_text(Some(&gettext("Open Vault")));
-        self_.open_folder_button.set_visible(false);
-        self_.open_folder_button.set_sensitive(true);
-        self_.settings_button.set_sensitive(true);
+        self.imp().open_folder_button.set_visible(false);
+        self.imp().open_folder_button.set_sensitive(true);
+        self.imp().settings_button.set_sensitive(true);
     }
 
     fn set_vault_row_state_backend_unavailable(&self) {
-        let self_ = imp::VaultsPageRow::from_instance(self);
-
-        self_
+        self.imp()
             .vaults_page_row
             .set_subtitle(&gettext("Backend is not installed."));
-        self_.locker_button.set_sensitive(false);
+        self.imp().locker_button.set_sensitive(false);
     }
 
     fn set_vault_row_state_backend_available(&self) {
-        let self_ = imp::VaultsPageRow::from_instance(self);
-
-        self_.vaults_page_row.set_subtitle("");
-        self_.locker_button.set_sensitive(true);
+        self.imp().vaults_page_row.set_subtitle("");
+        self.imp().locker_button.set_sensitive(true);
     }
 
     fn mount_added_triggered(&self, mount: &Mount) {
-        let self_ = imp::VaultsPageRow::from_instance(self);
-
-        let config_mount_directory = self_.config.borrow().clone().unwrap().mount_directory;
+        let config_mount_directory = self.imp().config.borrow().clone().unwrap().mount_directory;
 
         let config_mount_directory_path = std::path::Path::new(&config_mount_directory);
 
@@ -559,9 +535,7 @@ impl VaultsPageRow {
     }
 
     fn mount_removed_triggered(&self, mount: &Mount) {
-        let self_ = imp::VaultsPageRow::from_instance(self);
-
-        let config_mount_directory = self_.config.borrow().clone().unwrap().mount_directory;
+        let config_mount_directory = self.imp().config.borrow().clone().unwrap().mount_directory;
 
         let config_mount_directory_path = std::path::Path::new(&config_mount_directory);
 

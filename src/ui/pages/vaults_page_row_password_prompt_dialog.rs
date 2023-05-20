@@ -82,7 +82,9 @@ glib::wrapper! {
 
 impl VaultsPageRowPasswordPromptDialog {
     pub fn new() -> Self {
-        let dialog: Self = glib::Object::new(&[("use-header-bar", &1)]);
+        let dialog: Self = glib::Object::builder()
+            .property("use-header-bar", 1)
+            .build();
 
         let window = gio::Application::default()
             .unwrap()
@@ -96,21 +98,19 @@ impl VaultsPageRowPasswordPromptDialog {
     }
 
     fn setup_signals(&self) {
-        let self_ = imp::VaultsPageRowPasswordPromptDialog::from_instance(self);
-
-        self_
+        self.imp()
             .unlock_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.unlock_button_clicked();
             }));
 
-        self_
+        self.imp()
             .password_entry
             .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_unlock_button_enable_conditions();
             }));
 
-        self_
+        self.imp()
             .password_entry
             .connect_activate(clone!(@weak self as obj => move |_| {
                 obj.connect_activate();
@@ -118,9 +118,7 @@ impl VaultsPageRowPasswordPromptDialog {
     }
 
     pub fn set_name(&self, name: &String) {
-        let self_ = imp::VaultsPageRowPasswordPromptDialog::from_instance(self);
-
-        self_.status_page.set_title(name);
+        self.imp().status_page.set_title(name);
     }
 
     fn unlock_button_clicked(&self) {
@@ -128,28 +126,22 @@ impl VaultsPageRowPasswordPromptDialog {
     }
 
     fn check_unlock_button_enable_conditions(&self) {
-        let self_ = imp::VaultsPageRowPasswordPromptDialog::from_instance(self);
-
-        let vault_name = self_.password_entry.text();
+        let vault_name = self.imp().password_entry.text();
 
         if !vault_name.is_empty() {
-            self_.unlock_button.set_sensitive(true);
+            self.imp().unlock_button.set_sensitive(true);
         } else {
-            self_.unlock_button.set_sensitive(false);
+            self.imp().unlock_button.set_sensitive(false);
         }
     }
 
     fn connect_activate(&self) {
-        let self_ = imp::VaultsPageRowPasswordPromptDialog::from_instance(self);
-
-        if !self_.password_entry.text().is_empty() {
+        if !self.imp().password_entry.text().is_empty() {
             self.unlock_button_clicked();
         }
     }
 
     pub fn get_password(&self) -> String {
-        let self_ = imp::VaultsPageRowPasswordPromptDialog::from_instance(self);
-
-        self_.password_entry.text().to_string()
+        self.imp().password_entry.text().to_string()
     }
 }
