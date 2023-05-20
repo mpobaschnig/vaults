@@ -88,10 +88,10 @@ glib::wrapper! {
 
 impl VApplication {
     pub fn new() -> Self {
-        glib::Object::new(&[
-            ("application-id", &Some(config::APP_ID)),
-            ("flags", &ApplicationFlags::empty()),
-        ])
+        let object: Self = glib::Object::new();
+        object.set_property("application-id", config::APP_ID);
+        object.set_property("flags", ApplicationFlags::empty());
+        object
     }
 
     fn setup_gactions(&self) {

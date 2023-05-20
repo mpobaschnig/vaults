@@ -88,12 +88,10 @@ impl Vault {
         encrypted_data_directory: String,
         mount_directory: String,
     ) -> Vault {
-        let object: Self = glib::Object::new(&[]);
+        let object: Self = glib::Object::new();
 
-        let self_ = imp::Vault::from_instance(&object);
-
-        self_.name.replace(Some(name));
-        self_.config.replace(Some(VaultConfig {
+        object.imp().name.replace(Some(name));
+        object.imp().config.replace(Some(VaultConfig {
             backend,
             encrypted_data_directory,
             mount_directory,
@@ -103,33 +101,25 @@ impl Vault {
     }
 
     pub fn new_none() -> Vault {
-        let object: Self = glib::Object::new(&[]);
+        let object: Self = glib::Object::new();
 
         object
     }
 
     pub fn get_name(&self) -> Option<String> {
-        let self_ = imp::Vault::from_instance(&self);
-
-        self_.name.borrow().clone()
+        self.imp().name.borrow().clone()
     }
 
     pub fn set_name(&self, name: String) {
-        let self_ = &mut imp::Vault::from_instance(&self);
-
-        self_.name.borrow_mut().replace(name);
+        self.imp().name.borrow_mut().replace(name);
     }
 
     pub fn get_config(&self) -> Option<VaultConfig> {
-        let self_ = imp::Vault::from_instance(&self);
-
-        self_.config.borrow().clone()
+        self.imp().config.borrow().clone()
     }
 
     pub fn set_config(&self, config: VaultConfig) {
-        let self_ = &mut imp::Vault::from_instance(&self);
-
-        self_.config.borrow_mut().replace(config);
+        self.imp().config.borrow_mut().replace(config);
     }
 
     pub fn init(&self, password: String) -> Result<(), BackendError> {

@@ -29,7 +29,6 @@ use crate::GlobalConfigManager;
 use crate::VApplication;
 
 mod imp {
-    use adw::prelude::*;
     use gtk::{glib, subclass::prelude::*, CompositeTemplate};
 
     #[derive(Debug, CompositeTemplate)]
@@ -99,7 +98,9 @@ glib::wrapper! {
 
 impl PreferencesWindow {
     pub fn new() -> Self {
-        let o: Self = glib::Object::new(&[("use-header-bar", &1)]);
+        let o: Self = glib::Object::builder()
+            .property("use-header-bar", 1)
+            .build();
 
         let window = gio::Application::default()
             .unwrap()
@@ -117,51 +118,47 @@ impl PreferencesWindow {
     }
 
     fn init(&self) {
-        let self_ = imp::VaultSettingsDialog::from_instance(self);
-
         let global_config = GlobalConfigManager::instance().get_global_config();
 
-        self_
+        self.imp()
             .encrypted_data_directory_entry
             .set_text(&global_config.encrypted_data_directory.borrow());
 
-        self_
+        self.imp()
             .mount_directory_entry
             .set_text(&global_config.mount_directory.borrow());
     }
 
     fn setup_signals(&self) {
-        let self_ = imp::VaultSettingsDialog::from_instance(self);
-
-        self_.encrypted_data_directory_entry.connect_text_notify(
-            clone!(@weak self as obj => move |_| {
+        self.imp()
+            .encrypted_data_directory_entry
+            .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_apply_changes_button_enable_conditions();
-            }),
-        );
+            }));
 
-        self_.encrypted_data_directory_button.connect_clicked(
+        self.imp().encrypted_data_directory_button.connect_clicked(
             clone!(@weak self as obj => move |_| {
                 obj.encrypted_data_directory_button_clicked();
             }),
         );
 
-        self_
-            .mount_directory_entry
-            .connect_text_notify(clone!(@weak self as obj => move |_| {
+        self.imp().mount_directory_entry.connect_text_notify(
+            clone!(@weak self as obj => move |_| {
                 obj.check_apply_changes_button_enable_conditions();
-            }));
+            }),
+        );
 
-        self_
+        self.imp()
             .mount_directory_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.mount_directory_button_clicked();
             }));
 
-        self_
-            .general_apply_changes_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
+        self.imp().general_apply_changes_button.connect_clicked(
+            clone!(@weak self as obj => move |_| {
                 obj.general_apply_changes_button_clicked();
-            }));
+            }),
+        );
     }
 
     fn encrypted_data_directory_button_clicked(&self) {
@@ -181,8 +178,8 @@ impl PreferencesWindow {
             if response == gtk::ResponseType::Accept {
                 let file = dialog.file().unwrap();
                 let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
-                let self_ = imp::VaultSettingsDialog::from_instance(&obj);
-                self_.encrypted_data_directory_entry.set_text(&path);
+
+                obj.imp().encrypted_data_directory_entry.set_text(&path);
             }
 
             dialog.destroy();
@@ -208,8 +205,8 @@ impl PreferencesWindow {
             if response == gtk::ResponseType::Accept {
                 let file = dialog.file().unwrap();
                 let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
-                let self_ = imp::VaultSettingsDialog::from_instance(&obj);
-                self_.mount_directory_entry.set_text(&path);
+
+                obj.imp().mount_directory_entry.set_text(&path);
             }
 
             dialog.destroy();
@@ -219,10 +216,8 @@ impl PreferencesWindow {
     }
 
     fn general_apply_changes_button_clicked(&self) {
-        let self_ = imp::VaultSettingsDialog::from_instance(self);
-
-        let encrypted_data_directory = self_.encrypted_data_directory_entry.text().to_string();
-        let mount_directory = self_.mount_directory_entry.text().to_string();
+        let encrypted_data_directory = self.imp().encrypted_data_directory_entry.text().to_string();
+        let mount_directory = self.imp().mount_directory_entry.text().to_string();
 
         GlobalConfigManager::instance().set_encrypted_data_directory(encrypted_data_directory);
         GlobalConfigManager::instance().set_mount_directory(mount_directory);
@@ -230,7 +225,7 @@ impl PreferencesWindow {
         GlobalConfigManager::instance().write_config();
 
         let toast = adw::Toast::new(&gettext("Saved preferences successfully!"));
-        self_.toast_overlay.add_toast(&toast)
+        self.imp().toast_overlay.add_toast(toast);
     }
 
     fn are_directories_different(
@@ -238,35 +233,31 @@ impl PreferencesWindow {
         encrypted_data_directory: &GString,
         mount_directory: &GString,
     ) -> bool {
-        let self_ = imp::VaultSettingsDialog::from_instance(self);
-
         if encrypted_data_directory.eq(mount_directory) {
-            self_
+            self.imp()
                 .mount_directory_error_label
                 .set_text(&gettext("Directories must not be equal."));
-            self_.mount_directory_error_label.set_visible(true);
+            self.imp().mount_directory_error_label.set_visible(true);
 
             false
         } else {
-            self_.mount_directory_error_label.set_visible(false);
+            self.imp().mount_directory_error_label.set_visible(false);
 
             true
         }
     }
 
     fn check_apply_changes_button_enable_conditions(&self) {
-        let self_ = imp::VaultSettingsDialog::from_instance(self);
-
-        let encrypted_data_directory = self_.encrypted_data_directory_entry.text();
-        let mount_directory = self_.mount_directory_entry.text();
+        let encrypted_data_directory = self.imp().encrypted_data_directory_entry.text();
+        let mount_directory = self.imp().mount_directory_entry.text();
 
         let are_directories_different =
             self.are_directories_different(&encrypted_data_directory, &mount_directory);
 
         if are_directories_different {
-            self_.general_apply_changes_button.set_sensitive(true);
+            self.imp().general_apply_changes_button.set_sensitive(true);
         } else {
-            self_.general_apply_changes_button.set_sensitive(false);
+            self.imp().general_apply_changes_button.set_sensitive(false);
         }
     }
 }

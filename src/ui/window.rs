@@ -137,7 +137,7 @@ glib::wrapper! {
 
 impl ApplicationWindow {
     pub fn new(app: &VApplication) -> Self {
-        let object: Self = glib::Object::new(&[]);
+        let object: Self = glib::Object::new();
         object.set_application(Some(app));
 
         gtk::Window::set_default_icon_name(APP_ID);
@@ -161,36 +161,30 @@ impl ApplicationWindow {
     }
 
     fn setup_window(&self) {
-        let self_ = imp::ApplicationWindow::from_instance(self);
-
-        self_
-            .search_toggle_button
-            .connect_toggled(clone!(@weak self as obj => move |button| {
-                let self_ = imp::ApplicationWindow::from_instance(&obj);
-
+        self.imp().search_toggle_button.connect_toggled(
+            clone!(@weak self as obj => move |button| {
                 if button.is_active() {
-                    self_.title_stack.set_visible_child_name("search");
-                    self_.search_entry.grab_focus();
+                    obj.imp().title_stack.set_visible_child_name("search");
+                    obj.imp().search_entry.grab_focus();
                 } else {
-                    self_.search_entry.set_text("");
-                    self_.title_stack.set_visible_child_name("title");
+                    obj.imp().search_entry.set_text("");
+                    obj.imp().title_stack.set_visible_child_name("title");
                     obj.refresh_clicked();
                 }
-            }));
+            }),
+        );
     }
 
     fn setup_search_page(&self) {
-        let self_ = imp::ApplicationWindow::from_instance(self);
-
-        self_
+        self.imp()
             .search_vaults_list_box
-            .bind_model(Some(&self_.search_list_store), |obj| {
+            .bind_model(Some(&self.imp().search_list_store), |obj| {
                 obj.clone().downcast::<gtk::Widget>().unwrap()
             });
 
-        self_.search_stack.set_visible_child_name("start");
+        self.imp().search_stack.set_visible_child_name("start");
 
-        self_
+        self.imp()
             .search_entry
             .connect_search_changed(clone!(@weak self as obj => move |_| {
                 if obj.get_view().unwrap() != "search" {
@@ -202,11 +196,9 @@ impl ApplicationWindow {
     }
 
     fn search(&self) {
-        let self_ = imp::ApplicationWindow::from_instance(&self);
+        let text = self.imp().search_entry.text();
 
-        let text = self_.search_entry.text();
-
-        *self_.search_results.borrow_mut() = 0;
+        *self.imp().search_results.borrow_mut() = 0;
         let mut found = false;
         let map = UserConfigManager::instance().get_map();
         for (k, v) in &map {
@@ -214,7 +206,7 @@ impl ApplicationWindow {
 
             if k_search.contains(&text.to_string().to_lowercase()) {
                 if !found {
-                    self_.search_list_store.remove_all();
+                    self.imp().search_list_store.remove_all();
                     found = true;
                 }
 
@@ -229,7 +221,7 @@ impl ApplicationWindow {
                 self.search_row_connect_remove(&row);
                 self.row_connect_save(&row);
 
-                self_.search_list_store.insert_sorted(&row, |v1, v2| {
+                self.imp().search_list_store.insert_sorted(&row, |v1, v2| {
                     let row1 = v1.downcast_ref::<VaultsPageRow>().unwrap();
                     let name1 = row1.get_name();
                     let row2 = v2.downcast_ref::<VaultsPageRow>().unwrap();
@@ -237,39 +229,39 @@ impl ApplicationWindow {
                     name1.cmp(&name2)
                 });
 
-                *self_.search_results.borrow_mut() += 1;
+                *self.imp().search_results.borrow_mut() += 1;
             }
         }
 
         if map.is_empty() {
-            self_.search_stack.set_visible_child_name("start");
+            self.imp().search_stack.set_visible_child_name("start");
             return;
         }
 
         if found {
-            self_.search_stack.set_visible_child_name("results");
+            self.imp().search_stack.set_visible_child_name("results");
         } else {
-            self_.search_stack.set_visible_child_name("no-results");
+            self.imp().search_stack.set_visible_child_name("no-results");
         }
     }
 
     fn setup_start_page(&self) {
-        let self_ = imp::ApplicationWindow::from_instance(self);
-
-        self_.start_page_status_page.set_icon_name(Some(APP_ID));
+        self.imp()
+            .start_page_status_page
+            .set_icon_name(Some(APP_ID));
 
         if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
             if available_backends.is_empty() {
-                self_.start_page_status_page.set_description(Some(&gettext(
-                    "No backends available. Please install gocryptfs or CryFS on your system.",
-                )));
+                self.imp()
+                    .start_page_status_page
+                    .set_description(Some(&gettext(
+                        "No backends available. Please install gocryptfs or CryFS on your system.",
+                    )));
             }
         }
     }
 
     fn setup_vaults_page(&self) {
-        let self_ = imp::ApplicationWindow::from_instance(self);
-
         UserConfigManager::instance().connect_add_vault(clone!(@weak self as obj => move || {
             obj.add_vault();
         }));
@@ -280,9 +272,9 @@ impl ApplicationWindow {
             }),
         );
 
-        self_
+        self.imp()
             .vaults_list_box
-            .bind_model(Some(&self_.list_store), |obj| {
+            .bind_model(Some(&self.imp().list_store), |obj| {
                 obj.clone().downcast::<gtk::Widget>().unwrap()
             });
 
@@ -294,9 +286,8 @@ impl ApplicationWindow {
             self,
             "search",
             clone!(@weak self as obj => move |_, _| {
-                let self_ = imp::ApplicationWindow::from_instance(&obj);
-                if self_.search_toggle_button.is_sensitive() {
-                    self_.search_toggle_button.set_active(!self_.search_toggle_button.is_active());
+                if obj.imp().search_toggle_button.is_sensitive() {
+                    obj.imp().search_toggle_button.set_active(!obj.imp().search_toggle_button.is_active());
                 }
             })
         );
@@ -305,8 +296,7 @@ impl ApplicationWindow {
             self,
             "escape",
             clone!(@weak self as obj => move |_, _| {
-                let self_ = imp::ApplicationWindow::from_instance(&obj);
-                self_.search_toggle_button.set_active(false);
+                obj.imp().search_toggle_button.set_active(false);
             })
         );
 
@@ -336,8 +326,6 @@ impl ApplicationWindow {
     }
 
     fn fill_list_store(&self) {
-        let self_ = imp::ApplicationWindow::from_instance(self);
-
         let map = UserConfigManager::instance().get_map();
         for (k, v) in map.iter() {
             let vault = Vault::new(
@@ -351,7 +339,7 @@ impl ApplicationWindow {
             self.row_connect_remove(&row);
             self.row_connect_save(&row);
 
-            self_.list_store.insert_sorted(&row, |v1, v2| {
+            self.imp().list_store.insert_sorted(&row, |v1, v2| {
                 let row1 = v1.downcast_ref::<VaultsPageRow>().unwrap();
                 let name1 = row1.get_name();
                 let row2 = v2.downcast_ref::<VaultsPageRow>().unwrap();
@@ -363,7 +351,7 @@ impl ApplicationWindow {
 
     pub fn search_row_connect_remove(&self, row: &VaultsPageRow) {
         row.connect_remove(clone!(@weak self as obj, @weak row => move || {
-            let obj_ = imp::ApplicationWindow::from_instance(&obj);
+            let obj_ = imp::ApplicationWindow::from_obj(&obj);
             let index = obj_.search_list_store.find(&row);
             if let Some(index) = index {
                 obj_.search_list_store.remove(index);
@@ -392,15 +380,14 @@ impl ApplicationWindow {
 
     pub fn row_connect_remove(&self, row: &VaultsPageRow) {
         row.connect_remove(clone!(@weak self as obj, @weak row => move || {
-            let obj_ = imp::ApplicationWindow::from_instance(&obj);
-            let index = obj_.list_store.find(&row);
+            let index = obj.imp().list_store.find(&row);
             if let Some(index) = index {
-                obj_.list_store.remove(index);
+                obj.imp().list_store.remove(index);
                 if UserConfigManager::instance().get_map().is_empty() {
-                    obj_.search_entry.set_text("");
-                    obj_.title_stack.set_visible_child_name("title");
-                    obj_.search_toggle_button.set_active(false);
-                    obj_.search_toggle_button.set_sensitive(false);
+                    obj.imp().search_entry.set_text("");
+                    obj.imp().title_stack.set_visible_child_name("title");
+                    obj.imp().search_toggle_button.set_active(false);
+                    obj.imp().search_toggle_button.set_sensitive(false);
                 }
             } else {
                 log::error!("Vault not initialised!");
@@ -420,8 +407,6 @@ impl ApplicationWindow {
     }
 
     pub fn add_vault(&self) {
-        let self_ = imp::ApplicationWindow::from_instance(self);
-
         let vault = UserConfigManager::instance().get_current_vault();
 
         if let Some(vault) = vault {
@@ -429,7 +414,7 @@ impl ApplicationWindow {
             self.row_connect_remove(&row);
             self.row_connect_save(&row);
 
-            self_.list_store.insert_sorted(&row, |v1, v2| {
+            self.imp().list_store.insert_sorted(&row, |v1, v2| {
                 let row1 = v1.downcast_ref::<VaultsPageRow>().unwrap();
                 let name1 = row1.get_name();
                 let row2 = v2.downcast_ref::<VaultsPageRow>().unwrap();
@@ -437,16 +422,14 @@ impl ApplicationWindow {
                 name1.cmp(&name2)
             });
 
-            self_.search_toggle_button.set_sensitive(true);
+            self.imp().search_toggle_button.set_sensitive(true);
         } else {
             log::error!("Vault not initialised!");
         }
     }
 
     pub fn refresh(&self, map_is_empty: bool) {
-        let self_ = imp::ApplicationWindow::from_instance(self);
-
-        if self_.search_toggle_button.is_active() {
+        if self.imp().search_toggle_button.is_active() {
             return;
         }
 
@@ -466,8 +449,7 @@ impl ApplicationWindow {
     }
 
     pub fn clear(&self) {
-        let self_ = imp::ApplicationWindow::from_instance(self);
-        self_.list_store.remove_all();
+        self.imp().list_store.remove_all();
     }
 
     fn add_new_vault_clicked(&self) {
@@ -552,24 +534,20 @@ impl ApplicationWindow {
     }
 
     pub fn set_view(&self, view: View) {
-        let self_ = imp::ApplicationWindow::from_instance(self);
-
         match view {
-            View::Search => self_.window_stack.set_visible_child_name("search"),
+            View::Search => self.imp().window_stack.set_visible_child_name("search"),
             View::Start => {
-                self_.search_toggle_button.set_sensitive(false);
-                self_.window_stack.set_visible_child_name("start");
+                self.imp().search_toggle_button.set_sensitive(false);
+                self.imp().window_stack.set_visible_child_name("start");
             }
             View::Vaults => {
-                self_.search_toggle_button.set_sensitive(true);
-                self_.window_stack.set_visible_child_name("vaults");
+                self.imp().search_toggle_button.set_sensitive(true);
+                self.imp().window_stack.set_visible_child_name("vaults");
             }
         }
     }
 
     pub fn get_view(&self) -> Option<GString> {
-        let self_ = imp::ApplicationWindow::from_instance(self);
-
-        return self_.window_stack.visible_child_name();
+        return self.imp().window_stack.visible_child_name();
     }
 }
