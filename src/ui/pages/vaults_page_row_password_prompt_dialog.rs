@@ -86,6 +86,8 @@ impl VaultsPageRowPasswordPromptDialog {
             .property("use-header-bar", 1)
             .build();
 
+        dialog.header_bar().add_css_class("flat");
+
         let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
