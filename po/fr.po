@@ -20,23 +20,23 @@ msgstr ""
 #: src/backend/cryfs.rs:128 src/backend/cryfs.rs:145
 #: src/backend/gocryptfs.rs:149
 msgid "An unknown error occurred."
-msgstr "Une erreur inconnue s'est produite"
+msgstr "Une erreur inconnue s'est produite."
 
 #: src/backend/cryfs.rs:129
 msgid "Invalid arguments were given."
-msgstr "Des arguments invalides ont été donnés"
+msgstr "Des arguments invalides ont été donnés."
 
 #: src/backend/cryfs.rs:130 src/backend/gocryptfs.rs:135
 msgid "The password is wrong."
-msgstr "Mot de passe erroné"
+msgstr "Mot de passe erroné."
 
 #: src/backend/cryfs.rs:131 src/backend/gocryptfs.rs:138
 msgid "The password is empty."
-msgstr "Le mot de passe est vide"
+msgstr "Le mot de passe est vide."
 
 #: src/backend/cryfs.rs:132
 msgid "The format of the encrypted data directory is too new for this CryFS version. Please update CryFS."
-msgstr "Le format du dossier chiffré est trop récent pour cette version de CryFS. Veuillez mettre à jour CryFS"
+msgstr "Le format du dossier chiffré est trop récent pour cette version de CryFS. Veuillez mettre à jour CryFS."
 
 #: src/backend/cryfs.rs:133
 msgid "The format of the encrypted data directory is too old for this CryFS version."
@@ -44,7 +44,7 @@ msgstr "Le format du dossier chiffré est trop vieux pour cette version de CryFS
 
 #: src/backend/cryfs.rs:134
 msgid "The vault uses a different cipher than the default of CryFS."
-msgstr "Le coffre-fort utilise un chiffrement différent de celui par défaut de CryFS"
+msgstr "Le coffre-fort utilise un chiffrement différent de celui par défaut de CryFS."
 
 #: src/backend/cryfs.rs:135
 msgid "The encrypted data directory does not exist or is inaccessible."
@@ -317,7 +317,7 @@ msgstr "_Ajouter"
 #: data/resources/ui/import_vault_dialog.ui:182
 #: data/resources/ui/vaults_page_row_settings_dialog.ui:35
 msgid "_Name"
-msgstr "_Nommer"
+msgstr "_Nom"
 
 #: data/resources/ui/add_new_vault_dialog.ui:108
 #: data/resources/ui/import_vault_dialog.ui:205
