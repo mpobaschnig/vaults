@@ -52,7 +52,7 @@ msgstr "Le dossier de données chiffrées n’existe pas ou est inaccessible."
 
 #: src/backend/cryfs.rs:136
 msgid "The mount directory does not exist or is inaccessible."
-msgstr "Le dossier mount n'existe pas ou est inaccessible"
+msgstr "Le dossier mount n'existe pas ou est inaccessible."
 
 #: src/backend/cryfs.rs:137
 msgid "The mount directory is inside the encrypted data directory."
