@@ -471,7 +471,7 @@ msgstr "_Importer un Coffre-fort"
 
 #: data/resources/ui/window.ui:192
 msgid "_Refresh"
-msgstr "_Rafraîchir "
+msgstr "_Rafraîchir"
 
 #: data/resources/ui/window.ui:198
 msgid "_Preferences"
