@@ -120,7 +120,7 @@ msgstr "Échec de la création d’un dossier de données chiffrées : réiniti
 
 #: src/backend/mod.rs:156
 msgid "Failed to create encrypted data directory: Connection aborted."
-msgstr "Échec de la création d'un dossier de données chiffrées : Connection annulée"
+msgstr "Échec de la création d'un dossier de données chiffrées : Connection annulée."
 
 #: src/backend/mod.rs:159
 msgid "Failed to create encrypted data directory: Not connected."
