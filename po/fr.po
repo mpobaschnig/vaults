@@ -124,7 +124,7 @@ msgstr "Échec de la création d'un dossier de données chiffrées : Connection 
 
 #: src/backend/mod.rs:159
 msgid "Failed to create encrypted data directory: Not connected."
-msgstr "Échec de la création d'un dossier de données chiffrées : Pas connecté. "
+msgstr "Échec de la création d'un dossier de données chiffrées : Pas connecté."
 
 #: src/backend/mod.rs:162
 msgid "Failed to create encrypted data directory."
