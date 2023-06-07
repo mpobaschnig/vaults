@@ -415,7 +415,7 @@ msgstr "Bienvenue sur Vaults"
 
 #: data/resources/ui/start_page.ui:16 data/resources/ui/window.ui:136
 msgid "Add or Import a Vault."
-msgstr "Ajouter ou importer un Coffre-fort"
+msgstr "Ajouter ou importer un Coffre-fort."
 
 #: data/resources/ui/vaults_page_row.ui:10
 msgid "Vault X"
