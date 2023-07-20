@@ -36,7 +36,7 @@ mod imp {
         #[template_child]
         pub unlock_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub password_entry: TemplateChild<gtk::PasswordEntry>,
+        pub password_entry_row: TemplateChild<adw::PasswordEntryRow>,
         #[template_child]
         pub status_page: TemplateChild<adw::StatusPage>,
     }
@@ -50,7 +50,7 @@ mod imp {
         fn new() -> Self {
             Self {
                 unlock_button: TemplateChild::default(),
-                password_entry: TemplateChild::default(),
+                password_entry_row: TemplateChild::default(),
                 status_page: TemplateChild::default(),
             }
         }
@@ -114,13 +114,13 @@ impl VaultsPageRowPasswordPromptWindow {
             }));
 
         self.imp()
-            .password_entry
+            .password_entry_row
             .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_unlock_button_enable_conditions();
             }));
 
         self.imp()
-            .password_entry
+            .password_entry_row
             .connect_activate(clone!(@weak self as obj => move |_| {
                 obj.connect_activate();
             }));
@@ -136,7 +136,7 @@ impl VaultsPageRowPasswordPromptWindow {
     }
 
     fn check_unlock_button_enable_conditions(&self) {
-        let vault_name = self.imp().password_entry.text();
+        let vault_name = self.imp().password_entry_row.text();
 
         if !vault_name.is_empty() {
             self.imp().unlock_button.set_sensitive(true);
@@ -146,12 +146,12 @@ impl VaultsPageRowPasswordPromptWindow {
     }
 
     fn connect_activate(&self) {
-        if !self.imp().password_entry.text().is_empty() {
+        if !self.imp().password_entry_row.text().is_empty() {
             self.unlock_button_clicked();
         }
     }
 
     pub fn get_password(&self) -> String {
-        self.imp().password_entry.text().to_string()
+        self.imp().password_entry_row.text().to_string()
     }
 }
