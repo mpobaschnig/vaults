@@ -135,7 +135,7 @@ impl VApplication {
     fn show_preferences(&self) {
         let preferences = PreferencesWindow::new();
 
-        preferences.show();
+        preferences.set_visible(true);
     }
 
     fn show_about_dialog(&self) {
@@ -154,7 +154,7 @@ impl VApplication {
         about_window.set_version(config::VERSION);
         about_window.set_website("https://github.com/mpobaschnig/Vaults");
 
-        about_window.show();
+        about_window.set_visible(true);
     }
 
     pub fn run(&self) {
