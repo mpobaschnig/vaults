@@ -26,7 +26,7 @@ sources = files(
   'ui/pages/mod.rs',
   'ui/pages/vaults_page_row.rs',
   'ui/pages/vaults_page_row_settings_dialog.rs',
-  'ui/pages/vaults_page_row_password_prompt_dialog.rs',
+  'ui/pages/vaults_page_row_password_prompt_window.rs',
 
   'ui/add_new_vault_dialog.rs',
   'ui/import_vault_dialog.rs',
