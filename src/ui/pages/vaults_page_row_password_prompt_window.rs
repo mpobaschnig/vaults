@@ -1,4 +1,4 @@
-// vaults_page_row_settings_dialog.rs
+// vaults_page_row_settings_window.rs
 //
 // Copyright 2021 Martin Pobaschnig
 //
@@ -23,13 +23,16 @@ use gtk::{self, gio, glib, glib::clone, prelude::*, CompositeTemplate};
 use crate::VApplication;
 
 mod imp {
+    use gtk::glib::subclass::Signal;
+    use once_cell::sync::Lazy;
+
     use super::*;
 
     #[derive(Debug, CompositeTemplate)]
     #[template(
-        resource = "/io/github/mpobaschnig/Vaults/vaults_page_row_password_prompt_dialog.ui"
+        resource = "/io/github/mpobaschnig/Vaults/vaults_page_row_password_prompt_window.ui"
     )]
-    pub struct VaultsPageRowPasswordPromptDialog {
+    pub struct VaultsPageRowPasswordPromptWindow {
         #[template_child]
         pub unlock_button: TemplateChild<gtk::Button>,
         #[template_child]
@@ -39,10 +42,10 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for VaultsPageRowPasswordPromptDialog {
-        const NAME: &'static str = "VaultsPageRowPasswordPromptDialog";
-        type ParentType = gtk::Dialog;
-        type Type = super::VaultsPageRowPasswordPromptDialog;
+    impl ObjectSubclass for VaultsPageRowPasswordPromptWindow {
+        const NAME: &'static str = "VaultsPageRowPasswordPromptWindow";
+        type ParentType = gtk::Window;
+        type Type = super::VaultsPageRowPasswordPromptWindow;
 
         fn new() -> Self {
             Self {
@@ -61,32 +64,36 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for VaultsPageRowPasswordPromptDialog {
+    impl ObjectImpl for VaultsPageRowPasswordPromptWindow {
         fn constructed(&self) {
             let obj = self.obj();
             self.parent_constructed();
 
             obj.setup_signals();
         }
+
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> =
+                Lazy::new(|| vec![Signal::builder("unlock").build()]);
+            SIGNALS.as_ref()
+        }
     }
 
-    impl WidgetImpl for VaultsPageRowPasswordPromptDialog {}
-    impl WindowImpl for VaultsPageRowPasswordPromptDialog {}
-    impl DialogImpl for VaultsPageRowPasswordPromptDialog {}
+    impl WidgetImpl for VaultsPageRowPasswordPromptWindow {}
+    impl WindowImpl for VaultsPageRowPasswordPromptWindow {}
+    impl DialogImpl for VaultsPageRowPasswordPromptWindow {}
 }
 
 glib::wrapper! {
-    pub struct VaultsPageRowPasswordPromptDialog(ObjectSubclass<imp::VaultsPageRowPasswordPromptDialog>)
-        @extends gtk::Widget, gtk::Window, gtk::Dialog;
+    pub struct VaultsPageRowPasswordPromptWindow(ObjectSubclass<imp::VaultsPageRowPasswordPromptWindow>)
+        @extends gtk::Widget, gtk::Window;
 }
 
-impl VaultsPageRowPasswordPromptDialog {
+impl VaultsPageRowPasswordPromptWindow {
     pub fn new() -> Self {
-        let dialog: Self = glib::Object::builder()
-            .property("use-header-bar", 1)
-            .build();
+        let dialog: Self = glib::Object::builder().build();
 
-        dialog.header_bar().add_css_class("flat");
+        dialog.add_css_class("flat");
 
         let window = gio::Application::default()
             .unwrap()
@@ -124,7 +131,8 @@ impl VaultsPageRowPasswordPromptDialog {
     }
 
     fn unlock_button_clicked(&self) {
-        self.response(gtk::ResponseType::Ok);
+        self.emit_by_name::<()>("unlock", &[]);
+        //self.close();
     }
 
     fn check_unlock_button_enable_conditions(&self) {

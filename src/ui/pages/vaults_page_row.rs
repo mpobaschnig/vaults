@@ -23,14 +23,14 @@ use glib::once_cell::sync::Lazy;
 use glib::{clone, subclass};
 use gtk::gio::Mount;
 use gtk::gio::VolumeMonitor;
-use gtk::glib;
 use gtk::glib::subclass::Signal;
+use gtk::glib::{self, closure_local};
 use gtk::prelude::*;
 use gtk::CompositeTemplate;
 use std::cell::RefCell;
 use std::process::Command;
 
-use super::{VaultsPageRowPasswordPromptDialog, VaultsPageRowSettingsDialog};
+use super::{VaultsPageRowPasswordPromptWindow, VaultsPageRowSettingsDialog};
 use crate::{
     backend::{Backend, BackendError},
     vault::*,
@@ -293,98 +293,92 @@ impl VaultsPageRow {
             return;
         }
 
-        let dialog = VaultsPageRowPasswordPromptDialog::new();
+        let dialog = VaultsPageRowPasswordPromptWindow::new();
         dialog.set_name(&vault.get_name().unwrap());
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, id| {
-            let password = dialog.get_password();
+        dialog.connect_closure(
+            "unlock",
+            false,
+            closure_local!(@strong self as obj => move |dialog: VaultsPageRowPasswordPromptWindow| {
+                let password = dialog.get_password();
 
-            dialog.destroy();
+                dialog.close();
 
-            if id != gtk::ResponseType::Ok {
-                return;
-            }
+                obj.imp().settings_button.set_sensitive(false);
+                obj.imp().open_folder_button.set_sensitive(false);
 
-            obj.imp().settings_button.set_sensitive(false);
-            obj.imp().open_folder_button.set_sensitive(false);
+                *obj.imp().spinner.borrow_mut() = gtk::Spinner::new();
+                let spinner = obj.imp().spinner.borrow().clone();
+                obj.imp().locker_button.set_child(Some(&spinner));
 
-            *obj.imp().spinner.borrow_mut() = gtk::Spinner::new();
-            let spinner = obj.imp().spinner.borrow().clone();
-            obj.imp().locker_button.set_child(Some(&spinner));
+                spinner.start();
 
-            spinner.start();
+                enum Message {
+                    Finished,
+                    Error(BackendError),
+                }
 
-            enum Message {
-                Finished,
-                Error(BackendError)
-            }
-
-            let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
-            let vault_config = vault.get_config().clone().unwrap();
-            std::thread::spawn(move || {
-                match Backend::open(&vault_config, password) {
+                let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+                let vault_config = vault.get_config().clone().unwrap();
+                std::thread::spawn(move || match Backend::open(&vault_config, password) {
                     Ok(_) => {
                         let _ = sender.send(Message::Finished);
                     }
                     Err(e) => {
                         let _ = sender.send(Message::Error(e));
                     }
-                }
-            });
+                });
 
-            let locker_button = obj.imp().locker_button.clone();
-            let open_folder_button = obj.imp().open_folder_button.clone();
-            let settings_button = obj.imp().settings_button.clone();
-            let vaults_page_row = obj.imp().vaults_page_row.clone();
-            receiver.attach(None, move |message| {
-                match message {
-                    Message::Finished => {
-                        locker_button.set_icon_name(&"changes-allow-symbolic");
-                        locker_button.set_tooltip_text(Some(&gettext("Close Vault")));
-                        open_folder_button.set_visible(true);
-                        open_folder_button.set_sensitive(true);
-                        settings_button.set_sensitive(false);
+                let locker_button = obj.imp().locker_button.clone();
+                let open_folder_button = obj.imp().open_folder_button.clone();
+                let settings_button = obj.imp().settings_button.clone();
+                let vaults_page_row = obj.imp().vaults_page_row.clone();
+                receiver.attach(None, move |message| {
+                    match message {
+                        Message::Finished => {
+                            locker_button.set_icon_name(&"changes-allow-symbolic");
+                            locker_button.set_tooltip_text(Some(&gettext("Close Vault")));
+                            open_folder_button.set_visible(true);
+                            open_folder_button.set_sensitive(true);
+                            settings_button.set_sensitive(false);
+                        }
+                        Message::Error(e) => {
+                            log::error!("Error opening vault: {}", &e);
+
+                            locker_button.set_icon_name(&"changes-prevent-symbolic");
+                            locker_button.set_tooltip_text(Some(&gettext("Open Vault")));
+                            open_folder_button.set_visible(false);
+                            open_folder_button.set_sensitive(false);
+                            settings_button.set_sensitive(true);
+
+                            let vault_name = vaults_page_row.title().to_string();
+                            gtk::glib::MainContext::default().spawn_local(async move {
+                                let window = gtk::gio::Application::default()
+                                    .unwrap()
+                                    .downcast_ref::<VApplication>()
+                                    .unwrap()
+                                    .active_window()
+                                    .unwrap()
+                                    .clone();
+
+                                let info_dialog = gtk::AlertDialog::builder()
+                                    .modal(true)
+                                    .message(&vault_name)
+                                    .detail(&format!("{}", e))
+                                    .build();
+
+                                info_dialog.show(Some(&window));
+                            });
+                        }
                     }
-                    Message::Error(e) => {
-                        log::error!("Error opening vault: {}", &e);
 
-                        locker_button.set_icon_name(&"changes-prevent-symbolic");
-                        locker_button.set_tooltip_text(Some(&gettext("Open Vault")));
-                        open_folder_button.set_visible(false);
-                        open_folder_button.set_sensitive(false);
-                        settings_button.set_sensitive(true);
+                    spinner.stop();
 
-                        let vault_name = vaults_page_row.title().to_string();
-                        gtk::glib::MainContext::default().spawn_local(async move {
-                            let window = gtk::gio::Application::default()
-                                .unwrap()
-                                .downcast_ref::<VApplication>()
-                                .unwrap()
-                                .active_window()
-                                .unwrap()
-                                .clone();
-                            let info_dialog = gtk::MessageDialog::builder()
-                                .message_type(gtk::MessageType::Error)
-                                .transient_for(&window)
-                                .modal(true)
-                                .buttons(gtk::ButtonsType::Close)
-                                .text(&vault_name)
-                                .secondary_text(&format!("{}", e))
-                                .build();
+                    glib::Continue(true)
+                });
+            }),
+        );
 
-                            info_dialog.run_future().await;
-
-                            info_dialog.close();
-                        });
-                    }
-                }
-
-                spinner.stop();
-
-                glib::Continue(true)
-            });
-        }));
-
-        dialog.show();
+        dialog.set_visible(true);
     }
 
     fn locker_button_clicked(&self) {
