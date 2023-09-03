@@ -30,7 +30,7 @@ use gtk::CompositeTemplate;
 use std::cell::RefCell;
 use std::process::Command;
 
-use super::{VaultsPageRowPasswordPromptWindow, VaultsPageRowSettingsDialog};
+use super::{VaultsPageRowPasswordPromptWindow, VaultsPageRowSettingsWindow};
 use crate::{
     backend::{Backend, BackendError},
     vault::*,
@@ -399,28 +399,35 @@ impl VaultsPageRow {
     }
 
     fn settings_button_clicked(&self) {
-        let dialog = VaultsPageRowSettingsDialog::new(self.get_vault());
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, id|
-            match id {
-                gtk::ResponseType::Other(0) => {obj.emit_by_name::<()>("remove", &[]);},
-                gtk::ResponseType::Other(1) => {
-                    obj.emit_by_name::<()>("save", &[]);
-                    let vault = &obj.get_vault();
-                    if !vault.is_backend_available() {
-                        obj.set_vault_row_state_backend_unavailable();
-                    } else {
-                        obj.set_vault_row_state_backend_available();
-                    }
-                },
-                _ => {},
-            };
+        let dialog = VaultsPageRowSettingsWindow::new(self.get_vault());
 
-            obj.set_vault(dialog.get_vault());
+        dialog.connect_closure(
+            "save",
+            false,
+            closure_local!(@strong self as obj => move |dialog: VaultsPageRowSettingsWindow| {
+                obj.emit_by_name::<()>("save", &[]);
 
-            dialog.destroy();
-        ));
+                let vault = &dialog.get_vault();
+                if !vault.is_backend_available() {
+                    obj.set_vault_row_state_backend_unavailable();
+                } else {
+                    obj.set_vault_row_state_backend_available();
+                }
 
-        dialog.show();
+                obj.set_vault(dialog.get_vault());
+            }),
+        );
+
+        dialog.connect_closure(
+            "remove",
+            false,
+            closure_local!(@strong self as obj => move |dialog: VaultsPageRowSettingsWindow| {
+                obj.emit_by_name::<()>("remove", &[]);
+                dialog.close();
+            }),
+        );
+
+        dialog.present();
     }
 
     pub fn get_vault(&self) -> Vault {

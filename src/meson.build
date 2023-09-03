@@ -25,7 +25,7 @@ sources = files(
 
   'ui/pages/mod.rs',
   'ui/pages/vaults_page_row.rs',
-  'ui/pages/vaults_page_row_settings_dialog.rs',
+  'ui/pages/vaults_page_row_settings_window.rs',
   'ui/pages/vaults_page_row_password_prompt_window.rs',
 
   'ui/add_new_vault_window.rs',

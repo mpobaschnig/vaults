@@ -1,4 +1,4 @@
-// vaults_page_row_settings_dialog.rs
+// vaults_page_row_settings_window.rs
 //
 // Copyright 2021 Martin Pobaschnig
 //
@@ -28,11 +28,15 @@ use crate::{
 };
 
 mod imp {
+    use crate::ui::pages::vaults_page_row_settings_window;
+    use gtk::glib::subclass::Signal;
+    use once_cell::sync::Lazy;
+
     use super::*;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/io/github/mpobaschnig/Vaults/vaults_page_row_settings_dialog.ui")]
-    pub struct VaultsPageRowSettingsDialog {
+    #[template(resource = "/io/github/mpobaschnig/Vaults/vaults_page_row_settings_window.ui")]
+    pub struct VaultsPageRowSettingsWindow {
         #[template_child]
         pub remove_button: TemplateChild<gtk::Button>,
         #[template_child]
@@ -42,7 +46,7 @@ mod imp {
         #[template_child]
         pub name_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub backend_type_combo_box_text: TemplateChild<gtk::ComboBoxText>,
+        pub backend_type_drop_down: TemplateChild<gtk::DropDown>,
         #[template_child]
         pub backend_error_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -65,10 +69,10 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for VaultsPageRowSettingsDialog {
-        const NAME: &'static str = "VaultsPageRowSettingsDialog";
-        type ParentType = gtk::Dialog;
-        type Type = super::VaultsPageRowSettingsDialog;
+    impl ObjectSubclass for VaultsPageRowSettingsWindow {
+        const NAME: &'static str = "VaultsPageRowSettingsWindow";
+        type ParentType = gtk::Window;
+        type Type = vaults_page_row_settings_window::VaultsPageRowSettingsWindow;
 
         fn new() -> Self {
             Self {
@@ -76,7 +80,7 @@ mod imp {
                 apply_changes_button: TemplateChild::default(),
                 name_entry: TemplateChild::default(),
                 name_error_label: TemplateChild::default(),
-                backend_type_combo_box_text: TemplateChild::default(),
+                backend_type_drop_down: TemplateChild::default(),
                 backend_error_label: TemplateChild::default(),
                 encrypted_data_directory_entry: TemplateChild::default(),
                 encrypted_data_directory_button: TemplateChild::default(),
@@ -99,27 +103,35 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for VaultsPageRowSettingsDialog {
+    impl ObjectImpl for VaultsPageRowSettingsWindow {
         fn constructed(&self) {
             self.parent_constructed();
         }
+
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
+                vec![
+                    Signal::builder("save").build(),
+                    Signal::builder("remove").build(),
+                ]
+            });
+            SIGNALS.as_ref()
+        }
     }
 
-    impl WidgetImpl for VaultsPageRowSettingsDialog {}
-    impl WindowImpl for VaultsPageRowSettingsDialog {}
-    impl DialogImpl for VaultsPageRowSettingsDialog {}
+    impl WidgetImpl for VaultsPageRowSettingsWindow {}
+    impl WindowImpl for VaultsPageRowSettingsWindow {}
+    impl DialogImpl for VaultsPageRowSettingsWindow {}
 }
 
 glib::wrapper! {
-    pub struct VaultsPageRowSettingsDialog(ObjectSubclass<imp::VaultsPageRowSettingsDialog>)
-        @extends gtk::Widget, gtk::Window, gtk::Dialog;
+    pub struct VaultsPageRowSettingsWindow(ObjectSubclass<imp::VaultsPageRowSettingsWindow>)
+        @extends gtk::Widget, gtk::Window;
 }
 
-impl VaultsPageRowSettingsDialog {
+impl VaultsPageRowSettingsWindow {
     pub fn new(vault: Vault) -> Self {
-        let dialog: Self = glib::Object::builder()
-            .property("use-header-bar", 1)
-            .build();
+        let dialog: Self = glib::Object::builder().build();
 
         let window = gio::Application::default()
             .unwrap()
@@ -129,11 +141,9 @@ impl VaultsPageRowSettingsDialog {
             .unwrap();
         dialog.set_transient_for(Some(&window));
 
-        dialog.set_vault(vault);
-
-        dialog.setup_signals();
-
         dialog.fill_combo_box_text();
+        dialog.set_vault(vault);
+        dialog.setup_signals();
 
         dialog
     }
@@ -157,7 +167,7 @@ impl VaultsPageRowSettingsDialog {
                 obj.check_add_button_enable_conditions();
             }));
 
-        self.imp().backend_type_combo_box_text.connect_changed(
+        self.imp().backend_type_drop_down.connect_selected_notify(
             clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
             }),
@@ -190,7 +200,7 @@ impl VaultsPageRowSettingsDialog {
 
     fn remove_button_clicked(&self) {
         UserConfigManager::instance().remove_vault(self.get_vault());
-        self.response(gtk::ResponseType::Other(0));
+        self.emit_by_name::<()>("remove", &[])
     }
 
     fn apply_changes_button_clicked(&self) {
@@ -199,9 +209,12 @@ impl VaultsPageRowSettingsDialog {
             backend::get_backend_from_ui_string(
                 &self
                     .imp()
-                    .backend_type_combo_box_text
-                    .active_text()
+                    .backend_type_drop_down
+                    .selected_item()
                     .unwrap()
+                    .downcast::<gtk::StringObject>()
+                    .unwrap()
+                    .string()
                     .to_string(),
             )
             .unwrap(),
@@ -216,60 +229,38 @@ impl VaultsPageRowSettingsDialog {
 
         let toast = adw::Toast::new(&gettext("Saved settings successfully!"));
         self.imp().toast_overlay.add_toast(toast);
+
+        self.emit_by_name::<()>("save", &[]);
     }
 
     fn encrypted_data_directory_button_clicked(&self) {
-        let dialog = gtk::FileChooserDialog::new(
-            Some(&gettext("Choose Encrypted Data Directory")),
-            Some(self),
-            gtk::FileChooserAction::SelectFolder,
-            &[
-                (&gettext("Cancel"), gtk::ResponseType::Cancel),
-                (&gettext("Select"), gtk::ResponseType::Accept),
-            ],
-        );
+        let dialog = gtk::FileDialog::builder()
+            .title(&gettext("Choose Encrypted Data Directory"))
+            .modal(true)
+            .accept_label(&gettext("Select"))
+            .build();
 
-        dialog.set_transient_for(Some(self));
-
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
-            if response == gtk::ResponseType::Accept {
-                let file = dialog.file().unwrap();
-                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
-
+        dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
+            if let Ok(directory) = directory {
+                let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
                 obj.imp().encrypted_data_directory_entry.set_text(&path);
             }
-
-            dialog.destroy();
         }));
-
-        dialog.show();
     }
 
     fn mount_directory_button_clicked(&self) {
-        let dialog = gtk::FileChooserDialog::new(
-            Some(&gettext("Choose Mount Directory")),
-            Some(self),
-            gtk::FileChooserAction::SelectFolder,
-            &[
-                (&gettext("Cancel"), gtk::ResponseType::Cancel),
-                (&gettext("Select"), gtk::ResponseType::Accept),
-            ],
-        );
+        let dialog = gtk::FileDialog::builder()
+            .title(&gettext("Choose Mount Directory"))
+            .modal(true)
+            .accept_label(&gettext("Select"))
+            .build();
 
-        dialog.set_transient_for(Some(self));
-
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
-            if response == gtk::ResponseType::Accept {
-                let file = dialog.file().unwrap();
-                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
-
+        dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
+            if let Ok(directory) = directory {
+                let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
                 obj.imp().mount_directory_entry.set_text(&path);
             }
-
-            dialog.destroy();
         }));
-
-        dialog.show();
     }
 
     fn is_valid_vault_name(&self, vault_name: GString) -> bool {
@@ -487,9 +478,12 @@ impl VaultsPageRowSettingsDialog {
         let vault_name = self.imp().name_entry.text();
         let backend_str = &self
             .imp()
-            .backend_type_combo_box_text
-            .active_text()
-            .unwrap();
+            .backend_type_drop_down
+            .selected_item()
+            .unwrap()
+            .downcast::<gtk::StringObject>()
+            .unwrap()
+            .string();
         let backend = backend::get_backend_from_ui_string(&backend_str.to_string()).unwrap();
         let encrypted_data_directory = self.imp().encrypted_data_directory_entry.text();
         let mount_directory = self.imp().mount_directory_entry.text();
@@ -528,26 +522,14 @@ impl VaultsPageRowSettingsDialog {
     }
 
     fn fill_combo_box_text(&self) {
-        let curr_backend = backend::get_ui_string_from_backend(
-            &self
-                .get_current_vault()
-                .unwrap()
-                .get_config()
-                .unwrap()
-                .backend,
-        );
+        let list = gtk::StringList::new(&[]);
 
-        let combo_box_text = &self.imp().backend_type_combo_box_text;
-
-        for (i, backend) in Backend::iter().enumerate() {
-            let backend = backend::get_ui_string_from_backend(&backend);
-
-            combo_box_text.append_text(&backend);
-
-            if backend.eq(&curr_backend) {
-                combo_box_text.set_active(Some(i as u32));
-            }
+        for backend in Backend::iter() {
+            let backend = &backend::get_ui_string_from_backend(&backend);
+            list.append(backend);
         }
+
+        self.imp().backend_type_drop_down.set_model(Some(&list));
     }
 
     pub fn get_vault(&self) -> Vault {
@@ -556,9 +538,12 @@ impl VaultsPageRowSettingsDialog {
             backend::get_backend_from_ui_string(
                 &self
                     .imp()
-                    .backend_type_combo_box_text
-                    .active_text()
+                    .backend_type_drop_down
+                    .selected_item()
                     .unwrap()
+                    .downcast::<gtk::StringObject>()
+                    .unwrap()
+                    .string()
                     .to_string(),
             )
             .unwrap(),
@@ -577,9 +562,20 @@ impl VaultsPageRowSettingsDialog {
                 self.imp().current_vault.replace(Some(vault.clone()));
 
                 self.imp().name_entry.set_text(&name);
-                self.imp()
-                    .backend_type_combo_box_text
-                    .set_active_id(Some(&backend::get_ui_string_from_backend(&config.backend)));
+                let model = self.imp().backend_type_drop_down.model().unwrap();
+                for (position, item) in model.iter::<glib::Object>().enumerate() {
+                    if let Ok(object) = item {
+                        let string_object = object.downcast::<gtk::StringObject>().unwrap();
+                        if string_object
+                            .string()
+                            .eq(&backend::get_ui_string_from_backend(&config.backend))
+                        {
+                            self.imp()
+                                .backend_type_drop_down
+                                .set_selected(position as u32);
+                        }
+                    }
+                }
                 self.imp()
                     .encrypted_data_directory_entry
                     .set_text(&config.encrypted_data_directory.to_string());
