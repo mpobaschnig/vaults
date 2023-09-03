@@ -4,7 +4,7 @@ data/io.github.mpobaschnig.Vaults.gschema.xml.in
 data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in
 
 # data/resources/ui/
-data/resources/ui/add_new_vault_dialog.ui
+data/resources/ui/add_new_vault_window.ui
 data/resources/ui/import_vault_dialog.ui
 data/resources/ui/preferences.ui
 data/resources/ui/shortcuts.ui
@@ -23,7 +23,7 @@ src/backend/mod.rs
 src/config.rs
 src/main.rs
 src/mod.rs
-src/ui/add_new_vault_dialog.rs
+src/ui/add_new_vault_window.rs
 src/ui/import_vault_dialog.rs
 src/ui/mod.rs
 src/ui/pages/mod.rs
