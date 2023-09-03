@@ -9,7 +9,7 @@
     <file compressed="true" preprocess="xml-stripblanks" alias="vaults_page_row.ui">resources/ui/vaults_page_row.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="vaults_page_row_settings_dialog.ui">resources/ui/vaults_page_row_settings_dialog.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="add_new_vault_window.ui">resources/ui/add_new_vault_window.ui</file>
-    <file compressed="true" preprocess="xml-stripblanks" alias="import_vault_dialog.ui">resources/ui/import_vault_dialog.ui</file>
+    <file compressed="true" preprocess="xml-stripblanks" alias="import_vault_window.ui">resources/ui/import_vault_window.ui</file>
     <file compressed="true" preprocess="xml-stripblanks" alias="vaults_page_row_password_prompt_window.ui">resources/ui/vaults_page_row_password_prompt_window.ui</file>
 
     <file compressed="true" alias="style.css">resources/style.css</file>
