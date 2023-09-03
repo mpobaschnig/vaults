@@ -18,7 +18,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::backend::AVAILABLE_BACKENDS;
-use crate::config::{APP_ID, PROFILE};
+use crate::config::APP_ID;
 use crate::ui::pages::*;
 use crate::ui::window::glib::GString;
 use crate::ui::{AddNewVaultWindow, ImportVaultDialog};
@@ -31,7 +31,7 @@ use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
 use gtk::gio::ListStore;
-use gtk::glib::{closure, closure_local};
+use gtk::glib::closure_local;
 use gtk::{self, prelude::*};
 use gtk::{gio, glib, CompositeTemplate};
 use gtk_macros::action;
@@ -115,10 +115,6 @@ mod imp {
         fn constructed(&self) {
             let obj = self.obj();
             self.parent_constructed();
-
-            if PROFILE == "Devel" {
-                obj.style_context().add_class("devel");
-            }
 
             obj.setup_gactions();
         }
@@ -494,7 +490,7 @@ impl ApplicationWindow {
         dialog.connect_closure(
             "close",
             false,
-            closure_local!(@strong self as obj => move |dialog: AddNewVaultWindow| {
+            closure_local!(move |dialog: AddNewVaultWindow| {
                 dialog.close();
             }),
         );
@@ -520,7 +516,7 @@ impl ApplicationWindow {
         dialog.connect_closure(
             "close",
             false,
-            closure_local!(@strong self as obj => move |dialog: ImportVaultDialog| {
+            closure_local!(move |dialog: ImportVaultDialog| {
                 dialog.close();
             }),
         );
