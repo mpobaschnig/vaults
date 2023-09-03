@@ -1,7 +1,7 @@
 mod vaults_page_row;
 mod vaults_page_row_password_prompt_window;
-mod vaults_page_row_settings_dialog;
+mod vaults_page_row_settings_window;
 
 pub use vaults_page_row::VaultsPageRow;
 pub use vaults_page_row_password_prompt_window::VaultsPageRowPasswordPromptWindow;
-pub use vaults_page_row_settings_dialog::VaultsPageRowSettingsDialog;
+pub use vaults_page_row_settings_window::VaultsPageRowSettingsWindow;
