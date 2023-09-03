@@ -2,10 +2,9 @@
 <interface>
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
-  <template class="VaultSettingsDialog" parent="GtkDialog">
+  <template class="VaultSettingsWindow" parent="GtkWindow">
     <property name="default-height">500</property>
     <property name="default-width">660</property>
-    <property name="use-header-bar">1</property>
     <property name="modal">1</property>
     <property name="destroy-with-parent">1</property>
     <property name="title" translatable="yes">Preferences</property>
