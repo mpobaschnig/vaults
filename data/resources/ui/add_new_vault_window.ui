@@ -2,10 +2,9 @@
 <interface>
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
-  <template class="AddNewVaultDialog" parent="GtkDialog">
+  <template class="AddNewVaultWindow" parent="GtkWindow">
     <property name="default-height">500</property>
     <property name="default-width">660</property>
-    <property name="use-header-bar">1</property>
     <property name="modal">1</property>
     <property name="destroy-with-parent">1</property>
     <child type="titlebar">
@@ -116,7 +115,7 @@
                           <object class="GtkBox">
                             <property name="hexpand">True</property>
                             <child>
-                              <object class="GtkComboBoxText" id="backend_type_combo_box_text">
+                              <object class="GtkDropDown" id="backend_type_drop_down">
                                 <property name="valign">center</property>
                                 <property name="hexpand">True</property>
                               </object>

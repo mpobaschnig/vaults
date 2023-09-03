@@ -21,7 +21,7 @@ use crate::backend::AVAILABLE_BACKENDS;
 use crate::config::{APP_ID, PROFILE};
 use crate::ui::pages::*;
 use crate::ui::window::glib::GString;
-use crate::ui::{AddNewVaultDialog, ImportVaultDialog};
+use crate::ui::{AddNewVaultWindow, ImportVaultDialog};
 use crate::{
     application::VApplication, backend, backend::Backend, user_config_manager::UserConfigManager,
     vault::*,
@@ -31,6 +31,7 @@ use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
 use gtk::gio::ListStore;
+use gtk::glib::{closure, closure_local};
 use gtk::{self, prelude::*};
 use gtk::{gio, glib, CompositeTemplate};
 use gtk_macros::action;
@@ -453,11 +454,12 @@ impl ApplicationWindow {
     }
 
     fn add_new_vault_clicked(&self) {
-        backend::probe_backends();
+        let dialog = AddNewVaultWindow::new();
 
-        let dialog = AddNewVaultDialog::new();
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, id|
-            if id == gtk::ResponseType::Ok {
+        dialog.connect_closure(
+            "add",
+            false,
+            closure_local!(@strong self as obj => move |dialog: AddNewVaultWindow| {
                 let vault = dialog.get_vault();
                 let password = dialog.get_password();
                 match Backend::init(&vault.get_config().unwrap(), password) {
@@ -475,26 +477,29 @@ impl ApplicationWindow {
                                 .active_window()
                                 .unwrap()
                                 .clone();
-                            let info_dialog = gtk::MessageDialog::builder()
-                                .message_type(gtk::MessageType::Error)
-                                .transient_for(&window)
+                            let info_dialog = gtk::AlertDialog::builder()
+                                .message(&vault.get_name().unwrap())
+                                .detail(&format!("{}", e))
                                 .modal(true)
-                                .buttons(gtk::ButtonsType::Close)
-                                .text(&vault.get_name().unwrap())
-                                .secondary_text(&format!("{}", e))
                                 .build();
 
-                            info_dialog.run_future().await;
-                            info_dialog.close();
+                            info_dialog.show(Some(&window));
                         });
                     }
                 }
-            }
+                dialog.close();
+            }),
+        );
 
-            dialog.destroy();
-        ));
+        dialog.connect_closure(
+            "close",
+            false,
+            closure_local!(@strong self as obj => move |dialog: AddNewVaultWindow| {
+                dialog.close();
+            }),
+        );
 
-        dialog.show();
+        dialog.present();
     }
 
     fn import_vault_clicked(&self) {

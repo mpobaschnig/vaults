@@ -1,4 +1,4 @@
-// add_new_vault_dialog.rs
+// add_new_vault_window.rs
 //
 // Copyright 2021 Martin Pobaschnig
 //
@@ -17,23 +17,28 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use crate::user_config_manager::UserConfigManager;
 use crate::{
-    backend, backend::AVAILABLE_BACKENDS, global_config_manager::GlobalConfigManager,
-    user_config_manager::UserConfigManager, vault::*, VApplication,
+    backend, backend::AVAILABLE_BACKENDS, global_config_manager::GlobalConfigManager, vault::*,
+    VApplication,
 };
 use gettextrs::gettext;
 use gtk::gio;
+
 use gtk::{self, prelude::*};
 use gtk::{glib, CompositeTemplate};
 use gtk::{glib::clone, glib::GString, subclass::prelude::*};
 use std::cell::RefCell;
 
 mod imp {
+    use gtk::glib::subclass::Signal;
+    use once_cell::sync::Lazy;
+
     use super::*;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/io/github/mpobaschnig/Vaults/add_new_vault_dialog.ui")]
-    pub struct AddNewVaultDialog {
+    #[template(resource = "/io/github/mpobaschnig/Vaults/add_new_vault_window.ui")]
+    pub struct AddNewVaultWindow {
         #[template_child]
         pub carousel: TemplateChild<adw::Carousel>,
         #[template_child]
@@ -47,7 +52,7 @@ mod imp {
         #[template_child]
         pub name_entry: TemplateChild<gtk::Entry>,
         #[template_child]
-        pub backend_type_combo_box_text: TemplateChild<gtk::ComboBoxText>,
+        pub backend_type_drop_down: TemplateChild<gtk::DropDown>,
         #[template_child]
         pub info_button: TemplateChild<gtk::ToggleButton>,
         #[template_child]
@@ -75,10 +80,10 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for AddNewVaultDialog {
-        const NAME: &'static str = "AddNewVaultDialog";
-        type ParentType = gtk::Dialog;
-        type Type = super::AddNewVaultDialog;
+    impl ObjectSubclass for AddNewVaultWindow {
+        const NAME: &'static str = "AddNewVaultWindow";
+        type ParentType = gtk::Window;
+        type Type = super::AddNewVaultWindow;
 
         fn new() -> Self {
             Self {
@@ -88,7 +93,7 @@ mod imp {
                 next_button: TemplateChild::default(),
                 add_button: TemplateChild::default(),
                 name_entry: TemplateChild::default(),
-                backend_type_combo_box_text: TemplateChild::default(),
+                backend_type_drop_down: TemplateChild::default(),
                 info_button: TemplateChild::default(),
                 info_label: TemplateChild::default(),
                 name_error_label: TemplateChild::default(),
@@ -114,33 +119,40 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for AddNewVaultDialog {
+    impl ObjectImpl for AddNewVaultWindow {
         fn constructed(&self) {
             let obj = self.obj();
             self.parent_constructed();
 
+            obj.setup_combo_box();
             obj.setup_actions();
             obj.setup_signals();
+        }
 
-            obj.setup_combo_box();
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
+                vec![
+                    Signal::builder("add").build(),
+                    Signal::builder("close").build(),
+                ]
+            });
+            SIGNALS.as_ref()
         }
     }
 
-    impl WidgetImpl for AddNewVaultDialog {}
-    impl WindowImpl for AddNewVaultDialog {}
-    impl DialogImpl for AddNewVaultDialog {}
+    impl WidgetImpl for AddNewVaultWindow {}
+    impl WindowImpl for AddNewVaultWindow {}
+    impl DialogImpl for AddNewVaultWindow {}
 }
 
 glib::wrapper! {
-    pub struct AddNewVaultDialog(ObjectSubclass<imp::AddNewVaultDialog>)
-        @extends gtk::Widget, gtk::Window, gtk::Dialog;
+    pub struct AddNewVaultWindow(ObjectSubclass<imp::AddNewVaultWindow>)
+        @extends gtk::Widget, gtk::Window;
 }
 
-impl AddNewVaultDialog {
+impl AddNewVaultWindow {
     pub fn new() -> Self {
-        let dialog: Self = glib::Object::builder()
-            .property("use-header-bar", 1)
-            .build();
+        let dialog: Self = glib::Object::builder().build();
 
         let window = gio::Application::default()
             .unwrap()
@@ -157,9 +169,17 @@ impl AddNewVaultDialog {
 
     fn setup_signals(&self) {
         self.imp()
+            .add_button
+            .connect_clicked(clone!(@weak self as obj => move |_| {
+                obj.emit_by_name::<()>("add", &[]);
+                obj.close();
+            }));
+
+        self.imp()
             .cancel_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.response(gtk::ResponseType::Cancel);
+                obj.emit_by_name::<()>("close", &[]);
+                obj.close();
             }));
 
         self.imp()
@@ -175,18 +195,12 @@ impl AddNewVaultDialog {
             }));
 
         self.imp()
-            .add_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.response(gtk::ResponseType::Ok);
-            }));
-
-        self.imp()
             .name_entry
             .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.validate_name();
             }));
 
-        self.imp().backend_type_combo_box_text.connect_changed(
+        self.imp().backend_type_drop_down.connect_selected_notify(
             clone!(@weak self as obj => move |_| {
                 obj.combo_box_changed();
             }),
@@ -290,7 +304,7 @@ impl AddNewVaultDialog {
     }
 
     pub fn validate_name(&self) {
-        let combo_box_text = self.imp().backend_type_combo_box_text.active_text();
+        let combo_box_text = self.imp().backend_type_drop_down.selected_item();
 
         if combo_box_text.is_none() {
             self.imp().next_button.set_sensitive(false);
@@ -344,9 +358,12 @@ impl AddNewVaultDialog {
         let backend = backend::get_backend_from_ui_string(
             &self
                 .imp()
-                .backend_type_combo_box_text
-                .active_text()
+                .backend_type_drop_down
+                .selected_item()
                 .unwrap()
+                .downcast::<gtk::StringObject>()
+                .unwrap()
+                .string()
                 .to_string(),
         )
         .unwrap();
@@ -394,57 +411,33 @@ impl AddNewVaultDialog {
     }
 
     pub fn encrypted_data_directory_button_clicked(&self) {
-        let dialog = gtk::FileChooserDialog::new(
-            Some(&gettext("Choose Encrypted Data Directory")),
-            Some(self),
-            gtk::FileChooserAction::SelectFolder,
-            &[
-                (&gettext("Cancel"), gtk::ResponseType::Cancel),
-                (&gettext("Select"), gtk::ResponseType::Accept),
-            ],
-        );
+        let dialog = gtk::FileDialog::builder()
+            .title(&gettext("Choose Encrypted Data Directory"))
+            .modal(true)
+            .accept_label(&gettext("Select"))
+            .build();
 
-        dialog.set_transient_for(Some(self));
-
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
-            if response == gtk::ResponseType::Accept {
-                let file = dialog.file().unwrap();
-                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
-
+        dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
+            if let Ok(directory) = directory {
+                let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
                 obj.imp().encrypted_data_directory_entry.set_text(&path);
             }
-
-            dialog.destroy();
         }));
-
-        dialog.show();
     }
 
     pub fn mount_directory_button_clicked(&self) {
-        let dialog = gtk::FileChooserDialog::new(
-            Some(&gettext("Choose Mount Directory")),
-            Some(self),
-            gtk::FileChooserAction::SelectFolder,
-            &[
-                (&gettext("Cancel"), gtk::ResponseType::Cancel),
-                (&gettext("Select"), gtk::ResponseType::Accept),
-            ],
-        );
+        let dialog = gtk::FileDialog::builder()
+            .title(&gettext("Choose Mount Directory"))
+            .modal(true)
+            .accept_label(&gettext("Select"))
+            .build();
 
-        dialog.set_transient_for(Some(self));
-
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
-            if response == gtk::ResponseType::Accept {
-                let file = dialog.file().unwrap();
-                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
-
+        dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
+            if let Ok(directory) = directory {
+                let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
                 obj.imp().mount_directory_entry.set_text(&path);
             }
-
-            dialog.destroy();
         }));
-
-        dialog.show();
     }
 
     pub fn validate_directories(&self) {
@@ -623,24 +616,29 @@ impl AddNewVaultDialog {
     }
 
     pub fn get_vault(&self) -> Vault {
+        let backend = backend::get_backend_from_ui_string(
+            &self
+                .imp()
+                .backend_type_drop_down
+                .selected_item()
+                .unwrap()
+                .downcast::<gtk::StringObject>()
+                .unwrap()
+                .string()
+                .to_string(),
+        )
+        .unwrap();
+
         Vault::new(
             String::from(self.imp().name_entry.text().as_str()),
-            backend::get_backend_from_ui_string(
-                &self
-                    .imp()
-                    .backend_type_combo_box_text
-                    .active_text()
-                    .unwrap()
-                    .to_string(),
-            )
-            .unwrap(),
+            backend,
             String::from(self.imp().encrypted_data_directory_entry.text().as_str()),
             String::from(self.imp().mount_directory_entry.text().as_str()),
         )
     }
 
     fn setup_combo_box(&self) {
-        let combo_box_text = &self.imp().backend_type_combo_box_text;
+        let list = gtk::StringList::new(&[]);
 
         if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
             let mut gocryptfs_index: Option<u32> = None;
@@ -650,16 +648,17 @@ impl AddNewVaultDialog {
                     gocryptfs_index = Some(i as u32);
                 }
 
-                combo_box_text.append_text(backend);
+                list.append(backend);
             }
 
             if !available_backends.is_empty() {
+                self.imp().backend_type_drop_down.set_model(Some(&list));
+
                 if let Some(index) = gocryptfs_index {
-                    combo_box_text.set_active(Some(index));
+                    self.imp().backend_type_drop_down.set_selected(index);
                 } else {
-                    combo_box_text.set_active(Some(0));
+                    self.imp().backend_type_drop_down.set_selected(0);
                 }
-            } else {
             }
         }
     }
