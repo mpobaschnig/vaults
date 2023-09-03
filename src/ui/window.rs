@@ -504,22 +504,28 @@ impl ApplicationWindow {
 
     fn import_vault_clicked(&self) {
         let dialog = ImportVaultDialog::new();
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, id| match id {
-            gtk::ResponseType::Ok => {
+
+        dialog.connect_closure(
+            "import",
+            false,
+            closure_local!(@strong self as obj => move |dialog: ImportVaultDialog| {
                 let vault = dialog.get_vault();
 
                 UserConfigManager::instance().add_vault(vault);
 
                 obj.set_view(View::Vaults);
+            }),
+        );
 
-                dialog.destroy();
-            }
-            _ => {
-                dialog.destroy();
-            }
-        }));
+        dialog.connect_closure(
+            "close",
+            false,
+            closure_local!(@strong self as obj => move |dialog: ImportVaultDialog| {
+                dialog.close();
+            }),
+        );
 
-        dialog.show();
+        dialog.present();
     }
 
     fn refresh_clicked(&self) {

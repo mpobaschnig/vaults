@@ -1,4 +1,4 @@
-// import_vault_dialog.rs
+// import_vault_window.rs
 //
 // Copyright 2021 Martin Pobaschnig
 //
@@ -26,10 +26,13 @@ use strum::IntoEnumIterator;
 use crate::{backend, user_config_manager::UserConfigManager, vault::*, VApplication};
 
 mod imp {
+    use gtk::glib::subclass::Signal;
+    use once_cell::sync::Lazy;
+
     use super::*;
 
     #[derive(Debug, CompositeTemplate)]
-    #[template(resource = "/io/github/mpobaschnig/Vaults/import_vault_dialog.ui")]
+    #[template(resource = "/io/github/mpobaschnig/Vaults/import_vault_window.ui")]
     pub struct ImportVaultDialog {
         #[template_child]
         pub carousel: TemplateChild<adw::Carousel>,
@@ -44,7 +47,7 @@ mod imp {
         #[template_child]
         pub name_entry: TemplateChild<gtk::Entry>,
         #[template_child]
-        pub backend_type_combo_box_text: TemplateChild<gtk::ComboBoxText>,
+        pub backend_type_drop_down: TemplateChild<gtk::DropDown>,
         #[template_child]
         pub backend_type_error_label: TemplateChild<gtk::Label>,
         #[template_child]
@@ -70,7 +73,7 @@ mod imp {
     #[glib::object_subclass]
     impl ObjectSubclass for ImportVaultDialog {
         const NAME: &'static str = "ImportVaultDialog";
-        type ParentType = gtk::Dialog;
+        type ParentType = gtk::Window;
         type Type = super::ImportVaultDialog;
 
         fn new() -> Self {
@@ -81,7 +84,7 @@ mod imp {
                 next_button: TemplateChild::default(),
                 import_button: TemplateChild::default(),
                 name_entry: TemplateChild::default(),
-                backend_type_combo_box_text: TemplateChild::default(),
+                backend_type_drop_down: TemplateChild::default(),
                 backend_type_error_label: TemplateChild::default(),
                 name_error_label: TemplateChild::default(),
                 encrypted_data_directory_entry: TemplateChild::default(),
@@ -110,10 +113,19 @@ mod imp {
             let obj = self.obj();
             self.parent_constructed();
 
+            obj.fill_combo_box_text();
             obj.setup_actions();
             obj.setup_signals();
+        }
 
-            obj.fill_combo_box_text();
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
+                vec![
+                    Signal::builder("import").build(),
+                    Signal::builder("close").build(),
+                ]
+            });
+            SIGNALS.as_ref()
         }
     }
 
@@ -124,14 +136,12 @@ mod imp {
 
 glib::wrapper! {
     pub struct ImportVaultDialog(ObjectSubclass<imp::ImportVaultDialog>)
-        @extends gtk::Widget, gtk::Window, gtk::Dialog;
+        @extends gtk::Widget, gtk::Window;
 }
 
 impl ImportVaultDialog {
     pub fn new() -> Self {
-        let dialog: Self = glib::Object::builder()
-            .property("use-header-bar", 1)
-            .build();
+        let dialog: Self = glib::Object::builder().build();
 
         let window = gio::Application::default()
             .unwrap()
@@ -150,7 +160,8 @@ impl ImportVaultDialog {
         self.imp()
             .cancel_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.response(gtk::ResponseType::Cancel);
+                obj.emit_by_name::<()>("close", &[]);
+                obj.close();
             }));
 
         self.imp()
@@ -168,7 +179,8 @@ impl ImportVaultDialog {
         self.imp()
             .import_button
             .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.response(gtk::ResponseType::Ok);
+                obj.emit_by_name::<()>("import", &[]);
+                obj.close();
             }));
 
         self.imp()
@@ -177,7 +189,7 @@ impl ImportVaultDialog {
                 obj.validate_name();
             }));
 
-        self.imp().backend_type_combo_box_text.connect_changed(
+        self.imp().backend_type_drop_down.connect_selected_notify(
             clone!(@weak self as obj => move |_| {
                 obj.validate_name();
             }),
@@ -252,9 +264,9 @@ impl ImportVaultDialog {
                 self.imp().next_button.set_visible(false);
                 self.imp().import_button.set_visible(true);
 
-                let combo_box_text = self.imp().backend_type_combo_box_text.active_text();
+                let drop_down_text = self.imp().backend_type_drop_down.selected_item();
 
-                if combo_box_text.is_none() {
+                if drop_down_text.is_none() {
                     self.imp().import_button.set_sensitive(false);
 
                     self.imp().backend_type_error_label.set_text(&gettext(
@@ -310,62 +322,38 @@ impl ImportVaultDialog {
     }
 
     pub fn encrypted_data_directory_button_clicked(&self) {
-        let dialog = gtk::FileChooserDialog::new(
-            Some(&gettext("Choose Encrypted Data Directory")),
-            Some(self),
-            gtk::FileChooserAction::SelectFolder,
-            &[
-                (&gettext("Cancel"), gtk::ResponseType::Cancel),
-                (&gettext("Select"), gtk::ResponseType::Accept),
-            ],
-        );
+        let dialog = gtk::FileDialog::builder()
+            .title(&gettext("Choose Encrypted Data Directory"))
+            .modal(true)
+            .accept_label(&gettext("Select"))
+            .build();
 
-        dialog.set_transient_for(Some(self));
-
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
-            if response == gtk::ResponseType::Accept {
-                let file = dialog.file().unwrap();
-                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
-
+        dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
+            if let Ok(directory) = directory {
+                let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
                 obj.imp().encrypted_data_directory_entry.set_text(&path);
 
                 obj.validate_directories();
             }
-
-            dialog.destroy();
         }));
-
-        dialog.show();
     }
 
     pub fn mount_directory_button_clicked(&self) {
-        let dialog = gtk::FileChooserDialog::new(
-            Some(&gettext("Choose Mount Directory")),
-            Some(self),
-            gtk::FileChooserAction::SelectFolder,
-            &[
-                (&gettext("Cancel"), gtk::ResponseType::Cancel),
-                (&gettext("Select"), gtk::ResponseType::Accept),
-            ],
-        );
+        let dialog = gtk::FileDialog::builder()
+            .title(&gettext("Choose Mount Directory"))
+            .modal(true)
+            .accept_label(&gettext("Select"))
+            .build();
 
-        dialog.set_transient_for(Some(self));
-
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
-            if response == gtk::ResponseType::Accept {
-                let file = dialog.file().unwrap();
-                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
-
+        dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
+            if let Ok(directory) = directory {
+                let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
                 obj.imp().mount_directory_entry.set_text(&path);
 
-                obj.guess_name(&file);
+                obj.guess_name(&directory);
                 obj.validate_directories();
             }
-
-            dialog.destroy();
         }));
-
-        dialog.show();
     }
 
     pub fn validate_directories(&self) {
@@ -529,9 +517,12 @@ impl ImportVaultDialog {
             backend::get_backend_from_ui_string(
                 &self
                     .imp()
-                    .backend_type_combo_box_text
-                    .active_text()
+                    .backend_type_drop_down
+                    .selected_item()
                     .unwrap()
+                    .downcast::<gtk::StringObject>()
+                    .unwrap()
+                    .string()
                     .to_string(),
             )
             .unwrap(),
@@ -541,13 +532,14 @@ impl ImportVaultDialog {
     }
 
     fn fill_combo_box_text(&self) {
+        let list = gtk::StringList::new(&[]);
+
         for backend in backend::Backend::iter() {
             let value = &backend::get_ui_string_from_backend(&backend);
-
-            self.imp()
-                .backend_type_combo_box_text
-                .append(Some(&value), &value);
+            list.append(value);
         }
+
+        self.imp().backend_type_drop_down.set_model(Some(&list));
     }
 
     fn guess_name(&self, file: &File) {
@@ -573,10 +565,18 @@ impl ImportVaultDialog {
                                     .encrypted_data_directory_info_label
                                     .set_visible(true);
 
-                                self.imp()
-                                    .backend_type_combo_box_text
-                                    .set_active_id(Some("gocryptfs"));
-
+                                let model = self.imp().backend_type_drop_down.model().unwrap();
+                                for (position, item) in model.iter::<glib::Object>().enumerate() {
+                                    if let Ok(object) = item {
+                                        let string_object =
+                                            object.downcast::<gtk::StringObject>().unwrap();
+                                        if string_object.string().eq("gocryptfs") {
+                                            self.imp()
+                                                .backend_type_drop_down
+                                                .set_selected(position as u32);
+                                        }
+                                    }
+                                }
                                 return true;
                             }
 
@@ -589,10 +589,18 @@ impl ImportVaultDialog {
                                     .encrypted_data_directory_info_label
                                     .set_visible(true);
 
-                                self.imp()
-                                    .backend_type_combo_box_text
-                                    .set_active_id(Some("CryFS"));
-
+                                let model = self.imp().backend_type_drop_down.model().unwrap();
+                                for (position, item) in model.iter::<glib::Object>().enumerate() {
+                                    if let Ok(object) = item {
+                                        let string_object =
+                                            object.downcast::<gtk::StringObject>().unwrap();
+                                        if string_object.string().eq("CryFS") {
+                                            self.imp()
+                                                .backend_type_drop_down
+                                                .set_selected(position as u32);
+                                        }
+                                    }
+                                }
                                 return true;
                             }
                         }
