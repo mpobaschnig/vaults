@@ -36,6 +36,13 @@
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
+    <release version="0.6.1" date="2023-09-03">
+      <p>Small release:</p>
+      <ul>
+        <li>Added French translation</li>
+        <li>Updated to GNOME 44 runtime</li>
+      </ul>
+    </release>
     <release version="0.6.0" date="2023-03-07">
       <p>Translation release:</p>
       <ul>
