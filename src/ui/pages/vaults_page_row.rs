@@ -261,18 +261,13 @@ impl VaultsPageRow {
                             .active_window()
                             .unwrap()
                             .clone();
-                        let info_dialog = gtk::MessageDialog::builder()
-                            .message_type(gtk::MessageType::Error)
-                            .transient_for(&window)
+                        let info_dialog = gtk::AlertDialog::builder()
+                            .message(&vault_name)
+                            .detail(&format!("{}", e))
                             .modal(true)
-                            .buttons(gtk::ButtonsType::Close)
-                            .text(&vault_name)
-                            .secondary_text(&format!("{}", e))
                             .build();
 
-                        info_dialog.run_future().await;
-
-                        info_dialog.close();
+                        info_dialog.show(Some(&window));
                     });
                 }
             }
