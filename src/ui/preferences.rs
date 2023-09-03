@@ -33,7 +33,7 @@ mod imp {
 
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/io/github/mpobaschnig/Vaults/preferences.ui")]
-    pub struct VaultSettingsDialog {
+    pub struct VaultsSettingsWindow {
         #[template_child]
         pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
         #[template_child]
@@ -53,9 +53,9 @@ mod imp {
     }
 
     #[glib::object_subclass]
-    impl ObjectSubclass for VaultSettingsDialog {
-        const NAME: &'static str = "VaultSettingsDialog";
-        type ParentType = gtk::Dialog;
+    impl ObjectSubclass for VaultsSettingsWindow {
+        const NAME: &'static str = "VaultSettingsWindow";
+        type ParentType = gtk::Window;
         type Type = super::PreferencesWindow;
 
         fn new() -> Self {
@@ -80,27 +80,25 @@ mod imp {
         }
     }
 
-    impl ObjectImpl for VaultSettingsDialog {
+    impl ObjectImpl for VaultsSettingsWindow {
         fn constructed(&self) {
             self.parent_constructed();
         }
     }
 
-    impl WidgetImpl for VaultSettingsDialog {}
-    impl WindowImpl for VaultSettingsDialog {}
-    impl DialogImpl for VaultSettingsDialog {}
+    impl WidgetImpl for VaultsSettingsWindow {}
+    impl WindowImpl for VaultsSettingsWindow {}
+    impl DialogImpl for VaultsSettingsWindow {}
 }
 
 glib::wrapper! {
-    pub struct PreferencesWindow(ObjectSubclass<imp::VaultSettingsDialog>)
-        @extends gtk::Widget, gtk::Window, gtk::Dialog;
+    pub struct PreferencesWindow(ObjectSubclass<imp::VaultsSettingsWindow>)
+        @extends gtk::Widget, gtk::Window;
 }
 
 impl PreferencesWindow {
     pub fn new() -> Self {
-        let o: Self = glib::Object::builder()
-            .property("use-header-bar", 1)
-            .build();
+        let o: Self = glib::Object::builder().build();
 
         let window = gio::Application::default()
             .unwrap()
@@ -162,57 +160,33 @@ impl PreferencesWindow {
     }
 
     fn encrypted_data_directory_button_clicked(&self) {
-        let dialog = gtk::FileChooserDialog::new(
-            Some(&gettext("Choose Encrypted Data Directory")),
-            Some(self),
-            gtk::FileChooserAction::SelectFolder,
-            &[
-                (&gettext("Cancel"), gtk::ResponseType::Cancel),
-                (&gettext("Select"), gtk::ResponseType::Accept),
-            ],
-        );
+        let dialog = gtk::FileDialog::builder()
+            .title(&gettext("Choose Encrypted Data Directory"))
+            .modal(true)
+            .accept_label(&gettext("Select"))
+            .build();
 
-        dialog.set_transient_for(Some(self));
-
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
-            if response == gtk::ResponseType::Accept {
-                let file = dialog.file().unwrap();
-                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
-
+        dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
+            if let Ok(directory) = directory {
+                let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
                 obj.imp().encrypted_data_directory_entry.set_text(&path);
             }
-
-            dialog.destroy();
         }));
-
-        dialog.show();
     }
 
     fn mount_directory_button_clicked(&self) {
-        let dialog = gtk::FileChooserDialog::new(
-            Some(&gettext("Choose Mount Directory")),
-            Some(self),
-            gtk::FileChooserAction::SelectFolder,
-            &[
-                (&gettext("Cancel"), gtk::ResponseType::Cancel),
-                (&gettext("Select"), gtk::ResponseType::Accept),
-            ],
-        );
+        let dialog = gtk::FileDialog::builder()
+            .title(&gettext("Choose Mount Directory"))
+            .modal(true)
+            .accept_label(&gettext("Select"))
+            .build();
 
-        dialog.set_transient_for(Some(self));
-
-        dialog.connect_response(clone!(@weak self as obj => move |dialog, response| {
-            if response == gtk::ResponseType::Accept {
-                let file = dialog.file().unwrap();
-                let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
-
+        dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
+            if let Ok(directory) = directory {
+                let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
                 obj.imp().mount_directory_entry.set_text(&path);
             }
-
-            dialog.destroy();
         }));
-
-        dialog.show();
     }
 
     fn general_apply_changes_button_clicked(&self) {
