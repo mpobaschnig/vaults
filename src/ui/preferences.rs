@@ -35,13 +35,13 @@ mod imp {
     #[template(resource = "/io/github/mpobaschnig/Vaults/preferences.ui")]
     pub struct VaultsSettingsWindow {
         #[template_child]
-        pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
+        pub encrypted_data_directory_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub encrypted_data_directory_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub encrypted_data_directory_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub mount_directory_entry: TemplateChild<gtk::Entry>,
+        pub mount_directory_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub mount_directory_button: TemplateChild<gtk::Button>,
         #[template_child]
@@ -61,10 +61,10 @@ mod imp {
         fn new() -> Self {
             Self {
                 general_apply_changes_button: TemplateChild::default(),
-                encrypted_data_directory_entry: TemplateChild::default(),
+                encrypted_data_directory_entry_row: TemplateChild::default(),
                 encrypted_data_directory_button: TemplateChild::default(),
                 encrypted_data_directory_error_label: TemplateChild::default(),
-                mount_directory_entry: TemplateChild::default(),
+                mount_directory_entry_row: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
                 mount_directory_error_label: TemplateChild::default(),
                 toast_overlay: TemplateChild::default(),
@@ -119,17 +119,17 @@ impl PreferencesWindow {
         let global_config = GlobalConfigManager::instance().get_global_config();
 
         self.imp()
-            .encrypted_data_directory_entry
+            .encrypted_data_directory_entry_row
             .set_text(&global_config.encrypted_data_directory.borrow());
 
         self.imp()
-            .mount_directory_entry
+            .mount_directory_entry_row
             .set_text(&global_config.mount_directory.borrow());
     }
 
     fn setup_signals(&self) {
         self.imp()
-            .encrypted_data_directory_entry
+            .encrypted_data_directory_entry_row
             .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_apply_changes_button_enable_conditions();
             }));
@@ -140,7 +140,7 @@ impl PreferencesWindow {
             }),
         );
 
-        self.imp().mount_directory_entry.connect_text_notify(
+        self.imp().mount_directory_entry_row.connect_text_notify(
             clone!(@weak self as obj => move |_| {
                 obj.check_apply_changes_button_enable_conditions();
             }),
@@ -169,7 +169,7 @@ impl PreferencesWindow {
         dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
             if let Ok(directory) = directory {
                 let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                obj.imp().encrypted_data_directory_entry.set_text(&path);
+                obj.imp().encrypted_data_directory_entry_row.set_text(&path);
             }
         }));
     }
@@ -184,14 +184,18 @@ impl PreferencesWindow {
         dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
             if let Ok(directory) = directory {
                 let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                obj.imp().mount_directory_entry.set_text(&path);
+                obj.imp().mount_directory_entry_row.set_text(&path);
             }
         }));
     }
 
     fn general_apply_changes_button_clicked(&self) {
-        let encrypted_data_directory = self.imp().encrypted_data_directory_entry.text().to_string();
-        let mount_directory = self.imp().mount_directory_entry.text().to_string();
+        let encrypted_data_directory = self
+            .imp()
+            .encrypted_data_directory_entry_row
+            .text()
+            .to_string();
+        let mount_directory = self.imp().mount_directory_entry_row.text().to_string();
 
         GlobalConfigManager::instance().set_encrypted_data_directory(encrypted_data_directory);
         GlobalConfigManager::instance().set_mount_directory(mount_directory);
@@ -222,8 +226,8 @@ impl PreferencesWindow {
     }
 
     fn check_apply_changes_button_enable_conditions(&self) {
-        let encrypted_data_directory = self.imp().encrypted_data_directory_entry.text();
-        let mount_directory = self.imp().mount_directory_entry.text();
+        let encrypted_data_directory = self.imp().encrypted_data_directory_entry_row.text();
+        let mount_directory = self.imp().mount_directory_entry_row.text();
 
         let are_directories_different =
             self.are_directories_different(&encrypted_data_directory, &mount_directory);
