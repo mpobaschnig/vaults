@@ -17,6 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use adw::prelude::ComboRowExt;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::{self, gio, glib, glib::clone, glib::GString, prelude::*, CompositeTemplate};
@@ -42,21 +43,21 @@ mod imp {
         #[template_child]
         pub apply_changes_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub name_entry: TemplateChild<gtk::Entry>,
+        pub name_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub name_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub backend_type_drop_down: TemplateChild<gtk::DropDown>,
+        pub combo_row_backend: TemplateChild<adw::ComboRow>,
         #[template_child]
         pub backend_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
+        pub encrypted_data_directory_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub encrypted_data_directory_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub encrypted_data_directory_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub mount_directory_entry: TemplateChild<gtk::Entry>,
+        pub mount_directory_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub mount_directory_button: TemplateChild<gtk::Button>,
         #[template_child]
@@ -78,14 +79,14 @@ mod imp {
             Self {
                 remove_button: TemplateChild::default(),
                 apply_changes_button: TemplateChild::default(),
-                name_entry: TemplateChild::default(),
+                name_entry_row: TemplateChild::default(),
                 name_error_label: TemplateChild::default(),
-                backend_type_drop_down: TemplateChild::default(),
+                combo_row_backend: TemplateChild::default(),
                 backend_error_label: TemplateChild::default(),
-                encrypted_data_directory_entry: TemplateChild::default(),
+                encrypted_data_directory_entry_row: TemplateChild::default(),
                 encrypted_data_directory_button: TemplateChild::default(),
                 encrypted_data_directory_error_label: TemplateChild::default(),
-                mount_directory_entry: TemplateChild::default(),
+                mount_directory_entry_row: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
                 mount_directory_error_label: TemplateChild::default(),
                 toast_overlay: TemplateChild::default(),
@@ -162,19 +163,19 @@ impl VaultsPageRowSettingsWindow {
             }));
 
         self.imp()
-            .name_entry
+            .name_entry_row
             .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
             }));
 
-        self.imp().backend_type_drop_down.connect_selected_notify(
+        self.imp().combo_row_backend.connect_selected_notify(
             clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
             }),
         );
 
         self.imp()
-            .encrypted_data_directory_entry
+            .encrypted_data_directory_entry_row
             .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
             }));
@@ -185,7 +186,7 @@ impl VaultsPageRowSettingsWindow {
             }),
         );
 
-        self.imp().mount_directory_entry.connect_text_notify(
+        self.imp().mount_directory_entry_row.connect_text_notify(
             clone!(@weak self as obj => move |_| {
                 obj.check_add_button_enable_conditions();
             }),
@@ -205,11 +206,11 @@ impl VaultsPageRowSettingsWindow {
 
     fn apply_changes_button_clicked(&self) {
         let new_vault = Vault::new(
-            String::from(self.imp().name_entry.text().as_str()),
+            String::from(self.imp().name_entry_row.text().as_str()),
             backend::get_backend_from_ui_string(
                 &self
                     .imp()
-                    .backend_type_drop_down
+                    .combo_row_backend
                     .selected_item()
                     .unwrap()
                     .downcast::<gtk::StringObject>()
@@ -218,8 +219,13 @@ impl VaultsPageRowSettingsWindow {
                     .to_string(),
             )
             .unwrap(),
-            String::from(self.imp().encrypted_data_directory_entry.text().as_str()),
-            String::from(self.imp().mount_directory_entry.text().as_str()),
+            String::from(
+                self.imp()
+                    .encrypted_data_directory_entry_row
+                    .text()
+                    .as_str(),
+            ),
+            String::from(self.imp().mount_directory_entry_row.text().as_str()),
         );
 
         UserConfigManager::instance()
@@ -243,7 +249,7 @@ impl VaultsPageRowSettingsWindow {
         dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
             if let Ok(directory) = directory {
                 let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                obj.imp().encrypted_data_directory_entry.set_text(&path);
+                obj.imp().encrypted_data_directory_entry_row.set_text(&path);
             }
         }));
     }
@@ -258,14 +264,14 @@ impl VaultsPageRowSettingsWindow {
         dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
             if let Ok(directory) = directory {
                 let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                obj.imp().mount_directory_entry.set_text(&path);
+                obj.imp().mount_directory_entry_row.set_text(&path);
             }
         }));
     }
 
     fn is_valid_vault_name(&self, vault_name: GString) -> bool {
         if vault_name.is_empty() {
-            self.imp().name_entry.add_css_class("error");
+            self.imp().name_entry_row.add_css_class("error");
 
             self.imp()
                 .name_error_label
@@ -275,7 +281,7 @@ impl VaultsPageRowSettingsWindow {
 
             false
         } else {
-            self.imp().name_entry.remove_css_class("error");
+            self.imp().name_entry_row.remove_css_class("error");
 
             self.imp().name_error_label.set_visible(false);
 
@@ -289,7 +295,7 @@ impl VaultsPageRowSettingsWindow {
             .get_map()
             .contains_key(&vault_name.to_string());
         if !vault_name.is_empty() && !is_same_name && is_duplicate_name {
-            self.imp().name_entry.add_css_class("error");
+            self.imp().name_entry_row.add_css_class("error");
 
             self.imp()
                 .name_error_label
@@ -299,7 +305,7 @@ impl VaultsPageRowSettingsWindow {
 
             false
         } else {
-            self.imp().name_entry.remove_css_class("error");
+            self.imp().name_entry_row.remove_css_class("error");
 
             self.imp().name_error_label.set_visible(false);
 
@@ -475,18 +481,18 @@ impl VaultsPageRowSettingsWindow {
     }
 
     fn check_add_button_enable_conditions(&self) {
-        let vault_name = self.imp().name_entry.text();
+        let vault_name = self.imp().name_entry_row.text();
         let backend_str = &self
             .imp()
-            .backend_type_drop_down
+            .combo_row_backend
             .selected_item()
             .unwrap()
             .downcast::<gtk::StringObject>()
             .unwrap()
             .string();
         let backend = backend::get_backend_from_ui_string(&backend_str.to_string()).unwrap();
-        let encrypted_data_directory = self.imp().encrypted_data_directory_entry.text();
-        let mount_directory = self.imp().mount_directory_entry.text();
+        let encrypted_data_directory = self.imp().encrypted_data_directory_entry_row.text();
+        let mount_directory = self.imp().mount_directory_entry_row.text();
 
         let is_valid_vault_name = self.is_valid_vault_name(vault_name.clone());
         let is_different_vault_name = self.is_different_vault_name(vault_name.clone());
@@ -529,16 +535,16 @@ impl VaultsPageRowSettingsWindow {
             list.append(backend);
         }
 
-        self.imp().backend_type_drop_down.set_model(Some(&list));
+        self.imp().combo_row_backend.set_model(Some(&list));
     }
 
     pub fn get_vault(&self) -> Vault {
         Vault::new(
-            String::from(self.imp().name_entry.text().as_str()),
+            String::from(self.imp().name_entry_row.text().as_str()),
             backend::get_backend_from_ui_string(
                 &self
                     .imp()
-                    .backend_type_drop_down
+                    .combo_row_backend
                     .selected_item()
                     .unwrap()
                     .downcast::<gtk::StringObject>()
@@ -547,8 +553,13 @@ impl VaultsPageRowSettingsWindow {
                     .to_string(),
             )
             .unwrap(),
-            String::from(self.imp().encrypted_data_directory_entry.text().as_str()),
-            String::from(self.imp().mount_directory_entry.text().as_str()),
+            String::from(
+                self.imp()
+                    .encrypted_data_directory_entry_row
+                    .text()
+                    .as_str(),
+            ),
+            String::from(self.imp().mount_directory_entry_row.text().as_str()),
         )
     }
 
@@ -561,8 +572,8 @@ impl VaultsPageRowSettingsWindow {
             (Some(name), Some(config)) => {
                 self.imp().current_vault.replace(Some(vault.clone()));
 
-                self.imp().name_entry.set_text(&name);
-                let model = self.imp().backend_type_drop_down.model().unwrap();
+                self.imp().name_entry_row.set_text(&name);
+                let model = self.imp().combo_row_backend.model().unwrap();
                 for (position, item) in model.iter::<glib::Object>().enumerate() {
                     if let Ok(object) = item {
                         let string_object = object.downcast::<gtk::StringObject>().unwrap();
@@ -570,17 +581,15 @@ impl VaultsPageRowSettingsWindow {
                             .string()
                             .eq(&backend::get_ui_string_from_backend(&config.backend))
                         {
-                            self.imp()
-                                .backend_type_drop_down
-                                .set_selected(position as u32);
+                            self.imp().combo_row_backend.set_selected(position as u32);
                         }
                     }
                 }
                 self.imp()
-                    .encrypted_data_directory_entry
+                    .encrypted_data_directory_entry_row
                     .set_text(&config.encrypted_data_directory.to_string());
                 self.imp()
-                    .mount_directory_entry
+                    .mount_directory_entry_row
                     .set_text(&config.mount_directory.to_string());
             }
             (_, _) => {
