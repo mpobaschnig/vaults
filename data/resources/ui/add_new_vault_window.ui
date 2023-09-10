@@ -77,63 +77,51 @@
                     <child>
                       <object class="GtkBox">
                         <property name="orientation">vertical</property>
-                        <property name="spacing">6</property>
+                        <property name="spacing">12</property>
                         <child>
-                          <object class="GtkLabel">
-                            <property name="halign">start</property>
-                            <property name="label" translatable="yes">_Name</property>
-                            <property name="use_underline">True</property>
-                            <style>
-                              <class name="dim-label"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkEntry" id="name_entry">
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="name_error_label">
-                            <property name="visible">False</property>
-                            <property name="wrap">True</property>
-                            <style>
-                              <class name="error"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="halign">start</property>
-                            <property name="label" translatable="yes">_Backend</property>
-                            <property name="use_underline">True</property>
-                            <style>
-                              <class name="dim-label"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkBox">
-                            <property name="hexpand">True</property>
+                          <object class="AdwPreferencesGroup">
                             <child>
-                              <object class="GtkDropDown" id="backend_type_drop_down">
-                                <property name="valign">center</property>
-                                <property name="hexpand">True</property>
+                              <object class="AdwEntryRow" id="entry_row_name">
+                                <property name="title" translatable="yes">Name</property>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkToggleButton" id="info_button">
-                                <property name="icon_name">dialog-information-symbolic</property>
+                              <object class="GtkLabel" id="name_error_label">
+                                <property name="visible">False</property>
+                                <property name="wrap">True</property>
+                                <style>
+                                  <class name="error"/>
+                                  <class name="caption"/>
+                                </style>
                               </object>
                             </child>
-                            <style>
-                              <class name="linked"/>
-                            </style>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="info_label">
-                            <property name="halign">start</property>
-                            <property name="wrap">True</property>
+                          <object class="AdwPreferencesGroup">
+                            <child>
+                              <object class="AdwComboRow" id="combo_row_backend">
+                                <property name="title" translatable="yes">Backend</property>
+                                <property name="model">
+                                  <object class="GtkStringList">
+                                    <items>
+                                      <item translatable="yes">gocryptfs</item>
+                                      <item translatable="yes">CryFS</item>
+                                    </items>
+                                  </object>
+                                </property>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="info_label">
+                                <property name="wrap">true</property>
+                                <property name="visible">true</property>
+                                <style>
+                                  <class name="dim-label"/>
+                                  <class name="caption"/>
+                                </style>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>
@@ -150,29 +138,23 @@
                     <child>
                       <object class="GtkBox">
                         <property name="orientation">vertical</property>
-                        <property name="spacing">6</property>
+                        <property name="spacing">12</property>
                         <child>
-                          <object class="GtkLabel">
-                            <property name="halign">start</property>
-                            <property name="label" translatable="yes">_Password</property>
-                            <property name="use_underline">True</property>
-                            <style>
-                              <class name="dim-label"/>
-                            </style>
+                          <object class="AdwPreferencesGroup">
+                            <child>
+                              <object class="AdwPasswordEntryRow" id="password_entry_row">
+                                <property name="title" translatable="yes">Password</property>
+                              </object>
+                            </child>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkPasswordEntry" id="password_entry">
-                            <property name="valign">center</property>
-                            <property name="placeholder_text">Password</property>
-                            <property name="show-peek-icon">True</property>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkPasswordEntry" id="password_confirm_entry">
-                            <property name="valign">center</property>
-                            <property name="placeholder_text">Confirm Password</property>
-                            <property name="show-peek-icon">True</property>
+                          <object class="AdwPreferencesGroup">
+                            <child>
+                              <object class="AdwPasswordEntryRow" id="confirm_password_entry_row">
+                                <property name="title" translatable="yes">Confirm Password</property>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>
@@ -189,81 +171,63 @@
                     <child>
                       <object class="GtkBox">
                         <property name="orientation">vertical</property>
-                        <property name="spacing">6</property>
+                        <property name="spacing">12</property>
                         <child>
-                          <object class="GtkLabel">
-                            <property name="halign">start</property>
-                            <property name="label" translatable="yes">_Encrypted Data Directory</property>
-                            <property name="use_underline">True</property>
-                            <style>
-                              <class name="dim-label"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkBox">
-                            <property name="hexpand">True</property>
+                          <object class="AdwPreferencesGroup">
                             <child>
-                              <object class="GtkEntry" id="encrypted_data_directory_entry">
-                                <property name="hexpand">True</property>
+                              <object class="AdwEntryRow" id="encrypted_data_directory_entry_row">
+                                <property name="title" translatable="yes">Encrypted Data Directory</property>
+                                <child type="suffix">
+                                  <object class="GtkButton" id="encrypted_data_directory_button">
+                                    <property name="valign">center</property>
+                                    <property name="icon_name">document-open-symbolic</property>
+                                    <property name="tooltip-text" translatable="yes">Choose Encrypted Data Directory</property>
+                                    <style>
+                                      <class name="flat"/>
+                                    </style>
+                                  </object>
+                                </child>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkButton" id="encrypted_data_directory_button">
-                                <property name="icon_name">document-open-symbolic</property>
-                                <property name="tooltip-text" translatable="yes">Choose Encrypted Data Directory</property>
+                              <object class="GtkLabel" id="encrypted_data_directory_error_label">
+                                <property name="visible">False</property>
+                                <property name="wrap">True</property>
+                                <style>
+                                  <class name="error"/>
+                                  <class name="caption"/>
+                                </style>
                               </object>
                             </child>
-                            <style>
-                              <class name="linked"/>
-                            </style>
                           </object>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="encrypted_data_directory_error_label">
-                            <property name="visible">False</property>
-                            <property name="wrap">True</property>
-                            <style>
-                              <class name="error"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel">
-                            <property name="halign">start</property>
-                            <property name="label" translatable="yes">_Mount Directory</property>
-                            <property name="use_underline">True</property>
-                            <style>
-                              <class name="dim-label"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkBox">
-                            <property name="hexpand">True</property>
+                          <object class="AdwPreferencesGroup">
                             <child>
-                              <object class="GtkEntry" id="mount_directory_entry">
-                                <property name="hexpand">True</property>
+                              <object class="AdwEntryRow" id="mount_directory_entry_row">
+                                <property name="title" translatable="yes">Mount Directory</property>
+                                <child type="suffix">
+                                  <object class="GtkButton" id="mount_directory_button">
+                                    <property name="valign">center</property>
+                                    <property name="icon_name">document-open-symbolic</property>
+                                    <property name="tooltip-text" translatable="yes">Choose Mount Directory</property>
+                                    <style>
+                                      <class name="flat"/>
+                                    </style>
+                                  </object>
+                                </child>
                               </object>
                             </child>
                             <child>
-                              <object class="GtkButton" id="mount_directory_button">
-                                <property name="icon_name">document-open-symbolic</property>
-                                <property name="tooltip-text" translatable="yes">Choose Mount Directory</property>
+                              <object class="GtkLabel" id="mount_directory_error_label">
+                                <property name="visible">False</property>
+                                <property name="wrap">True</property>
+                                <style>
+                                  <class name="error"/>
+                                  <class name="caption"/>
+                                </style>
                               </object>
                             </child>
-                            <style>
-                              <class name="linked"/>
-                            </style>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="mount_directory_error_label">
-                            <property name="visible">False</property>
-                            <property name="wrap">True</property>
-                            <style>
-                              <class name="error"/>
-                            </style>
                           </object>
                         </child>
                       </object>

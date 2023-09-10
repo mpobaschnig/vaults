@@ -22,12 +22,14 @@ use crate::{
     backend, backend::AVAILABLE_BACKENDS, global_config_manager::GlobalConfigManager, vault::*,
     VApplication,
 };
+use adw::prelude::ComboRowExt;
 use gettextrs::gettext;
 use gtk::gio;
 
+use adw::subclass::prelude::*;
 use gtk::{self, prelude::*};
 use gtk::{glib, CompositeTemplate};
-use gtk::{glib::clone, glib::GString, subclass::prelude::*};
+use gtk::{glib::clone, glib::GString};
 use std::cell::RefCell;
 
 mod imp {
@@ -40,6 +42,10 @@ mod imp {
     #[template(resource = "/io/github/mpobaschnig/Vaults/add_new_vault_window.ui")]
     pub struct AddNewVaultWindow {
         #[template_child]
+        pub entry_row_name: TemplateChild<adw::EntryRow>,
+        #[template_child]
+        pub combo_row_backend: TemplateChild<adw::ComboRow>,
+        #[template_child]
         pub carousel: TemplateChild<adw::Carousel>,
         #[template_child]
         pub cancel_button: TemplateChild<gtk::Button>,
@@ -50,25 +56,19 @@ mod imp {
         #[template_child]
         pub add_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub name_entry: TemplateChild<gtk::Entry>,
-        #[template_child]
-        pub backend_type_drop_down: TemplateChild<gtk::DropDown>,
-        #[template_child]
-        pub info_button: TemplateChild<gtk::ToggleButton>,
-        #[template_child]
         pub info_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub name_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub password_entry: TemplateChild<gtk::PasswordEntry>,
+        pub password_entry_row: TemplateChild<adw::PasswordEntryRow>,
         #[template_child]
-        pub password_confirm_entry: TemplateChild<gtk::PasswordEntry>,
+        pub confirm_password_entry_row: TemplateChild<adw::PasswordEntryRow>,
         #[template_child]
-        pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
+        pub encrypted_data_directory_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub encrypted_data_directory_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub mount_directory_entry: TemplateChild<gtk::Entry>,
+        pub mount_directory_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub mount_directory_button: TemplateChild<gtk::Button>,
         #[template_child]
@@ -87,21 +87,20 @@ mod imp {
 
         fn new() -> Self {
             Self {
+                entry_row_name: TemplateChild::default(),
+                combo_row_backend: TemplateChild::default(),
                 carousel: TemplateChild::default(),
                 cancel_button: TemplateChild::default(),
                 previous_button: TemplateChild::default(),
                 next_button: TemplateChild::default(),
                 add_button: TemplateChild::default(),
-                name_entry: TemplateChild::default(),
-                backend_type_drop_down: TemplateChild::default(),
-                info_button: TemplateChild::default(),
                 info_label: TemplateChild::default(),
                 name_error_label: TemplateChild::default(),
-                password_entry: TemplateChild::default(),
-                password_confirm_entry: TemplateChild::default(),
-                encrypted_data_directory_entry: TemplateChild::default(),
+                password_entry_row: TemplateChild::default(),
+                confirm_password_entry_row: TemplateChild::default(),
+                encrypted_data_directory_entry_row: TemplateChild::default(),
                 encrypted_data_directory_button: TemplateChild::default(),
-                mount_directory_entry: TemplateChild::default(),
+                mount_directory_entry_row: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
                 encrypted_data_directory_error_label: TemplateChild::default(),
                 mount_directory_error_label: TemplateChild::default(),
@@ -195,37 +194,32 @@ impl AddNewVaultWindow {
             }));
 
         self.imp()
-            .name_entry
+            .entry_row_name
             .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.validate_name();
             }));
 
-        self.imp().backend_type_drop_down.connect_selected_notify(
-            clone!(@weak self as obj => move |_| {
+        self.imp().combo_row_backend.connect_notify_local(
+            Some("selected-item"),
+            clone!(@weak self as obj => move |_, __| {
                 obj.combo_box_changed();
             }),
         );
 
         self.imp()
-            .info_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.info_button_clicked();
-            }));
-
-        self.imp()
-            .password_entry
+            .password_entry_row
             .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.validate_passwords();
             }));
 
-        self.imp().password_confirm_entry.connect_text_notify(
+        self.imp().confirm_password_entry_row.connect_text_notify(
             clone!(@weak self as obj => move |_| {
                 obj.validate_passwords();
             }),
         );
 
         self.imp()
-            .encrypted_data_directory_entry
+            .encrypted_data_directory_entry_row
             .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.validate_directories();
             }));
@@ -236,7 +230,7 @@ impl AddNewVaultWindow {
             }),
         );
 
-        self.imp().mount_directory_entry.connect_text_notify(
+        self.imp().mount_directory_entry_row.connect_text_notify(
             clone!(@weak self as obj => move |_| {
                 obj.validate_directories();
             }),
@@ -304,7 +298,7 @@ impl AddNewVaultWindow {
     }
 
     pub fn validate_name(&self) {
-        let combo_box_text = self.imp().backend_type_drop_down.selected_item();
+        let combo_box_text = self.imp().combo_row_backend.selected_item();
 
         if combo_box_text.is_none() {
             self.imp().next_button.set_sensitive(false);
@@ -317,12 +311,12 @@ impl AddNewVaultWindow {
             return;
         }
 
-        let vault_name = self.imp().name_entry.text();
+        let vault_name = self.imp().entry_row_name.text();
 
         if vault_name.is_empty() {
             self.imp().next_button.set_sensitive(false);
 
-            self.imp().name_entry.remove_css_class("error");
+            self.imp().entry_row_name.remove_css_class("error");
             self.imp().name_error_label.set_visible(false);
             self.imp().name_error_label.set_text("");
 
@@ -336,7 +330,7 @@ impl AddNewVaultWindow {
         if is_duplicate {
             self.imp().next_button.set_sensitive(false);
 
-            self.imp().name_entry.add_css_class("error");
+            self.imp().entry_row_name.add_css_class("error");
             self.imp().name_error_label.set_visible(true);
             self.imp()
                 .name_error_label
@@ -344,21 +338,17 @@ impl AddNewVaultWindow {
         } else {
             self.imp().next_button.set_sensitive(true);
 
-            self.imp().name_entry.remove_css_class("error");
+            self.imp().entry_row_name.remove_css_class("error");
             self.imp().name_error_label.set_visible(false);
             self.imp().name_error_label.set_text("");
         }
     }
 
     pub fn combo_box_changed(&self) {
-        self.info_button_clicked();
-    }
-
-    pub fn info_button_clicked(&self) {
         let backend = backend::get_backend_from_ui_string(
             &self
                 .imp()
-                .backend_type_drop_down
+                .combo_row_backend
                 .selected_item()
                 .unwrap()
                 .downcast::<gtk::StringObject>()
@@ -376,23 +366,19 @@ impl AddNewVaultWindow {
                 self.imp().info_label.set_text(&gettext("Fast and robust, gocryptfs works well in general cases where third-parties do not always have access to the encrypted data directory (e.g. file hosting services). It exposes directory structure, number of files and file sizes. A security audit in 2017 verified gocryptfs is safe against third-parties that can read or write to encrypted data."));
             }
         }
-
-        if self.imp().info_button.is_active() {
-            self.imp().info_label.set_visible(true);
-        } else {
-            self.imp().info_label.set_visible(false);
-        }
     }
 
     pub fn validate_passwords(&self) {
-        let password = self.imp().password_entry.text();
-        let confirm_password = self.imp().password_confirm_entry.text();
+        let password = self.imp().password_entry_row.text();
+        let confirm_password = self.imp().confirm_password_entry_row.text();
 
         if password.is_empty() && confirm_password.is_empty() {
             self.imp().next_button.set_sensitive(false);
 
-            self.imp().password_entry.remove_css_class("error");
-            self.imp().password_confirm_entry.remove_css_class("error");
+            self.imp().password_entry_row.remove_css_class("error");
+            self.imp()
+                .confirm_password_entry_row
+                .remove_css_class("error");
 
             return;
         }
@@ -400,13 +386,15 @@ impl AddNewVaultWindow {
         if password.eq(&confirm_password) {
             self.imp().next_button.set_sensitive(true);
 
-            self.imp().password_entry.remove_css_class("error");
-            self.imp().password_confirm_entry.remove_css_class("error");
+            self.imp().password_entry_row.remove_css_class("error");
+            self.imp()
+                .confirm_password_entry_row
+                .remove_css_class("error");
         } else {
             self.imp().next_button.set_sensitive(false);
 
-            self.imp().password_entry.add_css_class("error");
-            self.imp().password_confirm_entry.add_css_class("error");
+            self.imp().password_entry_row.add_css_class("error");
+            self.imp().confirm_password_entry_row.add_css_class("error");
         }
     }
 
@@ -420,7 +408,7 @@ impl AddNewVaultWindow {
         dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
             if let Ok(directory) = directory {
                 let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                obj.imp().encrypted_data_directory_entry.set_text(&path);
+                obj.imp().encrypted_data_directory_entry_row.set_text(&path);
             }
         }));
     }
@@ -435,7 +423,7 @@ impl AddNewVaultWindow {
         dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
             if let Ok(directory) = directory {
                 let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                obj.imp().mount_directory_entry.set_text(&path);
+                obj.imp().mount_directory_entry_row.set_text(&path);
             }
         }));
     }
@@ -443,8 +431,8 @@ impl AddNewVaultWindow {
     pub fn validate_directories(&self) {
         self.imp().add_button.set_sensitive(false);
 
-        let encrypted_data_directory = self.imp().encrypted_data_directory_entry.text();
-        let mount_directory = self.imp().mount_directory_entry.text();
+        let encrypted_data_directory = self.imp().encrypted_data_directory_entry_row.text();
+        let mount_directory = self.imp().mount_directory_entry_row.text();
 
         let is_edd_valid = self.is_encrypted_data_directory_valid(&encrypted_data_directory);
 
@@ -456,9 +444,9 @@ impl AddNewVaultWindow {
 
         if encrypted_data_directory.eq(&mount_directory) {
             self.imp()
-                .encrypted_data_directory_entry
+                .encrypted_data_directory_entry_row
                 .add_css_class("error");
-            self.imp().mount_directory_entry.add_css_class("error");
+            self.imp().mount_directory_entry_row.add_css_class("error");
 
             self.imp()
                 .mount_directory_error_label
@@ -478,7 +466,7 @@ impl AddNewVaultWindow {
                 .set_visible(false);
 
             self.imp()
-                .encrypted_data_directory_entry
+                .encrypted_data_directory_entry_row
                 .remove_css_class("error");
 
             return false;
@@ -492,7 +480,7 @@ impl AddNewVaultWindow {
                         .set_visible(false);
 
                     self.imp()
-                        .encrypted_data_directory_entry
+                        .encrypted_data_directory_entry_row
                         .remove_css_class("error");
 
                     true
@@ -505,7 +493,7 @@ impl AddNewVaultWindow {
                         .set_visible(true);
 
                     self.imp()
-                        .encrypted_data_directory_entry
+                        .encrypted_data_directory_entry_row
                         .add_css_class("error");
 
                     false
@@ -518,7 +506,7 @@ impl AddNewVaultWindow {
                         .set_visible(false);
 
                     self.imp()
-                        .encrypted_data_directory_entry
+                        .encrypted_data_directory_entry_row
                         .remove_css_class("error");
 
                     true
@@ -534,7 +522,7 @@ impl AddNewVaultWindow {
                         .set_visible(true);
 
                     self.imp()
-                        .encrypted_data_directory_entry
+                        .encrypted_data_directory_entry_row
                         .add_css_class("error");
 
                     false
@@ -547,7 +535,9 @@ impl AddNewVaultWindow {
         if mount_directory.is_empty() {
             self.imp().mount_directory_error_label.set_visible(false);
 
-            self.imp().mount_directory_entry.remove_css_class("error");
+            self.imp()
+                .mount_directory_entry_row
+                .remove_css_class("error");
 
             return false;
         }
@@ -557,7 +547,9 @@ impl AddNewVaultWindow {
                 if is_empty {
                     self.imp().mount_directory_error_label.set_visible(false);
 
-                    self.imp().mount_directory_entry.remove_css_class("error");
+                    self.imp()
+                        .mount_directory_entry_row
+                        .remove_css_class("error");
 
                     true
                 } else {
@@ -566,7 +558,7 @@ impl AddNewVaultWindow {
                         .set_text(&gettext("Mount directory is not empty."));
                     self.imp().mount_directory_error_label.set_visible(true);
 
-                    self.imp().mount_directory_entry.add_css_class("error");
+                    self.imp().mount_directory_entry_row.add_css_class("error");
 
                     false
                 }
@@ -575,7 +567,9 @@ impl AddNewVaultWindow {
                 std::io::ErrorKind::NotFound => {
                     self.imp().mount_directory_error_label.set_visible(false);
 
-                    self.imp().mount_directory_entry.remove_css_class("error");
+                    self.imp()
+                        .mount_directory_entry_row
+                        .remove_css_class("error");
 
                     true
                 }
@@ -587,7 +581,7 @@ impl AddNewVaultWindow {
                         .set_text(&gettext("Mount directory is not valid."));
                     self.imp().mount_directory_error_label.set_visible(true);
 
-                    self.imp().mount_directory_entry.add_css_class("error");
+                    self.imp().mount_directory_entry_row.add_css_class("error");
 
                     false
                 }
@@ -612,14 +606,14 @@ impl AddNewVaultWindow {
     }
 
     pub fn get_password(&self) -> String {
-        String::from(self.imp().password_entry.text().as_str())
+        String::from(self.imp().password_entry_row.text().as_str())
     }
 
     pub fn get_vault(&self) -> Vault {
         let backend = backend::get_backend_from_ui_string(
             &self
                 .imp()
-                .backend_type_drop_down
+                .combo_row_backend
                 .selected_item()
                 .unwrap()
                 .downcast::<gtk::StringObject>()
@@ -630,10 +624,15 @@ impl AddNewVaultWindow {
         .unwrap();
 
         Vault::new(
-            String::from(self.imp().name_entry.text().as_str()),
+            String::from(self.imp().entry_row_name.text().as_str()),
             backend,
-            String::from(self.imp().encrypted_data_directory_entry.text().as_str()),
-            String::from(self.imp().mount_directory_entry.text().as_str()),
+            String::from(
+                self.imp()
+                    .encrypted_data_directory_entry_row
+                    .text()
+                    .as_str(),
+            ),
+            String::from(self.imp().mount_directory_entry_row.text().as_str()),
         )
     }
 
@@ -652,19 +651,21 @@ impl AddNewVaultWindow {
             }
 
             if !available_backends.is_empty() {
-                self.imp().backend_type_drop_down.set_model(Some(&list));
+                self.imp().combo_row_backend.set_model(Some(&list));
 
                 if let Some(index) = gocryptfs_index {
-                    self.imp().backend_type_drop_down.set_selected(index);
+                    self.imp().combo_row_backend.set_selected(index);
                 } else {
-                    self.imp().backend_type_drop_down.set_selected(0);
+                    self.imp().combo_row_backend.set_selected(0);
                 }
             }
+
+            self.combo_box_changed();
         }
     }
 
     fn fill_directories(&self) {
-        let vault_name = self.imp().name_entry.text().to_string();
+        let vault_name = self.imp().entry_row_name.text().to_string();
         let global_config = GlobalConfigManager::instance().get_global_config();
 
         let mut path = global_config.encrypted_data_directory.borrow().clone();
@@ -680,9 +681,11 @@ impl AddNewVaultWindow {
         let mount_directory = path + &vault_name;
 
         self.imp()
-            .encrypted_data_directory_entry
+            .encrypted_data_directory_entry_row
             .set_text(&encrypted_data_directory);
-        self.imp().mount_directory_entry.set_text(&mount_directory);
+        self.imp()
+            .mount_directory_entry_row
+            .set_text(&mount_directory);
 
         self.validate_directories();
     }
