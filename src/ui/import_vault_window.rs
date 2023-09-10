@@ -17,6 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use adw::prelude::ComboRowExt;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::{self, gio, gio::File, glib, glib::clone, glib::GString, prelude::*, CompositeTemplate};
@@ -45,19 +46,19 @@ mod imp {
         #[template_child]
         pub import_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub name_entry: TemplateChild<gtk::Entry>,
+        pub name_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
-        pub backend_type_drop_down: TemplateChild<gtk::DropDown>,
+        pub combo_row_backend: TemplateChild<adw::ComboRow>,
         #[template_child]
         pub backend_type_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub name_error_label: TemplateChild<gtk::Label>,
         #[template_child]
-        pub encrypted_data_directory_entry: TemplateChild<gtk::Entry>,
+        pub encrypted_data_directory_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub encrypted_data_directory_button: TemplateChild<gtk::Button>,
         #[template_child]
-        pub mount_directory_entry: TemplateChild<gtk::Entry>,
+        pub mount_directory_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub mount_directory_button: TemplateChild<gtk::Button>,
         #[template_child]
@@ -83,13 +84,13 @@ mod imp {
                 previous_button: TemplateChild::default(),
                 next_button: TemplateChild::default(),
                 import_button: TemplateChild::default(),
-                name_entry: TemplateChild::default(),
-                backend_type_drop_down: TemplateChild::default(),
+                name_entry_row: TemplateChild::default(),
+                combo_row_backend: TemplateChild::default(),
                 backend_type_error_label: TemplateChild::default(),
                 name_error_label: TemplateChild::default(),
-                encrypted_data_directory_entry: TemplateChild::default(),
+                encrypted_data_directory_entry_row: TemplateChild::default(),
                 encrypted_data_directory_button: TemplateChild::default(),
-                mount_directory_entry: TemplateChild::default(),
+                mount_directory_entry_row: TemplateChild::default(),
                 mount_directory_button: TemplateChild::default(),
                 encrypted_data_directory_error_label: TemplateChild::default(),
                 encrypted_data_directory_info_label: TemplateChild::default(),
@@ -184,19 +185,19 @@ impl ImportVaultDialog {
             }));
 
         self.imp()
-            .name_entry
+            .name_entry_row
             .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.validate_name();
             }));
 
-        self.imp().backend_type_drop_down.connect_selected_notify(
+        self.imp().combo_row_backend.connect_selected_notify(
             clone!(@weak self as obj => move |_| {
                 obj.validate_name();
             }),
         );
 
         self.imp()
-            .encrypted_data_directory_entry
+            .encrypted_data_directory_entry_row
             .connect_text_notify(clone!(@weak self as obj => move |_| {
                 obj.validate_directories();
             }));
@@ -207,7 +208,7 @@ impl ImportVaultDialog {
             }),
         );
 
-        self.imp().mount_directory_entry.connect_text_notify(
+        self.imp().mount_directory_entry_row.connect_text_notify(
             clone!(@weak self as obj => move |_| {
                 obj.validate_directories();
             }),
@@ -264,7 +265,7 @@ impl ImportVaultDialog {
                 self.imp().next_button.set_visible(false);
                 self.imp().import_button.set_visible(true);
 
-                let drop_down_text = self.imp().backend_type_drop_down.selected_item();
+                let drop_down_text = self.imp().combo_row_backend.selected_item();
 
                 if drop_down_text.is_none() {
                     self.imp().import_button.set_sensitive(false);
@@ -286,12 +287,12 @@ impl ImportVaultDialog {
     pub fn validate_name(&self) {
         self.imp().import_button.set_sensitive(false);
 
-        let vault_name = self.imp().name_entry.text();
+        let vault_name = self.imp().name_entry_row.text();
 
         if vault_name.is_empty() {
             self.imp().import_button.set_sensitive(false);
 
-            self.imp().name_entry.remove_css_class("error");
+            self.imp().name_entry_row.remove_css_class("error");
             self.imp().name_error_label.set_visible(false);
             self.imp().name_error_label.set_text("");
 
@@ -305,7 +306,7 @@ impl ImportVaultDialog {
         if is_duplicate {
             self.imp().import_button.set_sensitive(false);
 
-            self.imp().name_entry.add_css_class("error");
+            self.imp().name_entry_row.add_css_class("error");
             self.imp().name_error_label.set_visible(true);
             self.imp()
                 .name_error_label
@@ -313,7 +314,7 @@ impl ImportVaultDialog {
 
             return;
         } else {
-            self.imp().name_entry.remove_css_class("error");
+            self.imp().name_entry_row.remove_css_class("error");
             self.imp().name_error_label.set_visible(false);
             self.imp().name_error_label.set_text("");
         }
@@ -331,7 +332,7 @@ impl ImportVaultDialog {
         dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
             if let Ok(directory) = directory {
                 let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                obj.imp().encrypted_data_directory_entry.set_text(&path);
+                obj.imp().encrypted_data_directory_entry_row.set_text(&path);
 
                 obj.validate_directories();
             }
@@ -348,7 +349,7 @@ impl ImportVaultDialog {
         dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
             if let Ok(directory) = directory {
                 let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                obj.imp().mount_directory_entry.set_text(&path);
+                obj.imp().mount_directory_entry_row.set_text(&path);
 
                 obj.guess_name(&directory);
                 obj.validate_directories();
@@ -363,8 +364,8 @@ impl ImportVaultDialog {
             .encrypted_data_directory_info_label
             .set_visible(false);
 
-        let encrypted_data_directory = self.imp().encrypted_data_directory_entry.text();
-        let mount_directory = self.imp().mount_directory_entry.text();
+        let encrypted_data_directory = self.imp().encrypted_data_directory_entry_row.text();
+        let mount_directory = self.imp().mount_directory_entry_row.text();
 
         let is_edd_valid = self.is_encrypted_data_directory_valid(&encrypted_data_directory);
 
@@ -376,9 +377,9 @@ impl ImportVaultDialog {
 
         if encrypted_data_directory.eq(&mount_directory) {
             self.imp()
-                .encrypted_data_directory_entry
+                .encrypted_data_directory_entry_row
                 .add_css_class("error");
-            self.imp().mount_directory_entry.add_css_class("error");
+            self.imp().mount_directory_entry_row.add_css_class("error");
 
             self.imp()
                 .mount_directory_error_label
@@ -402,7 +403,7 @@ impl ImportVaultDialog {
                 .set_visible(false);
 
             self.imp()
-                .encrypted_data_directory_entry
+                .encrypted_data_directory_entry_row
                 .remove_css_class("error");
 
             return false;
@@ -419,7 +420,7 @@ impl ImportVaultDialog {
                         .set_visible(true);
 
                     self.imp()
-                        .encrypted_data_directory_entry
+                        .encrypted_data_directory_entry_row
                         .add_css_class("error");
 
                     false
@@ -429,7 +430,7 @@ impl ImportVaultDialog {
                         .set_visible(false);
 
                     self.imp()
-                        .encrypted_data_directory_entry
+                        .encrypted_data_directory_entry_row
                         .remove_css_class("error");
 
                     self.is_valid_backend(&encrypted_data_directory.to_string());
@@ -446,7 +447,7 @@ impl ImportVaultDialog {
                     .set_visible(true);
 
                 self.imp()
-                    .encrypted_data_directory_entry
+                    .encrypted_data_directory_entry_row
                     .add_css_class("error");
 
                 false
@@ -458,7 +459,9 @@ impl ImportVaultDialog {
         if mount_directory.is_empty() {
             self.imp().mount_directory_error_label.set_visible(false);
 
-            self.imp().mount_directory_entry.remove_css_class("error");
+            self.imp()
+                .mount_directory_entry_row
+                .remove_css_class("error");
 
             return false;
         }
@@ -468,7 +471,9 @@ impl ImportVaultDialog {
                 if is_empty {
                     self.imp().mount_directory_error_label.set_visible(false);
 
-                    self.imp().mount_directory_entry.remove_css_class("error");
+                    self.imp()
+                        .mount_directory_entry_row
+                        .remove_css_class("error");
 
                     true
                 } else {
@@ -477,7 +482,7 @@ impl ImportVaultDialog {
                         .set_text(&gettext("Mount directory is not empty."));
                     self.imp().mount_directory_error_label.set_visible(true);
 
-                    self.imp().mount_directory_entry.add_css_class("error");
+                    self.imp().mount_directory_entry_row.add_css_class("error");
 
                     false
                 }
@@ -488,7 +493,7 @@ impl ImportVaultDialog {
                     .set_text(&gettext("Mount directory is not valid."));
                 self.imp().mount_directory_error_label.set_visible(true);
 
-                self.imp().mount_directory_entry.add_css_class("error");
+                self.imp().mount_directory_entry_row.add_css_class("error");
 
                 false
             }
@@ -513,11 +518,11 @@ impl ImportVaultDialog {
 
     pub fn get_vault(&self) -> Vault {
         Vault::new(
-            String::from(self.imp().name_entry.text().as_str()),
+            String::from(self.imp().name_entry_row.text().as_str()),
             backend::get_backend_from_ui_string(
                 &self
                     .imp()
-                    .backend_type_drop_down
+                    .combo_row_backend
                     .selected_item()
                     .unwrap()
                     .downcast::<gtk::StringObject>()
@@ -526,8 +531,13 @@ impl ImportVaultDialog {
                     .to_string(),
             )
             .unwrap(),
-            String::from(self.imp().encrypted_data_directory_entry.text().as_str()),
-            String::from(self.imp().mount_directory_entry.text().as_str()),
+            String::from(
+                self.imp()
+                    .encrypted_data_directory_entry_row
+                    .text()
+                    .as_str(),
+            ),
+            String::from(self.imp().mount_directory_entry_row.text().as_str()),
         )
     }
 
@@ -539,12 +549,13 @@ impl ImportVaultDialog {
             list.append(value);
         }
 
-        self.imp().backend_type_drop_down.set_model(Some(&list));
+        self.imp().combo_row_backend.set_model(Some(&list));
+        self.imp().combo_row_backend.set_sensitive(false);
     }
 
     fn guess_name(&self, file: &File) {
         self.imp()
-            .name_entry
+            .name_entry_row
             .set_text(file.basename().unwrap().as_os_str().to_str().unwrap());
     }
 
@@ -565,14 +576,14 @@ impl ImportVaultDialog {
                                     .encrypted_data_directory_info_label
                                     .set_visible(true);
 
-                                let model = self.imp().backend_type_drop_down.model().unwrap();
+                                let model = self.imp().combo_row_backend.model().unwrap();
                                 for (position, item) in model.iter::<glib::Object>().enumerate() {
                                     if let Ok(object) = item {
                                         let string_object =
                                             object.downcast::<gtk::StringObject>().unwrap();
                                         if string_object.string().eq("gocryptfs") {
                                             self.imp()
-                                                .backend_type_drop_down
+                                                .combo_row_backend
                                                 .set_selected(position as u32);
                                         }
                                     }
@@ -589,14 +600,14 @@ impl ImportVaultDialog {
                                     .encrypted_data_directory_info_label
                                     .set_visible(true);
 
-                                let model = self.imp().backend_type_drop_down.model().unwrap();
+                                let model = self.imp().combo_row_backend.model().unwrap();
                                 for (position, item) in model.iter::<glib::Object>().enumerate() {
                                     if let Ok(object) = item {
                                         let string_object =
                                             object.downcast::<gtk::StringObject>().unwrap();
                                         if string_object.string().eq("CryFS") {
                                             self.imp()
-                                                .backend_type_drop_down
+                                                .combo_row_backend
                                                 .set_selected(position as u32);
                                         }
                                     }
