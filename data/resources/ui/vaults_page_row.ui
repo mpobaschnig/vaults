@@ -13,6 +13,9 @@
             <property name="valign">center</property>
             <property name="icon_name">folder-symbolic</property>
             <property name="tooltip-text" translatable="yes">Open Folder</property>
+            <style>
+              <class name="flat"/>
+            </style>
           </object>
         </child>
         <child>
@@ -20,6 +23,9 @@
             <property name="valign">center</property>
             <property name="icon_name">changes-prevent-symbolic</property>
             <property name="tooltip-text" translatable="yes">Open Vault</property>
+            <style>
+              <class name="flat"/>
+            </style>
           </object>
         </child>
         <child>
@@ -27,6 +33,9 @@
             <property name="valign">center</property>
             <property name="icon_name">emblem-system-symbolic</property>
             <property name="tooltip-text" translatable="yes">Open Settings</property>
+            <style>
+              <class name="flat"/>
+            </style>
           </object>
         </child>
       </object>
