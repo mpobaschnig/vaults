@@ -82,7 +82,7 @@ mod imp {
     #[glib::object_subclass]
     impl ObjectSubclass for AddNewVaultWindow {
         const NAME: &'static str = "AddNewVaultWindow";
-        type ParentType = gtk::Window;
+        type ParentType = adw::Window;
         type Type = super::AddNewVaultWindow;
 
         fn new() -> Self {
@@ -140,13 +140,14 @@ mod imp {
     }
 
     impl WidgetImpl for AddNewVaultWindow {}
+    impl AdwWindowImpl for AddNewVaultWindow {}
     impl WindowImpl for AddNewVaultWindow {}
     impl DialogImpl for AddNewVaultWindow {}
 }
 
 glib::wrapper! {
     pub struct AddNewVaultWindow(ObjectSubclass<imp::AddNewVaultWindow>)
-        @extends gtk::Widget, gtk::Window;
+        @extends gtk::Widget, adw::Window, gtk::Window;
 }
 
 impl AddNewVaultWindow {
