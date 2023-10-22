@@ -2,106 +2,110 @@
 <interface>
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
-  <template class="VaultSettingsWindow" parent="GtkWindow">
+  <template class="VaultSettingsWindow" parent="AdwWindow">
     <property name="default-height">500</property>
     <property name="default-width">660</property>
     <property name="modal">1</property>
     <property name="destroy-with-parent">1</property>
     <property name="title" translatable="yes">Preferences</property>
-    <child type="titlebar">
-      <object class="GtkHeaderBar" id="header_bar">
-      </object>
-    </child>
-    <child>
-      <object class="AdwToastOverlay" id="toast_overlay">
-        <child>
-          <object class="GtkScrolledWindow">
-            <property name="hexpand">True</property>
-            <property name="hscrollbar_policy">never</property>
-            <property name="vscrollbar_policy">automatic</property>
+    <property name="content">
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar" id="header_bar">
+          </object>
+        </child>
+        <property name="content">
+          <object class="AdwToastOverlay" id="toast_overlay">
             <child>
-              <object class="AdwClamp">
-                <property name="margin-top">30</property>
-                <property name="margin-bottom">30</property>
-                <property name="margin-start">12</property>
-                <property name="margin-end">12</property>
+              <object class="GtkScrolledWindow">
                 <property name="hexpand">True</property>
+                <property name="hscrollbar_policy">never</property>
+                <property name="vscrollbar_policy">automatic</property>
                 <child>
-                  <object class="GtkBox">
-                    <property name="orientation">vertical</property>
-                    <property name="spacing">12</property>
-                    <child>
-                      <object class="AdwPreferencesGroup">
-                        <property name="title" translatable="yes">Default Paths</property>
-                        <child>
-                          <object class="AdwEntryRow" id="encrypted_data_directory_entry_row">
-                            <property name="title" translatable="yes">Encrypted Data Directory</property>
-                            <child type="suffix">
-                              <object class="GtkButton" id="encrypted_data_directory_button">
-                                <property name="valign">center</property>
-                                <property name="icon_name">document-open-symbolic</property>
-                                <property name="tooltip-text" translatable="yes">Choose Encrypted Data Directory</property>
-                                <style>
-                                  <class name="flat"/>
-                                </style>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="encrypted_data_directory_error_label">
-                            <property name="visible">False</property>
-                            <property name="wrap">True</property>
-                            <style>
-                              <class name="error"/>
-                              <class name="caption"/>
-                            </style>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="AdwPreferencesGroup">
-                        <child>
-                          <object class="AdwEntryRow" id="mount_directory_entry_row">
-                            <property name="title" translatable="yes">Mount Directory</property>
-                            <child type="suffix">
-                              <object class="GtkButton" id="mount_directory_button">
-                                <property name="valign">center</property>
-                                <property name="icon_name">document-open-symbolic</property>
-                                <property name="tooltip-text" translatable="yes">Choose Mount Directory</property>
-                                <style>
-                                  <class name="flat"/>
-                                </style>
-                              </object>
-                            </child>
-                          </object>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="mount_directory_error_label">
-                            <property name="visible">False</property>
-                            <property name="wrap">True</property>
-                            <style>
-                              <class name="error"/>
-                              <class name="caption"/>
-                            </style>
-                          </object>
-                        </child>
-                      </object>
-                    </child>
+                  <object class="AdwClamp">
+                    <property name="margin-top">30</property>
+                    <property name="margin-bottom">30</property>
+                    <property name="margin-start">12</property>
+                    <property name="margin-end">12</property>
+                    <property name="hexpand">True</property>
                     <child>
                       <object class="GtkBox">
-                        <property name="halign">end</property>
-                        <property name="valign">end</property>
-                        <property name="margin-top">18</property>
+                        <property name="orientation">vertical</property>
+                        <property name="spacing">12</property>
                         <child>
-                          <object class="GtkButton" id="general_apply_changes_button">
-                            <property name="label" translatable="yes">_Apply Changes</property>
-                            <property name="use_underline">True</property>
-                            <property name="sensitive">False</property>
-                            <style>
-                              <class name="suggested-action"/>
-                            </style>
+                          <object class="AdwPreferencesGroup">
+                            <property name="title" translatable="yes">Default Paths</property>
+                            <child>
+                              <object class="AdwEntryRow" id="encrypted_data_directory_entry_row">
+                                <property name="title" translatable="yes">Encrypted Data Directory</property>
+                                <child type="suffix">
+                                  <object class="GtkButton" id="encrypted_data_directory_button">
+                                    <property name="valign">center</property>
+                                    <property name="icon_name">document-open-symbolic</property>
+                                    <property name="tooltip-text" translatable="yes">Choose Encrypted Data Directory</property>
+                                    <style>
+                                      <class name="flat"/>
+                                    </style>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="encrypted_data_directory_error_label">
+                                <property name="visible">False</property>
+                                <property name="wrap">True</property>
+                                <style>
+                                  <class name="error"/>
+                                  <class name="caption"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="AdwPreferencesGroup">
+                            <child>
+                              <object class="AdwEntryRow" id="mount_directory_entry_row">
+                                <property name="title" translatable="yes">Mount Directory</property>
+                                <child type="suffix">
+                                  <object class="GtkButton" id="mount_directory_button">
+                                    <property name="valign">center</property>
+                                    <property name="icon_name">document-open-symbolic</property>
+                                    <property name="tooltip-text" translatable="yes">Choose Mount Directory</property>
+                                    <style>
+                                      <class name="flat"/>
+                                    </style>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkLabel" id="mount_directory_error_label">
+                                <property name="visible">False</property>
+                                <property name="wrap">True</property>
+                                <style>
+                                  <class name="error"/>
+                                  <class name="caption"/>
+                                </style>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="halign">end</property>
+                            <property name="valign">end</property>
+                            <property name="margin-top">18</property>
+                            <child>
+                              <object class="GtkButton" id="general_apply_changes_button">
+                                <property name="label" translatable="yes">_Apply Changes</property>
+                                <property name="use_underline">True</property>
+                                <property name="sensitive">False</property>
+                                <style>
+                                  <class name="suggested-action"/>
+                                </style>
+                              </object>
+                            </child>
                           </object>
                         </child>
                       </object>
@@ -111,8 +115,8 @@
               </object>
             </child>
           </object>
-        </child>
+        </property>
       </object>
-    </child>
+    </property>
   </template>
 </interface>

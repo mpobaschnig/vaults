@@ -29,6 +29,7 @@ use crate::GlobalConfigManager;
 use crate::VApplication;
 
 mod imp {
+    use adw::subclass::window::AdwWindowImpl;
     use gtk::{glib, subclass::prelude::*, CompositeTemplate};
 
     #[derive(Debug, CompositeTemplate)]
@@ -55,7 +56,7 @@ mod imp {
     #[glib::object_subclass]
     impl ObjectSubclass for VaultsSettingsWindow {
         const NAME: &'static str = "VaultSettingsWindow";
-        type ParentType = gtk::Window;
+        type ParentType = adw::Window;
         type Type = super::PreferencesWindow;
 
         fn new() -> Self {
@@ -88,12 +89,13 @@ mod imp {
 
     impl WidgetImpl for VaultsSettingsWindow {}
     impl WindowImpl for VaultsSettingsWindow {}
+    impl AdwWindowImpl for VaultsSettingsWindow {}
     impl DialogImpl for VaultsSettingsWindow {}
 }
 
 glib::wrapper! {
     pub struct PreferencesWindow(ObjectSubclass<imp::VaultsSettingsWindow>)
-        @extends gtk::Widget, gtk::Window;
+        @extends gtk::Widget, adw::Window, gtk::Window;
 }
 
 impl PreferencesWindow {
