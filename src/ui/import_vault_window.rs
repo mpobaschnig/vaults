@@ -74,7 +74,7 @@ mod imp {
     #[glib::object_subclass]
     impl ObjectSubclass for ImportVaultDialog {
         const NAME: &'static str = "ImportVaultDialog";
-        type ParentType = gtk::Window;
+        type ParentType = adw::Window;
         type Type = super::ImportVaultDialog;
 
         fn new() -> Self {
@@ -131,13 +131,14 @@ mod imp {
     }
 
     impl WidgetImpl for ImportVaultDialog {}
+    impl AdwWindowImpl for ImportVaultDialog {}
     impl WindowImpl for ImportVaultDialog {}
     impl DialogImpl for ImportVaultDialog {}
 }
 
 glib::wrapper! {
     pub struct ImportVaultDialog(ObjectSubclass<imp::ImportVaultDialog>)
-        @extends gtk::Widget, gtk::Window;
+        @extends gtk::Widget, adw::Window, gtk::Window;
 }
 
 impl ImportVaultDialog {
