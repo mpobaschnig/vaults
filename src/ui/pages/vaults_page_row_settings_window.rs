@@ -72,7 +72,7 @@ mod imp {
     #[glib::object_subclass]
     impl ObjectSubclass for VaultsPageRowSettingsWindow {
         const NAME: &'static str = "VaultsPageRowSettingsWindow";
-        type ParentType = gtk::Window;
+        type ParentType = adw::Window;
         type Type = vaults_page_row_settings_window::VaultsPageRowSettingsWindow;
 
         fn new() -> Self {
@@ -121,13 +121,14 @@ mod imp {
     }
 
     impl WidgetImpl for VaultsPageRowSettingsWindow {}
+    impl AdwWindowImpl for VaultsPageRowSettingsWindow {}
     impl WindowImpl for VaultsPageRowSettingsWindow {}
     impl DialogImpl for VaultsPageRowSettingsWindow {}
 }
 
 glib::wrapper! {
     pub struct VaultsPageRowSettingsWindow(ObjectSubclass<imp::VaultsPageRowSettingsWindow>)
-        @extends gtk::Widget, gtk::Window;
+        @extends gtk::Widget, adw::Window, gtk::Window;
 }
 
 impl VaultsPageRowSettingsWindow {
