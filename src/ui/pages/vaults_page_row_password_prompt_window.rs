@@ -44,7 +44,7 @@ mod imp {
     #[glib::object_subclass]
     impl ObjectSubclass for VaultsPageRowPasswordPromptWindow {
         const NAME: &'static str = "VaultsPageRowPasswordPromptWindow";
-        type ParentType = gtk::Window;
+        type ParentType = adw::Window;
         type Type = super::VaultsPageRowPasswordPromptWindow;
 
         fn new() -> Self {
@@ -80,13 +80,14 @@ mod imp {
     }
 
     impl WidgetImpl for VaultsPageRowPasswordPromptWindow {}
+    impl AdwWindowImpl for VaultsPageRowPasswordPromptWindow {}
     impl WindowImpl for VaultsPageRowPasswordPromptWindow {}
     impl DialogImpl for VaultsPageRowPasswordPromptWindow {}
 }
 
 glib::wrapper! {
     pub struct VaultsPageRowPasswordPromptWindow(ObjectSubclass<imp::VaultsPageRowPasswordPromptWindow>)
-        @extends gtk::Widget, gtk::Window;
+        @extends gtk::Widget, adw::Window, gtk::Window;
 }
 
 impl VaultsPageRowPasswordPromptWindow {
