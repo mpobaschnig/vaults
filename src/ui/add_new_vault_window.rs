@@ -634,6 +634,7 @@ impl AddNewVaultWindow {
                     .as_str(),
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
+            Some(false)
         )
     }
 

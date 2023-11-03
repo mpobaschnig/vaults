@@ -127,6 +127,12 @@
                                 </style>
                               </object>
                             </child>
+                            <child>
+                              <object class="AdwSwitchRow" id="use_temporary_mount_directory_switch_row">
+                                <property name="title" translatable="yes">Use Temporary Mount Directory</property>
+                                <property name="subtitle" translatable="yes">Automatically create and remove the mount directory in the default mount directory path.</property>
+                             </object>
+                            </child>
                           </object>
                         </child>
                         <child>

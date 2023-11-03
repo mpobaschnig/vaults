@@ -212,6 +212,7 @@ impl ApplicationWindow {
                     v.backend,
                     v.encrypted_data_directory.to_owned(),
                     v.mount_directory.to_owned(),
+                    v.temporary_mount,
                 );
 
                 let row = VaultsPageRow::new(vault);
@@ -330,6 +331,7 @@ impl ApplicationWindow {
                 v.backend,
                 v.encrypted_data_directory.to_owned(),
                 v.mount_directory.to_owned(),
+                v.temporary_mount,
             );
 
             let row = VaultsPageRow::new(vault);

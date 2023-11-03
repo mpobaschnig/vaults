@@ -30,6 +30,7 @@ pub struct VaultConfig {
     pub backend: Backend,
     pub encrypted_data_directory: String,
     pub mount_directory: String,
+    pub temporary_mount: Option<bool>,
 }
 
 impl Clone for VaultConfig {
@@ -38,6 +39,7 @@ impl Clone for VaultConfig {
             backend: self.backend.clone(),
             encrypted_data_directory: self.encrypted_data_directory.clone(),
             mount_directory: self.mount_directory.clone(),
+            temporary_mount: self.temporary_mount.clone(),
         }
     }
 }
@@ -87,6 +89,7 @@ impl Vault {
         backend: Backend,
         encrypted_data_directory: String,
         mount_directory: String,
+        temporary_mount: Option<bool>,
     ) -> Vault {
         let object: Self = glib::Object::new();
 
@@ -95,6 +98,7 @@ impl Vault {
             backend,
             encrypted_data_directory,
             mount_directory,
+            temporary_mount,
         }));
 
         object
@@ -222,6 +226,7 @@ mod tests {
             Backend::Gocryptfs,
             "".to_string(),
             "".to_string(),
+            false
         );
         assert_eq!(vault.is_mount_hidden(), false);
 
@@ -229,6 +234,7 @@ mod tests {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: ".".to_string(),
+            temporary_mount: false
         });
         assert_eq!(vault.is_mount_hidden(), false);
 
@@ -236,6 +242,7 @@ mod tests {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "..".to_string(),
+            temporary_mount: false
         });
         assert_eq!(vault.is_mount_hidden(), false);
 
@@ -243,6 +250,7 @@ mod tests {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "./".to_string(),
+            temporary_mount: false
         });
         assert_eq!(vault.is_mount_hidden(), false);
 
@@ -250,6 +258,7 @@ mod tests {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "./Hidden".to_string(),
+            temporary_mount: false
         });
         assert_eq!(vault.is_mount_hidden(), false);
 
@@ -257,6 +266,7 @@ mod tests {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "tets/.Test".to_string(),
+            temporary_mount: false
         });
         assert_eq!(vault.is_mount_hidden(), true);
 
@@ -264,6 +274,7 @@ mod tests {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "./Test/.Test".to_string(),
+            temporary_mount: false
         });
         assert_eq!(vault.is_mount_hidden(), true);
 
@@ -271,6 +282,7 @@ mod tests {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "../.Test".to_string(),
+            temporary_mount: false
         });
         assert_eq!(vault.is_mount_hidden(), true);
     }

@@ -64,6 +64,8 @@ mod imp {
         pub mount_directory_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
+        #[template_child]
+        pub use_temporary_mount_directory_switch_row: TemplateChild<adw::SwitchRow>,
 
         pub current_vault: RefCell<Option<Vault>>,
         pub to_remove: RefCell<bool>,
@@ -90,6 +92,7 @@ mod imp {
                 mount_directory_button: TemplateChild::default(),
                 mount_directory_error_label: TemplateChild::default(),
                 toast_overlay: TemplateChild::default(),
+                use_temporary_mount_directory_switch_row: TemplateChild::default(),
                 current_vault: RefCell::new(None),
                 to_remove: RefCell::new(false),
             }
@@ -198,6 +201,15 @@ impl VaultsPageRowSettingsWindow {
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.mount_directory_button_clicked();
             }));
+
+        self.imp()
+            .use_temporary_mount_directory_switch_row
+            .connect_notify_local(
+                Some("active"),
+                clone!(@weak self as obj => move |_, __| {
+                    obj.check_add_button_enable_conditions();
+                }),
+            );
     }
 
     fn remove_button_clicked(&self) {
@@ -227,6 +239,11 @@ impl VaultsPageRowSettingsWindow {
                     .as_str(),
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
+            Some(
+                self.imp()
+                    .use_temporary_mount_directory_switch_row
+                    .is_active(),
+            ),
         );
 
         UserConfigManager::instance()
@@ -419,6 +436,7 @@ impl VaultsPageRowSettingsWindow {
         curr_backend: &GString,
         curr_encrypted_data_directory: &GString,
         curr_mount_directory: &GString,
+        curr_temp_mount: &bool,
     ) -> bool {
         let prev_vault = self.get_current_vault().unwrap();
         let prev_config = &prev_vault.get_config().unwrap();
@@ -444,6 +462,20 @@ impl VaultsPageRowSettingsWindow {
         if !curr_mount_directory.eq(prev_mount_directory) {
             return true;
         }
+
+        if let Some(prev_temp_mount) = &prev_config.temporary_mount {
+            if !curr_temp_mount.eq(prev_temp_mount) {
+                return true;
+            }
+            println!("1");
+        } else {
+            if *curr_temp_mount == true {
+                return true;
+            }
+            println!("2");
+        }
+
+        println!("Yes");
 
         false
     }
@@ -494,6 +526,10 @@ impl VaultsPageRowSettingsWindow {
         let backend = backend::get_backend_from_ui_string(&backend_str.to_string()).unwrap();
         let encrypted_data_directory = self.imp().encrypted_data_directory_entry_row.text();
         let mount_directory = self.imp().mount_directory_entry_row.text();
+        let temp_mount = self
+            .imp()
+            .use_temporary_mount_directory_switch_row
+            .is_active();
 
         let is_valid_vault_name = self.is_valid_vault_name(vault_name.clone());
         let is_different_vault_name = self.is_different_vault_name(vault_name.clone());
@@ -511,6 +547,7 @@ impl VaultsPageRowSettingsWindow {
             &backend_str,
             &encrypted_data_directory,
             &mount_directory,
+            &temp_mount,
         );
         let exists_config_file = self.exists_config_file(backend, &encrypted_data_directory);
 
@@ -561,6 +598,11 @@ impl VaultsPageRowSettingsWindow {
                     .as_str(),
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
+            Some(
+                self.imp()
+                    .use_temporary_mount_directory_switch_row
+                    .is_active(),
+            ),
         )
     }
 
@@ -592,6 +634,16 @@ impl VaultsPageRowSettingsWindow {
                 self.imp()
                     .mount_directory_entry_row
                     .set_text(&config.mount_directory.to_string());
+
+                if let Some(is_active) = config.temporary_mount {
+                    self.imp()
+                        .use_temporary_mount_directory_switch_row
+                        .set_active(is_active);
+                } else {
+                    self.imp()
+                        .use_temporary_mount_directory_switch_row
+                        .set_active(false);
+                }
             }
             (_, _) => {
                 log::error!("Vault not initialised!");
