@@ -95,8 +95,8 @@ mod imp {
                 search_entry: TemplateChild::default(),
                 search_toggle_button: TemplateChild::default(),
                 search_stack: TemplateChild::default(),
-                list_store: ListStore::new(gtk::Widget::static_type()),
-                search_list_store: ListStore::new(gtk::Widget::static_type()),
+                list_store: ListStore::new::<gtk::Widget>(),
+                search_list_store: ListStore::new::<gtk::Widget>(),
                 search_results: RefCell::new(0),
                 settings: gio::Settings::new(APP_ID),
             }

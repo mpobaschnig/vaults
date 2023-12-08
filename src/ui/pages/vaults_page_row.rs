@@ -219,7 +219,7 @@ impl VaultsPageRow {
             Error(BackendError),
         }
 
-        let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+        let (sender, receiver) = glib::MainContext::channel(glib::Priority::DEFAULT);
         let vault_config = vault.get_config().clone().unwrap();
         std::thread::spawn(move || match Backend::close(&vault_config) {
             Ok(_) => {
@@ -274,7 +274,7 @@ impl VaultsPageRow {
 
             spinner.stop();
 
-            glib::Continue(true)
+            glib::ControlFlow::Continue
         });
     }
 
@@ -312,7 +312,7 @@ impl VaultsPageRow {
                     Error(BackendError),
                 }
 
-                let (sender, receiver) = glib::MainContext::channel(glib::PRIORITY_DEFAULT);
+                let (sender, receiver) = glib::MainContext::channel(glib::Priority::DEFAULT);
                 let vault_config = vault.get_config().clone().unwrap();
                 std::thread::spawn(move || match Backend::open(&vault_config, password) {
                     Ok(_) => {
@@ -368,7 +368,7 @@ impl VaultsPageRow {
 
                     spinner.stop();
 
-                    glib::Continue(true)
+                    glib::ControlFlow::Continue
                 });
             }),
         );
