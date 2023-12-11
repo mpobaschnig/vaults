@@ -25,21 +25,11 @@ use gtk::{gio, glib};
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct VaultConfig {
     pub backend: Backend,
     pub encrypted_data_directory: String,
     pub mount_directory: String,
-}
-
-impl Clone for VaultConfig {
-    fn clone(&self) -> VaultConfig {
-        VaultConfig {
-            backend: self.backend.clone(),
-            encrypted_data_directory: self.encrypted_data_directory.clone(),
-            mount_directory: self.mount_directory.clone(),
-        }
-    }
 }
 
 mod imp {
