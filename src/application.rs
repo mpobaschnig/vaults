@@ -91,6 +91,7 @@ impl VApplication {
         let object: Self = glib::Object::new();
         object.set_property("application-id", config::APP_ID);
         object.set_property("flags", ApplicationFlags::empty());
+        object.set_property("register-session", true);
         object
     }
 
