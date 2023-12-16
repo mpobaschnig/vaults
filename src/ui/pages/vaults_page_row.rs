@@ -434,6 +434,7 @@ impl VaultsPageRow {
                 config.backend,
                 config.encrypted_data_directory,
                 config.mount_directory,
+                config.session_lock,
             ),
             _ => {
                 log::error!("Vault not initialised!");

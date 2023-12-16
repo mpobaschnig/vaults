@@ -130,6 +130,16 @@
                           </object>
                         </child>
                         <child>
+                          <object class="AdwPreferencesGroup">
+                            <child>
+                              <object class="AdwSwitchRow" id="lock_screen_switch_row">
+                                <property name="title" translatable="yes">Session lock</property>
+                                <property name="subtitle" translatable="yes">Automatically lock when screen is locked and screen saver is activated</property>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
                           <object class="GtkBox">
                             <property name="halign">end</property>
                             <property name="valign">end</property>

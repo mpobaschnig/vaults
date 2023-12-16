@@ -64,6 +64,8 @@ mod imp {
         pub mount_directory_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
+        #[template_child]
+        pub lock_screen_switch_row: TemplateChild<adw::SwitchRow>,
 
         pub current_vault: RefCell<Option<Vault>>,
         pub to_remove: RefCell<bool>,
@@ -90,6 +92,7 @@ mod imp {
                 mount_directory_button: TemplateChild::default(),
                 mount_directory_error_label: TemplateChild::default(),
                 toast_overlay: TemplateChild::default(),
+                lock_screen_switch_row: TemplateChild::default(),
                 current_vault: RefCell::new(None),
                 to_remove: RefCell::new(false),
             }
@@ -198,6 +201,12 @@ impl VaultsPageRowSettingsWindow {
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.mount_directory_button_clicked();
             }));
+
+        self.imp().lock_screen_switch_row.connect_active_notify(
+            clone!(@weak self as obj => move |_| {
+                obj.check_add_button_enable_conditions();
+            }),
+        );
     }
 
     fn remove_button_clicked(&self) {
@@ -227,6 +236,7 @@ impl VaultsPageRowSettingsWindow {
                     .as_str(),
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
+            Some(self.imp().lock_screen_switch_row.is_active()),
         );
 
         UserConfigManager::instance()
@@ -419,6 +429,7 @@ impl VaultsPageRowSettingsWindow {
         curr_backend: &GString,
         curr_encrypted_data_directory: &GString,
         curr_mount_directory: &GString,
+        curr_session_locking: &bool,
     ) -> bool {
         let prev_vault = self.get_current_vault().unwrap();
         let prev_config = &prev_vault.get_config().unwrap();
@@ -443,6 +454,16 @@ impl VaultsPageRowSettingsWindow {
 
         if !curr_mount_directory.eq(prev_mount_directory) {
             return true;
+        }
+
+        if let Some(prev_session_locking) = prev_config.session_lock {
+            if prev_session_locking != *curr_session_locking {
+                return true;
+            }
+        } else {
+            if *curr_session_locking {
+                return true;
+            }
         }
 
         false
@@ -506,11 +527,13 @@ impl VaultsPageRowSettingsWindow {
             } else {
                 false
             };
+        let is_session_locking = self.imp().lock_screen_switch_row.is_active();
         let has_something_changed = self.has_something_changed(
             &vault_name,
             &backend_str,
             &encrypted_data_directory,
             &mount_directory,
+            &is_session_locking,
         );
         let exists_config_file = self.exists_config_file(backend, &encrypted_data_directory);
 
@@ -561,6 +584,7 @@ impl VaultsPageRowSettingsWindow {
                     .as_str(),
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
+            Some(self.imp().lock_screen_switch_row.is_active()),
         )
     }
 
@@ -592,6 +616,9 @@ impl VaultsPageRowSettingsWindow {
                 self.imp()
                     .mount_directory_entry_row
                     .set_text(&config.mount_directory.to_string());
+                if let Some(session_lock) = config.session_lock {
+                    self.imp().lock_screen_switch_row.set_active(session_lock);
+                }
             }
             (_, _) => {
                 log::error!("Vault not initialised!");
