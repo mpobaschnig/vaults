@@ -184,6 +184,31 @@ impl VaultsPageRow {
                 obj.mount_removed_triggered(&m);
             }),
         );
+
+        let window = gtk::gio::Application::default()
+            .unwrap()
+            .downcast_ref::<VApplication>()
+            .unwrap()
+            .clone();
+        window.connect_screensaver_active_notify(clone!(@weak self as obj => move |_| {
+            let config = obj.imp().config.borrow().clone().unwrap();
+            if let Some(session_locking) = config.session_lock {
+                if session_locking {
+                    let vault = obj.get_vault();
+
+                    if !vault.is_backend_available() {
+                        obj.set_vault_row_state_backend_unavailable();
+                        return;
+                    } else {
+                        obj.set_vault_row_state_backend_available();
+                    }
+
+                    if obj.is_mounted() {
+                        obj.locker_button_clicked_is_mounted(vault);
+                    }
+                }
+            }
+        }));
     }
 
     fn open_folder_button_clicked(&self) {
