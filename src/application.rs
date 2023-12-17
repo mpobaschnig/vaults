@@ -17,14 +17,18 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use crate::backend::Backend;
 use crate::config;
+use crate::ui::pages::VaultsPageRowPasswordPromptWindow;
 use crate::ui::ApplicationWindow;
 use crate::ui::PreferencesWindow;
+use crate::user_config_manager::UserConfigManager;
 
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gio::ApplicationFlags;
 use glib::clone;
+use gtk::glib::closure_local;
 use gtk::prelude::*;
 use gtk::{gio, glib};
 use gtk_macros::action;
@@ -32,6 +36,9 @@ use log::{debug, info};
 use std::cell::RefCell;
 
 mod imp {
+
+    use gtk::glib::VariantTy;
+
     use super::*;
 
     #[derive(Debug, PartialEq)]
@@ -76,7 +83,7 @@ mod imp {
             let app = self.obj();
 
             app.setup_accels();
-
+            app.setup_gactions();
             app.set_resource_base_path(Some("/io/github/mpobaschnig/Vaults/"));
 
             match *self.only_prompt_type.borrow() {
@@ -84,10 +91,67 @@ mod imp {
                     let window = ApplicationWindow::new(&app);
                     window.present();
                     self.window.replace(Some(window));
-                    app.setup_gactions();
                 }
-                OnlyPromptType::OPEN => todo!(),
-                OnlyPromptType::CLOSE => todo!(),
+                OnlyPromptType::OPEN => {
+                    let window = ApplicationWindow::new(&app);
+                    self.window.replace(Some(window));
+
+                    let map = UserConfigManager::instance().get_map();
+                    let vault_config = map.get(&*self.only_pompt_vault.borrow());
+
+                    match vault_config {
+                        Some(vault_config) => {
+                            let dialog = VaultsPageRowPasswordPromptWindow::new();
+                            dialog.set_name(&*self.only_pompt_vault.borrow());
+                            dialog.connect_closure(
+                                "unlock",
+                                false,
+                                closure_local!(@strong vault_config as vc, @strong app as a => move |dialog: VaultsPageRowPasswordPromptWindow| {
+                                    let password = dialog.get_password();
+                                    let result = Backend::open(&vc, password);
+                                    match result {
+                                        Ok(_) => log::info!("Opened vault successfully."),
+                                        Err(e) => log::error!("{e}"),
+                                    }
+                                    a.quit();
+                                }),
+                            );
+
+                            dialog.set_visible(true);
+                        }
+                        None => {
+                            log::error!(
+                                "Vault {} does not exist.",
+                                *self.only_pompt_vault.borrow()
+                            );
+                            app.quit();
+                        }
+                    }
+                }
+                OnlyPromptType::CLOSE => {
+                    let window = ApplicationWindow::new(&app);
+                    self.window.replace(Some(window));
+
+                    let map = UserConfigManager::instance().get_map();
+                    let vault_config = map.get(&*self.only_pompt_vault.borrow());
+
+                    match vault_config {
+                        Some(vault_config) => {
+                            let result = Backend::close(&vault_config);
+                            match result {
+                                Ok(_) => log::info!("Closed vault successfully."),
+                                Err(e) => log::error!("{e}"),
+                            }
+                        }
+                        None => {
+                            log::error!(
+                                "Vault {} does not exist.",
+                                *self.only_pompt_vault.borrow()
+                            );
+                        }
+                    }
+                    app.quit();
+                }
             }
         }
 
