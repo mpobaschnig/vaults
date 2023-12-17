@@ -96,13 +96,14 @@ impl VaultsPageRowPasswordPromptWindow {
 
         dialog.add_css_class("flat");
 
-        let window = gio::Application::default()
+        if let Some(window) = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
             .active_window()
-            .unwrap();
-        dialog.set_transient_for(Some(&window));
+        {
+            dialog.set_transient_for(Some(&window));
+        }
 
         dialog
     }
