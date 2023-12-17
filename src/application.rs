@@ -22,6 +22,7 @@ use crate::ui::ApplicationWindow;
 use crate::ui::PreferencesWindow;
 
 use adw::subclass::prelude::*;
+use gettextrs::gettext;
 use gio::ApplicationFlags;
 use glib::clone;
 use gtk::prelude::*;
@@ -33,9 +34,25 @@ use std::cell::RefCell;
 mod imp {
     use super::*;
 
+    #[derive(Debug, PartialEq)]
+    enum OnlyPromptType {
+        NONE,
+        OPEN,
+        CLOSE,
+    }
+
+    impl Default for OnlyPromptType {
+        fn default() -> Self {
+            OnlyPromptType::NONE
+        }
+    }
+
     #[derive(Debug, Default)]
     pub struct VApplication {
         pub window: RefCell<Option<ApplicationWindow>>,
+
+        only_prompt_type: RefCell<OnlyPromptType>,
+        only_pompt_vault: RefCell<String>,
     }
 
     #[glib::object_subclass]
@@ -62,18 +79,40 @@ mod imp {
 
             app.set_resource_base_path(Some("/io/github/mpobaschnig/Vaults/"));
 
-            let window = ApplicationWindow::new(&app);
-
-            window.present();
-
-            self.window.replace(Some(window));
-
-            app.setup_gactions();
+            match *self.only_prompt_type.borrow() {
+                OnlyPromptType::NONE => {
+                    let window = ApplicationWindow::new(&app);
+                    window.present();
+                    self.window.replace(Some(window));
+                    app.setup_gactions();
+                }
+                OnlyPromptType::OPEN => todo!(),
+                OnlyPromptType::CLOSE => todo!(),
+            }
         }
 
         fn startup(&self) {
             debug!("GtkApplication<VApplication>::startup");
             self.parent_startup();
+        }
+
+        fn handle_local_options(&self, options: &glib::VariantDict) -> glib::ExitCode {
+            if let Some(vault_name) = options.lookup_value("open", Some(VariantTy::STRING)) {
+                *self.only_prompt_type.borrow_mut() = OnlyPromptType::OPEN;
+                *self.only_pompt_vault.borrow_mut() = vault_name.get::<String>().unwrap();
+            }
+
+            if let Some(vault_name) = options.lookup_value("close", Some(VariantTy::STRING)) {
+                if *self.only_prompt_type.borrow() != OnlyPromptType::NONE {
+                    log::error!("{}", gettext("Cannot open and close at the same time."));
+                    return glib::ExitCode::from(2);
+                }
+
+                *self.only_prompt_type.borrow_mut() = OnlyPromptType::CLOSE;
+                *self.only_pompt_vault.borrow_mut() = vault_name.get::<String>().unwrap();
+            }
+
+            glib::ExitCode::from(-1)
         }
     }
 
@@ -90,8 +129,26 @@ impl VApplication {
     pub fn new() -> Self {
         let object: Self = glib::Object::new();
         object.set_property("application-id", config::APP_ID);
-        object.set_property("flags", ApplicationFlags::empty());
+        object.set_property("flags", ApplicationFlags::FLAGS_NONE);
         object.set_property("register-session", true);
+
+        object.add_main_option(
+            "open",
+            glib::Char::from(b'o'),
+            glib::OptionFlags::IN_MAIN,
+            glib::OptionArg::String,
+            "Open given vault",
+            None,
+        );
+        object.add_main_option(
+            "close",
+            glib::Char::from(b'c'),
+            glib::OptionFlags::IN_MAIN,
+            glib::OptionArg::String,
+            "Close given vault",
+            None,
+        );
+
         object
     }
 
