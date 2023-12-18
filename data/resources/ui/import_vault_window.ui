@@ -105,6 +105,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="encrypted_data_directory_error_label">
+                                    <property name="margin-top">12</property>
                                     <property name="visible">False</property>
                                     <property name="wrap">True</property>
                                     <style>
@@ -132,6 +133,7 @@
                                     </child>
                                     <child>
                                       <object class="GtkLabel" id="mount_directory_error_label">
+                                    <property name="margin-top">12</property>
                                         <property name="visible">False</property>
                                         <property name="wrap">True</property>
                                         <style>
@@ -168,6 +170,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="name_error_label">
+                                    <property name="margin-top">12</property>
                                     <property name="visible">False</property>
                                     <property name="wrap">True</property>
                                     <style>
@@ -188,6 +191,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="backend_type_error_label">
+                                    <property name="margin-top">12</property>
                                     <property name="visible">False</property>
                                     <property name="wrap">True</property>
                                     <style>
