@@ -99,6 +99,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkLabel" id="encrypted_data_directory_info_label">
+                                    <property name="margin-top">12</property>
                                     <property name="visible">False</property>
                                     <property name="wrap">True</property>
                                   </object>
