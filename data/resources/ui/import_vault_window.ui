@@ -131,17 +131,17 @@
                                         </style>
                                       </object>
                                     </child>
-                                    <child>
-                                      <object class="GtkLabel" id="mount_directory_error_label">
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="mount_directory_error_label">
                                     <property name="margin-top">12</property>
-                                        <property name="visible">False</property>
-                                        <property name="wrap">True</property>
-                                        <style>
-                                          <class name="error"/>
-                                          <class name="caption"/>
-                                        </style>
-                                      </object>
-                                    </child>
+                                    <property name="visible">False</property>
+                                    <property name="wrap">True</property>
+                                    <style>
+                                      <class name="error"/>
+                                      <class name="caption"/>
+                                    </style>
                                   </object>
                                 </child>
                               </object>
