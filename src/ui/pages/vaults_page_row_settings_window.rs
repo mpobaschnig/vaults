@@ -299,6 +299,7 @@ impl VaultsPageRowSettingsWindow {
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
             Some(self.imp().lock_screen_switch_row.is_active()),
+            Some(self.imp().temporary_mount_switch_row.is_active()),
         );
 
         UserConfigManager::instance()
@@ -490,6 +491,7 @@ impl VaultsPageRowSettingsWindow {
         curr_encrypted_data_directory: &GString,
         curr_mount_directory: &GString,
         curr_session_locking: &bool,
+        curr_temporary_mount: &bool,
     ) -> bool {
         let prev_vault = self.get_current_vault().unwrap();
         let prev_config = &prev_vault.get_config().unwrap();
@@ -522,6 +524,16 @@ impl VaultsPageRowSettingsWindow {
             }
         } else {
             if *curr_session_locking {
+                return true;
+            }
+        }
+
+        if let Some(prev_temporary_mount) = prev_config.temporary_mount {
+            if prev_temporary_mount != *curr_temporary_mount {
+                return true;
+            }
+        } else {
+            if *curr_temporary_mount {
                 return true;
             }
         }
@@ -588,12 +600,14 @@ impl VaultsPageRowSettingsWindow {
                 false
             };
         let is_session_locking = self.imp().lock_screen_switch_row.is_active();
+        let is_temporary_mount = self.imp().temporary_mount_switch_row.is_active();
         let has_something_changed = self.has_something_changed(
             &vault_name,
             &backend_str,
             &encrypted_data_directory,
             &mount_directory,
             &is_session_locking,
+            &is_temporary_mount,
         );
         let exists_config_file = self.exists_config_file(backend, &encrypted_data_directory);
 
@@ -645,6 +659,7 @@ impl VaultsPageRowSettingsWindow {
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
             Some(self.imp().lock_screen_switch_row.is_active()),
+            Some(self.imp().temporary_mount_switch_row.is_active()),
         )
     }
 
@@ -678,6 +693,11 @@ impl VaultsPageRowSettingsWindow {
                     .set_text(&config.mount_directory.to_string());
                 if let Some(session_lock) = config.session_lock {
                     self.imp().lock_screen_switch_row.set_active(session_lock);
+                }
+                if let Some(temporary_mount) = config.temporary_mount {
+                    self.imp()
+                        .temporary_mount_switch_row
+                        .set_active(temporary_mount);
                 }
             }
             (_, _) => {
