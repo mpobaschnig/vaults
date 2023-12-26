@@ -224,6 +224,12 @@
                                   </object>
                                 </child>
                                 <child>
+                                  <object class="AdwSwitchRow" id="temporary_mount_switch_row">
+                                    <property name="title" translatable="yes">Use Temporary Mount Folder</property>
+                                    <property name="subtitle" translatable="yes">The mount directory is dynamically created when opened and removed when closed</property>
+                                  </object>
+                                </child>
+                                <child>
                                   <object class="GtkLabel" id="mount_directory_error_label">
                                     <property name="margin-top">12</property>
                                     <property name="visible">False</property>

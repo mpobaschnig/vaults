@@ -460,6 +460,7 @@ impl VaultsPageRow {
                 config.encrypted_data_directory,
                 config.mount_directory,
                 config.session_lock,
+                config.temporary_mount,
             ),
             _ => {
                 log::error!("Vault not initialised!");
