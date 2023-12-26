@@ -66,6 +66,8 @@ mod imp {
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
         pub lock_screen_switch_row: TemplateChild<adw::SwitchRow>,
+        #[template_child]
+        pub temporary_mount_switch_row: TemplateChild<adw::SwitchRow>,
 
         pub current_vault: RefCell<Option<Vault>>,
         pub to_remove: RefCell<bool>,
@@ -93,6 +95,7 @@ mod imp {
                 mount_directory_error_label: TemplateChild::default(),
                 toast_overlay: TemplateChild::default(),
                 lock_screen_switch_row: TemplateChild::default(),
+                temporary_mount_switch_row: TemplateChild::default(),
                 current_vault: RefCell::new(None),
                 to_remove: RefCell::new(false),
             }
