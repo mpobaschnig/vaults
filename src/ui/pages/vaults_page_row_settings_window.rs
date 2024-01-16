@@ -216,6 +216,16 @@ impl VaultsPageRowSettingsWindow {
                 obj.check_add_button_enable_conditions();
             }),
         );
+
+        self.imp()
+            .temporary_mount_switch_row
+            .bind_property(
+                "active",
+                &self.imp().mount_directory_entry_row.clone(),
+                "sensitive",
+            )
+            .invert_boolean()
+            .build();
     }
 
     fn remove_button_clicked(&self) {
