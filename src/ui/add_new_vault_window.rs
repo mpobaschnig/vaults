@@ -75,6 +75,8 @@ mod imp {
         pub encrypted_data_directory_error_label: TemplateChild<gtk::Label>,
         #[template_child]
         pub mount_directory_error_label: TemplateChild<gtk::Label>,
+        #[template_child]
+        pub temporary_mount_switch_row: TemplateChild<adw::SwitchRow>,
 
         pub current_page: RefCell<u32>,
     }
@@ -104,6 +106,7 @@ mod imp {
                 mount_directory_button: TemplateChild::default(),
                 encrypted_data_directory_error_label: TemplateChild::default(),
                 mount_directory_error_label: TemplateChild::default(),
+                temporary_mount_switch_row: TemplateChild::default(),
 
                 current_page: RefCell::new(0),
             }
@@ -242,6 +245,16 @@ impl AddNewVaultWindow {
             .connect_clicked(clone!(@weak self as obj => move |_| {
                 obj.mount_directory_button_clicked();
             }));
+
+        self.imp()
+            .temporary_mount_switch_row
+            .bind_property(
+                "active",
+                &self.imp().mount_directory_entry_row.clone(),
+                "sensitive",
+            )
+            .invert_boolean()
+            .build();
     }
 
     pub fn next_button_clicked(&self) {
