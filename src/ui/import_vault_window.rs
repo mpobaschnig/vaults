@@ -21,10 +21,17 @@ use adw::prelude::ComboRowExt;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::{self, gio, gio::File, glib, glib::clone, glib::GString, prelude::*, CompositeTemplate};
-use std::cell::RefCell;
+use std::{
+    cell::RefCell,
+    collections::hash_map::DefaultHasher,
+    hash::{Hash, Hasher},
+};
 use strum::IntoEnumIterator;
 
-use crate::{backend, user_config_manager::UserConfigManager, vault::*, VApplication};
+use crate::{
+    backend, global_config_manager::GlobalConfigManager, user_config_manager::UserConfigManager,
+    vault::*, VApplication,
+};
 
 mod imp {
     use gtk::glib::subclass::Signal;
@@ -203,6 +210,7 @@ impl ImportVaultDialog {
         self.imp()
             .encrypted_data_directory_entry_row
             .connect_text_notify(clone!(@weak self as obj => move |_| {
+                obj.update_temporary_mount();
                 obj.validate_directories();
             }));
 
@@ -233,6 +241,12 @@ impl ImportVaultDialog {
             )
             .invert_boolean()
             .build();
+
+        self.imp().temporary_mount_switch_row.connect_active_notify(
+            clone!(@weak self as obj => move |_| {
+                obj.update_temporary_mount();
+            }),
+        );
     }
 
     pub fn next_button_clicked(&self) {
@@ -295,6 +309,44 @@ impl ImportVaultDialog {
                 self.validate_name();
             }
             _ => {}
+        }
+    }
+
+    pub fn update_temporary_mount(&self) {
+        let is_temporary_mount_enabled = self.imp().temporary_mount_switch_row.is_active();
+
+        if is_temporary_mount_enabled {
+            let path = self
+                .imp()
+                .encrypted_data_directory_entry_row
+                .text()
+                .to_string();
+            let file_path = std::path::Path::new(&path);
+            match file_path.file_name() {
+                Some(directory) => {
+                    let mut hasher = DefaultHasher::new();
+                    file_path.hash(&mut hasher);
+                    let hash = hasher.finish().to_string();
+
+                    let global_config = GlobalConfigManager::instance().get_global_config();
+                    let mut path = global_config.mount_directory.borrow().clone();
+                    if !path.ends_with("/") {
+                        path.push_str("/");
+                    }
+                    match directory.to_str() {
+                        Some(directory) => {
+                            let mount_directory = path + directory + "-" + &hash;
+                            self.imp()
+                                .mount_directory_entry_row
+                                .set_text(&mount_directory);
+                        }
+                        None => self.imp().mount_directory_entry_row.set_text(""),
+                    }
+                }
+                None => self.imp().mount_directory_entry_row.set_text(""),
+            }
+        } else {
+            self.imp().mount_directory_entry_row.set_text("");
         }
     }
 
@@ -380,9 +432,7 @@ impl ImportVaultDialog {
 
         let encrypted_data_directory = self.imp().encrypted_data_directory_entry_row.text();
         let mount_directory = self.imp().mount_directory_entry_row.text();
-
         let is_edd_valid = self.is_encrypted_data_directory_valid(&encrypted_data_directory);
-
         let is_md_valid = self.is_mount_directory_valid(&mount_directory);
 
         if !is_edd_valid || !is_md_valid {
@@ -423,7 +473,7 @@ impl ImportVaultDialog {
             return false;
         }
 
-        match self.is_path_empty(&encrypted_data_directory) {
+        match self.is_path_empty(&encrypted_data_directory, false) {
             Ok(is_empty) => {
                 if is_empty {
                     self.imp()
@@ -480,7 +530,7 @@ impl ImportVaultDialog {
             return false;
         }
 
-        match self.is_path_empty(&mount_directory) {
+        match self.is_path_empty(&mount_directory, true) {
             Ok(is_empty) => {
                 if is_empty {
                     self.imp().mount_directory_error_label.set_visible(false);
@@ -514,7 +564,11 @@ impl ImportVaultDialog {
         }
     }
 
-    fn is_path_empty(&self, path: &GString) -> Result<bool, std::io::Error> {
+    fn is_path_empty(
+        &self,
+        path: &GString,
+        check_temporary_mount: bool,
+    ) -> Result<bool, std::io::Error> {
         match std::fs::read_dir(path.to_string()) {
             Ok(dir) => {
                 if dir.count() > 0 {
@@ -524,8 +578,14 @@ impl ImportVaultDialog {
                 }
             }
             Err(e) => {
-                log::debug!("Could not read path {}: {}", path, e);
-                Err(e)
+                let is_temporary_mount_active = self.imp().temporary_mount_switch_row.is_active();
+
+                if check_temporary_mount && is_temporary_mount_active {
+                    Ok(true)
+                } else {
+                    log::debug!("Could not read path {}: {}", path, e);
+                    Err(e)
+                }
             }
         }
     }
@@ -553,7 +613,7 @@ impl ImportVaultDialog {
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
             None,
-            None,
+            Some(self.imp().temporary_mount_switch_row.is_active()),
         )
     }
 
