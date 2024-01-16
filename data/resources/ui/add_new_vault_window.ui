@@ -210,6 +210,7 @@
                               <object class="AdwPreferencesGroup">
                                 <child>
                                   <object class="AdwEntryRow" id="mount_directory_entry_row">
+                                    <property name="sensitive">false</property>
                                     <property name="title" translatable="yes">Mount Directory</property>
                                     <child type="suffix">
                                       <object class="GtkButton" id="mount_directory_button">
@@ -225,6 +226,7 @@
                                 </child>
                                 <child>
                                   <object class="AdwSwitchRow" id="temporary_mount_switch_row">
+                                    <property name="active">true</property>
                                     <property name="title" translatable="yes">Use Temporary Mount Folder</property>
                                     <property name="subtitle" translatable="yes">The mount directory is dynamically created when opened and removed when closed</property>
                                   </object>
