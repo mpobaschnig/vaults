@@ -570,6 +570,24 @@ impl VaultsPageRow {
                     Some(file_name) => {
                         if mount.name() == file_name {
                             self.set_vault_row_state_closed();
+
+                            match self.imp().config.borrow().clone().unwrap().temporary_mount {
+                                Some(is_temporary_mount_active) => {
+                                    if is_temporary_mount_active {
+                                        match std::fs::remove_dir(&config_mount_directory) {
+                                            Ok(_) => {}
+                                            Err(e) => {
+                                                log::debug!(
+                                                    "Could not delete temporary mount {} ({})",
+                                                    &config_mount_directory,
+                                                    e
+                                                );
+                                            }
+                                        }
+                                    }
+                                }
+                                None => {}
+                            }
                         }
                     }
                     None => {
