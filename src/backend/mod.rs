@@ -91,6 +91,23 @@ impl Backend {
     }
 
     pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
+        match vault_config.temporary_mount {
+            Some(is_temporary_mount_active) => {
+                if is_temporary_mount_active {
+                    let mount_directory = &vault_config.mount_directory;
+                    match create_md_if_not_exists(&mount_directory) {
+                        Ok(_) => {
+                            log::debug!("Created mount directory: {}", &mount_directory);
+                        }
+                        Err(e) => {
+                            return Err(e);
+                        }
+                    }
+                }
+            }
+            None => {}
+        }
+
         match vault_config.backend {
             Backend::Cryfs => cryfs::open(vault_config, password),
             Backend::Gocryptfs => gocryptfs::open(vault_config, password),
@@ -98,6 +115,30 @@ impl Backend {
     }
 
     pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
+        match vault_config.temporary_mount {
+            Some(is_temporary_mount_active) => {
+                if is_temporary_mount_active {
+                    let mount_directory = &vault_config.mount_directory;
+
+                    match std::fs::remove_dir(std::path::Path::new(&mount_directory)) {
+                        Ok(_) => {}
+                        Err(e) => {
+                            log::debug!(
+                                "Could not delete temporary mount {} ({})",
+                                &mount_directory,
+                                e
+                            );
+                            return Err(BackendError::ToUser(gettext(std::format!(
+                                "Could not remove temporary mount folder. Error: {}",
+                                e
+                            ))));
+                        }
+                    }
+                }
+            }
+            None => {}
+        }
+
         match vault_config.backend {
             Backend::Cryfs => cryfs::close(vault_config),
             Backend::Gocryptfs => gocryptfs::close(vault_config),
