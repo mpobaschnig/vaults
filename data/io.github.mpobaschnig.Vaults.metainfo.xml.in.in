@@ -6,12 +6,8 @@
   <name>Vaults</name>
   <summary>Keep important files safe</summary>
   <description>
-    <p>
-      Vaults lets you create encrypted vaults in which you can safely store files. It uses gocryptfs and CryFS for encryption.
-    </p>
-    <p>
-      Note: This version does not bundle gocryptfs and CryFS yet, so you need to install them on the host.
-    </p>
+    <p>Vaults lets you create encrypted vaults in which you can safely store files. It uses gocryptfs and CryFS for encryption.</p>
+    <p>Note: This version does not bundle gocryptfs and CryFS yet, so you need to install them on the host.</p>
   </description>
   <screenshots>
     <screenshot type="default">
@@ -31,63 +27,67 @@
      <kudo>ModernToolkit</kudo>
      <kudo>HiDpiIcon</kudo>
   </kudos>
-  <developer_name translatable="no">Martin Pobaschnig</developer_name>
+  <developer_name translate="no">Martin Pobaschnig</developer_name>
   <update_contact>mpobaschnig@protonmail.com</update_contact>
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
     <release version="0.6.0" date="2023-03-07">
-      <p>Translation release:</p>
-      <ul>
-        <li>Added Dutch translation</li>
-      </ul>
+      <description translate="no">
+        <p>Translation release:</p>
+        <ul>
+          <li>Added Dutch translation</li>
+        </ul>
+      </description>
     </release>
     <release version="0.5.0" date="2023-01-30">
-      <p>Translation release:</p>
-      <ul>
-        <li>Added German translation</li>
-      </ul>
+      <description translate="no">
+        <p>Translation release:</p>
+        <ul>
+          <li>Added German translation</li>
+        </ul>
+      </description>
     </release>
     <release version="0.4.0" date="2022-11-18">
-      <p>
-        This is a smaller release and includes:
-      </p>
-      <ul>
-        <li>Support for manually mounting/unmounting Vaults in hidden paths</li>
-        <li>Updated libadwaita about window</li>
-        <li>Updated dependencies, GNOME 43 runtime</li>
-      </ul>
+      <description translate="no">
+        <p>This is a smaller release and includes:</p>
+        <ul>
+          <li>Support for manually mounting/unmounting Vaults in hidden paths</li>
+          <li>Updated libadwaita about window</li>
+          <li>Updated dependencies, GNOME 43 runtime</li>
+        </ul>
+      </description>
     </release>
     <release version="0.3.0" date="2022-04-02">
-      <p>
-        This release adds search functionality and toasts, and updates the libadwaita theme.
-      </p>
+      <description translate="no">
+        <p>This release adds search functionality and toasts, and updates the libadwaita theme.</p>
+      </description>
     </release>
     <release version="0.2.1" date="2021-12-27">
-      <p>
-        Bug fix release:
-      </p>
-      <ul>
-        <li>Fix importing of vaults where gocryptfs and CryFS is not installed</li>
-      </ul>
+      <description translate="no">
+        <p>Bug fix release:</p>
+        <ul>
+          <li>Fix importing of vaults where gocryptfs and CryFS is not installed</li>
+        </ul>
+      </description>
     </release>
     <release version="0.2.0" date="2021-12-26">
-      <p>
-        This release introduces various changes, in particular:
-      </p>
-      <ul>
-        <li>New application icon</li>
-        <li>New responsive design and style based on libadwaita</li>
-        <li>Preferences to change default directories</li>
-        <li>Automatically adapt the state of the vault row if it gets opened or closed outside the app</li>
-        <li>Add shortcuts for more keyboard friendly interaction</li>
-        <li>Various bug fixes</li>
-      </ul>
+      <description translate="no">
+        <p>This release introduces various changes, in particular:</p>
+        <ul>
+          <li>New application icon</li>
+          <li>New responsive design and style based on libadwaita</li>
+          <li>Preferences to change default directories</li>
+          <li>Automatically adapt the state of the vault row if it gets opened or closed outside the app</li>
+          <li>Add shortcuts for more keyboard friendly interaction</li>
+          <li>Various bug fixes</li>
+        </ul>
+      </description>
     </release>
     <release version="0.1.0" date="2021-04-27">
-      <p>
-        Initial release
-      </p>
+      <description translate="no">
+        <p>Initial release</p>
+      </description>
     </release>
   </releases>
   <requires>
