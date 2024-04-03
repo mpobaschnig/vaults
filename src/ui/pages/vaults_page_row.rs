@@ -244,7 +244,7 @@ impl VaultsPageRow {
             Error(BackendError),
         }
 
-        let (sender, receiver) = glib::MainContext::channel(glib::Priority::DEFAULT);
+        let (sender, receiver) = async_channel::unbounded();
         let vault_config = vault.get_config().clone().unwrap();
         std::thread::spawn(move || match Backend::close(&vault_config) {
             Ok(_) => {
@@ -259,48 +259,48 @@ impl VaultsPageRow {
         let open_folder_button = self.imp().open_folder_button.clone();
         let settings_button = self.imp().settings_button.clone();
         let vaults_page_row = self.imp().vaults_page_row.clone();
-        receiver.attach(None, move |message| {
-            match message {
-                Message::Finished => {
-                    locker_button.set_icon_name(&"changes-prevent-symbolic");
-                    locker_button.set_tooltip_text(Some(&gettext("Open Vault")));
-                    open_folder_button.set_visible(false);
-                    open_folder_button.set_sensitive(false);
-                    settings_button.set_sensitive(true);
+        glib::spawn_future_local(clone!(@weak self as obj, => async move {
+            while let Ok(message) = receiver.recv().await {
+                match message {
+                    Message::Finished => {
+                        locker_button.set_icon_name(&"changes-prevent-symbolic");
+                        locker_button.set_tooltip_text(Some(&gettext("Open Vault")));
+                        open_folder_button.set_visible(false);
+                        open_folder_button.set_sensitive(false);
+                        settings_button.set_sensitive(true);
+                    }
+                    Message::Error(e) => {
+                        log::error!("Error closing vault: {}", &e);
+
+                        locker_button.set_icon_name(&"changes-allow-symbolic");
+                        locker_button.set_tooltip_text(Some(&gettext("Close Vault")));
+                        open_folder_button.set_visible(true);
+                        open_folder_button.set_sensitive(true);
+                        settings_button.set_sensitive(false);
+
+                        let vault_name = vaults_page_row.title().to_string();
+                        gtk::glib::MainContext::default().spawn_local(async move {
+                            let window = gtk::gio::Application::default()
+                                .unwrap()
+                                .downcast_ref::<VApplication>()
+                                .unwrap()
+                                .active_window()
+                                .unwrap()
+                                .clone();
+                            let info_dialog = gtk::AlertDialog::builder()
+                                .message(&vault_name)
+                                .detail(&format!("{}", e))
+                                .modal(true)
+                                .build();
+
+                            info_dialog.show(Some(&window));
+                        });
+                    }
                 }
-                Message::Error(e) => {
-                    log::error!("Error closing vault: {}", &e);
 
-                    locker_button.set_icon_name(&"changes-allow-symbolic");
-                    locker_button.set_tooltip_text(Some(&gettext("Close Vault")));
-                    open_folder_button.set_visible(true);
-                    open_folder_button.set_sensitive(true);
-                    settings_button.set_sensitive(false);
-
-                    let vault_name = vaults_page_row.title().to_string();
-                    gtk::glib::MainContext::default().spawn_local(async move {
-                        let window = gtk::gio::Application::default()
-                            .unwrap()
-                            .downcast_ref::<VApplication>()
-                            .unwrap()
-                            .active_window()
-                            .unwrap()
-                            .clone();
-                        let info_dialog = gtk::AlertDialog::builder()
-                            .message(&vault_name)
-                            .detail(&format!("{}", e))
-                            .modal(true)
-                            .build();
-
-                        info_dialog.show(Some(&window));
-                    });
-                }
+                spinner.stop();
             }
-
-            spinner.stop();
-
-            glib::ControlFlow::Continue
-        });
+        }));
     }
 
     fn locker_button_clicked_is_not_mounted(&self, vault: Vault) {
@@ -337,7 +337,7 @@ impl VaultsPageRow {
                     Error(BackendError),
                 }
 
-                let (sender, receiver) = glib::MainContext::channel(glib::Priority::DEFAULT);
+                let (sender, receiver) = async_channel::unbounded();
                 let vault_config = vault.get_config().clone().unwrap();
                 std::thread::spawn(move || match Backend::open(&vault_config, password) {
                     Ok(_) => {
@@ -352,49 +352,49 @@ impl VaultsPageRow {
                 let open_folder_button = obj.imp().open_folder_button.clone();
                 let settings_button = obj.imp().settings_button.clone();
                 let vaults_page_row = obj.imp().vaults_page_row.clone();
-                receiver.attach(None, move |message| {
-                    match message {
-                        Message::Finished => {
-                            locker_button.set_icon_name(&"changes-allow-symbolic");
-                            locker_button.set_tooltip_text(Some(&gettext("Close Vault")));
-                            open_folder_button.set_visible(true);
-                            open_folder_button.set_sensitive(true);
-                            settings_button.set_sensitive(false);
+                glib::spawn_future_local(clone!(@weak obj => async move {
+                    while let Ok(message) = receiver.recv().await {
+                        match message {
+                            Message::Finished => {
+                                locker_button.set_icon_name(&"changes-allow-symbolic");
+                                locker_button.set_tooltip_text(Some(&gettext("Close Vault")));
+                                open_folder_button.set_visible(true);
+                                open_folder_button.set_sensitive(true);
+                                settings_button.set_sensitive(false);
+                            }
+                            Message::Error(e) => {
+                                log::error!("Error opening vault: {}", &e);
+
+                                locker_button.set_icon_name(&"changes-prevent-symbolic");
+                                locker_button.set_tooltip_text(Some(&gettext("Open Vault")));
+                                open_folder_button.set_visible(false);
+                                open_folder_button.set_sensitive(false);
+                                settings_button.set_sensitive(true);
+
+                                let vault_name = vaults_page_row.title().to_string();
+                                gtk::glib::MainContext::default().spawn_local(async move {
+                                    let window = gtk::gio::Application::default()
+                                        .unwrap()
+                                        .downcast_ref::<VApplication>()
+                                        .unwrap()
+                                        .active_window()
+                                        .unwrap()
+                                        .clone();
+
+                                    let info_dialog = gtk::AlertDialog::builder()
+                                        .modal(true)
+                                        .message(&vault_name)
+                                        .detail(&format!("{}", e))
+                                        .build();
+
+                                    info_dialog.show(Some(&window));
+                                });
+                            }
                         }
-                        Message::Error(e) => {
-                            log::error!("Error opening vault: {}", &e);
 
-                            locker_button.set_icon_name(&"changes-prevent-symbolic");
-                            locker_button.set_tooltip_text(Some(&gettext("Open Vault")));
-                            open_folder_button.set_visible(false);
-                            open_folder_button.set_sensitive(false);
-                            settings_button.set_sensitive(true);
-
-                            let vault_name = vaults_page_row.title().to_string();
-                            gtk::glib::MainContext::default().spawn_local(async move {
-                                let window = gtk::gio::Application::default()
-                                    .unwrap()
-                                    .downcast_ref::<VApplication>()
-                                    .unwrap()
-                                    .active_window()
-                                    .unwrap()
-                                    .clone();
-
-                                let info_dialog = gtk::AlertDialog::builder()
-                                    .modal(true)
-                                    .message(&vault_name)
-                                    .detail(&format!("{}", e))
-                                    .build();
-
-                                info_dialog.show(Some(&window));
-                            });
-                        }
+                        spinner.stop();
                     }
-
-                    spinner.stop();
-
-                    glib::ControlFlow::Continue
-                });
+                }));
             }),
         );
 
