@@ -249,7 +249,7 @@ impl VApplication {
         self.set_accels_for_action("win.escape", &["Escape"]);
         self.set_accels_for_action("win.refresh", &["<primary>r"]);
 
-        self.set_accels_for_action("app.preferences", &["<primary>p"]);
+        self.set_accels_for_action("app.preferences", &["<primary>comma"]);
         self.set_accels_for_action("win.show-help-overlay", &["<primary>question"]);
         self.set_accels_for_action("app.quit", &["<primary>q"]);
     }
