@@ -19,7 +19,7 @@
 
 use adw::{prelude::ActionRowExt, prelude::PreferencesRowExt, subclass::prelude::*};
 use gettextrs::gettext;
-use glib::once_cell::sync::Lazy;
+use once_cell::sync::Lazy;
 use glib::{clone, subclass};
 use gtk::gio::Mount;
 use gtk::gio::VolumeMonitor;
