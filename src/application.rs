@@ -249,7 +249,7 @@ impl VApplication {
         self.set_accels_for_action("win.escape", &["Escape"]);
         self.set_accels_for_action("win.refresh", &["<primary>r"]);
 
-        self.set_accels_for_action("app.preferences", &["<primary>p"]);
+        self.set_accels_for_action("app.preferences", &["<primary>comma"]);
         self.set_accels_for_action("win.show-help-overlay", &["<primary>question"]);
         self.set_accels_for_action("app.quit", &["<primary>q"]);
     }
@@ -267,6 +267,8 @@ impl VApplication {
         about_window.set_application_name("Vaults");
         about_window.set_artists(&["Martin Pobaschnig", "Jacson Hilgert"]);
         about_window.set_copyright("© 2022 Martin Pobaschnig");
+        // Translators: Replace "translator-credits" with your names, one name per line
+        about_window.set_translator_credits(&gettext("translator-credits"));
         about_window.set_developer_name("Martin Pobschnig");
         about_window.set_issue_url("https://github.com/mpobaschnig/Vaults/issues");
         about_window.set_license_type(gtk::License::Gpl30);

@@ -377,7 +377,7 @@ impl VaultsPageRowSettingsWindow {
                 if is_empty {
                     self.imp()
                         .mount_directory_error_label
-                        .set_text(&gettext(""));
+                        .set_text("");
                     self.imp().mount_directory_error_label.set_visible(true);
 
                     true
