@@ -215,6 +215,7 @@ mod tests {
             Backend::Gocryptfs,
             "".to_string(),
             "".to_string(),
+            None,
         );
         assert_eq!(vault.is_mount_hidden(), false);
 
@@ -222,6 +223,7 @@ mod tests {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: ".".to_string(),
+            session_lock: None,
         });
         assert_eq!(vault.is_mount_hidden(), false);
 
@@ -229,6 +231,7 @@ mod tests {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "..".to_string(),
+            session_lock: None,
         });
         assert_eq!(vault.is_mount_hidden(), false);
 
@@ -236,6 +239,7 @@ mod tests {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "./".to_string(),
+            session_lock: None,
         });
         assert_eq!(vault.is_mount_hidden(), false);
 
@@ -243,6 +247,7 @@ mod tests {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "./Hidden".to_string(),
+            session_lock: None,
         });
         assert_eq!(vault.is_mount_hidden(), false);
 
@@ -250,6 +255,7 @@ mod tests {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "tets/.Test".to_string(),
+            session_lock: None,
         });
         assert_eq!(vault.is_mount_hidden(), true);
 
@@ -257,6 +263,7 @@ mod tests {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "./Test/.Test".to_string(),
+            session_lock: None,
         });
         assert_eq!(vault.is_mount_hidden(), true);
 
@@ -264,6 +271,7 @@ mod tests {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "../.Test".to_string(),
+            session_lock: None,
         });
         assert_eq!(vault.is_mount_hidden(), true);
     }
