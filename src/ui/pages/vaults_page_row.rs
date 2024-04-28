@@ -19,7 +19,6 @@
 
 use adw::{prelude::ActionRowExt, prelude::PreferencesRowExt, subclass::prelude::*};
 use gettextrs::gettext;
-use once_cell::sync::Lazy;
 use glib::{clone, subclass};
 use gtk::gio::Mount;
 use gtk::gio::VolumeMonitor;
@@ -27,6 +26,7 @@ use gtk::glib::subclass::Signal;
 use gtk::glib::{self, closure_local};
 use gtk::prelude::*;
 use gtk::CompositeTemplate;
+use once_cell::sync::Lazy;
 use std::cell::RefCell;
 use std::process::Command;
 
