@@ -202,6 +202,16 @@ impl Vault {
         }
         false
     }
+
+    pub fn delete_encrypted_data(&self) -> std::io::Result<()> {
+        if let Some(config) = self.get_config() {
+            let path = std::path::Path::new(&config.encrypted_data_directory);
+            return std::fs::remove_dir_all(path);
+        }
+
+        log::error!("Could not get config");
+        Ok(())
+    }
 }
 
 #[cfg(test)]
