@@ -17,10 +17,16 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use adw::prelude::ComboRowExt;
+use adw::prelude::MessageDialogExtManual;
 use adw::subclass::prelude::*;
+use adw::{prelude::ComboRowExt, prelude::MessageDialogExt, prelude::PreferencesGroupExt};
 use gettextrs::gettext;
-use gtk::{self, gio, glib, glib::clone, glib::GString, prelude::*, CompositeTemplate};
+use gtk::{
+    self, gio,
+    glib::{self, clone, GString},
+    prelude::*,
+    CompositeTemplate,
+};
 use std::cell::RefCell;
 use strum::IntoEnumIterator;
 
@@ -210,8 +216,61 @@ impl VaultsPageRowSettingsWindow {
     }
 
     fn remove_button_clicked(&self) {
-        UserConfigManager::instance().remove_vault(self.get_vault());
-        self.emit_by_name::<()>("remove", &[])
+        let name = self.get_current_vault().unwrap().get_name().unwrap();
+        let confirm_dialog = adw::MessageDialog::builder()
+            .heading(&gettext!("Remove {}", name))
+            .default_response(&gettext("Cancel"))
+            .transient_for(self)
+            .build();
+
+        confirm_dialog.add_responses(&[
+            (&"cancel", &gettext("Cancel")),
+            (&"remove", &gettext("Remove")),
+        ]);
+        confirm_dialog.set_response_appearance("remove", adw::ResponseAppearance::Destructive);
+        confirm_dialog.set_default_response(Some("cancel"));
+        confirm_dialog.set_close_response("cancel");
+
+        let switch_row = adw::SwitchRow::builder()
+            .title(&gettext("Delete encrypted data"))
+            .build();
+        let preference_group = adw::PreferencesGroup::builder().build();
+        preference_group.add(&switch_row);
+        confirm_dialog.set_extra_child(Some(&preference_group));
+
+        confirm_dialog.choose(
+            None::<&gio::Cancellable>,
+            clone!(@strong self as obj, @strong switch_row as sr => move |s| {
+                match s.as_str() {
+                    "cancel" => (),
+                    "remove" => {
+                        log::info!("Removing {}", obj.get_vault().get_name().unwrap());
+
+                        let vault = obj.get_vault();
+
+                        if sr.is_active() {
+                            match vault.delete_encrypted_data() {
+                                Ok(_) => (),
+                                Err(e) => {
+                                    log::error!("Could not delete encrypted data: {}", e.kind());
+                                    let err_dialog = adw::MessageDialog::builder()
+                                        .transient_for(&obj)
+                                        .body(&gettext!("", "Could not remove encrypted data (Error: {})", e.kind()))
+                                        .build();
+                                    err_dialog.add_response("close", &gettext("Close"));
+                                    err_dialog.set_default_response(Some("close"));
+                                    err_dialog.choose(None::<&gio::Cancellable>, clone!(@strong obj as _ => move |_| {}));
+                                }
+                            }
+                        }
+
+                        UserConfigManager::instance().remove_vault(vault);
+                        obj.emit_by_name::<()>("remove", &[])
+                    }
+                    _ => todo!()
+                }
+            }),
+        );
     }
 
     fn apply_changes_button_clicked(&self) {
