@@ -144,6 +144,20 @@
                           </object>
                         </child>
                         <child>
+                          <object class="AdwPreferencesGroup">
+                            <child>
+                              <object class="AdwEntryRow" id="mount_options_entry_row">
+                                <property name="title" translatable="yes">Additional Mount Options</property>
+                                <child>
+                                  <object class="GtkSwitch" id="mount_options_switch">
+                                    <property name="valign">center</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
                           <object class="GtkBox">
                             <property name="halign">end</property>
                             <property name="valign">end</property>

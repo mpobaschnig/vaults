@@ -540,6 +540,8 @@ impl ImportVaultDialog {
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
             None,
+            None,
+            None,
         )
     }
 

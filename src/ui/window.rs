@@ -213,6 +213,8 @@ impl ApplicationWindow {
                     v.encrypted_data_directory.to_owned(),
                     v.mount_directory.to_owned(),
                     v.session_lock,
+                    v.mount_options.to_owned(),
+                    v.mount_options_enabled,
                 );
 
                 let row = VaultsPageRow::new(vault);
@@ -332,6 +334,8 @@ impl ApplicationWindow {
                 v.encrypted_data_directory.to_owned(),
                 v.mount_directory.to_owned(),
                 v.session_lock,
+                v.mount_options.to_owned(),
+                v.mount_options_enabled,
             );
 
             let row = VaultsPageRow::new(vault);
