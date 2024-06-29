@@ -66,7 +66,11 @@ impl Backend {
         }
     }
 
-    pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
+    pub fn init(
+        vault_config: &VaultConfig,
+        password: String,
+        init_options: String,
+    ) -> Result<(), BackendError> {
         let encrypted_data_directory = &vault_config.encrypted_data_directory;
         let mount_directory = &vault_config.mount_directory;
 
@@ -85,14 +89,14 @@ impl Backend {
         }
 
         match vault_config.backend {
-            Backend::Cryfs => cryfs::init(vault_config, password),
-            Backend::Gocryptfs => gocryptfs::init(vault_config, password),
+            Backend::Cryfs => cryfs::init(vault_config, password, init_options),
+            Backend::Gocryptfs => gocryptfs::init(vault_config, password, init_options),
         }
     }
 
     pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
         match vault_config.backend {
-            Backend::Cryfs => cryfs::open(vault_config, password),
+            Backend::Cryfs => cryfs::open(vault_config, password, None),
             Backend::Gocryptfs => gocryptfs::open(vault_config, password),
         }
     }

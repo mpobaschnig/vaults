@@ -121,8 +121,8 @@ impl Vault {
         self.imp().config.borrow_mut().replace(config);
     }
 
-    pub fn init(&self, password: String) -> Result<(), BackendError> {
-        Backend::init(&self.get_config().unwrap(), password)
+    pub fn init(&self, password: String, init_options: String) -> Result<(), BackendError> {
+        Backend::init(&self.get_config().unwrap(), password, init_options)
     }
 
     pub fn unlock(&self, password: String) -> Result<(), BackendError> {

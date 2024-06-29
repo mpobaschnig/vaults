@@ -29,12 +29,20 @@ pub fn is_available() -> Result<bool, BackendError> {
     Ok(output.status.success())
 }
 
-pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
-    open(vault_config, password)?;
+pub fn init(
+    vault_config: &VaultConfig,
+    password: String,
+    init_options: String,
+) -> Result<(), BackendError> {
+    open(vault_config, password, Some(init_options))?;
     close(vault_config)
 }
 
-pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
+pub fn open(
+    vault_config: &VaultConfig,
+    password: String,
+    init_options: Option<String>,
+) -> Result<(), BackendError> {
     let mut additional_mount_options: Vec<&str> = [].to_vec();
     if let Some(mount_options_enabled) = vault_config.mount_options_enabled {
         if mount_options_enabled {
@@ -42,6 +50,8 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
                 additional_mount_options = mount_options.split(" ").collect();
             }
         }
+    } else if let Some(init_options) = &init_options {
+        additional_mount_options = init_options.split(" ").collect();
     }
 
     log::info!("Adding mount options: {:?}", additional_mount_options);

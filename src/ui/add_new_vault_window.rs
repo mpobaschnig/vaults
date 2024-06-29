@@ -46,6 +46,8 @@ mod imp {
         #[template_child]
         pub combo_row_backend: TemplateChild<adw::ComboRow>,
         #[template_child]
+        pub init_options_entry_row: TemplateChild<adw::EntryRow>,
+        #[template_child]
         pub carousel: TemplateChild<adw::Carousel>,
         #[template_child]
         pub cancel_button: TemplateChild<gtk::Button>,
@@ -89,6 +91,7 @@ mod imp {
             Self {
                 entry_row_name: TemplateChild::default(),
                 combo_row_backend: TemplateChild::default(),
+                init_options_entry_row: TemplateChild::default(),
                 carousel: TemplateChild::default(),
                 cancel_button: TemplateChild::default(),
                 previous_button: TemplateChild::default(),
@@ -608,6 +611,10 @@ impl AddNewVaultWindow {
 
     pub fn get_password(&self) -> String {
         String::from(self.imp().password_entry_row.text().as_str())
+    }
+
+    pub fn get_init_options(&self) -> String {
+        String::from(self.imp().init_options_entry_row.text().as_str())
     }
 
     pub fn get_vault(&self) -> Vault {
