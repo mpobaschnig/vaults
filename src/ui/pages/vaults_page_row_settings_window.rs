@@ -72,6 +72,10 @@ mod imp {
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
         pub lock_screen_switch_row: TemplateChild<adw::SwitchRow>,
+        #[template_child]
+        pub mount_options_entry_row: TemplateChild<adw::EntryRow>,
+        #[template_child]
+        pub mount_options_switch: TemplateChild<gtk::Switch>,
 
         pub current_vault: RefCell<Option<Vault>>,
         pub to_remove: RefCell<bool>,
@@ -99,6 +103,8 @@ mod imp {
                 mount_directory_error_label: TemplateChild::default(),
                 toast_overlay: TemplateChild::default(),
                 lock_screen_switch_row: TemplateChild::default(),
+                mount_options_entry_row: TemplateChild::default(),
+                mount_options_switch: TemplateChild::default(),
                 current_vault: RefCell::new(None),
                 to_remove: RefCell::new(false),
             }
@@ -213,6 +219,18 @@ impl VaultsPageRowSettingsWindow {
                 obj.check_add_button_enable_conditions();
             }),
         );
+
+        self.imp().mount_options_entry_row.connect_text_notify(
+            clone!(@weak self as obj => move |_| {
+                obj.check_add_button_enable_conditions();
+            }),
+        );
+
+        self.imp().mount_options_switch.connect_active_notify(
+            clone!(@weak self as obj => move |_| {
+                obj.check_add_button_enable_conditions();
+            }),
+        );
     }
 
     fn remove_button_clicked(&self) {
@@ -296,6 +314,10 @@ impl VaultsPageRowSettingsWindow {
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
             Some(self.imp().lock_screen_switch_row.is_active()),
+            Some(String::from(
+                self.imp().mount_options_entry_row.text().as_str(),
+            )),
+            Some(self.imp().mount_options_switch.is_active()),
         );
 
         UserConfigManager::instance()
@@ -487,6 +509,8 @@ impl VaultsPageRowSettingsWindow {
         curr_encrypted_data_directory: &GString,
         curr_mount_directory: &GString,
         curr_session_locking: &bool,
+        curr_mount_options: &GString,
+        curr_mount_options_enabled: &bool,
     ) -> bool {
         let prev_vault = self.get_current_vault().unwrap();
         let prev_config = &prev_vault.get_config().unwrap();
@@ -519,6 +543,26 @@ impl VaultsPageRowSettingsWindow {
             }
         } else {
             if *curr_session_locking {
+                return true;
+            }
+        }
+
+        if let Some(prev_mount_options) = &prev_config.mount_options {
+            if !prev_mount_options.eq(curr_mount_options) {
+                return true;
+            }
+        } else {
+            if *curr_mount_options_enabled {
+                return true;
+            }
+        }
+
+        if let Some(prev_mount_options_enabled) = prev_config.mount_options_enabled {
+            if prev_mount_options_enabled != *curr_mount_options_enabled {
+                return true;
+            }
+        } else {
+            if !curr_mount_options.is_empty() {
                 return true;
             }
         }
@@ -585,12 +629,16 @@ impl VaultsPageRowSettingsWindow {
                 false
             };
         let is_session_locking = self.imp().lock_screen_switch_row.is_active();
+        let mount_options = self.imp().mount_options_entry_row.text();
+        let is_mount_options_enabled = self.imp().mount_options_switch.is_active();
         let has_something_changed = self.has_something_changed(
             &vault_name,
             &backend_str,
             &encrypted_data_directory,
             &mount_directory,
             &is_session_locking,
+            &mount_options,
+            &is_mount_options_enabled,
         );
         let exists_config_file = self.exists_config_file(backend, &encrypted_data_directory);
 
@@ -642,6 +690,10 @@ impl VaultsPageRowSettingsWindow {
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
             Some(self.imp().lock_screen_switch_row.is_active()),
+            Some(String::from(
+                self.imp().mount_options_entry_row.text().as_str(),
+            )),
+            Some(self.imp().mount_options_switch.is_active()),
         )
     }
 
@@ -675,6 +727,14 @@ impl VaultsPageRowSettingsWindow {
                     .set_text(&config.mount_directory.to_string());
                 if let Some(session_lock) = config.session_lock {
                     self.imp().lock_screen_switch_row.set_active(session_lock);
+                }
+                if let Some(mount_options) = &config.mount_options {
+                    self.imp().mount_options_entry_row.set_text(mount_options);
+                }
+                if let Some(mount_options_enabled) = &config.mount_options_enabled {
+                    self.imp()
+                        .mount_options_switch
+                        .set_active(*mount_options_enabled);
                 }
             }
             (_, _) => {

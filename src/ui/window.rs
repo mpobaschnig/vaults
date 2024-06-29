@@ -213,6 +213,8 @@ impl ApplicationWindow {
                     v.encrypted_data_directory.to_owned(),
                     v.mount_directory.to_owned(),
                     v.session_lock,
+                    v.mount_options.to_owned(),
+                    v.mount_options_enabled,
                 );
 
                 let row = VaultsPageRow::new(vault);
@@ -332,6 +334,8 @@ impl ApplicationWindow {
                 v.encrypted_data_directory.to_owned(),
                 v.mount_directory.to_owned(),
                 v.session_lock,
+                v.mount_options.to_owned(),
+                v.mount_options_enabled,
             );
 
             let row = VaultsPageRow::new(vault);
@@ -460,7 +464,8 @@ impl ApplicationWindow {
             closure_local!(@strong self as obj => move |dialog: AddNewVaultWindow| {
                 let vault = dialog.get_vault();
                 let password = dialog.get_password();
-                match Backend::init(&vault.get_config().unwrap(), password) {
+                let init_options = dialog.get_init_options();
+                match Backend::init(&vault.get_config().unwrap(), password, init_options) {
                     Ok(_) => {
                         UserConfigManager::instance().add_vault(vault);
                         obj.set_view(View::Vaults);

@@ -128,6 +128,15 @@
                                 </child>
                               </object>
                             </child>
+                            <child>
+                              <object class="AdwPreferencesGroup">
+                                <child>
+                                  <object class="AdwEntryRow" id="init_options_entry_row">
+                                    <property name="title" translatable="yes">Additional Init Options</property>
+                                  </object>
+                                </child>
+                             </object>
+                            </child>
                           </object>
                         </child>
                       </object>

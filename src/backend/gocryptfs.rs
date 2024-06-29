@@ -29,12 +29,21 @@ pub fn is_available() -> Result<bool, BackendError> {
     Ok(output.status.success())
 }
 
-pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
+pub fn init(
+    vault_config: &VaultConfig,
+    password: String,
+    init_options: String,
+) -> Result<(), BackendError> {
+    let additional_init_options: Vec<&str> = init_options.split(" ").collect();
+
+    log::info!("Adding init options: {:?}", additional_init_options);
+
     let mut child = Command::new("gocryptfs")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .arg("--init")
         .arg("-q")
+        .args(additional_init_options)
         .arg("--")
         .arg(&vault_config.encrypted_data_directory)
         .spawn()?;
@@ -62,10 +71,22 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 }
 
 pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
+    let mut additional_mount_options: Vec<&str> = [].to_vec();
+    if let Some(mount_options_enabled) = vault_config.mount_options_enabled {
+        if mount_options_enabled {
+            if let Some(mount_options) = &vault_config.mount_options {
+                additional_mount_options = mount_options.split(" ").collect();
+            }
+        }
+    }
+
+    log::info!("Adding mount options: {:?}", additional_mount_options);
+
     let mut child = Command::new("gocryptfs")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .arg("-q")
+        .args(additional_mount_options)
         .arg("--")
         .arg(&vault_config.encrypted_data_directory)
         .arg(&vault_config.mount_directory)
