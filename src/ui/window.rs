@@ -69,6 +69,8 @@ mod imp {
         pub search_toggle_button: TemplateChild<gtk::ToggleButton>,
         #[template_child]
         pub search_stack: TemplateChild<gtk::Stack>,
+        #[template_child]
+        pub add_menu_button: TemplateChild<gtk::MenuButton>,
 
         pub list_store: ListStore,
         pub search_list_store: ListStore,
@@ -99,6 +101,7 @@ mod imp {
                 search_list_store: ListStore::new::<gtk::Widget>(),
                 search_results: RefCell::new(0),
                 settings: gio::Settings::new(APP_ID),
+                add_menu_button: TemplateChild::default(),
             }
         }
 
@@ -170,6 +173,12 @@ impl ApplicationWindow {
                 }
             }),
         );
+
+        if backend::are_backends_available() {
+            self.imp().add_menu_button.set_sensitive(true);
+        } else {
+            self.imp().add_menu_button.set_sensitive(false);
+        }
     }
 
     fn setup_search_page(&self) {
@@ -255,6 +264,10 @@ impl ApplicationWindow {
                     .set_description(Some(&gettext(
                         "No backends available. Please install gocryptfs or CryFS on your system.",
                     )));
+            } else {
+                self.imp()
+                    .start_page_status_page
+                    .set_description(Some(&gettext("Add or import a Vault.")));
             }
         }
     }
@@ -534,6 +547,26 @@ impl ApplicationWindow {
         UserConfigManager::instance().read_config();
 
         self.fill_list_store();
+
+        if backend::are_backends_available() {
+            self.imp().add_menu_button.set_sensitive(true);
+        } else {
+            self.imp().add_menu_button.set_sensitive(false);
+        }
+
+        if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
+            if available_backends.is_empty() {
+                self.imp()
+                    .start_page_status_page
+                    .set_description(Some(&gettext(
+                        "No backends available. Please install gocryptfs or CryFS on your system.",
+                    )));
+            } else {
+                self.imp()
+                    .start_page_status_page
+                    .set_description(Some(&gettext("Add or import a Vault.")));
+            }
+        }
 
         if UserConfigManager::instance().get_map().is_empty() {
             self.set_view(View::Start);

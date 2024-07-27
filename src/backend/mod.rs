@@ -119,6 +119,18 @@ pub fn probe_backends() {
     }
 }
 
+pub fn are_backends_available() -> bool {
+    if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
+        if available_backends.len() > 0 {
+            return true;
+        } else {
+            return false;
+        }
+    } else {
+        return false;
+    }
+}
+
 pub fn get_ui_string_from_backend(backend: &Backend) -> String {
     match backend {
         Backend::Cryfs => String::from("CryFS"),
