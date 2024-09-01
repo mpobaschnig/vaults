@@ -161,8 +161,10 @@ impl ApplicationWindow {
     }
 
     fn setup_window(&self) {
-        self.imp().search_toggle_button.connect_toggled(
-            clone!(@weak self as obj => move |button| {
+        self.imp().search_toggle_button.connect_toggled(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |button| {
                 if button.is_active() {
                     obj.imp().title_stack.set_visible_child_name("search");
                     obj.imp().search_entry.grab_focus();
@@ -171,8 +173,8 @@ impl ApplicationWindow {
                     obj.imp().title_stack.set_visible_child_name("title");
                     obj.refresh_clicked();
                 }
-            }),
-        );
+            }
+        ));
 
         if backend::are_backends_available() {
             self.imp().add_menu_button.set_sensitive(true);
@@ -190,15 +192,17 @@ impl ApplicationWindow {
 
         self.imp().search_stack.set_visible_child_name("start");
 
-        self.imp()
-            .search_entry
-            .connect_search_changed(clone!(@weak self as obj => move |_| {
+        self.imp().search_entry.connect_search_changed(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 if obj.get_view().unwrap() != "search" {
                     obj.set_view(View::Search);
                 }
 
                 obj.search();
-            }));
+            }
+        ));
     }
 
     fn search(&self) {
@@ -273,15 +277,21 @@ impl ApplicationWindow {
     }
 
     fn setup_vaults_page(&self) {
-        UserConfigManager::instance().connect_add_vault(clone!(@weak self as obj => move || {
-            obj.add_vault();
-        }));
+        UserConfigManager::instance().connect_add_vault(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move || {
+                obj.add_vault();
+            }
+        ));
 
-        UserConfigManager::instance().connect_refresh(
-            clone!(@weak self as obj => move |map_is_empty| {
+        UserConfigManager::instance().connect_refresh(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |map_is_empty| {
                 obj.refresh(map_is_empty);
-            }),
-        );
+            }
+        ));
 
         self.imp()
             .vaults_list_box
@@ -296,43 +306,65 @@ impl ApplicationWindow {
         action!(
             self,
             "search",
-            clone!(@weak self as obj => move |_, _| {
-                if obj.imp().search_toggle_button.is_sensitive() {
-                    obj.imp().search_toggle_button.set_active(!obj.imp().search_toggle_button.is_active());
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_, _| {
+                    if obj.imp().search_toggle_button.is_sensitive() {
+                        obj.imp()
+                            .search_toggle_button
+                            .set_active(!obj.imp().search_toggle_button.is_active());
+                    }
                 }
-            })
+            )
         );
 
         action!(
             self,
             "escape",
-            clone!(@weak self as obj => move |_, _| {
-                obj.imp().search_toggle_button.set_active(false);
-            })
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_, _| {
+                    obj.imp().search_toggle_button.set_active(false);
+                }
+            )
         );
 
         action!(
             self,
             "refresh",
-            clone!(@weak self as obj => move |_, _| {
-                obj.refresh_clicked();
-            })
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_, _| {
+                    obj.refresh_clicked();
+                }
+            )
         );
 
         action!(
             self,
             "add_new_vault",
-            clone!(@weak self as obj => move |_, _| {
-                obj.add_new_vault_clicked();
-            })
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_, _| {
+                    obj.add_new_vault_clicked();
+                }
+            )
         );
 
         action!(
             self,
             "import_vault",
-            clone!(@weak self as obj => move |_, _| {
-                obj.import_vault_clicked();
-            })
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_, _| {
+                    obj.import_vault_clicked();
+                }
+            )
         );
     }
 
@@ -362,60 +394,78 @@ impl ApplicationWindow {
     }
 
     pub fn search_row_connect_remove(&self, row: &VaultsPageRow) {
-        row.connect_remove(clone!(@weak self as obj, @weak row => move || {
-            let obj_ = imp::ApplicationWindow::from_obj(&obj);
-            let index = obj_.search_list_store.find(&row);
-            if let Some(index) = index {
-                obj_.search_list_store.remove(index);
+        row.connect_remove(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            #[weak]
+            row,
+            move || {
+                let obj_ = imp::ApplicationWindow::from_obj(&obj);
+                let index = obj_.search_list_store.find(&row);
+                if let Some(index) = index {
+                    obj_.search_list_store.remove(index);
 
-                *obj_.search_results.borrow_mut() -= 1;
+                    *obj_.search_results.borrow_mut() -= 1;
 
-                if *obj_.search_results.borrow_mut() == 0 {
-                    if UserConfigManager::instance().get_map().is_empty() {
-                        obj_.search_stack.set_visible_child_name("start");
-                        obj_.search_entry.set_text("");
-                        obj_.title_stack.set_visible_child_name("title");
-                        obj_.search_toggle_button.set_active(false);
-                        obj_.search_toggle_button.set_sensitive(false);
-                        return;
+                    if *obj_.search_results.borrow_mut() == 0 {
+                        if UserConfigManager::instance().get_map().is_empty() {
+                            obj_.search_stack.set_visible_child_name("start");
+                            obj_.search_entry.set_text("");
+                            obj_.title_stack.set_visible_child_name("title");
+                            obj_.search_toggle_button.set_active(false);
+                            obj_.search_toggle_button.set_sensitive(false);
+                            return;
+                        }
+                        if obj.get_view().unwrap() != "search" {
+                            obj.set_view(View::Search);
+                        }
+                        obj_.search_stack.set_visible_child_name("no-results");
                     }
-                    if obj.get_view().unwrap() != "search" {
-                        obj.set_view(View::Search);
-                    }
-                    obj_.search_stack.set_visible_child_name("no-results");
+                } else {
+                    log::error!("Vault not initialised!");
                 }
-            } else {
-                log::error!("Vault not initialised!");
             }
-        }));
+        ));
     }
 
     pub fn row_connect_remove(&self, row: &VaultsPageRow) {
-        row.connect_remove(clone!(@weak self as obj, @weak row => move || {
-            let index = obj.imp().list_store.find(&row);
-            if let Some(index) = index {
-                obj.imp().list_store.remove(index);
-                if UserConfigManager::instance().get_map().is_empty() {
-                    obj.imp().search_entry.set_text("");
-                    obj.imp().title_stack.set_visible_child_name("title");
-                    obj.imp().search_toggle_button.set_active(false);
-                    obj.imp().search_toggle_button.set_sensitive(false);
+        row.connect_remove(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            #[weak]
+            row,
+            move || {
+                let index = obj.imp().list_store.find(&row);
+                if let Some(index) = index {
+                    obj.imp().list_store.remove(index);
+                    if UserConfigManager::instance().get_map().is_empty() {
+                        obj.imp().search_entry.set_text("");
+                        obj.imp().title_stack.set_visible_child_name("title");
+                        obj.imp().search_toggle_button.set_active(false);
+                        obj.imp().search_toggle_button.set_sensitive(false);
+                    }
+                } else {
+                    log::error!("Vault not initialised!");
                 }
-            } else {
-                log::error!("Vault not initialised!");
             }
-        }));
+        ));
     }
 
     pub fn row_connect_save(&self, row: &VaultsPageRow) {
-        row.connect_save(clone!(@weak self as obj, @weak row as r => move || {
-            let vault = UserConfigManager::instance().get_current_vault();
-            if let Some(vault) = vault {
-                r.set_vault(vault);
-            } else {
-                log::error!("Vault not initialised!");
+        row.connect_save(clone!(
+            #[weak(rename_to = _obj)]
+            self,
+            #[weak(rename_to = r)]
+            row,
+            move || {
+                let vault = UserConfigManager::instance().get_current_vault();
+                if let Some(vault) = vault {
+                    r.set_vault(vault);
+                } else {
+                    log::error!("Vault not initialised!");
+                }
             }
-        }));
+        ));
     }
 
     pub fn add_vault(&self) {
@@ -470,36 +520,40 @@ impl ApplicationWindow {
         dialog.connect_closure(
             "add",
             false,
-            closure_local!(@strong self as obj => move |dialog: AddNewVaultWindow| {
-                let vault = dialog.get_vault();
-                let password = dialog.get_password();
-                match Backend::init(&vault.get_config().unwrap(), password) {
-                    Ok(_) => {
-                        UserConfigManager::instance().add_vault(vault);
-                        obj.set_view(View::Vaults);
-                    }
-                    Err(e) => {
-                        log::error!("Could not init vault: {}", e);
-                        gtk::glib::MainContext::default().spawn_local(async move {
-                            let window = gtk::gio::Application::default()
-                                .unwrap()
-                                .downcast_ref::<VApplication>()
-                                .unwrap()
-                                .active_window()
-                                .unwrap()
-                                .clone();
-                            let info_dialog = gtk::AlertDialog::builder()
-                                .message(&vault.get_name().unwrap())
-                                .detail(&format!("{}", e))
-                                .modal(true)
-                                .build();
+            closure_local!(
+                #[strong(rename_to = obj)]
+                self,
+                move |dialog: AddNewVaultWindow| {
+                    let vault = dialog.get_vault();
+                    let password = dialog.get_password();
+                    match Backend::init(&vault.get_config().unwrap(), password) {
+                        Ok(_) => {
+                            UserConfigManager::instance().add_vault(vault);
+                            obj.set_view(View::Vaults);
+                        }
+                        Err(e) => {
+                            log::error!("Could not init vault: {}", e);
+                            gtk::glib::MainContext::default().spawn_local(async move {
+                                let window = gtk::gio::Application::default()
+                                    .unwrap()
+                                    .downcast_ref::<VApplication>()
+                                    .unwrap()
+                                    .active_window()
+                                    .unwrap()
+                                    .clone();
+                                let info_dialog = gtk::AlertDialog::builder()
+                                    .message(&vault.get_name().unwrap())
+                                    .detail(&format!("{}", e))
+                                    .modal(true)
+                                    .build();
 
-                            info_dialog.show(Some(&window));
-                        });
+                                info_dialog.show(Some(&window));
+                            });
+                        }
                     }
+                    dialog.close();
                 }
-                dialog.close();
-            }),
+            ),
         );
 
         dialog.connect_closure(
@@ -519,13 +573,17 @@ impl ApplicationWindow {
         dialog.connect_closure(
             "import",
             false,
-            closure_local!(@strong self as obj => move |dialog: ImportVaultDialog| {
-                let vault = dialog.get_vault();
+            closure_local!(
+                #[strong(rename_to = obj)]
+                self,
+                move |dialog: ImportVaultDialog| {
+                    let vault = dialog.get_vault();
 
-                UserConfigManager::instance().add_vault(vault);
+                    UserConfigManager::instance().add_vault(vault);
 
-                obj.set_view(View::Vaults);
-            }),
+                    obj.set_view(View::Vaults);
+                }
+            ),
         );
 
         dialog.connect_closure(

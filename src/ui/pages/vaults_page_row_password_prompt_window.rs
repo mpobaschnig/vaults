@@ -109,23 +109,29 @@ impl VaultsPageRowPasswordPromptWindow {
     }
 
     fn setup_signals(&self) {
-        self.imp()
-            .unlock_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
+        self.imp().unlock_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.unlock_button_clicked();
-            }));
+            }
+        ));
 
-        self.imp()
-            .password_entry_row
-            .connect_text_notify(clone!(@weak self as obj => move |_| {
+        self.imp().password_entry_row.connect_text_notify(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.check_unlock_button_enable_conditions();
-            }));
+            }
+        ));
 
-        self.imp()
-            .password_entry_row
-            .connect_activate(clone!(@weak self as obj => move |_| {
+        self.imp().password_entry_row.connect_activate(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.connect_activate();
-            }));
+            }
+        ));
     }
 
     pub fn set_name(&self, name: &String) {

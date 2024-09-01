@@ -156,60 +156,80 @@ impl VaultsPageRow {
     }
 
     pub fn setup_connect_handlers(&self) {
-        self.imp()
-            .open_folder_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
+        self.imp().open_folder_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.open_folder_button_clicked();
-            }));
+            }
+        ));
 
-        self.imp()
-            .locker_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
+        self.imp().locker_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.locker_button_clicked();
-            }));
+            }
+        ));
+
+        self.imp().settings_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
+                obj.settings_button_clicked();
+            }
+        ));
 
         self.imp()
-            .settings_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.settings_button_clicked();
-            }));
+            .volume_monitor
+            .borrow()
+            .connect_mount_added(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_, m| {
+                    obj.mount_added_triggered(&m);
+                }
+            ));
 
-        self.imp().volume_monitor.borrow().connect_mount_added(
-            clone!(@weak self as obj=> move |_, m| {
-                obj.mount_added_triggered(&m);
-            }),
-        );
-
-        self.imp().volume_monitor.borrow().connect_mount_removed(
-            clone!(@weak self as obj=> move |_, m| {
-                obj.mount_removed_triggered(&m);
-            }),
-        );
+        self.imp()
+            .volume_monitor
+            .borrow()
+            .connect_mount_removed(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_, m| {
+                    obj.mount_removed_triggered(&m);
+                }
+            ));
 
         let window = gtk::gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
             .clone();
-        window.connect_screensaver_active_notify(clone!(@weak self as obj => move |_| {
-            let config = obj.imp().config.borrow().clone().unwrap();
-            if let Some(session_locking) = config.session_lock {
-                if session_locking {
-                    let vault = obj.get_vault();
+        window.connect_screensaver_active_notify(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
+                let config = obj.imp().config.borrow().clone().unwrap();
+                if let Some(session_locking) = config.session_lock {
+                    if session_locking {
+                        let vault = obj.get_vault();
 
-                    if !vault.is_backend_available() {
-                        obj.set_vault_row_state_backend_unavailable();
-                        return;
-                    } else {
-                        obj.set_vault_row_state_backend_available();
-                    }
+                        if !vault.is_backend_available() {
+                            obj.set_vault_row_state_backend_unavailable();
+                            return;
+                        } else {
+                            obj.set_vault_row_state_backend_available();
+                        }
 
-                    if obj.is_mounted() {
-                        obj.locker_button_clicked_is_mounted(vault);
+                        if obj.is_mounted() {
+                            obj.locker_button_clicked_is_mounted(vault);
+                        }
                     }
                 }
             }
-        }));
+        ));
     }
 
     fn open_folder_button_clicked(&self) {
@@ -251,7 +271,7 @@ impl VaultsPageRow {
         let open_folder_button = self.imp().open_folder_button.clone();
         let settings_button = self.imp().settings_button.clone();
         let vaults_page_row = self.imp().vaults_page_row.clone();
-        glib::spawn_future_local(clone!(@weak self as obj, => async move {
+        glib::spawn_future_local(clone!(async move {
             while let Ok(message) = receiver.recv().await {
                 match message {
                     Message::Finished => {
@@ -323,88 +343,92 @@ impl VaultsPageRow {
         dialog.connect_closure(
             "unlock",
             false,
-            closure_local!(@strong self as obj => move |dialog: VaultsPageRowPasswordPromptWindow| {
-                let password = dialog.get_password();
+            closure_local!(
+                #[strong(rename_to = obj)]
+                self,
+                move |dialog: VaultsPageRowPasswordPromptWindow| {
+                    let password = dialog.get_password();
 
-                dialog.close();
+                    dialog.close();
 
-                obj.imp().settings_button.set_sensitive(false);
-                obj.imp().open_folder_button.set_sensitive(false);
+                    obj.imp().settings_button.set_sensitive(false);
+                    obj.imp().open_folder_button.set_sensitive(false);
 
-                *obj.imp().spinner.borrow_mut() = gtk::Spinner::new();
-                let spinner = obj.imp().spinner.borrow().clone();
-                obj.imp().locker_button.set_child(Some(&spinner));
+                    *obj.imp().spinner.borrow_mut() = gtk::Spinner::new();
+                    let spinner = obj.imp().spinner.borrow().clone();
+                    obj.imp().locker_button.set_child(Some(&spinner));
 
-                spinner.start();
+                    spinner.start();
 
-                enum Message {
-                    Finished,
-                    Error(BackendError),
-                }
+                    enum Message {
+                        Finished,
+                        Error(BackendError),
+                    }
 
-                let (sender, receiver) = async_channel::unbounded();
-                let vault_config = vault.get_config().clone().unwrap();
-                let locker_button = obj.imp().locker_button.clone();
-                let open_folder_button = obj.imp().open_folder_button.clone();
-                let settings_button = obj.imp().settings_button.clone();
-                let vaults_page_row = obj.imp().vaults_page_row.clone();
-                glib::spawn_future_local(clone!(@weak obj => async move {
-                    while let Ok(message) = receiver.recv().await {
-                        match message {
-                            Message::Finished => {
-                                locker_button.set_icon_name(&"changes-allow-symbolic");
-                                locker_button.set_tooltip_text(Some(&gettext("Close Vault")));
-                                open_folder_button.set_visible(true);
-                                open_folder_button.set_sensitive(true);
-                                settings_button.set_sensitive(false);
+                    let (sender, receiver) = async_channel::unbounded();
+                    let vault_config = vault.get_config().clone().unwrap();
+                    let locker_button = obj.imp().locker_button.clone();
+                    let open_folder_button = obj.imp().open_folder_button.clone();
+                    let settings_button = obj.imp().settings_button.clone();
+                    let vaults_page_row = obj.imp().vaults_page_row.clone();
+                    glib::spawn_future_local(clone!(async move {
+                        while let Ok(message) = receiver.recv().await {
+                            match message {
+                                Message::Finished => {
+                                    locker_button.set_icon_name(&"changes-allow-symbolic");
+                                    locker_button.set_tooltip_text(Some(&gettext("Close Vault")));
+                                    open_folder_button.set_visible(true);
+                                    open_folder_button.set_sensitive(true);
+                                    settings_button.set_sensitive(false);
+                                }
+                                Message::Error(e) => {
+                                    log::error!("Error opening vault: {}", &e);
+
+                                    locker_button.set_icon_name(&"changes-prevent-symbolic");
+                                    locker_button.set_tooltip_text(Some(&gettext("Open Vault")));
+                                    open_folder_button.set_visible(false);
+                                    open_folder_button.set_sensitive(false);
+                                    settings_button.set_sensitive(true);
+
+                                    let vault_name = vaults_page_row.title().to_string();
+                                    gtk::glib::MainContext::default().spawn_local(async move {
+                                        let window = gtk::gio::Application::default()
+                                            .unwrap()
+                                            .downcast_ref::<VApplication>()
+                                            .unwrap()
+                                            .active_window()
+                                            .unwrap()
+                                            .clone();
+
+                                        let info_dialog = gtk::AlertDialog::builder()
+                                            .modal(true)
+                                            .message(&vault_name)
+                                            .detail(&format!("{}", e))
+                                            .build();
+
+                                        info_dialog.show(Some(&window));
+                                    });
+                                }
                             }
-                            Message::Error(e) => {
-                                log::error!("Error opening vault: {}", &e);
 
-                                locker_button.set_icon_name(&"changes-prevent-symbolic");
-                                locker_button.set_tooltip_text(Some(&gettext("Open Vault")));
-                                open_folder_button.set_visible(false);
-                                open_folder_button.set_sensitive(false);
-                                settings_button.set_sensitive(true);
-
-                                let vault_name = vaults_page_row.title().to_string();
-                                gtk::glib::MainContext::default().spawn_local(async move {
-                                    let window = gtk::gio::Application::default()
-                                        .unwrap()
-                                        .downcast_ref::<VApplication>()
-                                        .unwrap()
-                                        .active_window()
-                                        .unwrap()
-                                        .clone();
-
-                                    let info_dialog = gtk::AlertDialog::builder()
-                                        .modal(true)
-                                        .message(&vault_name)
-                                        .detail(&format!("{}", e))
-                                        .build();
-
-                                    info_dialog.show(Some(&window));
-                                });
-                            }
+                            spinner.stop();
                         }
+                    }));
 
-                        spinner.stop();
-                    }
-                }));
-
-                std::thread::spawn(move || match Backend::open(&vault_config, password) {
-                    Ok(_) => {
-                        gio::spawn_blocking(move || {
-                            sender.send_blocking(Message::Finished).expect("Channel needs to be open");
-                        })
-                    }
-                    Err(e) => {
-                        gio::spawn_blocking(move || {
-                            sender.send_blocking(Message::Error(e)).expect("Channel needs to be open");
-                        })
-                    }
-                });
-            }),
+                    std::thread::spawn(move || match Backend::open(&vault_config, password) {
+                        Ok(_) => gio::spawn_blocking(move || {
+                            sender
+                                .send_blocking(Message::Finished)
+                                .expect("Channel needs to be open");
+                        }),
+                        Err(e) => gio::spawn_blocking(move || {
+                            sender
+                                .send_blocking(Message::Error(e))
+                                .expect("Channel needs to be open");
+                        }),
+                    });
+                }
+            ),
         );
 
         dialog.set_visible(true);
@@ -433,27 +457,35 @@ impl VaultsPageRow {
         dialog.connect_closure(
             "save",
             false,
-            closure_local!(@strong self as obj => move |dialog: VaultsPageRowSettingsWindow| {
-                obj.emit_by_name::<()>("save", &[]);
+            closure_local!(
+                #[strong(rename_to = obj)]
+                self,
+                move |dialog: VaultsPageRowSettingsWindow| {
+                    obj.emit_by_name::<()>("save", &[]);
 
-                let vault = &dialog.get_vault();
-                if !vault.is_backend_available() {
-                    obj.set_vault_row_state_backend_unavailable();
-                } else {
-                    obj.set_vault_row_state_backend_available();
+                    let vault = &dialog.get_vault();
+                    if !vault.is_backend_available() {
+                        obj.set_vault_row_state_backend_unavailable();
+                    } else {
+                        obj.set_vault_row_state_backend_available();
+                    }
+
+                    obj.set_vault(dialog.get_vault());
                 }
-
-                obj.set_vault(dialog.get_vault());
-            }),
+            ),
         );
 
         dialog.connect_closure(
             "remove",
             false,
-            closure_local!(@strong self as obj => move |dialog: VaultsPageRowSettingsWindow| {
-                obj.emit_by_name::<()>("remove", &[]);
-                dialog.close();
-            }),
+            closure_local!(
+                #[strong(rename_to = obj)]
+                self,
+                move |dialog: VaultsPageRowSettingsWindow| {
+                    obj.emit_by_name::<()>("remove", &[]);
+                    dialog.close();
+                }
+            ),
         );
 
         dialog.present();
