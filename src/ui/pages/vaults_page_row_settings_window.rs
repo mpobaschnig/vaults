@@ -218,7 +218,7 @@ impl VaultsPageRowSettingsWindow {
     fn remove_button_clicked(&self) {
         let name = self.get_current_vault().unwrap().get_name().unwrap();
         let confirm_dialog = adw::MessageDialog::builder()
-            .heading(&gettext!("Remove {}", name))
+            .heading(&gettext("Remove {}", name))
             .default_response(&gettext("Cancel"))
             .transient_for(self)
             .build();
@@ -255,7 +255,7 @@ impl VaultsPageRowSettingsWindow {
                                     log::error!("Could not delete encrypted data: {}", e.kind());
                                     let err_dialog = adw::MessageDialog::builder()
                                         .transient_for(&obj)
-                                        .body(&gettext!("", "Could not remove encrypted data (Error: {})", e.kind()))
+                                        .body(&gettext("", "Could not remove encrypted data (Error: {})", e.kind()))
                                         .build();
                                     err_dialog.add_response("close", &gettext("Close"));
                                     err_dialog.set_default_response(Some("close"));
