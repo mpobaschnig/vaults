@@ -37,6 +37,16 @@
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
+    <release version="0.8.0" date="2024-09-01">
+      <description translate="no">
+        <p>Small update:</p>
+        <ul>
+          <li>Update dependencies and GNOME 46 runtime</li>
+          <li>Add option to delete encrypted data when removing Vault</li>
+          <li>Add following translations: tr, zh_CN</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.7.1" date="2024-02-04">
       <description translate="no">
         <p>Small update:</p>
