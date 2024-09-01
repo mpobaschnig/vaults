@@ -160,65 +160,90 @@ impl VaultsPageRowSettingsWindow {
     }
 
     fn setup_signals(&self) {
-        self.imp()
-            .remove_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
+        self.imp().remove_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.remove_button_clicked();
-            }));
+            }
+        ));
 
-        self.imp()
-            .apply_changes_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
+        self.imp().apply_changes_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.apply_changes_button_clicked();
-            }));
+            }
+        ));
 
-        self.imp()
-            .name_entry_row
-            .connect_text_notify(clone!(@weak self as obj => move |_| {
+        self.imp().name_entry_row.connect_text_notify(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.check_add_button_enable_conditions();
-            }));
+            }
+        ));
 
-        self.imp().combo_row_backend.connect_selected_notify(
-            clone!(@weak self as obj => move |_| {
+        self.imp().combo_row_backend.connect_selected_notify(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.check_add_button_enable_conditions();
-            }),
-        );
+            }
+        ));
 
         self.imp()
             .encrypted_data_directory_entry_row
-            .connect_text_notify(clone!(@weak self as obj => move |_| {
-                obj.check_add_button_enable_conditions();
-            }));
-
-        self.imp().encrypted_data_directory_button.connect_clicked(
-            clone!(@weak self as obj => move |_| {
-                obj.encrypted_data_directory_button_clicked();
-            }),
-        );
-
-        self.imp().mount_directory_entry_row.connect_text_notify(
-            clone!(@weak self as obj => move |_| {
-                obj.check_add_button_enable_conditions();
-            }),
-        );
+            .connect_text_notify(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.check_add_button_enable_conditions();
+                }
+            ));
 
         self.imp()
-            .mount_directory_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.mount_directory_button_clicked();
-            }));
+            .encrypted_data_directory_button
+            .connect_clicked(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.encrypted_data_directory_button_clicked();
+                }
+            ));
 
-        self.imp().lock_screen_switch_row.connect_active_notify(
-            clone!(@weak self as obj => move |_| {
-                obj.check_add_button_enable_conditions();
-            }),
-        );
+        self.imp()
+            .mount_directory_entry_row
+            .connect_text_notify(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.check_add_button_enable_conditions();
+                }
+            ));
+
+        self.imp().mount_directory_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
+                obj.mount_directory_button_clicked();
+            }
+        ));
+
+        self.imp()
+            .lock_screen_switch_row
+            .connect_active_notify(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.check_add_button_enable_conditions();
+                }
+            ));
     }
 
     fn remove_button_clicked(&self) {
-        let name = self.get_current_vault().unwrap().get_name().unwrap();
         let confirm_dialog = adw::MessageDialog::builder()
-            .heading(&gettext("Remove {}", name))
+            .heading(&gettext("Remove Vault?"))
             .default_response(&gettext("Cancel"))
             .transient_for(self)
             .build();
@@ -240,36 +265,52 @@ impl VaultsPageRowSettingsWindow {
 
         confirm_dialog.choose(
             None::<&gio::Cancellable>,
-            clone!(@strong self as obj, @strong switch_row as sr => move |s| {
-                match s.as_str() {
-                    "cancel" => (),
-                    "remove" => {
-                        log::info!("Removing {}", obj.get_vault().get_name().unwrap());
+            clone!(
+                #[strong(rename_to = obj)]
+                self,
+                #[strong(rename_to = sr)]
+                switch_row,
+                move |s| {
+                    match s.as_str() {
+                        "cancel" => (),
+                        "remove" => {
+                            log::info!("Removing {}", obj.get_vault().get_name().unwrap());
 
-                        let vault = obj.get_vault();
+                            let vault = obj.get_vault();
 
-                        if sr.is_active() {
-                            match vault.delete_encrypted_data() {
-                                Ok(_) => (),
-                                Err(e) => {
-                                    log::error!("Could not delete encrypted data: {}", e.kind());
-                                    let err_dialog = adw::MessageDialog::builder()
-                                        .transient_for(&obj)
-                                        .body(&gettext("", "Could not remove encrypted data (Error: {})", e.kind()))
-                                        .build();
-                                    err_dialog.add_response("close", &gettext("Close"));
-                                    err_dialog.set_default_response(Some("close"));
-                                    err_dialog.choose(None::<&gio::Cancellable>, clone!(@strong obj as _ => move |_| {}));
+                            if sr.is_active() {
+                                match vault.delete_encrypted_data() {
+                                    Ok(_) => (),
+                                    Err(e) => {
+                                        log::error!(
+                                            "Could not delete encrypted data: {}",
+                                            e.kind()
+                                        );
+                                        let err_dialog = adw::MessageDialog::builder()
+                                            .transient_for(&obj)
+                                            .body(&gettext("Could not remove encrypted data."))
+                                            .build();
+                                        err_dialog.add_response("close", &gettext("Close"));
+                                        err_dialog.set_default_response(Some("close"));
+                                        err_dialog.choose(
+                                            None::<&gio::Cancellable>,
+                                            clone!(
+                                                #[strong(rename_to = _o)]
+                                                obj,
+                                                move |_o| {}
+                                            ),
+                                        );
+                                    }
                                 }
                             }
-                        }
 
-                        UserConfigManager::instance().remove_vault(vault);
-                        obj.emit_by_name::<()>("remove", &[])
+                            UserConfigManager::instance().remove_vault(vault);
+                            obj.emit_by_name::<()>("remove", &[])
+                        }
+                        _ => todo!(),
                     }
-                    _ => todo!()
                 }
-            }),
+            ),
         );
     }
 
@@ -316,12 +357,21 @@ impl VaultsPageRowSettingsWindow {
             .accept_label(&gettext("Select"))
             .build();
 
-        dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
-            if let Ok(directory) = directory {
-                let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                obj.imp().encrypted_data_directory_entry_row.set_text(&path);
-            }
-        }));
+        dialog.select_folder(
+            Some(self),
+            gio::Cancellable::NONE,
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |directory| {
+                    if let Ok(directory) = directory {
+                        let path =
+                            String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
+                        obj.imp().encrypted_data_directory_entry_row.set_text(&path);
+                    }
+                }
+            ),
+        );
     }
 
     fn mount_directory_button_clicked(&self) {
@@ -331,12 +381,21 @@ impl VaultsPageRowSettingsWindow {
             .accept_label(&gettext("Select"))
             .build();
 
-        dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
-            if let Ok(directory) = directory {
-                let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                obj.imp().mount_directory_entry_row.set_text(&path);
-            }
-        }));
+        dialog.select_folder(
+            Some(self),
+            gio::Cancellable::NONE,
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |directory| {
+                    if let Ok(directory) = directory {
+                        let path =
+                            String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
+                        obj.imp().mount_directory_entry_row.set_text(&path);
+                    }
+                }
+            ),
+        );
     }
 
     fn is_valid_vault_name(&self, vault_name: GString) -> bool {

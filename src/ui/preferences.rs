@@ -132,33 +132,51 @@ impl PreferencesWindow {
     fn setup_signals(&self) {
         self.imp()
             .encrypted_data_directory_entry_row
-            .connect_text_notify(clone!(@weak self as obj => move |_| {
-                obj.check_apply_changes_button_enable_conditions();
-            }));
-
-        self.imp().encrypted_data_directory_button.connect_clicked(
-            clone!(@weak self as obj => move |_| {
-                obj.encrypted_data_directory_button_clicked();
-            }),
-        );
-
-        self.imp().mount_directory_entry_row.connect_text_notify(
-            clone!(@weak self as obj => move |_| {
-                obj.check_apply_changes_button_enable_conditions();
-            }),
-        );
+            .connect_text_notify(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.check_apply_changes_button_enable_conditions();
+                }
+            ));
 
         self.imp()
-            .mount_directory_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
-                obj.mount_directory_button_clicked();
-            }));
+            .encrypted_data_directory_button
+            .connect_clicked(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.encrypted_data_directory_button_clicked();
+                }
+            ));
 
-        self.imp().general_apply_changes_button.connect_clicked(
-            clone!(@weak self as obj => move |_| {
-                obj.general_apply_changes_button_clicked();
-            }),
-        );
+        self.imp()
+            .mount_directory_entry_row
+            .connect_text_notify(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.check_apply_changes_button_enable_conditions();
+                }
+            ));
+
+        self.imp().mount_directory_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
+                obj.mount_directory_button_clicked();
+            }
+        ));
+
+        self.imp()
+            .general_apply_changes_button
+            .connect_clicked(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.general_apply_changes_button_clicked();
+                }
+            ));
     }
 
     fn encrypted_data_directory_button_clicked(&self) {
@@ -168,12 +186,21 @@ impl PreferencesWindow {
             .accept_label(&gettext("Select"))
             .build();
 
-        dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
-            if let Ok(directory) = directory {
-                let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                obj.imp().encrypted_data_directory_entry_row.set_text(&path);
-            }
-        }));
+        dialog.select_folder(
+            Some(self),
+            gio::Cancellable::NONE,
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |directory| {
+                    if let Ok(directory) = directory {
+                        let path =
+                            String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
+                        obj.imp().encrypted_data_directory_entry_row.set_text(&path);
+                    }
+                }
+            ),
+        );
     }
 
     fn mount_directory_button_clicked(&self) {
@@ -183,12 +210,21 @@ impl PreferencesWindow {
             .accept_label(&gettext("Select"))
             .build();
 
-        dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
-            if let Ok(directory) = directory {
-                let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                obj.imp().mount_directory_entry_row.set_text(&path);
-            }
-        }));
+        dialog.select_folder(
+            Some(self),
+            gio::Cancellable::NONE,
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |directory| {
+                    if let Ok(directory) = directory {
+                        let path =
+                            String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
+                        obj.imp().mount_directory_entry_row.set_text(&path);
+                    }
+                }
+            ),
+        );
     }
 
     fn general_apply_changes_button_clicked(&self) {

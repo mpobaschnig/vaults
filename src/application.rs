@@ -106,15 +106,21 @@ mod imp {
                             dialog.connect_closure(
                                 "unlock",
                                 false,
-                                closure_local!(@strong vault_config as vc, @strong app as a => move |dialog: VaultsPageRowPasswordPromptWindow| {
-                                    let password = dialog.get_password();
-                                    let result = Backend::open(&vc, password);
-                                    match result {
-                                        Ok(_) => log::info!("Opened vault successfully."),
-                                        Err(e) => log::error!("{e}"),
+                                closure_local!(
+                                    #[strong(rename_to = vc)]
+                                    vault_config,
+                                    #[strong(rename_to = a)]
+                                    app,
+                                    move |dialog: VaultsPageRowPasswordPromptWindow| {
+                                        let password = dialog.get_password();
+                                        let result = Backend::open(&vc, password);
+                                        match result {
+                                            Ok(_) => log::info!("Opened vault successfully."),
+                                            Err(e) => log::error!("{e}"),
+                                        }
+                                        a.quit();
                                     }
-                                    a.quit();
-                                }),
+                                ),
                             );
 
                             dialog.set_visible(true);
@@ -220,25 +226,37 @@ impl VApplication {
         action!(
             self,
             "preferences",
-            clone!(@weak self as obj => move |_, _| {
-                obj.show_preferences();
-            })
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_, _| {
+                    obj.show_preferences();
+                }
+            )
         );
 
         action!(
             self,
             "about",
-            clone!(@weak self as obj => move |_, _| {
-                obj.show_about_dialog();
-            })
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_, _| {
+                    obj.show_about_dialog();
+                }
+            )
         );
 
         action!(
             self,
             "quit",
-            clone!(@weak self as obj => move |_, _| {
-                obj.quit();
-            })
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_, _| {
+                    obj.quit();
+                }
+            )
         );
     }
 

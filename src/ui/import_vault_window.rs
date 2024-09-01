@@ -159,67 +159,93 @@ impl ImportVaultDialog {
     fn setup_actions(&self) {}
 
     fn setup_signals(&self) {
-        self.imp()
-            .cancel_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
+        self.imp().cancel_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.emit_by_name::<()>("close", &[]);
                 obj.close();
-            }));
+            }
+        ));
 
-        self.imp()
-            .previous_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
+        self.imp().previous_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.previous_button_clicked();
-            }));
+            }
+        ));
 
-        self.imp()
-            .next_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
+        self.imp().next_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.next_button_clicked();
-            }));
+            }
+        ));
 
-        self.imp()
-            .import_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
+        self.imp().import_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.emit_by_name::<()>("import", &[]);
                 obj.close();
-            }));
+            }
+        ));
 
-        self.imp()
-            .name_entry_row
-            .connect_text_notify(clone!(@weak self as obj => move |_| {
+        self.imp().name_entry_row.connect_text_notify(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.validate_name();
-            }));
+            }
+        ));
 
-        self.imp().combo_row_backend.connect_selected_notify(
-            clone!(@weak self as obj => move |_| {
+        self.imp().combo_row_backend.connect_selected_notify(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.validate_name();
-            }),
-        );
+            }
+        ));
 
         self.imp()
             .encrypted_data_directory_entry_row
-            .connect_text_notify(clone!(@weak self as obj => move |_| {
-                obj.validate_directories();
-            }));
-
-        self.imp().encrypted_data_directory_button.connect_clicked(
-            clone!(@weak self as obj => move |_| {
-                obj.encrypted_data_directory_button_clicked();
-            }),
-        );
-
-        self.imp().mount_directory_entry_row.connect_text_notify(
-            clone!(@weak self as obj => move |_| {
-                obj.validate_directories();
-            }),
-        );
+            .connect_text_notify(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.validate_directories();
+                }
+            ));
 
         self.imp()
-            .mount_directory_button
-            .connect_clicked(clone!(@weak self as obj => move |_| {
+            .encrypted_data_directory_button
+            .connect_clicked(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.encrypted_data_directory_button_clicked();
+                }
+            ));
+
+        self.imp()
+            .mount_directory_entry_row
+            .connect_text_notify(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.validate_directories();
+                }
+            ));
+
+        self.imp().mount_directory_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
                 obj.mount_directory_button_clicked();
-            }));
+            }
+        ));
     }
 
     pub fn next_button_clicked(&self) {
@@ -330,14 +356,23 @@ impl ImportVaultDialog {
             .accept_label(&gettext("Select"))
             .build();
 
-        dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
-            if let Ok(directory) = directory {
-                let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                obj.imp().encrypted_data_directory_entry_row.set_text(&path);
+        dialog.select_folder(
+            Some(self),
+            gio::Cancellable::NONE,
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |directory| {
+                    if let Ok(directory) = directory {
+                        let path =
+                            String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
+                        obj.imp().encrypted_data_directory_entry_row.set_text(&path);
 
-                obj.validate_directories();
-            }
-        }));
+                        obj.validate_directories();
+                    }
+                }
+            ),
+        );
     }
 
     pub fn mount_directory_button_clicked(&self) {
@@ -347,15 +382,24 @@ impl ImportVaultDialog {
             .accept_label(&gettext("Select"))
             .build();
 
-        dialog.select_folder(Some(self), gio::Cancellable::NONE, clone!(@weak self as obj => move |directory| {
-            if let Ok(directory) = directory {
-                let path = String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                obj.imp().mount_directory_entry_row.set_text(&path);
+        dialog.select_folder(
+            Some(self),
+            gio::Cancellable::NONE,
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |directory| {
+                    if let Ok(directory) = directory {
+                        let path =
+                            String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
+                        obj.imp().mount_directory_entry_row.set_text(&path);
 
-                obj.guess_name(&directory);
-                obj.validate_directories();
-            }
-        }));
+                        obj.guess_name(&directory);
+                        obj.validate_directories();
+                    }
+                }
+            ),
+        );
     }
 
     pub fn validate_directories(&self) {
