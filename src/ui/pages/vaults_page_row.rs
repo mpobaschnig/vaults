@@ -20,6 +20,7 @@
 use adw::{prelude::ActionRowExt, prelude::PreferencesRowExt, subclass::prelude::*};
 use gettextrs::gettext;
 use glib::{clone, subclass};
+use gtk::gio;
 use gtk::gio::Mount;
 use gtk::gio::VolumeMonitor;
 use gtk::glib::subclass::Signal;
@@ -246,15 +247,6 @@ impl VaultsPageRow {
 
         let (sender, receiver) = async_channel::unbounded();
         let vault_config = vault.get_config().clone().unwrap();
-        std::thread::spawn(move || match Backend::close(&vault_config) {
-            Ok(_) => {
-                let _ = sender.send(Message::Finished);
-            }
-            Err(e) => {
-                let _ = sender.send(Message::Error(e));
-            }
-        });
-
         let locker_button = self.imp().locker_button.clone();
         let open_folder_button = self.imp().open_folder_button.clone();
         let settings_button = self.imp().settings_button.clone();
@@ -301,6 +293,19 @@ impl VaultsPageRow {
                 spinner.stop();
             }
         }));
+
+        std::thread::spawn(move || match Backend::close(&vault_config) {
+            Ok(_) => gio::spawn_blocking(move || {
+                sender
+                    .send_blocking(Message::Finished)
+                    .expect("Channel needs to be open");
+            }),
+            Err(e) => gio::spawn_blocking(move || {
+                sender
+                    .send_blocking(Message::Error(e))
+                    .expect("Channel needs to be open");
+            }),
+        });
     }
 
     fn locker_button_clicked_is_not_mounted(&self, vault: Vault) {
@@ -339,15 +344,6 @@ impl VaultsPageRow {
 
                 let (sender, receiver) = async_channel::unbounded();
                 let vault_config = vault.get_config().clone().unwrap();
-                std::thread::spawn(move || match Backend::open(&vault_config, password) {
-                    Ok(_) => {
-                        let _ = sender.send(Message::Finished);
-                    }
-                    Err(e) => {
-                        let _ = sender.send(Message::Error(e));
-                    }
-                });
-
                 let locker_button = obj.imp().locker_button.clone();
                 let open_folder_button = obj.imp().open_folder_button.clone();
                 let settings_button = obj.imp().settings_button.clone();
@@ -395,6 +391,19 @@ impl VaultsPageRow {
                         spinner.stop();
                     }
                 }));
+
+                std::thread::spawn(move || match Backend::open(&vault_config, password) {
+                    Ok(_) => {
+                        gio::spawn_blocking(move || {
+                            sender.send_blocking(Message::Finished).expect("Channel needs to be open");
+                        })
+                    }
+                    Err(e) => {
+                        gio::spawn_blocking(move || {
+                            sender.send_blocking(Message::Error(e)).expect("Channel needs to be open");
+                        })
+                    }
+                });
             }),
         );
 
