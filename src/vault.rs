@@ -87,7 +87,7 @@ impl Vault {
             backend,
             encrypted_data_directory,
             mount_directory,
-            session_lock: session_lock,
+            session_lock,
         }));
 
         object
@@ -130,34 +130,33 @@ impl Vault {
     pub fn is_mounted(&self) -> bool {
         let config_mount_directory = self.get_config().unwrap().mount_directory;
 
-        let config_mount_directory_path = std::path::Path::new(&config_mount_directory);
-
-        let config_mount_directory_file_name = config_mount_directory_path.file_name();
-
         if self.is_mount_hidden() {
             return self.is_mounted_all();
         }
 
-        match config_mount_directory_file_name {
-            Some(config_mount_directory_file_name) => {
-                match config_mount_directory_file_name.to_str() {
-                    Some(file_name) => {
-                        let volume_monitor = VolumeMonitor::get();
+        let canon_config_path = std::path::Path::new(&config_mount_directory)
+            .canonicalize()
+            .ok();
 
-                        for mount in volume_monitor.mounts() {
-                            if mount.name() == file_name {
-                                return true;
-                            }
-                        }
-                    }
-                    None => {
-                        log::debug!("Could not get mount directory path");
-                    }
+        if let Some(canon_config_path) = canon_config_path {
+            log::info!(
+                "Opening canonical path: {}",
+                &canon_config_path.as_os_str().to_str().unwrap()
+            );
+            for mount in VolumeMonitor::get().mounts() {
+                let is_configured_mount = mount
+                    .default_location()
+                    .path()
+                    .map(|mount_path| std::path::Path::canonicalize(&mount_path))
+                    .and_then(Result::ok)
+                    .map(|canon_mount_path| canon_mount_path == canon_config_path)
+                    .unwrap_or(false);
+                if is_configured_mount {
+                    return true;
                 }
             }
-            None => {
-                log::debug!("Could not get config mount directory file name");
-            }
+        } else {
+            log::debug!("Could not get canonical mount directory path");
         }
 
         false
@@ -264,7 +263,7 @@ mod tests {
         vault.set_config(VaultConfig {
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
-            mount_directory: "tets/.Test".to_string(),
+            mount_directory: "Test/.Test".to_string(),
             session_lock: None,
         });
         assert_eq!(vault.is_mount_hidden(), true);
