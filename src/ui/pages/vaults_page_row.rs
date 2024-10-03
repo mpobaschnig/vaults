@@ -574,7 +574,9 @@ impl VaultsPageRow {
     fn mount_added_triggered(&self, mount: &Mount) {
         let config_mount_directory = self.imp().config.borrow().clone().unwrap().mount_directory;
 
-        let config_mount_directory_path = std::path::Path::new(&config_mount_directory);
+        let config_mount_directory_path = std::path::Path::new(&config_mount_directory)
+            .canonicalize()
+            .unwrap();
 
         let config_mount_directory_file_name = config_mount_directory_path.file_name();
 
@@ -582,7 +584,10 @@ impl VaultsPageRow {
             Some(config_mount_directory_file_name) => {
                 match config_mount_directory_file_name.to_str() {
                     Some(file_name) => {
-                        if mount.name() == file_name {
+                        let eq_name = mount.name() == file_name;
+                        let eq_path =
+                            mount.default_location().path().unwrap() == config_mount_directory_path;
+                        if eq_name && eq_path {
                             self.set_vault_row_state_opened();
                         }
                     }
@@ -600,7 +605,9 @@ impl VaultsPageRow {
     fn mount_removed_triggered(&self, mount: &Mount) {
         let config_mount_directory = self.imp().config.borrow().clone().unwrap().mount_directory;
 
-        let config_mount_directory_path = std::path::Path::new(&config_mount_directory);
+        let config_mount_directory_path = std::path::Path::new(&config_mount_directory)
+            .canonicalize()
+            .unwrap();
 
         let config_mount_directory_file_name = config_mount_directory_path.file_name();
 
@@ -608,7 +615,10 @@ impl VaultsPageRow {
             Some(config_mount_directory_file_name) => {
                 match config_mount_directory_file_name.to_str() {
                     Some(file_name) => {
-                        if mount.name() == file_name {
+                        let eq_name = mount.name() == file_name;
+                        let eq_path =
+                            mount.default_location().path().unwrap() == config_mount_directory_path;
+                        if eq_name && eq_path {
                             self.set_vault_row_state_closed();
                         }
                     }
