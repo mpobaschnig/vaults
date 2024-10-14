@@ -19,3 +19,4 @@ adw = { version = "0.7", package = "libadwaita", features = ["v1_4"] }
 gtk = { version = "0.9", package = "gtk4", features = ["v4_14"] }
 proc-mounts = "0.3"
 async-channel = "2"
+rust-ini = "0.21"

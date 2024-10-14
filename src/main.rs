@@ -20,6 +20,7 @@
 mod application;
 #[rustfmt::skip]
 mod config;
+mod flatpak_info_parser;
 mod global_config_manager;
 mod user_config_manager;
 mod vault;
