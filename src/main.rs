@@ -54,8 +54,6 @@ fn main() {
         log::error!("Could not set text domain: {}", e);
     }
 
-    backend::probe_backends();
-
     GlobalConfigManager::instance().read_config();
 
     UserConfigManager::instance().read_config();
