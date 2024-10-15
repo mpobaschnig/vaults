@@ -20,6 +20,7 @@
 mod application;
 #[rustfmt::skip]
 mod config;
+mod flatpak_info_parser;
 mod global_config_manager;
 mod user_config_manager;
 mod vault;
@@ -52,8 +53,6 @@ fn main() {
     if let Err(e) = textdomain(GETTEXT_PACKAGE) {
         log::error!("Could not set text domain: {}", e);
     }
-
-    backend::probe_backends();
 
     GlobalConfigManager::instance().read_config();
 
