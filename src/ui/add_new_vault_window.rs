@@ -693,29 +693,25 @@ impl AddNewVaultWindow {
     fn setup_combo_box(&self) {
         let list = gtk::StringList::new(&[]);
 
-        if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
-            let mut gocryptfs_index: Option<u32> = None;
+        let mut gocryptfs_index: Option<u32> = None;
 
-            for (i, backend) in available_backends.iter().enumerate() {
-                if backend.eq("gocryptfs") {
-                    gocryptfs_index = Some(i as u32);
-                }
-
-                list.append(backend);
+        for (i, backend) in AVAILABLE_BACKENDS.iter().enumerate() {
+            if backend.eq(&"gocryptfs") {
+                gocryptfs_index = Some(i as u32);
             }
 
-            if !available_backends.is_empty() {
-                self.imp().combo_row_backend.set_model(Some(&list));
-
-                if let Some(index) = gocryptfs_index {
-                    self.imp().combo_row_backend.set_selected(index);
-                } else {
-                    self.imp().combo_row_backend.set_selected(0);
-                }
-            }
-
-            self.combo_box_changed();
+            list.append(backend);
         }
+
+        self.imp().combo_row_backend.set_model(Some(&list));
+
+        if let Some(index) = gocryptfs_index {
+            self.imp().combo_row_backend.set_selected(index);
+        } else {
+            self.imp().combo_row_backend.set_selected(0);
+        }
+
+        self.combo_box_changed();
     }
 
     fn fill_directories(&self) {
