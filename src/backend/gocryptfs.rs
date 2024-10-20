@@ -17,7 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use super::BackendError;
+use super::backend::BackendError;
 use crate::vault::VaultConfig;
 use gettextrs::gettext;
 use std::process::Command;
