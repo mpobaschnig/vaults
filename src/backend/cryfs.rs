@@ -17,7 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use super::BackendError;
+use super::backend::BackendError;
 use crate::vault::VaultConfig;
 use gettextrs::gettext;
 use std::process::Command;
@@ -64,7 +64,8 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 }
 
 pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
-    let child = Command::new("cryfs-unmount")
+    let child = Command::new("fusermount")
+        .arg("-u")
         .stdout(Stdio::piped())
         .arg(&vault_config.mount_directory)
         .spawn()?;

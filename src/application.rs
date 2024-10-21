@@ -17,7 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use crate::backend::Backend;
+use crate::backend::backend;
 use crate::config;
 use crate::ui::pages::VaultsPageRowPasswordPromptWindow;
 use crate::ui::ApplicationWindow;
@@ -113,7 +113,7 @@ mod imp {
                                     app,
                                     move |dialog: VaultsPageRowPasswordPromptWindow| {
                                         let password = dialog.get_password();
-                                        let result = Backend::open(&vc, password);
+                                        let result = backend::Backend::open(&vc, password);
                                         match result {
                                             Ok(_) => log::info!("Opened vault successfully."),
                                             Err(e) => log::error!("{e}"),
@@ -143,7 +143,7 @@ mod imp {
 
                     match vault_config {
                         Some(vault_config) => {
-                            let result = Backend::close(&vault_config);
+                            let result = backend::Backend::close(&vault_config);
                             match result {
                                 Ok(_) => log::info!("Closed vault successfully."),
                                 Err(e) => log::error!("{e}"),

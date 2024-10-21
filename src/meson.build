@@ -35,6 +35,7 @@ sources = files(
 
   'application.rs',
   'config.rs',
+  'flatpak_info_parser.rs',
   'global_config_manager.rs',
   'main.rs',
   'vault.rs',
