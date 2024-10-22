@@ -1,4 +1,4 @@
-// mod.rs
+// manager.rs
 //
 // Copyright 2024 Martin Pobaschnig
 //
@@ -17,6 +17,3 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-pub mod manager;
-pub mod reader;
-pub mod writer;
