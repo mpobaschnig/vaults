@@ -17,6 +17,9 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use crate::nova::backend::encryption_backend::EncryptionBackend;
+use crate::nova::vault::settings::Settings;
+
 pub struct Vault {
     settings: Settings,
     backend: Box<dyn EncryptionBackend>,

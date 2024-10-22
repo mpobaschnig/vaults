@@ -17,6 +17,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use crate::nova::{backend::encryption_backend::EncryptionBackend, vault::settings::Settings};
+
 pub struct Gocryptfs {}
 
 impl EncryptionBackend for Gocryptfs {

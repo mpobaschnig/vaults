@@ -17,6 +17,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use crate::nova::vault::settings::Settings;
+
 pub trait EncryptionBackend {
     fn name(&self) -> String;
     fn init(&self, settings: &Settings);
