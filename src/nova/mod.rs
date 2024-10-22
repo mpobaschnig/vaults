@@ -19,6 +19,6 @@
 
 pub mod backend;
 pub mod configuration;
-pub mod vault;
 pub mod flatpak_info_parser;
 pub mod preferences;
+pub mod vault;
