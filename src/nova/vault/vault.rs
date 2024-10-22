@@ -19,5 +19,5 @@
 
 pub struct Vault {
     settings: Settings,
-    backend: Box<dyn Backend>,
+    backend: Box<dyn EncryptionBackend>,
 }
