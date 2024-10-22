@@ -35,24 +35,23 @@ sources = files(
 
   'application.rs',
   'config.rs',
-  'flatpak_info_parser.rs',
   'global_config_manager.rs',
   'main.rs',
   'vault.rs',
   'user_config_manager.rs',
 
   # Start of the new stuff
-  'backend/cryfs/cryfs.rs',
-  'backend/cryfs/errors.rs',
-  'backend/gocryptfs/errors.rs',
-  'backend/gocryptfs/gocryptfs.rs',
-  'backend/encryption_backend.rs',
-  'configuration/reader.rs',
-  'configuration/writer.rs',
-  'vault/settings.rs',
-  'vault/vault.rs',
-  'flatpak_info_parser.rs',
-  'preferences.rs',
+  'nova/backend/cryfs/cryfs.rs',
+  'nova/backend/cryfs/errors.rs',
+  'nova/backend/gocryptfs/errors.rs',
+  'nova/backend/gocryptfs/gocryptfs.rs',
+  'nova/backend/encryption_backend.rs',
+  'nova/configuration/reader.rs',
+  'nova/configuration/writer.rs',
+  'nova/vault/settings.rs',
+  'nova/vault/vault.rs',
+  'nova/flatpak_info_parser.rs',
+  'nova/preferences.rs',
 )
 
 custom_target(
