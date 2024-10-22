@@ -27,6 +27,8 @@ mod vault;
 mod backend;
 mod ui;
 
+mod nova;
+
 #[macro_use]
 extern crate quick_error;
 extern crate proc_mounts;
