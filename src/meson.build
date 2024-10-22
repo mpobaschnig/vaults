@@ -40,6 +40,19 @@ sources = files(
   'main.rs',
   'vault.rs',
   'user_config_manager.rs',
+
+  # Start of the new stuff
+  'backend/cryfs/cryfs.rs',
+  'backend/cryfs/errors.rs',
+  'backend/gocryptfs/errors.rs',
+  'backend/gocryptfs/gocryptfs.rs',
+  'backend/encryption_backend.rs',
+  'configuration/reader.rs',
+  'configuration/writer.rs',
+  'vault/settings.rs',
+  'vault/vault.rs',
+  'flatpak_info_parser.rs',
+  'preferences.rs',
 )
 
 custom_target(
