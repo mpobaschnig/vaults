@@ -18,4 +18,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 pub mod errors;
+#[allow(clippy::module_inception)]
 pub mod gocryptfs;

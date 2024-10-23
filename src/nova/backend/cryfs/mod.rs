@@ -17,5 +17,6 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#[allow(clippy::module_inception)]
 pub mod cryfs;
 pub mod errors;

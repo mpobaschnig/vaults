@@ -21,4 +21,5 @@ pub mod backend;
 pub mod configuration;
 pub mod flatpak_info_parser;
 pub mod preferences;
+#[allow(clippy::module_inception)]
 pub mod vault;
