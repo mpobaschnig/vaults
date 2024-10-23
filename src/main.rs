@@ -27,6 +27,8 @@ mod vault;
 mod backend;
 mod ui;
 
+mod nova;
+
 #[macro_use]
 extern crate quick_error;
 extern crate proc_mounts;
@@ -52,8 +54,6 @@ fn main() {
     if let Err(e) = textdomain(GETTEXT_PACKAGE) {
         log::error!("Could not set text domain: {}", e);
     }
-
-    backend::probe_backends();
 
     GlobalConfigManager::instance().read_config();
 

@@ -17,14 +17,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use crate::backend::AVAILABLE_BACKENDS;
 use crate::config::APP_ID;
 use crate::ui::pages::*;
 use crate::ui::window::glib::GString;
 use crate::ui::{AddNewVaultWindow, ImportVaultDialog};
 use crate::{
-    application::VApplication, backend, backend::Backend, user_config_manager::UserConfigManager,
-    vault::*,
+    application::VApplication, backend::Backend, user_config_manager::UserConfigManager, vault::*,
 };
 
 use adw::subclass::prelude::*;
@@ -176,11 +174,7 @@ impl ApplicationWindow {
             }
         ));
 
-        if backend::are_backends_available() {
-            self.imp().add_menu_button.set_sensitive(true);
-        } else {
-            self.imp().add_menu_button.set_sensitive(false);
-        }
+        self.imp().add_menu_button.set_sensitive(true);
     }
 
     fn setup_search_page(&self) {
@@ -261,19 +255,9 @@ impl ApplicationWindow {
             .start_page_status_page
             .set_icon_name(Some(APP_ID));
 
-        if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
-            if available_backends.is_empty() {
-                self.imp()
-                    .start_page_status_page
-                    .set_description(Some(&gettext(
-                        "No backends available. Please install gocryptfs or CryFS on your system.",
-                    )));
-            } else {
-                self.imp()
-                    .start_page_status_page
-                    .set_description(Some(&gettext("Add or import a Vault.")));
-            }
-        }
+        self.imp()
+            .start_page_status_page
+            .set_description(Some(&gettext("Add or import a Vault.")));
     }
 
     fn setup_vaults_page(&self) {
@@ -600,31 +584,15 @@ impl ApplicationWindow {
     fn refresh_clicked(&self) {
         self.clear();
 
-        backend::probe_backends();
-
         UserConfigManager::instance().read_config();
 
         self.fill_list_store();
 
-        if backend::are_backends_available() {
-            self.imp().add_menu_button.set_sensitive(true);
-        } else {
-            self.imp().add_menu_button.set_sensitive(false);
-        }
+        self.imp().add_menu_button.set_sensitive(true);
 
-        if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
-            if available_backends.is_empty() {
-                self.imp()
-                    .start_page_status_page
-                    .set_description(Some(&gettext(
-                        "No backends available. Please install gocryptfs or CryFS on your system.",
-                    )));
-            } else {
-                self.imp()
-                    .start_page_status_page
-                    .set_description(Some(&gettext("Add or import a Vault.")));
-            }
-        }
+        self.imp()
+            .start_page_status_page
+            .set_description(Some(&gettext("Add or import a Vault.")));
 
         if UserConfigManager::instance().get_map().is_empty() {
             self.set_view(View::Start);

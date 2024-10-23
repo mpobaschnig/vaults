@@ -1,6 +1,6 @@
-// mod.rs
+// vault.rs
 //
-// Copyright 2021 Martin Pobaschnig
+// Copyright 2024 Martin Pobaschnig
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,13 +17,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#[allow(clippy::module_inception)]
-pub mod backend;
-pub mod cryfs;
-pub mod gocryptfs;
+use crate::nova::backend::encryption_backend::EncryptionBackend;
+use crate::nova::vault::settings::Settings;
 
-pub use backend::get_backend_from_ui_string;
-pub use backend::get_ui_string_from_backend;
-pub use backend::Backend;
-pub use backend::BackendError;
-pub use backend::AVAILABLE_BACKENDS;
+pub struct Vault {
+    settings: Settings,
+    backend: Box<dyn EncryptionBackend>,
+}
