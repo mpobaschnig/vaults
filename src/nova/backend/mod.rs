@@ -20,3 +20,6 @@
 pub mod cryfs;
 pub mod encryption_backend;
 pub mod gocryptfs;
+
+pub use cryfs::cryfs::Cryfs;
+pub use gocryptfs::gocryptfs::Gocryptfs;
