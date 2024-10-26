@@ -25,3 +25,9 @@ pub trait EncryptionBackend {
     fn mount(&self, settings: &Settings);
     fn unmount(&self, settings: &Settings);
 }
+
+impl core::fmt::Debug for dyn EncryptionBackend {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "EncryptionBackend: {}", self.typetag_name())
+    }
+}
