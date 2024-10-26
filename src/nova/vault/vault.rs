@@ -21,6 +21,6 @@ use crate::nova::backend::encryption_backend::EncryptionBackend;
 use crate::nova::vault::settings::Settings;
 
 pub struct Vault {
-    settings: Settings,
-    backend: Box<dyn EncryptionBackend>,
+    pub settings: Settings,
+    pub backend: Box<dyn EncryptionBackend>,
 }

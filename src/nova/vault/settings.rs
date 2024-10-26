@@ -18,8 +18,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 pub struct Settings {
-    name: String,
-    edd: String,
-    dd: String,
-    session_lock: bool,
+    pub name: String,
+    pub edd: String,
+    pub dd: String,
+    pub session_lock: bool,
 }
