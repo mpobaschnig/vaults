@@ -22,16 +22,10 @@ use crate::nova::{backend::encryption_backend::EncryptionBackend, vault::setting
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize, Serialize)]
-pub struct Cryfs {
-    pub name: String,
-}
+pub struct Cryfs {}
 
 #[typetag::serde]
 impl EncryptionBackend for Cryfs {
-    fn name(&self) -> String {
-        todo!()
-    }
-
     fn init(&self, settings: &Settings) {
         todo!()
     }

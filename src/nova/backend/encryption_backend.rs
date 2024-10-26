@@ -21,7 +21,6 @@ use crate::nova::vault::settings::Settings;
 
 #[typetag::serde(tag = "type")]
 pub trait EncryptionBackend {
-    fn name(&self) -> String;
     fn init(&self, settings: &Settings);
     fn mount(&self, settings: &Settings);
     fn unmount(&self, settings: &Settings);
