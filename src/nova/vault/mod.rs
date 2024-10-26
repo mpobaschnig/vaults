@@ -19,3 +19,5 @@
 
 pub mod settings;
 pub mod vault;
+
+pub use settings::Settings;
