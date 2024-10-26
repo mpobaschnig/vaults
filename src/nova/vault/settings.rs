@@ -24,5 +24,5 @@ pub struct Settings {
     pub name: String,
     pub edd: String,
     pub dd: String,
-    pub session_lock: bool,
+    pub session_lock: Option<bool>,
 }
