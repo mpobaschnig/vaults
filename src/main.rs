@@ -33,7 +33,9 @@ mod nova;
 extern crate quick_error;
 extern crate proc_mounts;
 extern crate serde;
+extern crate serde_json;
 extern crate toml;
+extern crate typetag;
 
 use application::VApplication;
 use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};

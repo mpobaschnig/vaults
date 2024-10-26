@@ -20,6 +20,9 @@
 use crate::nova::backend::encryption_backend::EncryptionBackend;
 use crate::nova::vault::settings::Settings;
 
+use serde::{Deserialize, Serialize};
+
+#[derive(Deserialize, Serialize)]
 pub struct Vault {
     pub settings: Settings,
     pub backend: Box<dyn EncryptionBackend>,

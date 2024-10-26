@@ -19,8 +19,14 @@
 
 use crate::nova::{backend::encryption_backend::EncryptionBackend, vault::settings::Settings};
 
-pub struct Gocryptfs {}
+use serde::{Deserialize, Serialize};
 
+#[derive(Deserialize, Serialize)]
+pub struct Gocryptfs {
+    pub name: String,
+}
+
+#[typetag::serde]
 impl EncryptionBackend for Gocryptfs {
     fn name(&self) -> String {
         todo!()
