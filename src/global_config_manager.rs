@@ -21,6 +21,7 @@ use gtk::{
     gio::subclass::prelude::*,
     glib::{self, home_dir, user_config_dir, user_data_dir},
 };
+use ini::Ini;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 use toml::de::Error;
@@ -52,6 +53,7 @@ mod imp {
         pub user_config_directory: RefCell<Option<String>>,
 
         pub global_config: RefCell<GlobalConfig>,
+        pub flatpak_info: RefCell<Ini>,
     }
 
     #[glib::object_subclass]
@@ -67,6 +69,7 @@ mod imp {
                     encrypted_data_directory: RefCell::new(String::from("".to_string())),
                     mount_directory: RefCell::new(String::from("".to_string())),
                 }),
+                flatpak_info: RefCell::new(Ini::new()),
             }
         }
     }
@@ -94,6 +97,9 @@ impl GlobalConfigManager {
 
     fn new() -> Self {
         let object: Self = glib::Object::new();
+
+        *object.imp().flatpak_info.borrow_mut() =
+            Ini::load_from_file("/.flatpak-info").expect("Could not load .flatpak-info");
 
         match user_config_dir().as_os_str().to_str() {
             Some(user_config_directory) => {
