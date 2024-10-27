@@ -220,4 +220,8 @@ impl GlobalConfigManager {
             .mount_directory
             .borrow_mut() = path;
     }
+
+    pub fn get_flatpak_info(&self) -> Ini {
+        self.imp().flatpak_info.borrow().clone()
+    }
 }
