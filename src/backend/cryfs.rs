@@ -18,13 +18,28 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use super::BackendError;
+use crate::global_config_manager::GlobalConfigManager;
 use crate::vault::VaultConfig;
 use gettextrs::gettext;
 use std::process::Command;
 use std::{self, io::Write, process::Stdio};
 
+fn get_binary_path() -> String {
+    let global_config = GlobalConfigManager::instance().get_flatpak_info();
+    let instance_path = global_config
+        .section(Some("Instance"))
+        .unwrap()
+        .get("app-path")
+        .unwrap();
+    instance_path.to_owned() + "/bin/cryfs"
+}
+
 pub fn is_available() -> Result<bool, BackendError> {
-    let output = Command::new("cryfs").arg("--version").output()?;
+    let output = Command::new("flatpak-spawn")
+        .arg("--host")
+        .arg(get_binary_path())
+        .arg("--version")
+        .output()?;
 
     Ok(output.status.success())
 }
@@ -35,7 +50,9 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 }
 
 pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
-    let mut child = Command::new("cryfs")
+    let mut child = Command::new("flatpak-spawn")
+        .arg("--host")
+        .arg(get_binary_path())
         .env("CRYFS_FRONTEND", "noninteractive")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -64,7 +81,9 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 }
 
 pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
-    let child = Command::new("fusermount")
+    let child = Command::new("flatpak-spawn")
+        .arg("--host")
+        .arg("fusermount")
         .arg("-u")
         .stdout(Stdio::piped())
         .arg(&vault_config.mount_directory)
