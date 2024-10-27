@@ -18,19 +18,32 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use super::BackendError;
+use crate::global_config_manager::GlobalConfigManager;
 use crate::vault::VaultConfig;
 use gettextrs::gettext;
 use std::process::Command;
 use std::{io::Write, process::Stdio};
 
+fn get_binary_path() -> String {
+    let global_config = GlobalConfigManager::instance().get_flatpak_info();
+    let instance_path = global_config
+        .section(Some("Instance"))
+        .unwrap()
+        .get("app-path")
+        .unwrap();
+    instance_path.to_owned() + "/bin/gocryptfs"
+}
+
 pub fn is_available() -> Result<bool, BackendError> {
-    let output = Command::new("gocryptfs").arg("--version").output()?;
+    let output = Command::new(get_binary_path()).arg("--version").output()?;
 
     Ok(output.status.success())
 }
 
 pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
-    let mut child = Command::new("gocryptfs")
+    let mut child = Command::new("flatpak-spawn")
+        .arg("--host")
+        .arg(get_binary_path())
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .arg("--init")
@@ -62,7 +75,9 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 }
 
 pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
-    let mut child = Command::new("gocryptfs")
+    let mut child = Command::new("flatpak-spawn")
+        .arg("--host")
+        .arg(get_binary_path())
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .arg("-q")
