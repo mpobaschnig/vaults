@@ -29,6 +29,7 @@ use gettextrs::gettext;
 use gio::ApplicationFlags;
 use glib::clone;
 use gtk::glib::closure_local;
+use gtk::glib::VariantTy;
 use gtk::prelude::*;
 use gtk::{gio, glib};
 use gtk_macros::action;
@@ -36,9 +37,6 @@ use log::{debug, info};
 use std::cell::RefCell;
 
 mod imp {
-
-    use gtk::glib::VariantTy;
-
     use super::*;
 
     #[derive(Debug, Default, PartialEq)]
