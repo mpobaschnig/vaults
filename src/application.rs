@@ -41,17 +41,12 @@ mod imp {
 
     use super::*;
 
-    #[derive(Debug, PartialEq)]
+    #[derive(Debug, Default, PartialEq)]
     enum OnlyPromptType {
-        NONE,
-        OPEN,
-        CLOSE,
-    }
-
-    impl Default for OnlyPromptType {
-        fn default() -> Self {
-            OnlyPromptType::NONE
-        }
+        #[default]
+        NONE = 0,
+        OPEN = 1,
+        CLOSE = 2,
     }
 
     #[derive(Debug, Default)]
