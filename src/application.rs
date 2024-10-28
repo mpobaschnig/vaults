@@ -97,7 +97,7 @@ mod imp {
                     match vault_config {
                         Some(vault_config) => {
                             let dialog = VaultsPageRowPasswordPromptWindow::new();
-                            dialog.set_name(&*self.only_pompt_vault.borrow());
+                            dialog.set_name(&self.only_pompt_vault.borrow());
                             dialog.connect_closure(
                                 "unlock",
                                 false,
@@ -138,7 +138,7 @@ mod imp {
 
                     match vault_config {
                         Some(vault_config) => {
-                            let result = Backend::close(&vault_config);
+                            let result = Backend::close(vault_config);
                             match result {
                                 Ok(_) => log::info!("Closed vault successfully."),
                                 Err(e) => log::error!("{e}"),
