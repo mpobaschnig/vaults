@@ -44,9 +44,9 @@ mod imp {
     #[derive(Debug, Default, PartialEq)]
     enum OnlyPromptType {
         #[default]
-        NONE = 0,
-        OPEN = 1,
-        CLOSE = 2,
+        None = 0,
+        Open = 1,
+        Close = 2,
     }
 
     #[derive(Debug, Default)]
@@ -82,12 +82,12 @@ mod imp {
             app.set_resource_base_path(Some("/io/github/mpobaschnig/Vaults/"));
 
             match *self.only_prompt_type.borrow() {
-                OnlyPromptType::NONE => {
+                OnlyPromptType::None => {
                     let window = ApplicationWindow::new(&app);
                     window.present();
                     self.window.replace(Some(window));
                 }
-                OnlyPromptType::OPEN => {
+                OnlyPromptType::Open => {
                     let window = ApplicationWindow::new(&app);
                     self.window.replace(Some(window));
 
@@ -129,7 +129,7 @@ mod imp {
                         }
                     }
                 }
-                OnlyPromptType::CLOSE => {
+                OnlyPromptType::Close => {
                     let window = ApplicationWindow::new(&app);
                     self.window.replace(Some(window));
 
@@ -163,17 +163,17 @@ mod imp {
 
         fn handle_local_options(&self, options: &glib::VariantDict) -> glib::ExitCode {
             if let Some(vault_name) = options.lookup_value("open", Some(VariantTy::STRING)) {
-                *self.only_prompt_type.borrow_mut() = OnlyPromptType::OPEN;
+                *self.only_prompt_type.borrow_mut() = OnlyPromptType::Open;
                 *self.only_pompt_vault.borrow_mut() = vault_name.get::<String>().unwrap();
             }
 
             if let Some(vault_name) = options.lookup_value("close", Some(VariantTy::STRING)) {
-                if *self.only_prompt_type.borrow() != OnlyPromptType::NONE {
+                if *self.only_prompt_type.borrow() != OnlyPromptType::None {
                     log::error!("{}", gettext("Cannot open and close at the same time."));
                     return glib::ExitCode::from(2);
                 }
 
-                *self.only_prompt_type.borrow_mut() = OnlyPromptType::CLOSE;
+                *self.only_prompt_type.borrow_mut() = OnlyPromptType::Close;
                 *self.only_pompt_vault.borrow_mut() = vault_name.get::<String>().unwrap();
             }
 
