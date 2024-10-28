@@ -190,6 +190,12 @@ glib::wrapper! {
     @extends gio::Application, gtk::ApplicationWindow, gtk::Application, adw::Application, @implements gio::ActionMap, gio::ActionGroup;
 }
 
+impl Default for VApplication {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl VApplication {
     pub fn new() -> Self {
         let object: Self = glib::Object::new();
