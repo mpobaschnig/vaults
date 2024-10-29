@@ -121,13 +121,9 @@ pub fn probe_backends() {
 
 pub fn are_backends_available() -> bool {
     if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
-        if available_backends.len() > 0 {
-            return true;
-        } else {
-            return false;
-        }
+        available_backends.len() > 0
     } else {
-        return false;
+        false
     }
 }
 
