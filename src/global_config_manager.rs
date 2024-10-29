@@ -66,8 +66,8 @@ mod imp {
             Self {
                 user_config_directory: RefCell::new(None),
                 global_config: RefCell::new(GlobalConfig {
-                    encrypted_data_directory: RefCell::new(String::from("".to_string())),
-                    mount_directory: RefCell::new(String::from("".to_string())),
+                    encrypted_data_directory: RefCell::new("".to_string()),
+                    mount_directory: RefCell::new("".to_string()),
                 }),
                 flatpak_info: RefCell::new(Ini::new()),
             }
