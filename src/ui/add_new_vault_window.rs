@@ -441,9 +441,9 @@ impl AddNewVaultWindow {
 
     pub fn encrypted_data_directory_button_clicked(&self) {
         let dialog = gtk::FileDialog::builder()
-            .title(&gettext("Choose Encrypted Data Directory"))
+            .title(gettext("Choose Encrypted Data Directory"))
             .modal(true)
-            .accept_label(&gettext("Select"))
+            .accept_label(gettext("Select"))
             .build();
 
         dialog.select_folder(
@@ -465,9 +465,9 @@ impl AddNewVaultWindow {
 
     pub fn mount_directory_button_clicked(&self) {
         let dialog = gtk::FileDialog::builder()
-            .title(&gettext("Choose Mount Directory"))
+            .title(gettext("Choose Mount Directory"))
             .modal(true)
-            .accept_label(&gettext("Select"))
+            .accept_label(gettext("Select"))
             .build();
 
         dialog.select_folder(
@@ -531,7 +531,7 @@ impl AddNewVaultWindow {
             return false;
         }
 
-        match self.is_path_empty(&encrypted_data_directory) {
+        match self.is_path_empty(encrypted_data_directory) {
             Ok(is_empty) => {
                 if is_empty {
                     self.imp()
@@ -601,7 +601,7 @@ impl AddNewVaultWindow {
             return false;
         }
 
-        match self.is_path_empty(&mount_directory) {
+        match self.is_path_empty(mount_directory) {
             Ok(is_empty) => {
                 if is_empty {
                     self.imp().mount_directory_error_label.set_visible(false);
