@@ -70,14 +70,14 @@ impl Backend {
         let encrypted_data_directory = &vault_config.encrypted_data_directory;
         let mount_directory = &vault_config.mount_directory;
 
-        match create_edd_if_not_exists(&encrypted_data_directory) {
+        match create_edd_if_not_exists(encrypted_data_directory) {
             Ok(_) => {}
             Err(e) => {
                 return Err(e);
             }
         }
 
-        match create_md_if_not_exists(&mount_directory) {
+        match create_md_if_not_exists(mount_directory) {
             Ok(_) => {}
             Err(e) => {
                 return Err(e);
