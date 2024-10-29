@@ -150,6 +150,12 @@ glib::wrapper! {
         @extends gtk::Widget, adw::Window, gtk::Window;
 }
 
+impl Default for AddNewVaultWindow {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AddNewVaultWindow {
     pub fn new() -> Self {
         let dialog: Self = glib::Object::builder().build();
