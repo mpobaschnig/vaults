@@ -61,7 +61,7 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
         .spawn()?;
 
     let mut pw = String::from(&password);
-    pw.push_str(&"\n".to_owned());
+    pw.push('\n');
 
     child
         .stdin
