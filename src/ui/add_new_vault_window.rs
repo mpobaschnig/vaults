@@ -730,13 +730,13 @@ impl AddNewVaultWindow {
 
         let mut path = global_config.encrypted_data_directory.borrow().clone();
         if !path.ends_with("/") {
-            path.push_str("/");
+            path.push('/');
         }
         let encrypted_data_directory = path + &vault_name;
 
         path = global_config.mount_directory.borrow().clone();
         if !path.ends_with("/") {
-            path.push_str("/");
+            path.push('/');
         }
         let mount_directory = path + &vault_name;
 
