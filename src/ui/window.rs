@@ -542,8 +542,8 @@ impl ApplicationWindow {
                                     .unwrap()
                                     .clone();
                                 let info_dialog = gtk::AlertDialog::builder()
-                                    .message(&vault.get_name().unwrap())
-                                    .detail(&format!("{}", e))
+                                    .message(vault.get_name().unwrap())
+                                    .detail(format!("{}", e))
                                     .modal(true)
                                     .build();
 
