@@ -187,9 +187,9 @@ impl PreferencesWindow {
 
     fn encrypted_data_directory_button_clicked(&self) {
         let dialog = gtk::FileDialog::builder()
-            .title(&gettext("Choose Encrypted Data Directory"))
+            .title(gettext("Choose Encrypted Data Directory"))
             .modal(true)
-            .accept_label(&gettext("Select"))
+            .accept_label(gettext("Select"))
             .build();
 
         dialog.select_folder(
@@ -211,9 +211,9 @@ impl PreferencesWindow {
 
     fn mount_directory_button_clicked(&self) {
         let dialog = gtk::FileDialog::builder()
-            .title(&gettext("Choose Mount Directory"))
+            .title(gettext("Choose Mount Directory"))
             .modal(true)
-            .accept_label(&gettext("Select"))
+            .accept_label(gettext("Select"))
             .build();
 
         dialog.select_folder(
