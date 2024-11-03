@@ -736,7 +736,6 @@ impl VaultsPageRowSettingsWindow {
             }
             (_, _) => {
                 log::error!("Vault not initialised!");
-                return;
             }
         }
     }
