@@ -226,7 +226,7 @@ mod tests {
             "".to_string(),
             None,
         );
-        assert_eq!(vault.is_mount_hidden(), false);
+        assert!(!vault.is_mount_hidden());
 
         vault.set_config(VaultConfig {
             backend: Backend::Gocryptfs,
@@ -234,7 +234,7 @@ mod tests {
             mount_directory: ".".to_string(),
             session_lock: None,
         });
-        assert_eq!(vault.is_mount_hidden(), false);
+        assert!(!vault.is_mount_hidden());
 
         vault.set_config(VaultConfig {
             backend: Backend::Gocryptfs,
@@ -242,7 +242,7 @@ mod tests {
             mount_directory: "..".to_string(),
             session_lock: None,
         });
-        assert_eq!(vault.is_mount_hidden(), false);
+        assert!(!vault.is_mount_hidden());
 
         vault.set_config(VaultConfig {
             backend: Backend::Gocryptfs,
@@ -250,7 +250,7 @@ mod tests {
             mount_directory: "./".to_string(),
             session_lock: None,
         });
-        assert_eq!(vault.is_mount_hidden(), false);
+        assert!(!vault.is_mount_hidden());
 
         vault.set_config(VaultConfig {
             backend: Backend::Gocryptfs,
@@ -258,7 +258,7 @@ mod tests {
             mount_directory: "./Hidden".to_string(),
             session_lock: None,
         });
-        assert_eq!(vault.is_mount_hidden(), false);
+        assert!(!vault.is_mount_hidden());
 
         vault.set_config(VaultConfig {
             backend: Backend::Gocryptfs,
@@ -266,7 +266,7 @@ mod tests {
             mount_directory: "Test/.Test".to_string(),
             session_lock: None,
         });
-        assert_eq!(vault.is_mount_hidden(), true);
+        assert!(vault.is_mount_hidden());
 
         vault.set_config(VaultConfig {
             backend: Backend::Gocryptfs,
@@ -274,7 +274,7 @@ mod tests {
             mount_directory: "./Test/.Test".to_string(),
             session_lock: None,
         });
-        assert_eq!(vault.is_mount_hidden(), true);
+        assert!(vault.is_mount_hidden());
 
         vault.set_config(VaultConfig {
             backend: Backend::Gocryptfs,
@@ -282,6 +282,6 @@ mod tests {
             mount_directory: "../.Test".to_string(),
             session_lock: None,
         });
-        assert_eq!(vault.is_mount_hidden(), true);
+        assert!(vault.is_mount_hidden());
     }
 }
