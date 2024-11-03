@@ -98,6 +98,12 @@ glib::wrapper! {
         @extends gtk::Widget, adw::Window, gtk::Window;
 }
 
+impl Default for PreferencesWindow {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl PreferencesWindow {
     pub fn new() -> Self {
         let o: Self = glib::Object::builder().build();
