@@ -576,10 +576,8 @@ impl VaultsPageRowSettingsWindow {
             if prev_session_locking != *curr_session_locking {
                 return true;
             }
-        } else {
-            if *curr_session_locking {
-                return true;
-            }
+        } else if *curr_session_locking {
+            return true;
         }
 
         false
