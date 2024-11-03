@@ -140,7 +140,7 @@ impl VaultsPageRowPasswordPromptWindow {
         ));
     }
 
-    pub fn set_name(&self, name: &String) {
+    pub fn set_name(&self, name: &str) {
         self.imp().status_page.set_title(name);
     }
 
