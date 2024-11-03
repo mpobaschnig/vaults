@@ -90,6 +90,12 @@ glib::wrapper! {
         @extends gtk::Widget, adw::Window, gtk::Window;
 }
 
+impl Default for VaultsPageRowPasswordPromptWindow {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl VaultsPageRowPasswordPromptWindow {
     pub fn new() -> Self {
         let dialog: Self = glib::Object::builder().build();
