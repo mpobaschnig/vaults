@@ -243,21 +243,21 @@ impl VaultsPageRowSettingsWindow {
 
     fn remove_button_clicked(&self) {
         let confirm_dialog = adw::MessageDialog::builder()
-            .heading(&gettext("Remove Vault?"))
-            .default_response(&gettext("Cancel"))
+            .heading(gettext("Remove Vault?"))
+            .default_response(gettext("Cancel"))
             .transient_for(self)
             .build();
 
         confirm_dialog.add_responses(&[
-            (&"cancel", &gettext("Cancel")),
-            (&"remove", &gettext("Remove")),
+            ("cancel", &gettext("Cancel")),
+            ("remove", &gettext("Remove")),
         ]);
         confirm_dialog.set_response_appearance("remove", adw::ResponseAppearance::Destructive);
         confirm_dialog.set_default_response(Some("cancel"));
         confirm_dialog.set_close_response("cancel");
 
         let switch_row = adw::SwitchRow::builder()
-            .title(&gettext("Delete encrypted data"))
+            .title(gettext("Delete encrypted data"))
             .build();
         let preference_group = adw::PreferencesGroup::builder().build();
         preference_group.add(&switch_row);
@@ -288,7 +288,7 @@ impl VaultsPageRowSettingsWindow {
                                         );
                                         let err_dialog = adw::MessageDialog::builder()
                                             .transient_for(&obj)
-                                            .body(&gettext("Could not remove encrypted data."))
+                                            .body(gettext("Could not remove encrypted data."))
                                             .build();
                                         err_dialog.add_response("close", &gettext("Close"));
                                         err_dialog.set_default_response(Some("close"));
@@ -352,9 +352,9 @@ impl VaultsPageRowSettingsWindow {
 
     fn encrypted_data_directory_button_clicked(&self) {
         let dialog = gtk::FileDialog::builder()
-            .title(&gettext("Choose Encrypted Data Directory"))
+            .title(gettext("Choose Encrypted Data Directory"))
             .modal(true)
-            .accept_label(&gettext("Select"))
+            .accept_label(gettext("Select"))
             .build();
 
         dialog.select_folder(
@@ -376,9 +376,9 @@ impl VaultsPageRowSettingsWindow {
 
     fn mount_directory_button_clicked(&self) {
         let dialog = gtk::FileDialog::builder()
-            .title(&gettext("Choose Mount Directory"))
+            .title(gettext("Choose Mount Directory"))
             .modal(true)
-            .accept_label(&gettext("Select"))
+            .accept_label(gettext("Select"))
             .build();
 
         dialog.select_folder(
@@ -586,7 +586,7 @@ impl VaultsPageRowSettingsWindow {
     }
 
     fn exists_config_file(&self, backend: Backend, encrypted_data_directory: &GString) -> bool {
-        if !self.is_encrypted_data_directory_valid(&encrypted_data_directory) {
+        if !self.is_encrypted_data_directory_valid(encrypted_data_directory) {
             self.imp().backend_error_label.set_visible(false);
 
             return false;
@@ -646,7 +646,7 @@ impl VaultsPageRowSettingsWindow {
         let is_session_locking = self.imp().lock_screen_switch_row.is_active();
         let has_something_changed = self.has_something_changed(
             &vault_name,
-            &backend_str,
+            backend_str,
             &encrypted_data_directory,
             &mount_directory,
             &is_session_locking,
