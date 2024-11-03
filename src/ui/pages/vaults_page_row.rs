@@ -528,11 +528,7 @@ impl VaultsPageRow {
     }
 
     fn is_mounted(&self) -> bool {
-        if self.get_vault().is_mounted() {
-            true
-        } else {
-            false
-        }
+        self.get_vault().is_mounted()
     }
 
     fn set_vault_row_state_opened(&self) {
