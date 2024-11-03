@@ -552,7 +552,7 @@ impl ImportVaultDialog {
     }
 
     fn is_path_empty(&self, path: &GString) -> Result<bool, std::io::Error> {
-        match std::fs::read_dir(path.to_string()) {
+        match std::fs::read_dir(path) {
             Ok(dir) => {
                 if dir.count() > 0 {
                     Ok(false)
@@ -612,7 +612,7 @@ impl ImportVaultDialog {
     }
 
     fn is_valid_backend(&self, path: &String) -> bool {
-        match std::fs::read_dir(path.to_string()) {
+        match std::fs::read_dir(path) {
             Ok(dir) => {
                 for file in dir.into_iter() {
                     match file {
