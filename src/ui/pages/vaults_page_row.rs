@@ -187,7 +187,7 @@ impl VaultsPageRow {
                 #[weak(rename_to = obj)]
                 self,
                 move |_, m| {
-                    obj.mount_added_triggered(&m);
+                    obj.mount_added_triggered(m);
                 }
             ));
 
@@ -198,7 +198,7 @@ impl VaultsPageRow {
                 #[weak(rename_to = obj)]
                 self,
                 move |_, m| {
-                    obj.mount_removed_triggered(&m);
+                    obj.mount_removed_triggered(m);
                 }
             ));
 
@@ -275,7 +275,7 @@ impl VaultsPageRow {
             while let Ok(message) = receiver.recv().await {
                 match message {
                     Message::Finished => {
-                        locker_button.set_icon_name(&"changes-prevent-symbolic");
+                        locker_button.set_icon_name("changes-prevent-symbolic");
                         locker_button.set_tooltip_text(Some(&gettext("Open Vault")));
                         open_folder_button.set_visible(false);
                         open_folder_button.set_sensitive(false);
@@ -284,7 +284,7 @@ impl VaultsPageRow {
                     Message::Error(e) => {
                         log::error!("Error closing vault: {}", &e);
 
-                        locker_button.set_icon_name(&"changes-allow-symbolic");
+                        locker_button.set_icon_name("changes-allow-symbolic");
                         locker_button.set_tooltip_text(Some(&gettext("Close Vault")));
                         open_folder_button.set_visible(true);
                         open_folder_button.set_sensitive(true);
@@ -301,7 +301,7 @@ impl VaultsPageRow {
                                 .clone();
                             let info_dialog = gtk::AlertDialog::builder()
                                 .message(&vault_name)
-                                .detail(&format!("{}", e))
+                                .detail(format!("{}", e))
                                 .modal(true)
                                 .build();
 
@@ -375,7 +375,7 @@ impl VaultsPageRow {
                         while let Ok(message) = receiver.recv().await {
                             match message {
                                 Message::Finished => {
-                                    locker_button.set_icon_name(&"changes-allow-symbolic");
+                                    locker_button.set_icon_name("changes-allow-symbolic");
                                     locker_button.set_tooltip_text(Some(&gettext("Close Vault")));
                                     open_folder_button.set_visible(true);
                                     open_folder_button.set_sensitive(true);
@@ -384,7 +384,7 @@ impl VaultsPageRow {
                                 Message::Error(e) => {
                                     log::error!("Error opening vault: {}", &e);
 
-                                    locker_button.set_icon_name(&"changes-prevent-symbolic");
+                                    locker_button.set_icon_name("changes-prevent-symbolic");
                                     locker_button.set_tooltip_text(Some(&gettext("Open Vault")));
                                     open_folder_button.set_visible(false);
                                     open_folder_button.set_sensitive(false);
@@ -403,7 +403,7 @@ impl VaultsPageRow {
                                         let info_dialog = gtk::AlertDialog::builder()
                                             .modal(true)
                                             .message(&vault_name)
-                                            .detail(&format!("{}", e))
+                                            .detail(format!("{}", e))
                                             .build();
 
                                         info_dialog.show(Some(&window));
@@ -538,7 +538,7 @@ impl VaultsPageRow {
     fn set_vault_row_state_opened(&self) {
         self.imp()
             .locker_button
-            .set_icon_name(&"changes-allow-symbolic");
+            .set_icon_name("changes-allow-symbolic");
         self.imp()
             .locker_button
             .set_tooltip_text(Some(&gettext("Close Vault")));
@@ -550,7 +550,7 @@ impl VaultsPageRow {
     fn set_vault_row_state_closed(&self) {
         self.imp()
             .locker_button
-            .set_icon_name(&"changes-prevent-symbolic");
+            .set_icon_name("changes-prevent-symbolic");
         self.imp()
             .locker_button
             .set_tooltip_text(Some(&gettext("Open Vault")));
