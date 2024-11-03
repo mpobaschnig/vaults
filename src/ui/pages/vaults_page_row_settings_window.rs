@@ -443,7 +443,7 @@ impl VaultsPageRowSettingsWindow {
     }
 
     fn is_path_empty(&self, path: &GString) -> Result<bool, std::io::Error> {
-        match std::fs::read_dir(path.to_string()) {
+        match std::fs::read_dir(path) {
             Ok(dir) => {
                 if dir.count() > 0 {
                     Ok(false)
