@@ -1,0 +1,19 @@
+name: rust
+
+on: [pull_request, workflow_dispatch]
+
+env:
+  RUSTFLAGS: "-Dwarnings"
+
+jobs:
+  clippy-check:
+    name: "clippy"
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install deps
+        run: sudo apt install -y libgtk-4-dev libadwaita-1-dev meson gettext
+      - name: Meson setup
+        run: meson setup build
+      - name: Run Clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
