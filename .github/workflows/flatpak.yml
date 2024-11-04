@@ -3,8 +3,8 @@ name: flatpak
 on: [pull_request, workflow_dispatch]
 
 jobs:
-  flatpak:
-    name: "Flatpak"
+  flatpak-build:
+    name: "build"
     runs-on: ubuntu-latest
     container:
       image: bilelmoussaoui/flatpak-github-actions:gnome-45
