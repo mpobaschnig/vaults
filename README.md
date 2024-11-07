@@ -18,7 +18,7 @@ It currently uses [gocryptfs](https://github.com/rfjakob/gocryptfs) and [CryFS](
 
 # How to build
 
-Open GNOME Builder (or Visual Studio Code with the Flatpak extension), clone the repository, build and run it.
+The supported way of building Vaults using GNOME Builder (or Visual Studio Code with the Flatpak extension) by cloning the repository and simply building and then running it.
 
 # Contributing
 
