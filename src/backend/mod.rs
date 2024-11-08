@@ -22,14 +22,9 @@ pub mod gocryptfs;
 
 use crate::vault::VaultConfig;
 use gettextrs::gettext;
-use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 use std::string::String;
-use std::sync::Mutex;
-use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-
-pub static AVAILABLE_BACKENDS: Lazy<Mutex<Vec<String>>> = Lazy::new(|| Mutex::new(vec![]));
 
 quick_error! {
     #[derive(Debug)]
@@ -102,28 +97,6 @@ impl Backend {
             Backend::Cryfs => cryfs::close(vault_config),
             Backend::Gocryptfs => gocryptfs::close(vault_config),
         }
-    }
-}
-
-pub fn probe_backends() {
-    if let Ok(mut available_backends) = AVAILABLE_BACKENDS.lock() {
-        available_backends.clear();
-
-        for backend in Backend::iter() {
-            if let Ok(success) = backend.is_available() {
-                if success {
-                    available_backends.push(get_ui_string_from_backend(&backend));
-                }
-            }
-        }
-    }
-}
-
-pub fn are_backends_available() -> bool {
-    if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
-        available_backends.len() > 0
-    } else {
-        false
     }
 }
 
