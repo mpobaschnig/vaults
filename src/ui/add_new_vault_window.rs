@@ -18,10 +18,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::user_config_manager::UserConfigManager;
-use crate::{
-    backend, backend::AVAILABLE_BACKENDS, global_config_manager::GlobalConfigManager, vault::*,
-    VApplication,
-};
+use crate::{backend, global_config_manager::GlobalConfigManager, vault::*, VApplication};
 use adw::prelude::ComboRowExt;
 use gettextrs::gettext;
 use gtk::gio;
@@ -31,6 +28,7 @@ use gtk::{self, prelude::*};
 use gtk::{glib, CompositeTemplate};
 use gtk::{glib::clone, glib::GString};
 use std::cell::RefCell;
+use strum::IntoEnumIterator;
 
 mod imp {
     use gtk::glib::subclass::Signal;
@@ -699,29 +697,11 @@ impl AddNewVaultWindow {
     fn setup_combo_box(&self) {
         let list = gtk::StringList::new(&[]);
 
-        if let Ok(available_backends) = AVAILABLE_BACKENDS.lock() {
-            let mut gocryptfs_index: Option<u32> = None;
-
-            for (i, backend) in available_backends.iter().enumerate() {
-                if backend.eq("gocryptfs") {
-                    gocryptfs_index = Some(i as u32);
-                }
-
-                list.append(backend);
-            }
-
-            if !available_backends.is_empty() {
-                self.imp().combo_row_backend.set_model(Some(&list));
-
-                if let Some(index) = gocryptfs_index {
-                    self.imp().combo_row_backend.set_selected(index);
-                } else {
-                    self.imp().combo_row_backend.set_selected(0);
-                }
-            }
-
-            self.combo_box_changed();
+        for backend in backend::Backend::iter() {
+            list.append(&backend.to_string());
         }
+
+        self.combo_box_changed();
     }
 
     fn fill_directories(&self) {
