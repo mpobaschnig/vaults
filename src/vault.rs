@@ -231,6 +231,8 @@ mod tests {
             "".to_string(),
             "".to_string(),
             None,
+            None,
+            None,
         );
         assert!(!vault.is_mount_hidden());
 
@@ -239,6 +241,8 @@ mod tests {
             encrypted_data_directory: "".to_string(),
             mount_directory: ".".to_string(),
             session_lock: None,
+            use_custom_binary: None,
+            custom_binary_path: None,
         });
         assert!(!vault.is_mount_hidden());
 
@@ -247,6 +251,8 @@ mod tests {
             encrypted_data_directory: "".to_string(),
             mount_directory: "..".to_string(),
             session_lock: None,
+            use_custom_binary: None,
+            custom_binary_path: None,
         });
         assert!(!vault.is_mount_hidden());
 
@@ -255,6 +261,8 @@ mod tests {
             encrypted_data_directory: "".to_string(),
             mount_directory: "./".to_string(),
             session_lock: None,
+            use_custom_binary: None,
+            custom_binary_path: None,
         });
         assert!(!vault.is_mount_hidden());
 
@@ -263,6 +271,8 @@ mod tests {
             encrypted_data_directory: "".to_string(),
             mount_directory: "./Hidden".to_string(),
             session_lock: None,
+            use_custom_binary: None,
+            custom_binary_path: None,
         });
         assert!(!vault.is_mount_hidden());
 
@@ -271,6 +281,8 @@ mod tests {
             encrypted_data_directory: "".to_string(),
             mount_directory: "Test/.Test".to_string(),
             session_lock: None,
+            use_custom_binary: None,
+            custom_binary_path: None,
         });
         assert!(vault.is_mount_hidden());
 
@@ -279,6 +291,8 @@ mod tests {
             encrypted_data_directory: "".to_string(),
             mount_directory: "./Test/.Test".to_string(),
             session_lock: None,
+            use_custom_binary: None,
+            custom_binary_path: None,
         });
         assert!(vault.is_mount_hidden());
 
@@ -287,6 +301,8 @@ mod tests {
             encrypted_data_directory: "".to_string(),
             mount_directory: "../.Test".to_string(),
             session_lock: None,
+            use_custom_binary: None,
+            custom_binary_path: None,
         });
         assert!(vault.is_mount_hidden());
     }
