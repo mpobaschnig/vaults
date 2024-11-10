@@ -17,6 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use adw::prelude::ExpanderRowExt;
 use adw::prelude::MessageDialogExtManual;
 use adw::subclass::prelude::*;
 use adw::{prelude::ComboRowExt, prelude::MessageDialogExt, prelude::PreferencesGroupExt};
@@ -72,6 +73,10 @@ mod imp {
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
         pub lock_screen_switch_row: TemplateChild<adw::SwitchRow>,
+        #[template_child]
+        pub custom_binary_expander_row: TemplateChild<adw::ExpanderRow>,
+        #[template_child]
+        pub custom_binary_entry_row: TemplateChild<adw::EntryRow>,
 
         pub current_vault: RefCell<Option<Vault>>,
         pub to_remove: RefCell<bool>,
@@ -99,6 +104,8 @@ mod imp {
                 mount_directory_error_label: TemplateChild::default(),
                 toast_overlay: TemplateChild::default(),
                 lock_screen_switch_row: TemplateChild::default(),
+                custom_binary_expander_row: TemplateChild::default(),
+                custom_binary_entry_row: TemplateChild::default(),
                 current_vault: RefCell::new(None),
                 to_remove: RefCell::new(false),
             }
@@ -337,6 +344,10 @@ impl VaultsPageRowSettingsWindow {
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
             Some(self.imp().lock_screen_switch_row.is_active()),
+            Some(self.imp().custom_binary_expander_row.is_expanded()),
+            Some(String::from(
+                self.imp().custom_binary_entry_row.text().as_str(),
+            )),
         );
 
         UserConfigManager::instance()
@@ -699,6 +710,10 @@ impl VaultsPageRowSettingsWindow {
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
             Some(self.imp().lock_screen_switch_row.is_active()),
+            Some(self.imp().custom_binary_expander_row.is_expanded()),
+            Some(String::from(
+                self.imp().custom_binary_entry_row.text().as_str(),
+            )),
         )
     }
 
