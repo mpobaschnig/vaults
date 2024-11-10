@@ -246,6 +246,26 @@ impl VaultsPageRowSettingsWindow {
                     obj.check_add_button_enable_conditions();
                 }
             ));
+
+        self.imp()
+            .custom_binary_expander_row
+            .connect_expanded_notify(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.check_add_button_enable_conditions();
+                }
+            ));
+
+        self.imp()
+            .custom_binary_entry_row
+            .connect_text_notify(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.check_add_button_enable_conditions();
+                }
+            ));
     }
 
     fn remove_button_clicked(&self) {
@@ -550,6 +570,7 @@ impl VaultsPageRowSettingsWindow {
         }
     }
 
+    #[allow(clippy::too_many_arguments)]
     fn has_something_changed(
         &self,
         curr_vault_name: &GString,
@@ -557,6 +578,8 @@ impl VaultsPageRowSettingsWindow {
         curr_encrypted_data_directory: &GString,
         curr_mount_directory: &GString,
         curr_session_locking: &bool,
+        curr_use_custom_binary: &bool,
+        curr_custom_binary_path: &GString,
     ) -> bool {
         let prev_vault = self.get_current_vault().unwrap();
         let prev_config = &prev_vault.get_config().unwrap();
@@ -589,6 +612,20 @@ impl VaultsPageRowSettingsWindow {
             }
         } else if *curr_session_locking {
             return true;
+        }
+
+        if let Some(prev_use_custom_binary) = prev_config.use_custom_binary {
+            if prev_use_custom_binary != *curr_use_custom_binary {
+                return true;
+            }
+        } else if *curr_use_custom_binary {
+            return true;
+        }
+
+        if let Some(prev_custom_binary_path) = &prev_config.custom_binary_path {
+            if !prev_custom_binary_path.eq(curr_custom_binary_path) {
+                return true;
+            }
         }
 
         false
@@ -653,12 +690,16 @@ impl VaultsPageRowSettingsWindow {
                 false
             };
         let is_session_locking = self.imp().lock_screen_switch_row.is_active();
+        let use_custom_binary = self.imp().custom_binary_expander_row.is_expanded();
+        let custom_binary_path = self.imp().custom_binary_entry_row.text();
         let has_something_changed = self.has_something_changed(
             &vault_name,
             backend_str,
             &encrypted_data_directory,
             &mount_directory,
             &is_session_locking,
+            &use_custom_binary,
+            &custom_binary_path,
         );
         let exists_config_file = self.exists_config_file(backend, &encrypted_data_directory);
 
@@ -747,6 +788,16 @@ impl VaultsPageRowSettingsWindow {
                     .set_text(&config.mount_directory.to_string());
                 if let Some(session_lock) = config.session_lock {
                     self.imp().lock_screen_switch_row.set_active(session_lock);
+                }
+                if let Some(use_custom_binary) = config.use_custom_binary {
+                    self.imp()
+                        .custom_binary_expander_row
+                        .set_enable_expansion(use_custom_binary);
+                }
+                if let Some(custom_binary_path) = config.custom_binary_path {
+                    self.imp()
+                        .custom_binary_entry_row
+                        .set_text(&custom_binary_path);
                 }
             }
             (_, _) => {
