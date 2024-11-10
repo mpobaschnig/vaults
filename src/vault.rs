@@ -31,6 +31,8 @@ pub struct VaultConfig {
     pub encrypted_data_directory: String,
     pub mount_directory: String,
     pub session_lock: Option<bool>,
+    pub use_custom_binary: Option<bool>,
+    pub custom_binary_path: Option<String>,
 }
 
 mod imp {
@@ -79,6 +81,8 @@ impl Vault {
         encrypted_data_directory: String,
         mount_directory: String,
         session_lock: Option<bool>,
+        use_custom_binary: Option<bool>,
+        custom_binary_path: Option<String>,
     ) -> Vault {
         let object: Self = glib::Object::new();
 
@@ -88,6 +92,8 @@ impl Vault {
             encrypted_data_directory,
             mount_directory,
             session_lock,
+            use_custom_binary,
+            custom_binary_path,
         }));
 
         object
