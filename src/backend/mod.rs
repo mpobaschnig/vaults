@@ -54,10 +54,10 @@ pub enum Backend {
 }
 
 impl Backend {
-    pub fn is_available(&self) -> Result<bool, BackendError> {
+    pub fn is_available(&self, vault_config: &VaultConfig) -> Result<bool, BackendError> {
         match &self {
-            Backend::Cryfs => cryfs::is_available(),
-            Backend::Gocryptfs => gocryptfs::is_available(),
+            Backend::Cryfs => cryfs::is_available(vault_config),
+            Backend::Gocryptfs => gocryptfs::is_available(vault_config),
         }
     }
 

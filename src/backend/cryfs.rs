@@ -24,7 +24,15 @@ use gettextrs::gettext;
 use std::process::Command;
 use std::{self, io::Write, process::Stdio};
 
-fn get_binary_path() -> String {
+fn get_binary_path(vault_config: &VaultConfig) -> String {
+    if let Some(use_custom_binary) = vault_config.use_custom_binary {
+        if use_custom_binary {
+            if let Some(custom_binary_path) = &vault_config.custom_binary_path {
+                return custom_binary_path.to_string();
+            }
+        }
+    }
+
     let global_config = GlobalConfigManager::instance().get_flatpak_info();
     let instance_path = global_config
         .section(Some("Instance"))
@@ -34,10 +42,10 @@ fn get_binary_path() -> String {
     instance_path.to_owned() + "/bin/cryfs"
 }
 
-pub fn is_available() -> Result<bool, BackendError> {
+pub fn is_available(vault_config: &VaultConfig) -> Result<bool, BackendError> {
     let output = Command::new("flatpak-spawn")
         .arg("--host")
-        .arg(get_binary_path())
+        .arg(get_binary_path(vault_config))
         .arg("--version")
         .output()?;
 
@@ -52,7 +60,7 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
     let mut child = Command::new("flatpak-spawn")
         .arg("--host")
-        .arg(get_binary_path())
+        .arg(get_binary_path(vault_config))
         .env("CRYFS_FRONTEND", "noninteractive")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
