@@ -60,7 +60,7 @@ mod imp {
         #[template_child]
         pub headerbar: TemplateChild<adw::HeaderBar>,
         #[template_child]
-        pub title_stack: TemplateChild<gtk::Stack>,
+        pub search_bar: TemplateChild<gtk::SearchBar>,
         #[template_child]
         pub search_entry: TemplateChild<gtk::SearchEntry>,
         #[template_child]
@@ -91,7 +91,7 @@ mod imp {
                 vaults_list_box: TemplateChild::default(),
                 search_vaults_list_box: TemplateChild::default(),
                 headerbar: TemplateChild::default(),
-                title_stack: TemplateChild::default(),
+                search_bar: TemplateChild::default(),
                 search_entry: TemplateChild::default(),
                 search_toggle_button: TemplateChild::default(),
                 search_stack: TemplateChild::default(),
@@ -163,14 +163,7 @@ impl ApplicationWindow {
             #[weak(rename_to = obj)]
             self,
             move |button| {
-                if button.is_active() {
-                    obj.imp().title_stack.set_visible_child_name("search");
-                    obj.imp().search_entry.grab_focus();
-                } else {
-                    obj.imp().search_entry.set_text("");
-                    obj.imp().title_stack.set_visible_child_name("title");
-                    obj.refresh_clicked();
-                }
+                obj.imp().search_bar.set_search_mode(button.is_active());
             }
         ));
 
@@ -399,7 +392,6 @@ impl ApplicationWindow {
                         if UserConfigManager::instance().get_map().is_empty() {
                             obj_.search_stack.set_visible_child_name("start");
                             obj_.search_entry.set_text("");
-                            obj_.title_stack.set_visible_child_name("title");
                             obj_.search_toggle_button.set_active(false);
                             obj_.search_toggle_button.set_sensitive(false);
                             return;
@@ -428,7 +420,6 @@ impl ApplicationWindow {
                     obj.imp().list_store.remove(index);
                     if UserConfigManager::instance().get_map().is_empty() {
                         obj.imp().search_entry.set_text("");
-                        obj.imp().title_stack.set_visible_child_name("title");
                         obj.imp().search_toggle_button.set_active(false);
                         obj.imp().search_toggle_button.set_sensitive(false);
                     }
