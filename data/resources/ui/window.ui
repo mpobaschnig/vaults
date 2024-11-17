@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <template class="ApplicationWindow" parent="AdwApplicationWindow">
-    <property name="default-width">640</property>
-    <property name="default-height">480</property>
+    <property name="default-width">720</property>
+    <property name="default-height">640</property>
     <property name="content">
       <object class="AdwToolbarView">
         <child type="top">
