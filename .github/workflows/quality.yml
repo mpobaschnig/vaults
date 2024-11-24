@@ -5,10 +5,11 @@ on: [pull_request, workflow_dispatch]
 jobs:
   quality:
     runs-on: ubuntu-24.04
+    container: fedora:41
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: sudo apt install -y libgtk-4-dev libadwaita-1-dev meson gettext
+        run: sudo dnf install -y gtk4-devel libadwaita-devel meson gettext
       - name: Run meson setup
         run: meson setup build
       - name: Run clippy
