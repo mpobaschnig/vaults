@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install dependencies
-        run: sudo dnf install -y gtk4-devel libadwaita-devel meson gettext
+        run: sudo dnf install -y gtk4-devel libadwaita-devel meson gettext cargo rust clippy rustfmt
       - name: Run meson setup
         run: meson setup build
       - name: Run clippy
