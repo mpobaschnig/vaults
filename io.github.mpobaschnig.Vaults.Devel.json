@@ -1,10 +1,11 @@
 {
     "id": "io.github.mpobaschnig.Vaults.Devel",
     "runtime": "org.gnome.Platform",
-    "runtime-version": "46",
+    "runtime-version": "47",
     "sdk": "org.gnome.Sdk",
     "sdk-extensions": [
-        "org.freedesktop.Sdk.Extension.rust-stable"
+        "org.freedesktop.Sdk.Extension.rust-stable",
+        "org.freedesktop.Sdk.Extension.llvm18"
     ],
     "command": "vaults",
     "finish-args": [
@@ -24,9 +25,10 @@
         "/lib/pkgconfig"
     ],
     "build-options": {
-        "append-path": "/usr/lib/sdk/rust-stable/bin",
+        "append-path": "/usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/llvm18/bin",
+        "prepend-ld-library-path": "/usr/lib/sdk/llvm18/lib",
         "env": {
-            "RUST_BACKTRACE": "1"
+            "RUSTFLAGS": "-C force-frame-pointers=yes -C symbol-mangling-version=v0 -C linker=clang -C link-arg=-fuse-ld=/usr/lib/sdk/rust-stable/bin/mold"
         },
         "build-args": [
             "--share=network"
@@ -109,16 +111,19 @@
             "name": "range-v3",
             "buildsystem": "cmake-ninja",
             "config-opts": [
-                "-DCMAKE_BUILD_TYPE=Release"
+                "-DCMAKE_C_COMPILER=clang",
+                "-DCMAKE_CXX_COMPILER=clang++",
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DRANGES_HAS_WERROR=0"
             ],
             "cleanup": [
                 "*"
             ],
             "sources": [
                 {
-                    "type": "archive",
-                    "url": "https://github.com/ericniebler/range-v3/archive/refs/tags/0.12.0.tar.gz",
-                    "sha256": "015adb2300a98edfceaf0725beec3337f542af4915cec4d0b89fa0886f4ba9cb"
+                    "type": "git",
+                    "url": "https://github.com/ericniebler/range-v3",
+                    "commit": "7e6f34b1e820fb8321346888ef0558a0ec842b8e"
                 }
             ]
         },
