@@ -24,6 +24,7 @@ use crate::ui::ApplicationWindow;
 use crate::ui::PreferencesWindow;
 use crate::user_config_manager::UserConfigManager;
 
+use adw::prelude::AdwDialogExt;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gio::ApplicationFlags;
@@ -278,7 +279,7 @@ impl VApplication {
     }
 
     fn show_about_dialog(&self) {
-        let about_window = adw::AboutWindow::new();
+        let about_window = adw::AboutDialog::new();
 
         about_window.set_application_icon(config::APP_ID);
         about_window.set_application_name("Vaults");
@@ -289,13 +290,11 @@ impl VApplication {
         about_window.set_developer_name("Martin Pobschnig");
         about_window.set_issue_url("https://github.com/mpobaschnig/Vaults/issues");
         about_window.set_license_type(gtk::License::Gpl30);
-        about_window.set_modal(true);
         about_window.set_support_url("https://github.com/mpobaschnig/Vaults/discussions");
-        about_window.set_transient_for(Some(&self.active_window().unwrap()));
         about_window.set_version(config::VERSION);
         about_window.set_website("https://github.com/mpobaschnig/Vaults");
 
-        about_window.set_visible(true);
+        about_window.present(Some(&self.active_window().unwrap()));
     }
 
     pub fn run(&self) {
