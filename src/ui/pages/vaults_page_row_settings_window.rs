@@ -17,10 +17,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use adw::prelude::AlertDialogExt;
+use adw::prelude::AlertDialogExtManual;
 use adw::prelude::ExpanderRowExt;
-use adw::prelude::MessageDialogExtManual;
 use adw::subclass::prelude::*;
-use adw::{prelude::ComboRowExt, prelude::MessageDialogExt, prelude::PreferencesGroupExt};
+use adw::{prelude::ComboRowExt, prelude::PreferencesGroupExt};
 use gettextrs::gettext;
 use gtk::{
     self, gio,
@@ -280,12 +281,10 @@ impl VaultsPageRowSettingsWindow {
     }
 
     fn remove_button_clicked(&self) {
-        let confirm_dialog = adw::MessageDialog::builder()
+        let confirm_dialog = adw::AlertDialog::builder()
             .heading(gettext("Remove Vault?"))
             .default_response(gettext("Cancel"))
-            .transient_for(self)
             .build();
-
         confirm_dialog.add_responses(&[
             ("cancel", &gettext("Cancel")),
             ("remove", &gettext("Remove")),
@@ -302,6 +301,7 @@ impl VaultsPageRowSettingsWindow {
         confirm_dialog.set_extra_child(Some(&preference_group));
 
         confirm_dialog.choose(
+            self,
             None::<&gio::Cancellable>,
             clone!(
                 #[strong(rename_to = obj)]
@@ -324,13 +324,13 @@ impl VaultsPageRowSettingsWindow {
                                             "Could not delete encrypted data: {}",
                                             e.kind()
                                         );
-                                        let err_dialog = adw::MessageDialog::builder()
-                                            .transient_for(&obj)
+                                        let err_dialog = adw::AlertDialog::builder()
                                             .body(gettext("Could not remove encrypted data."))
                                             .build();
                                         err_dialog.add_response("close", &gettext("Close"));
                                         err_dialog.set_default_response(Some("close"));
                                         err_dialog.choose(
+                                            &obj,
                                             None::<&gio::Cancellable>,
                                             clone!(
                                                 #[strong(rename_to = _o)]
