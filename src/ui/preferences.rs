@@ -19,7 +19,6 @@
 
 use adw::prelude::*;
 use adw::subclass::dialog::AdwDialogImpl;
-use adw::subclass::window::AdwWindowImpl;
 use gettextrs::gettext;
 use glib::clone;
 use gtk::gio;
