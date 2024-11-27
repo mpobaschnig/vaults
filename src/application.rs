@@ -21,7 +21,7 @@ use crate::backend::Backend;
 use crate::config;
 use crate::ui::pages::VaultsPageRowPasswordPromptWindow;
 use crate::ui::ApplicationWindow;
-use crate::ui::PreferencesWindow;
+use crate::ui::VaultsSettingsWindow;
 use crate::user_config_manager::UserConfigManager;
 
 use adw::prelude::AdwDialogExt;
@@ -227,7 +227,7 @@ impl VApplication {
             self,
             "preferences",
             clone!(
-                #[weak(rename_to = obj)]
+                #[strong(rename_to = obj)]
                 self,
                 move |_, _| {
                     obj.show_preferences();
@@ -273,9 +273,8 @@ impl VApplication {
     }
 
     fn show_preferences(&self) {
-        let preferences = PreferencesWindow::new();
-
-        preferences.set_visible(true);
+        let preferences = VaultsSettingsWindow::new();
+        AdwDialogExt::present(&preferences, Some(&self.active_window().unwrap()));
     }
 
     fn show_about_dialog(&self) {

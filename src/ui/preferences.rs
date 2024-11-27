@@ -18,19 +18,19 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use adw::prelude::*;
+use adw::subclass::dialog::AdwDialogImpl;
+use adw::subclass::window::AdwWindowImpl;
 use gettextrs::gettext;
+use glib::clone;
 use gtk::gio;
-use gtk::glib;
-use gtk::glib::clone;
 use gtk::glib::GString;
 use gtk::subclass::prelude::*;
+use gtk::{glib, CompositeTemplate};
 
 use crate::GlobalConfigManager;
-use crate::VApplication;
 
 mod imp {
-    use adw::subclass::window::AdwWindowImpl;
-    use gtk::{glib, subclass::prelude::*, CompositeTemplate};
+    use super::*;
 
     #[derive(Debug, CompositeTemplate)]
     #[template(resource = "/io/github/mpobaschnig/Vaults/preferences.ui")]
@@ -56,8 +56,8 @@ mod imp {
     #[glib::object_subclass]
     impl ObjectSubclass for VaultsSettingsWindow {
         const NAME: &'static str = "VaultSettingsWindow";
-        type ParentType = adw::Window;
-        type Type = super::PreferencesWindow;
+        type ParentType = adw::Dialog;
+        type Type = super::VaultsSettingsWindow;
 
         fn new() -> Self {
             Self {
@@ -89,37 +89,25 @@ mod imp {
 
     impl WidgetImpl for VaultsSettingsWindow {}
     impl WindowImpl for VaultsSettingsWindow {}
-    impl AdwWindowImpl for VaultsSettingsWindow {}
-    impl DialogImpl for VaultsSettingsWindow {}
+    impl AdwDialogImpl for VaultsSettingsWindow {}
 }
 
 glib::wrapper! {
-    pub struct PreferencesWindow(ObjectSubclass<imp::VaultsSettingsWindow>)
-        @extends gtk::Widget, adw::Window, gtk::Window;
+    pub struct VaultsSettingsWindow(ObjectSubclass<imp::VaultsSettingsWindow>)
+        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window;
 }
 
-impl Default for PreferencesWindow {
+impl Default for VaultsSettingsWindow {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl PreferencesWindow {
+impl VaultsSettingsWindow {
     pub fn new() -> Self {
         let o: Self = glib::Object::builder().build();
-
-        let window = gio::Application::default()
-            .unwrap()
-            .downcast_ref::<VApplication>()
-            .unwrap()
-            .active_window()
-            .unwrap();
-        o.set_transient_for(Some(&window));
-
         o.init();
-
         o.setup_signals();
-
         o
     }
 

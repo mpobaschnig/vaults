@@ -2,16 +2,20 @@
 <interface>
   <requires lib="gtk" version="4.0"/>
   <requires lib="libadwaita" version="1.0"/>
-  <template class="VaultSettingsWindow" parent="AdwWindow">
-    <property name="default-height">520</property>
-    <property name="default-width">600</property>
-    <property name="modal">1</property>
-    <property name="destroy-with-parent">1</property>
-    <property name="title" translatable="yes">Preferences</property>
-    <property name="content">
+  <template class="VaultSettingsWindow" parent="AdwDialog">
+    <property name="width_request">320</property>
+    <property name="height_request">280</property>
+    <property name="content_width">600</property>
+    <property name="content_height">520</property>
+    <child>
       <object class="AdwToolbarView">
         <child type="top">
-          <object class="AdwHeaderBar" id="header_bar">
+          <object class="AdwHeaderBar">
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="title" translatable="yes">Preferences</property>
+              </object>
+            </property>
           </object>
         </child>
         <property name="content">
@@ -119,6 +123,6 @@
           </object>
         </property>
       </object>
-    </property>
+    </child>
   </template>
 </interface>
