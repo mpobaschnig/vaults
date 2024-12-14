@@ -84,6 +84,7 @@ glib::wrapper! {
 impl GlobalConfigManager {
     pub fn instance() -> Self {
         unsafe {
+            #[allow(static_mut_refs)]
             match GLOBAL_CONFIG_MANAGER.as_ref() {
                 Some(user_config) => user_config.clone(),
                 None => {
