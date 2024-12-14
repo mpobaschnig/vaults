@@ -108,6 +108,7 @@ impl UserConfigManager {
 
     pub fn instance() -> Self {
         unsafe {
+            #[allow(static_mut_refs)]
             match USER_CONFIG_MANAGER.as_ref() {
                 Some(user_config) => user_config.clone(),
                 None => {
