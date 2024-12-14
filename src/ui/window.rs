@@ -611,6 +611,6 @@ impl ApplicationWindow {
     }
 
     pub fn get_view(&self) -> Option<GString> {
-        return self.imp().window_stack.visible_child_name();
+        self.imp().window_stack.visible_child_name()
     }
 }
