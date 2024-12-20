@@ -17,6 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use adw::prelude::AdwDialogExt;
 use adw::{prelude::ActionRowExt, prelude::PreferencesRowExt, subclass::prelude::*};
 use gettextrs::gettext;
 use glib::{clone, subclass};
@@ -349,8 +350,6 @@ impl VaultsPageRow {
                 move |dialog: VaultsPageRowPasswordPromptWindow| {
                     let password = dialog.get_password();
 
-                    dialog.close();
-
                     obj.imp().settings_button.set_sensitive(false);
                     obj.imp().open_folder_button.set_sensitive(false);
 
@@ -483,12 +482,19 @@ impl VaultsPageRow {
                 self,
                 move |dialog: VaultsPageRowSettingsWindow| {
                     obj.emit_by_name::<()>("remove", &[]);
-                    dialog.close();
+                    AdwDialogExt::close(&dialog);
                 }
             ),
         );
 
-        dialog.present();
+        let window = gtk::gio::Application::default()
+            .unwrap()
+            .downcast_ref::<VApplication>()
+            .unwrap()
+            .active_window()
+            .unwrap()
+            .clone();
+        AdwDialogExt::present(&dialog, Some(&window));
     }
 
     pub fn get_vault(&self) -> Vault {
