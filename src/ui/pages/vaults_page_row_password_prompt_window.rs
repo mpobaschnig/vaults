@@ -17,10 +17,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use adw::subclass::prelude::*;
-use gtk::{self, gio, glib, glib::clone, prelude::*, CompositeTemplate};
-
-use crate::VApplication;
+use adw::{prelude::AdwDialogExt, subclass::prelude::*};
+use gtk::{self, glib, glib::clone, prelude::*, CompositeTemplate};
 
 mod imp {
     use gtk::glib::subclass::Signal;
@@ -44,7 +42,7 @@ mod imp {
     #[glib::object_subclass]
     impl ObjectSubclass for VaultsPageRowPasswordPromptWindow {
         const NAME: &'static str = "VaultsPageRowPasswordPromptWindow";
-        type ParentType = adw::Window;
+        type ParentType = adw::Dialog;
         type Type = super::VaultsPageRowPasswordPromptWindow;
 
         fn new() -> Self {
@@ -79,15 +77,15 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for VaultsPageRowPasswordPromptWindow {}
-    impl AdwWindowImpl for VaultsPageRowPasswordPromptWindow {}
-    impl WindowImpl for VaultsPageRowPasswordPromptWindow {}
+    impl AdwDialogImpl for VaultsPageRowPasswordPromptWindow {}
     impl DialogImpl for VaultsPageRowPasswordPromptWindow {}
+    impl WidgetImpl for VaultsPageRowPasswordPromptWindow {}
+    impl WindowImpl for VaultsPageRowPasswordPromptWindow {}
 }
 
 glib::wrapper! {
     pub struct VaultsPageRowPasswordPromptWindow(ObjectSubclass<imp::VaultsPageRowPasswordPromptWindow>)
-        @extends gtk::Widget, adw::Window, gtk::Window;
+        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window;
 }
 
 impl Default for VaultsPageRowPasswordPromptWindow {
@@ -101,15 +99,6 @@ impl VaultsPageRowPasswordPromptWindow {
         let dialog: Self = glib::Object::builder().build();
 
         dialog.add_css_class("flat");
-
-        if let Some(window) = gio::Application::default()
-            .unwrap()
-            .downcast_ref::<VApplication>()
-            .unwrap()
-            .active_window()
-        {
-            dialog.set_transient_for(Some(&window));
-        }
 
         dialog
     }
@@ -146,7 +135,7 @@ impl VaultsPageRowPasswordPromptWindow {
 
     fn unlock_button_clicked(&self) {
         self.emit_by_name::<()>("unlock", &[]);
-        //self.close();
+        AdwDialogExt::close(self);
     }
 
     fn check_unlock_button_enable_conditions(&self) {

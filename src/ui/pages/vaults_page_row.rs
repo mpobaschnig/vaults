@@ -430,7 +430,15 @@ impl VaultsPageRow {
             ),
         );
 
-        dialog.set_visible(true);
+        let window = gtk::gio::Application::default()
+            .unwrap()
+            .downcast_ref::<VApplication>()
+            .unwrap()
+            .active_window()
+            .unwrap()
+            .clone();
+
+        AdwDialogExt::present(&dialog, Some(&window));
     }
 
     fn locker_button_clicked(&self) {

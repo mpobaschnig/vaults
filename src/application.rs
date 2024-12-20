@@ -117,7 +117,7 @@ mod imp {
                                 ),
                             );
 
-                            dialog.set_visible(true);
+                            AdwDialogExt::present(&dialog, Option::<&gtk::Widget>::None);
                         }
                         None => {
                             log::error!(
