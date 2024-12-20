@@ -17,30 +17,29 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use crate::ui::pages::vaults_page_row_settings_window;
 use adw::prelude::AlertDialogExt;
 use adw::prelude::AlertDialogExtManual;
 use adw::prelude::ExpanderRowExt;
+use adw::subclass::dialog::AdwDialogImpl;
 use adw::subclass::prelude::*;
 use adw::{prelude::ComboRowExt, prelude::PreferencesGroupExt};
 use gettextrs::gettext;
+use gtk::glib::subclass::Signal;
 use gtk::{
     self, gio,
     glib::{self, clone, GString},
     prelude::*,
     CompositeTemplate,
 };
+use once_cell::sync::Lazy;
+
 use std::cell::RefCell;
 use strum::IntoEnumIterator;
 
-use crate::{
-    backend, backend::Backend, user_config_manager::UserConfigManager, vault::*, VApplication,
-};
+use crate::{backend, backend::Backend, user_config_manager::UserConfigManager, vault::*};
 
 mod imp {
-    use crate::ui::pages::vaults_page_row_settings_window;
-    use gtk::glib::subclass::Signal;
-    use once_cell::sync::Lazy;
-
     use super::*;
 
     #[derive(Debug, CompositeTemplate)]
@@ -88,7 +87,7 @@ mod imp {
     #[glib::object_subclass]
     impl ObjectSubclass for VaultsPageRowSettingsWindow {
         const NAME: &'static str = "VaultsPageRowSettingsWindow";
-        type ParentType = adw::Window;
+        type ParentType = adw::Dialog;
         type Type = vaults_page_row_settings_window::VaultsPageRowSettingsWindow;
 
         fn new() -> Self {
@@ -140,28 +139,20 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for VaultsPageRowSettingsWindow {}
-    impl AdwWindowImpl for VaultsPageRowSettingsWindow {}
-    impl WindowImpl for VaultsPageRowSettingsWindow {}
+    impl AdwDialogImpl for VaultsPageRowSettingsWindow {}
     impl DialogImpl for VaultsPageRowSettingsWindow {}
+    impl WidgetImpl for VaultsPageRowSettingsWindow {}
+    impl WindowImpl for VaultsPageRowSettingsWindow {}
 }
 
 glib::wrapper! {
     pub struct VaultsPageRowSettingsWindow(ObjectSubclass<imp::VaultsPageRowSettingsWindow>)
-        @extends gtk::Widget, adw::Window, gtk::Window;
+        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window;
 }
 
 impl VaultsPageRowSettingsWindow {
     pub fn new(vault: Vault) -> Self {
         let dialog: Self = glib::Object::builder().build();
-
-        let window = gio::Application::default()
-            .unwrap()
-            .downcast_ref::<VApplication>()
-            .unwrap()
-            .active_window()
-            .unwrap();
-        dialog.set_transient_for(Some(&window));
 
         dialog.fill_combo_box_text();
         dialog.set_vault(vault);
