@@ -18,7 +18,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::user_config_manager::UserConfigManager;
-use crate::{backend, global_config_manager::GlobalConfigManager, vault::*, VApplication};
+use crate::{backend, global_config_manager::GlobalConfigManager, vault::*};
+use adw::prelude::AdwDialogExt;
 use adw::prelude::ComboRowExt;
 use gettextrs::gettext;
 use gtk::gio;
@@ -80,7 +81,7 @@ mod imp {
     #[glib::object_subclass]
     impl ObjectSubclass for AddNewVaultWindow {
         const NAME: &'static str = "AddNewVaultWindow";
-        type ParentType = adw::Window;
+        type ParentType = adw::Dialog;
         type Type = super::AddNewVaultWindow;
 
         fn new() -> Self {
@@ -137,15 +138,15 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for AddNewVaultWindow {}
-    impl AdwWindowImpl for AddNewVaultWindow {}
-    impl WindowImpl for AddNewVaultWindow {}
+    impl AdwDialogImpl for AddNewVaultWindow {}
     impl DialogImpl for AddNewVaultWindow {}
+    impl WidgetImpl for AddNewVaultWindow {}
+    impl WindowImpl for AddNewVaultWindow {}
 }
 
 glib::wrapper! {
     pub struct AddNewVaultWindow(ObjectSubclass<imp::AddNewVaultWindow>)
-        @extends gtk::Widget, adw::Window, gtk::Window;
+        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window;
 }
 
 impl Default for AddNewVaultWindow {
@@ -158,14 +159,6 @@ impl AddNewVaultWindow {
     pub fn new() -> Self {
         let dialog: Self = glib::Object::builder().build();
 
-        let window = gio::Application::default()
-            .unwrap()
-            .downcast_ref::<VApplication>()
-            .unwrap()
-            .active_window()
-            .unwrap();
-        dialog.set_transient_for(Some(&window));
-
         dialog
     }
 
@@ -177,7 +170,7 @@ impl AddNewVaultWindow {
             self,
             move |_| {
                 obj.emit_by_name::<()>("add", &[]);
-                obj.close();
+                AdwDialogExt::close(&obj);
             }
         ));
 
@@ -186,7 +179,7 @@ impl AddNewVaultWindow {
             self,
             move |_| {
                 obj.emit_by_name::<()>("close", &[]);
-                obj.close();
+                AdwDialogExt::close(&obj);
             }
         ));
 
