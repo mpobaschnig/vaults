@@ -25,6 +25,7 @@ use crate::{
     application::VApplication, backend::Backend, user_config_manager::UserConfigManager, vault::*,
 };
 
+use adw::prelude::AdwDialogExt;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
@@ -530,7 +531,7 @@ impl ApplicationWindow {
                             });
                         }
                     }
-                    dialog.close();
+                    AdwDialogExt::close(&dialog);
                 }
             ),
         );
@@ -539,11 +540,19 @@ impl ApplicationWindow {
             "close",
             false,
             closure_local!(move |dialog: AddNewVaultWindow| {
-                dialog.close();
+                AdwDialogExt::close(&dialog);
             }),
         );
 
-        dialog.present();
+        let window = gtk::gio::Application::default()
+            .unwrap()
+            .downcast_ref::<VApplication>()
+            .unwrap()
+            .active_window()
+            .unwrap()
+            .clone();
+
+        AdwDialogExt::present(&dialog, Some(&window));
     }
 
     fn import_vault_clicked(&self) {
