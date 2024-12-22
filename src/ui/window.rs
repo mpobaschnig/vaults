@@ -578,11 +578,19 @@ impl ApplicationWindow {
             "close",
             false,
             closure_local!(move |dialog: ImportVaultDialog| {
-                dialog.close();
+                AdwDialogExt::close(&dialog);
             }),
         );
 
-        dialog.present();
+        let window = gtk::gio::Application::default()
+            .unwrap()
+            .downcast_ref::<VApplication>()
+            .unwrap()
+            .active_window()
+            .unwrap()
+            .clone();
+
+        AdwDialogExt::present(&dialog, Some(&window));
     }
 
     fn refresh_clicked(&self) {

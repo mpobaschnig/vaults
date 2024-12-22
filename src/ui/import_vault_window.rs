@@ -17,14 +17,14 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use adw::prelude::ComboRowExt;
+use adw::prelude::{AdwDialogExt, ComboRowExt};
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gtk::{self, gio, gio::File, glib, glib::clone, glib::GString, prelude::*, CompositeTemplate};
 use std::cell::RefCell;
 use strum::IntoEnumIterator;
 
-use crate::{backend, user_config_manager::UserConfigManager, vault::*, VApplication};
+use crate::{backend, user_config_manager::UserConfigManager, vault::*};
 
 mod imp {
     use gtk::glib::subclass::Signal;
@@ -74,7 +74,7 @@ mod imp {
     #[glib::object_subclass]
     impl ObjectSubclass for ImportVaultDialog {
         const NAME: &'static str = "ImportVaultDialog";
-        type ParentType = adw::Window;
+        type ParentType = adw::Dialog;
         type Type = super::ImportVaultDialog;
 
         fn new() -> Self {
@@ -130,15 +130,15 @@ mod imp {
         }
     }
 
-    impl WidgetImpl for ImportVaultDialog {}
-    impl AdwWindowImpl for ImportVaultDialog {}
-    impl WindowImpl for ImportVaultDialog {}
+    impl AdwDialogImpl for ImportVaultDialog {}
     impl DialogImpl for ImportVaultDialog {}
+    impl WidgetImpl for ImportVaultDialog {}
+    impl WindowImpl for ImportVaultDialog {}
 }
 
 glib::wrapper! {
     pub struct ImportVaultDialog(ObjectSubclass<imp::ImportVaultDialog>)
-        @extends gtk::Widget, adw::Window, gtk::Window;
+        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window;
 }
 
 impl Default for ImportVaultDialog {
@@ -151,14 +151,6 @@ impl ImportVaultDialog {
     pub fn new() -> Self {
         let dialog: Self = glib::Object::builder().build();
 
-        let window = gio::Application::default()
-            .unwrap()
-            .downcast_ref::<VApplication>()
-            .unwrap()
-            .active_window()
-            .unwrap();
-        dialog.set_transient_for(Some(&window));
-
         dialog
     }
 
@@ -170,7 +162,7 @@ impl ImportVaultDialog {
             self,
             move |_| {
                 obj.emit_by_name::<()>("close", &[]);
-                obj.close();
+                AdwDialogExt::close(&obj);
             }
         ));
 
@@ -195,7 +187,7 @@ impl ImportVaultDialog {
             self,
             move |_| {
                 obj.emit_by_name::<()>("import", &[]);
-                obj.close();
+                AdwDialogExt::close(&obj);
             }
         ));
 
