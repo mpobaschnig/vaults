@@ -747,26 +747,44 @@ impl VaultsPageRowSettingsWindow {
     }
 
     fn custom_binary_button_clicked(&self) {
-        let dialog = gtk::FileDialog::builder()
-            .title(gettext("Choose Custom Binary"))
-            .modal(true)
-            .accept_label(gettext("Select"))
-            .build();
+        let window = gtk::gio::Application::default()
+            .unwrap()
+            .downcast_ref::<VApplication>()
+            .unwrap()
+            .active_window()
+            .unwrap()
+            .clone();
 
-        dialog.open(
-            Some(self),
-            gio::Cancellable::NONE,
-            clone!(
-                #[weak(rename_to = obj)]
-                self,
-                move |file| {
-                    if let Ok(file) = file {
-                        let path = String::from(file.path().unwrap().as_os_str().to_str().unwrap());
-                        obj.imp().custom_binary_entry_row.set_text(&path);
-                    }
-                }
-            ),
-        );
+        glib::spawn_future_local(clone!(
+            #[strong]
+            window,
+            #[strong(rename_to = obj)]
+            self,
+            async move {
+                let dialog = gtk::FileDialog::builder()
+                    .title(gettext("Choose Custom Binary"))
+                    .modal(true)
+                    .accept_label(gettext("Select"))
+                    .build();
+
+                dialog.select_folder(
+                    Some(&window),
+                    gio::Cancellable::NONE,
+                    clone!(
+                        #[strong]
+                        obj,
+                        move |file| {
+                            if let Ok(file) = file {
+                                let path = String::from(
+                                    file.path().unwrap().as_os_str().to_str().unwrap(),
+                                );
+                                obj.imp().custom_binary_entry_row.set_text(&path);
+                            }
+                        }
+                    ),
+                );
+            }
+        ));
     }
 
     fn fill_combo_box_text(&self) {
