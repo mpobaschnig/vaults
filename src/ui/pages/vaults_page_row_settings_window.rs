@@ -399,7 +399,11 @@ impl VaultsPageRowSettingsWindow {
             #[strong(rename_to = obj)]
             self,
             async move {
-                let dialog = gtk::FileDialog::new();
+                let dialog = gtk::FileDialog::builder()
+                    .title(gettext("Choose Encrypted Data Directory"))
+                    .modal(true)
+                    .accept_label(gettext("Select"))
+                    .build();
 
                 dialog.select_folder(
                     Some(&window),
@@ -436,7 +440,11 @@ impl VaultsPageRowSettingsWindow {
             #[strong(rename_to = obj)]
             self,
             async move {
-                let dialog = gtk::FileDialog::new();
+                let dialog = gtk::FileDialog::builder()
+                    .title(gettext("Choose Mount Directory"))
+                    .modal(true)
+                    .accept_label(gettext("Select"))
+                    .build();
 
                 dialog.select_folder(
                     Some(&window),
