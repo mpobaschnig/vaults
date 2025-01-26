@@ -26,6 +26,7 @@ use gtk::glib::GString;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 
+use crate::application::VApplication;
 use crate::GlobalConfigManager;
 
 mod imp {
@@ -173,51 +174,85 @@ impl VaultsSettingsWindow {
     }
 
     fn encrypted_data_directory_button_clicked(&self) {
-        let dialog = gtk::FileDialog::builder()
-            .title(gettext("Choose Encrypted Data Directory"))
-            .modal(true)
-            .accept_label(gettext("Select"))
-            .build();
+        let window = gtk::gio::Application::default()
+            .unwrap()
+            .downcast_ref::<VApplication>()
+            .unwrap()
+            .active_window()
+            .unwrap()
+            .clone();
 
-        dialog.select_folder(
-            Some(self),
-            gio::Cancellable::NONE,
-            clone!(
-                #[weak(rename_to = obj)]
-                self,
-                move |directory| {
-                    if let Ok(directory) = directory {
-                        let path =
-                            String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                        obj.imp().encrypted_data_directory_entry_row.set_text(&path);
-                    }
-                }
-            ),
-        );
+        glib::spawn_future_local(clone!(
+            #[strong]
+            window,
+            #[strong(rename_to = obj)]
+            self,
+            async move {
+                let dialog = gtk::FileDialog::builder()
+                    .title(gettext("Choose Encrypted Data Directory"))
+                    .modal(true)
+                    .accept_label(gettext("Select"))
+                    .build();
+
+                dialog.select_folder(
+                    Some(&window),
+                    gio::Cancellable::NONE,
+                    clone!(
+                        #[strong]
+                        obj,
+                        move |directory| {
+                            if let Ok(directory) = directory {
+                                let path = String::from(
+                                    directory.path().unwrap().as_os_str().to_str().unwrap(),
+                                );
+                                obj.imp().encrypted_data_directory_entry_row.set_text(&path);
+                            }
+                        }
+                    ),
+                );
+            }
+        ));
     }
 
     fn mount_directory_button_clicked(&self) {
-        let dialog = gtk::FileDialog::builder()
-            .title(gettext("Choose Mount Directory"))
-            .modal(true)
-            .accept_label(gettext("Select"))
-            .build();
+        let window = gtk::gio::Application::default()
+            .unwrap()
+            .downcast_ref::<VApplication>()
+            .unwrap()
+            .active_window()
+            .unwrap()
+            .clone();
 
-        dialog.select_folder(
-            Some(self),
-            gio::Cancellable::NONE,
-            clone!(
-                #[weak(rename_to = obj)]
-                self,
-                move |directory| {
-                    if let Ok(directory) = directory {
-                        let path =
-                            String::from(directory.path().unwrap().as_os_str().to_str().unwrap());
-                        obj.imp().mount_directory_entry_row.set_text(&path);
-                    }
-                }
-            ),
-        );
+        glib::spawn_future_local(clone!(
+            #[strong]
+            window,
+            #[strong(rename_to = obj)]
+            self,
+            async move {
+                let dialog = gtk::FileDialog::builder()
+                    .title(gettext("Choose Mount Directory"))
+                    .modal(true)
+                    .accept_label(gettext("Select"))
+                    .build();
+
+                dialog.select_folder(
+                    Some(&window),
+                    gio::Cancellable::NONE,
+                    clone!(
+                        #[strong]
+                        obj,
+                        move |directory| {
+                            if let Ok(directory) = directory {
+                                let path = String::from(
+                                    directory.path().unwrap().as_os_str().to_str().unwrap(),
+                                );
+                                obj.imp().mount_directory_entry_row.set_text(&path);
+                            }
+                        }
+                    ),
+                );
+            }
+        ));
     }
 
     fn general_apply_changes_button_clicked(&self) {
