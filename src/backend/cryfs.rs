@@ -19,8 +19,9 @@
 
 use super::BackendError;
 use crate::global_config_manager::GlobalConfigManager;
-use crate::vault::VaultConfig;
+use crate::vault::{self, VaultConfig};
 use gettextrs::gettext;
+use std::io::Read;
 use std::process::Command;
 use std::{self, io::Write, process::Stdio};
 
@@ -53,7 +54,60 @@ pub fn is_available(vault_config: &VaultConfig) -> Result<bool, BackendError> {
 }
 
 pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
-    open(vault_config, password)?;
+    let mut child = Command::new("flatpak-spawn")
+        .arg("--host")
+        .arg(get_binary_path(vault_config))
+        .env("CRYFS_FRONTEND", "noninteractive")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .arg(&vault_config.encrypted_data_directory)
+        .arg(&vault_config.mount_directory)
+        .spawn()?;
+
+    // // Write to the child process's stdin
+    // if let Some(mut stdin) = child.stdin.take() {
+    //     //stdin.write_all(b"y\nc\nc\n")?;
+    //     stdin.write(b"y\n");
+    //     stdin.write(b"c\n");
+    //     stdin.write(b"c\n");
+    // }
+
+    // // Read from the child process's stdout
+    // if let Some(mut stdout) = child.stdout.take() {
+    //     let mut buf = Vec::new();
+    //     stdout.read_to_end(&mut buf)?;
+    //     println!("Output: {}", String::from_utf8_lossy(&buf));
+    // }
+
+    // // Wait for the child process to exit
+    // let status = child.wait()?;
+    // if status.success() {
+    // } else {
+    //     return Err(status_to_err(status.code()))
+    // }
+
+    let mut pw = String::from("y");
+    pw.push('\n');
+    pw.push_str(&password);
+    pw.push('\n');
+    pw.push_str(&password);
+    pw.push('\n');
+
+    child
+        .stdin
+        .as_mut()
+        .ok_or(BackendError::Generic)?
+        .write_all(pw.as_bytes())?;
+
+    let output = child.wait_with_output()?;
+    if output.status.success() {
+    } else {
+        std::io::stdout().write_all(&output.stdout).unwrap();
+        std::io::stderr().write_all(&output.stderr).unwrap();
+
+        return Err(status_to_err(output.status.code()));
+    }
+
     close(vault_config)
 }
 
@@ -68,7 +122,31 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
         .arg(&vault_config.mount_directory)
         .spawn()?;
 
+    // // Write to the child process's stdin
+    // if let Some(mut stdin) = child.stdin.take() {
+    //     let mut pw = String::from(password);
+    //     pw.push('\n');
+    //     stdin.write(pw.as_bytes())?;
+    // }
+
+    // // Read from the child process's stdout
+    // if let Some(mut stdout) = child.stdout.take() {
+    //     let mut buf = Vec::new();
+    //     stdout.read_to_end(&mut buf)?;
+    //     println!("Output: {}", String::from_utf8_lossy(&buf));
+    // }
+
+    // // Wait for the child process to exit
+    // let status = child.wait()?;
+    // if status.success() {
+    //     Ok(())
+    // } else {
+    //     Err(status_to_err(status.code()))
+    // }
+
     let mut pw = String::from(&password);
+    pw.push('\n');
+    pw.push_str(&password);
     pw.push('\n');
 
     child

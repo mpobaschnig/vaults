@@ -21,6 +21,7 @@ use super::BackendError;
 use crate::global_config_manager::GlobalConfigManager;
 use crate::vault::VaultConfig;
 use gettextrs::gettext;
+use std::io::Read;
 use std::process::Command;
 use std::{io::Write, process::Stdio};
 
@@ -52,6 +53,7 @@ pub fn is_available(vault_config: &VaultConfig) -> Result<bool, BackendError> {
 
 pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
     let mut child = Command::new("flatpak-spawn")
+        .env("CRYFS_FRONTEND", "noninteractive")
         .arg("--host")
         .arg(get_binary_path(vault_config))
         .stdin(Stdio::piped())
@@ -62,26 +64,38 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
         .arg(&vault_config.encrypted_data_directory)
         .spawn()?;
 
-    let mut pw = String::from(&password);
-    pw.push('\n');
-    pw.push_str(&password);
-    pw.push('\n');
+    // Write to the child process's stdin
+    if let Some(mut stdin) = child.stdin.take() {
+        //stdin.write_all(b"y\nc\nc\n")?;
+        stdin.write(b"c");
+        //stdin.write(b"c\n");
+        //stdin.write(b"c\n");
+    }
 
-    child
-        .stdin
-        .as_mut()
-        .ok_or(BackendError::Generic)?
-        .write_all(pw.as_bytes())?;
+    // Read from the child process's stdout
+    if let Some(mut stdout) = child.stdout.take() {
+        let mut buf = Vec::new();
+        stdout.read_to_end(&mut buf)?;
+        println!("Output: {}", String::from_utf8_lossy(&buf));
+    }
 
-    let output = child.wait_with_output()?;
-    if output.status.success() {
+    // Wait for the child process to exit
+    let status = child.wait()?;
+    if status.success() {
         Ok(())
     } else {
-        std::io::stdout().write_all(&output.stdout).unwrap();
-        std::io::stderr().write_all(&output.stderr).unwrap();
-
-        Err(status_to_err(output.status.code()))
+        Err(status_to_err(status.code()))
     }
+
+    //let output = child.wait_with_output()?;
+    //if output.status.success() {
+    //    Ok(())
+    //} else {
+    //    std::io::stdout().write_all(&output.stdout).unwrap();
+    //    std::io::stderr().write_all(&output.stderr).unwrap();
+
+    //    Err(status_to_err(output.status.code()))
+    //}
 }
 
 pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
