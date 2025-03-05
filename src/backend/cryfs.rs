@@ -53,8 +53,38 @@ pub fn is_available(vault_config: &VaultConfig) -> Result<bool, BackendError> {
 }
 
 pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
-    open(vault_config, password)?;
-    close(vault_config)
+    let mut child = Command::new("flatpak-spawn")
+        .arg("--host")
+        .arg(get_binary_path(vault_config))
+        .env("CRYFS_FRONTEND", "noninteractive")
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .arg(&vault_config.encrypted_data_directory)
+        .arg(&vault_config.mount_directory)
+        .spawn()?;
+
+    let mut pw = String::from("y");
+    pw.push('\n');
+    pw.push_str(&password);
+    pw.push('\n');
+    pw.push_str(&password);
+    pw.push('\n');
+
+    child
+        .stdin
+        .as_mut()
+        .ok_or(BackendError::Generic)?
+        .write_all(pw.as_bytes())?;
+
+    let output = child.wait_with_output()?;
+    if output.status.success() {
+        close(vault_config)
+    } else {
+        std::io::stdout().write_all(&output.stdout).unwrap();
+        std::io::stderr().write_all(&output.stderr).unwrap();
+
+        Err(status_to_err(output.status.code()))
+    }
 }
 
 pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
