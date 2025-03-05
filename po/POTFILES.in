@@ -9,26 +9,36 @@ data/resources/ui/import_vault_window.ui
 data/resources/ui/preferences.ui
 data/resources/ui/shortcuts.ui
 data/resources/ui/start_page.ui
-data/resources/ui/vaults_page.ui
-data/resources/ui/vaults_page_row.ui
 data/resources/ui/vaults_page_row_password_prompt_window.ui
 data/resources/ui/vaults_page_row_settings_window.ui
+data/resources/ui/vaults_page_row.ui
+data/resources/ui/vaults_page.ui
 data/resources/ui/window.ui
 
-# src/
-src/application.rs
+# src/backend/
 src/backend/cryfs.rs
 src/backend/gocryptfs.rs
 src/backend/mod.rs
-src/config.rs
-src/main.rs
-src/mod.rs
-src/ui/add_new_vault_window.rs
-src/ui/import_vault_window.rs
-src/ui/mod.rs
+
+# src/ui/pages/
 src/ui/pages/mod.rs
 src/ui/pages/vaults_page_row.rs
 src/ui/pages/vaults_page_row_password_prompt_window.rs
 src/ui/pages/vaults_page_row_settings_window.rs
+
+# src/ui/
+src/ui/add_new_vault_window.rs
+src/ui/import_vault_window.rs
+src/ui/mod.rs
 src/ui/window.rs
+src/ui/preferences.rs
+
+# src/
+src/application.rs
+src/config.rs
+src/global_config_manager.rs
+src/main.rs
+src/mod.rs
 src/user_config_manager.rs
+src/vault.rs
+
