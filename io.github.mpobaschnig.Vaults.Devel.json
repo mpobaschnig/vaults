@@ -177,8 +177,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/cryfs/cryfs/archive/refs/tags/1.0.0-rc1.tar.gz",
-                    "sha256": "7d89ba1302fd6bbf92ad9a06779ed74eca5539052e78309bf10bbbc1d6fe0285"
+                    "url": "https://github.com/cryfs/cryfs/archive/refs/tags/1.0.1.tar.gz",
+                    "sha256": "485e7aa1b3b7e38a5ed422a22817aa2962c411b5afbc8be41d76750c50700a28"
                 },
                 {
                     "type": "patch",
