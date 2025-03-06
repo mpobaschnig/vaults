@@ -36,6 +36,17 @@
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
+    <release version="0.9.0" date="2025-03-06">
+      <description translate="no">
+        <p>Welcome to the 0.9.0 release of Vaults! This update includes:</p>
+        <ul>
+          <li>Update dependencies and runtime to GNOME 47</li>
+          <li>Bundle gocryptfs and CryFS dependency within the Flatpak</li>
+          <li>Update to new libadwaita widgets</li>
+          <li>Bug fixes and general improvements</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.8.0" date="2024-09-01">
       <description translate="no">
         <p>Small update:</p>
