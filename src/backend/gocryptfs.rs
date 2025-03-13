@@ -43,7 +43,9 @@ fn get_binary_path(vault_config: &VaultConfig) -> String {
 }
 
 pub fn is_available(vault_config: &VaultConfig) -> Result<bool, BackendError> {
-    let output = Command::new(get_binary_path(vault_config))
+    let output = Command::new("flatpak-spawn")
+        .arg("--host")
+        .arg(get_binary_path(vault_config))
         .arg("--version")
         .output()?;
 
@@ -117,7 +119,9 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 }
 
 pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
-    let child = Command::new("umount")
+    let child = Command::new("flatpak-spawn")
+        .arg("--host")
+        .arg("umount")
         .stdout(Stdio::piped())
         .arg(&vault_config.mount_directory)
         .spawn()?;
