@@ -36,6 +36,11 @@
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
+    <release version="0.9.1" date="2025-03-13">
+      <description translate="no">
+        <p>Welcome to the 0.9.1 release of Vaults! This update includes a small bug fix to make gocryptfs work again.</p>
+      </description>
+    </release>
     <release version="0.9.0" date="2025-03-06">
       <description translate="no">
         <p>Welcome to the 0.9.0 release of Vaults! This update includes:</p>
