@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: vaults\n"
-"POT-Creation-Date: 2025-03-05 21:00+0100\n"
-"PO-Revision-Date: 2025-03-05 21:00+0100\n"
+"POT-Creation-Date: 2025-03-13 18:53+0100\n"
+"PO-Revision-Date: 2025-03-13 18:53+0100\n"
 "Last-Translator: Martin Pobaschnig <mpobaschnig@protonmail.com>\n"
 "Language-Team: en <LL@li.org>\n"
 "Language: en\n"
@@ -327,105 +327,105 @@ msgstr ""
 msgid "_About Vaults"
 msgstr ""
 
-#: src/backend/cryfs.rs:156 src/backend/cryfs.rs:173
-#: src/backend/gocryptfs.rs:174
+#: src/backend/cryfs.rs:186 src/backend/cryfs.rs:203
+#: src/backend/gocryptfs.rs:178
 msgid "An unknown error occurred."
 msgstr ""
 
-#: src/backend/cryfs.rs:157
+#: src/backend/cryfs.rs:187
 msgid "Invalid arguments were given."
 msgstr ""
 
-#: src/backend/cryfs.rs:158 src/backend/gocryptfs.rs:160
+#: src/backend/cryfs.rs:188 src/backend/gocryptfs.rs:164
 msgid "The password is wrong."
 msgstr ""
 
-#: src/backend/cryfs.rs:159 src/backend/gocryptfs.rs:163
+#: src/backend/cryfs.rs:189 src/backend/gocryptfs.rs:167
 msgid "The password is empty."
 msgstr ""
 
-#: src/backend/cryfs.rs:160
+#: src/backend/cryfs.rs:190
 msgid ""
 "The format of the encrypted data directory is too new for this CryFS "
 "version. Please update CryFS."
 msgstr ""
 
-#: src/backend/cryfs.rs:161
+#: src/backend/cryfs.rs:191
 msgid ""
 "The format of the encrypted data directory is too old for this CryFS version."
 msgstr ""
 
-#: src/backend/cryfs.rs:162
+#: src/backend/cryfs.rs:192
 msgid "The vault uses a different cipher than the default of CryFS."
 msgstr ""
 
-#: src/backend/cryfs.rs:163
+#: src/backend/cryfs.rs:193
 msgid "The encrypted data directory does not exist or is inaccessible."
 msgstr ""
 
-#: src/backend/cryfs.rs:164
+#: src/backend/cryfs.rs:194
 msgid "The mount directory does not exist or is inaccessible."
 msgstr ""
 
-#: src/backend/cryfs.rs:165
+#: src/backend/cryfs.rs:195
 msgid "The mount directory is inside the encrypted data directory."
 msgstr ""
 
-#: src/backend/cryfs.rs:166
+#: src/backend/cryfs.rs:196
 msgid "The encrypted data directory is invalid."
 msgstr ""
 
-#: src/backend/cryfs.rs:167
+#: src/backend/cryfs.rs:197
 msgid ""
 "The encrypted data id in the configuration file is different to the last "
 "time this vault was opened. This could mean someone replaced files in the "
 "encrypted data directory with different ones."
 msgstr ""
 
-#: src/backend/cryfs.rs:168
+#: src/backend/cryfs.rs:198
 msgid ""
 "The encryption key for your encrypted files is different to the last time "
 "this vault was opened. This could mean someone replaced files in the "
 "encrypted data directory with different ones."
 msgstr ""
 
-#: src/backend/cryfs.rs:169
+#: src/backend/cryfs.rs:199
 msgid "Vaults' configuration and the encrypted data configuration mismatches."
 msgstr ""
 
-#: src/backend/cryfs.rs:170
+#: src/backend/cryfs.rs:200
 msgid ""
 "The encrypted data directory is in single-user mode and can only be used "
 "from the user that created it."
 msgstr ""
 
-#: src/backend/cryfs.rs:171
+#: src/backend/cryfs.rs:201
 msgid ""
 "CryFS detected an integrity violation. The encrypted data directory will be "
 "accessible again after the integrity state file has been deleted."
 msgstr ""
 
-#: src/backend/cryfs.rs:172
+#: src/backend/cryfs.rs:202
 msgid "An integrity violation was detected. Vault will be unmounted."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:154
+#: src/backend/gocryptfs.rs:158
 msgid "The encrypted data directory is not empty."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:157
+#: src/backend/gocryptfs.rs:161
 msgid "The mount directory is not empty."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:166
+#: src/backend/gocryptfs.rs:170
 msgid "Vaults cannot read configuration file."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:169
+#: src/backend/gocryptfs.rs:173
 msgid "Vaults cannot write configuration file."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:172
+#: src/backend/gocryptfs.rs:176
 msgid "The file system check reported an error."
 msgstr ""
 
