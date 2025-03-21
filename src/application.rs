@@ -34,7 +34,6 @@ use gtk::glib::VariantTy;
 use gtk::prelude::*;
 use gtk::{gio, glib};
 use gtk_macros::action;
-use log::{debug, info};
 use std::cell::RefCell;
 
 mod imp {
@@ -67,7 +66,7 @@ mod imp {
 
     impl gio::subclass::prelude::ApplicationImpl for VApplication {
         fn activate(&self) {
-            debug!("GtkApplication<VApplication>::activate");
+            log::trace!("GtkApplication<VApplication>::activate");
 
             if let Some(ref window) = *self.window.borrow() {
                 window.present();
@@ -82,11 +81,15 @@ mod imp {
 
             match *self.only_prompt_type.borrow() {
                 OnlyPromptType::None => {
+                    log::trace!("OnlyPromptType::None");
+
                     let window = ApplicationWindow::new(&app);
                     window.present();
                     self.window.replace(Some(window));
                 }
                 OnlyPromptType::Open => {
+                    log::trace!("OnlyPromptType::Open");
+
                     let window = ApplicationWindow::new(&app);
                     self.window.replace(Some(window));
 
@@ -95,6 +98,12 @@ mod imp {
 
                     match vault_config {
                         Some(vault_config) => {
+                            log::debug!(
+                                "Opening vault {:?}: {:?}",
+                                *self.only_pompt_vault.borrow(),
+                                &vault_config
+                            );
+
                             let dialog = VaultsPageRowPasswordPromptWindow::new();
                             dialog.set_name(&self.only_pompt_vault.borrow());
                             dialog.connect_closure(
@@ -129,6 +138,8 @@ mod imp {
                     }
                 }
                 OnlyPromptType::Close => {
+                    log::trace!("OnlyPromptType::Close");
+
                     let window = ApplicationWindow::new(&app);
                     self.window.replace(Some(window));
 
@@ -137,6 +148,12 @@ mod imp {
 
                     match vault_config {
                         Some(vault_config) => {
+                            log::debug!(
+                                "Closing vault {:?}: {:?}",
+                                *self.only_pompt_vault.borrow(),
+                                &vault_config
+                            );
+
                             let result = Backend::close(vault_config);
                             match result {
                                 Ok(_) => log::info!("Closed vault successfully."),
@@ -156,17 +173,22 @@ mod imp {
         }
 
         fn startup(&self) {
-            debug!("GtkApplication<VApplication>::startup");
+            log::debug!("startup()");
+
             self.parent_startup();
         }
 
         fn handle_local_options(&self, options: &glib::VariantDict) -> glib::ExitCode {
+            log::trace!("handle_local_options(...)");
+
             if let Some(vault_name) = options.lookup_value("open", Some(VariantTy::STRING)) {
+                log::debug!("Found open option");
                 *self.only_prompt_type.borrow_mut() = OnlyPromptType::Open;
                 *self.only_pompt_vault.borrow_mut() = vault_name.get::<String>().unwrap();
             }
 
             if let Some(vault_name) = options.lookup_value("close", Some(VariantTy::STRING)) {
+                log::debug!("Found close option");
                 if *self.only_prompt_type.borrow() != OnlyPromptType::None {
                     log::error!("{}", gettext("Cannot open and close at the same time."));
                     return glib::ExitCode::from(2);
@@ -297,9 +319,9 @@ impl VApplication {
     }
 
     pub fn run(&self) {
-        info!("Vaults ({})", config::APP_ID);
-        info!("Version: {} ({})", config::VERSION, config::PROFILE);
-        info!("Datadir: {}", config::PKGDATADIR);
+        log::info!("Vaults ({})", config::APP_ID);
+        log::info!("Version: {} ({})", config::VERSION, config::PROFILE);
+        log::info!("Datadir: {}", config::PKGDATADIR);
 
         ApplicationExtManual::run(self);
     }
