@@ -127,7 +127,7 @@ impl UserConfigManager {
 
         match user_config_dir().as_os_str().to_str() {
             Some(user_config_directory) => {
-                log::debug!("Got user config dir: {}", user_config_directory);
+                log::info!("Got user config dir: {}", user_config_directory);
 
                 *object.imp().user_config_directory.borrow_mut() =
                     Some(user_config_directory.to_owned() + "/user_config.toml");
