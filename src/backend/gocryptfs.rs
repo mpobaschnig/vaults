@@ -54,6 +54,7 @@ pub fn is_available(vault_config: &VaultConfig) -> Result<bool, BackendError> {
         .arg(get_binary_path(vault_config))
         .arg("--version")
         .output()?;
+    log::debug!("gocryptfs output: {:?}", output);
 
     let success = output.status.success();
     log::info!("gocryptfs is available: {}", success);
@@ -86,6 +87,7 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
         .write_all(pw.as_bytes())?;
 
     let output = child.wait_with_output()?;
+    log::debug!("gocryptfs output: {:?}", output);
     if output.status.success() {
         log::info!("gocryptfs init successful");
         Ok(())
@@ -123,6 +125,7 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
         .write_all(pw.as_bytes())?;
 
     let output = child.wait_with_output()?;
+    log::debug!("gocryptfs output: {:?}", output);
     if output.status.success() {
         log::info!("gocryptfs open successful");
         Ok(())
@@ -147,6 +150,7 @@ pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
         .spawn()?;
 
     let output = child.wait_with_output()?;
+    log::debug!("gocryptfs output: {:?}", output);
     if output.status.success() {
         log::info!("gocryptfs close successful");
         Ok(())
