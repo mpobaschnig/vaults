@@ -97,6 +97,8 @@ impl GlobalConfigManager {
     }
 
     fn new() -> Self {
+        log::trace!("new()");
+
         let object: Self = glib::Object::new();
 
         *object.imp().flatpak_info.borrow_mut() =
@@ -118,6 +120,8 @@ impl GlobalConfigManager {
     }
 
     pub fn read_config(&self) {
+        log::trace!("read_config()");
+
         if let Some(path) = self.imp().user_config_directory.borrow().as_ref() {
             let global_config = &mut *self.imp().global_config.borrow_mut();
 
@@ -183,6 +187,8 @@ impl GlobalConfigManager {
     }
 
     pub fn write_config(&self) {
+        log::trace!("write_config()");
+
         if let Some(path) = self.imp().user_config_directory.borrow().as_ref() {
             match toml::to_string_pretty(&self.imp().global_config.borrow().clone()) {
                 Ok(contents) => match std::fs::write(path, &contents) {
@@ -201,10 +207,14 @@ impl GlobalConfigManager {
     }
 
     pub fn get_global_config(&self) -> GlobalConfig {
+        log::trace!("get_global_config()");
+
         self.imp().global_config.borrow().clone()
     }
 
     pub fn set_encrypted_data_directory(&self, path: String) {
+        log::trace!("set_encrypted_data_directory({})", path);
+
         *self
             .imp()
             .global_config
@@ -214,6 +224,8 @@ impl GlobalConfigManager {
     }
 
     pub fn set_mount_directory(&self, path: String) {
+        log::trace!("set_mount_directory({})", path);
+
         *self
             .imp()
             .global_config
@@ -223,6 +235,8 @@ impl GlobalConfigManager {
     }
 
     pub fn get_flatpak_info(&self) -> Ini {
+        log::trace!("get_flatpak_info()");
+
         self.imp().flatpak_info.borrow().clone()
     }
 }
