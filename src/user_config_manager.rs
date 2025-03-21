@@ -121,6 +121,8 @@ impl UserConfigManager {
     }
 
     fn new() -> Self {
+        log::trace!("new()");
+
         let object: Self = glib::Object::new();
 
         match user_config_dir().as_os_str().to_str() {
@@ -139,10 +141,14 @@ impl UserConfigManager {
     }
 
     pub fn get_map(&self) -> HashMap<String, VaultConfig> {
+        log::trace!("get_map()");
+
         self.imp().vaults.borrow().clone()
     }
 
     pub fn read_config(&self) {
+        log::trace!("read_config()");
+
         if let Some(path) = self.imp().user_config_directory.borrow().as_ref() {
             let map = &mut *self.imp().vaults.borrow_mut();
 
@@ -170,6 +176,8 @@ impl UserConfigManager {
     }
 
     pub fn write_config(&self, map: &mut HashMap<String, VaultConfig>) {
+        log::trace!("write_config({:?})", &map);
+
         if let Some(path) = self.imp().user_config_directory.borrow().as_ref() {
             match toml::to_string_pretty(&map) {
                 Ok(contents) => match std::fs::write(path, &contents) {
@@ -188,17 +196,25 @@ impl UserConfigManager {
     }
 
     pub fn get_current_vault(&self) -> Option<Vault> {
+        log::trace!("get_current_vault()");
+
         self.imp().current_vault.borrow().clone()
     }
 
     pub fn set_current_vault(&self, vault: Vault) {
+        log::trace!("set_current_vault({:?})", &vault);
+
         self.imp().current_vault.borrow_mut().replace(vault);
     }
 
     pub fn add_vault(&self, vault: Vault) {
+        log::trace!("add_vault({:?})", &vault);
+
         let map = &mut self.imp().vaults.borrow_mut();
         match (vault.get_name(), vault.get_config()) {
             (Some(name), Some(config)) => {
+                log::debug!("Add vault: {:?}, {:?}", &name, &config);
+
                 *self.imp().current_vault.borrow_mut() = Some(vault.clone());
                 map.insert(name, config);
 
@@ -213,9 +229,13 @@ impl UserConfigManager {
     }
 
     pub fn remove_vault(self, vault: Vault) {
+        log::trace!("remove_vault({:?})", &vault);
+
         let map = &mut self.imp().vaults.borrow_mut();
         match vault.get_name() {
             Some(name) => {
+                log::debug!("Remove vault: {:?}", &name);
+
                 *self.imp().current_vault.borrow_mut() = Some(vault.clone());
 
                 map.remove(&name);
@@ -232,12 +252,21 @@ impl UserConfigManager {
     }
 
     pub fn change_vault(&self, old_vault: Vault, new_vault: Vault) {
+        log::trace!("change_vault({:?}, {:?})", &old_vault, &new_vault);
+
         match (
             old_vault.get_name(),
             new_vault.get_name(),
             new_vault.get_config(),
         ) {
             (Some(old_name), Some(new_name), Some(config)) => {
+                log::debug!(
+                    "Change vault: {:?}, {:?}, {:?}",
+                    &old_name,
+                    &new_name,
+                    &config
+                );
+
                 let map = &mut self.imp().vaults.borrow_mut();
 
                 map.remove(&old_name);
