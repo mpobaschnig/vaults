@@ -17,7 +17,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use adw::{prelude::AdwDialogExt, subclass::prelude::*};
+use adw::{
+    prelude::{AdwDialogExt, EntryRowExt},
+    subclass::prelude::*,
+};
 use gtk::{self, glib, glib::clone, prelude::*, CompositeTemplate};
 
 mod imp {
@@ -120,13 +123,15 @@ impl VaultsPageRowPasswordPromptWindow {
             }
         ));
 
-        self.imp().password_entry_row.connect_activate(clone!(
-            #[weak(rename_to = obj)]
-            self,
-            move |_| {
-                obj.connect_activate();
-            }
-        ));
+        self.imp()
+            .password_entry_row
+            .connect_entry_activated(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.connect_activate();
+                }
+            ));
     }
 
     pub fn set_name(&self, name: &str) {
