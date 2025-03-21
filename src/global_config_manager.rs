@@ -106,7 +106,7 @@ impl GlobalConfigManager {
 
         match user_config_dir().as_os_str().to_str() {
             Some(user_config_directory) => {
-                log::debug!("Got user data dir: {}", user_config_directory);
+                log::info!("Got user data dir: {}", user_config_directory);
 
                 *object.imp().user_config_directory.borrow_mut() =
                     Some(user_config_directory.to_owned() + "/global_config.toml");
@@ -146,7 +146,7 @@ impl GlobalConfigManager {
 
                     match user_data_dir().as_os_str().to_str() {
                         Some(user_data_directory) => {
-                            log::debug!("Got user data directory: {}", user_data_directory);
+                            log::info!("Got user data directory: {}", user_data_directory);
 
                             *global_config.encrypted_data_directory.borrow_mut() =
                                 user_data_directory.to_owned() + "/";
