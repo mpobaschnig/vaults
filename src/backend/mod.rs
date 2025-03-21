@@ -135,7 +135,7 @@ fn create_edd_if_not_exists(encrypted_data_directory: &String) -> Result<(), Bac
     match std::fs::create_dir_all(encrypted_data_directory) {
         Ok(_) => Ok(()),
         Err(e) => {
-            log::debug!("Failed to create encrypted data directory: {}", e);
+            log::error!("Failed to create encrypted data directory: {}", e);
 
             match e.kind() {
                 std::io::ErrorKind::PermissionDenied => Err(BackendError::ToUser(gettext(
@@ -167,7 +167,7 @@ fn create_md_if_not_exists(mount_directory: &String) -> Result<(), BackendError>
     match std::fs::create_dir_all(mount_directory) {
         Ok(_) => Ok(()),
         Err(e) => {
-            log::debug!("Failed to create encrypted data directory: {}", e);
+            log::error!("Failed to create encrypted data directory: {}", e);
 
             match e.kind() {
                 std::io::ErrorKind::PermissionDenied => Err(BackendError::ToUser(gettext(
