@@ -25,6 +25,8 @@ use std::process::Command;
 use std::{io::Write, process::Stdio};
 
 fn get_binary_path(vault_config: &VaultConfig) -> String {
+    log::trace!("get_binary_path({:?})", vault_config);
+
     if let Some(use_custom_binary) = vault_config.use_custom_binary {
         if use_custom_binary {
             if let Some(custom_binary_path) = &vault_config.custom_binary_path {
@@ -43,6 +45,8 @@ fn get_binary_path(vault_config: &VaultConfig) -> String {
 }
 
 pub fn is_available(vault_config: &VaultConfig) -> Result<bool, BackendError> {
+    log::trace!("is_available({:?})", vault_config);
+
     let output = Command::new("flatpak-spawn")
         .arg("--host")
         .arg(get_binary_path(vault_config))
@@ -53,6 +57,8 @@ pub fn is_available(vault_config: &VaultConfig) -> Result<bool, BackendError> {
 }
 
 pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
+    log::trace!("init({:?}, password: <redacted>)", vault_config);
+
     let mut child = Command::new("flatpak-spawn")
         .arg("--host")
         .arg(get_binary_path(vault_config))
@@ -87,6 +93,8 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 }
 
 pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
+    log::trace!("open({:?}, password: <redacted>)", vault_config);
+
     let mut child = Command::new("flatpak-spawn")
         .arg("--host")
         .arg(get_binary_path(vault_config))
@@ -119,6 +127,8 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 }
 
 pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
+    log::trace!("close({:?}, password: <redacted>)", vault_config);
+
     let child = Command::new("flatpak-spawn")
         .arg("--host")
         .arg("umount")
@@ -138,6 +148,8 @@ pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
 }
 
 fn status_to_err(status: Option<i32>) -> BackendError {
+    log::trace!("status_to_err({:?})", status);
+
     struct GocryptfsExitStatus {}
 
     #[allow(dead_code)]
