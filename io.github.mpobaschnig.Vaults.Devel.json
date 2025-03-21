@@ -15,7 +15,7 @@
         "--device=dri",
         "--talk-name=org.freedesktop.Flatpak",
         "--filesystem=host",
-        "--env=RUST_LOG=vaults=debug",
+        "--env=RUST_LOG=vaults=trace",
         "--env=G_MESSAGES_DEBUG=none",
         "--filesystem=xdg-run/gvfsd",
         "--talk-name=org.gtk.vfs.*"
