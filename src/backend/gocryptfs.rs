@@ -41,7 +41,9 @@ fn get_binary_path(vault_config: &VaultConfig) -> String {
         .unwrap()
         .get("app-path")
         .unwrap();
-    instance_path.to_owned() + "/bin/gocryptfs"
+    let gocryptfs_instance_path = instance_path.to_owned() + "/bin/gocryptfs";
+    log::info!("gocryptfs binary path: {}", gocryptfs_instance_path);
+    gocryptfs_instance_path
 }
 
 pub fn is_available(vault_config: &VaultConfig) -> Result<bool, BackendError> {
@@ -53,7 +55,9 @@ pub fn is_available(vault_config: &VaultConfig) -> Result<bool, BackendError> {
         .arg("--version")
         .output()?;
 
-    Ok(output.status.success())
+    let success = output.status.success();
+    log::info!("gocryptfs is available: {}", success);
+    Ok(success)
 }
 
 pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
@@ -83,12 +87,15 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 
     let output = child.wait_with_output()?;
     if output.status.success() {
+        log::info!("gocryptfs init successful");
         Ok(())
     } else {
         std::io::stdout().write_all(&output.stdout).unwrap();
         std::io::stderr().write_all(&output.stderr).unwrap();
 
-        Err(status_to_err(output.status.code()))
+        let err_code = output.status.code();
+        log::error!("gocryptfs init failed: {:?}", err_code);
+        Err(status_to_err(err_code))
     }
 }
 
@@ -117,12 +124,15 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 
     let output = child.wait_with_output()?;
     if output.status.success() {
+        log::info!("gocryptfs open successful");
         Ok(())
     } else {
         std::io::stdout().write_all(&output.stdout).unwrap();
         std::io::stderr().write_all(&output.stderr).unwrap();
 
-        Err(status_to_err(output.status.code()))
+        let err_code = output.status.code();
+        log::error!("gocryptfs open failed: {:?}", err_code);
+        Err(status_to_err(err_code))
     }
 }
 
@@ -138,12 +148,15 @@ pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
 
     let output = child.wait_with_output()?;
     if output.status.success() {
+        log::info!("gocryptfs close successful");
         Ok(())
     } else {
         std::io::stdout().write_all(&output.stdout).unwrap();
         std::io::stderr().write_all(&output.stderr).unwrap();
 
-        Err(status_to_err(output.status.code()))
+        let err_code = output.status.code();
+        log::error!("gocryptfs close failed: {:?}", err_code);
+        Err(status_to_err(err_code))
     }
 }
 
