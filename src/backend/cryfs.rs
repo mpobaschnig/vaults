@@ -54,6 +54,7 @@ pub fn is_available(vault_config: &VaultConfig) -> Result<bool, BackendError> {
         .arg(get_binary_path(vault_config))
         .arg("--version")
         .output()?;
+    log::debug!("CryFS output: {:?}", output);
 
     let success = output.status.success();
     log::info!("CryFS is available: {}", success);
@@ -87,6 +88,7 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
         .write_all(pw.as_bytes())?;
 
     let output = child.wait_with_output()?;
+    log::debug!("CryFS output: {:?}", output);
     if output.status.success() {
         log::info!("CryFS init successful. Closing now");
         close(vault_config)
@@ -123,6 +125,7 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
         .write_all(pw.as_bytes())?;
 
     let output = child.wait_with_output()?;
+    log::debug!("CryFS output: {:?}", output);
     if output.status.success() {
         log::info!("CryFS open successful");
         Ok(())
@@ -148,6 +151,7 @@ pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
         .spawn()?;
 
     let output = child.wait_with_output()?;
+    log::debug!("CryFS output: {:?}", output);
     if output.status.success() {
         log::info!("CryFS close successful");
         Ok(())
