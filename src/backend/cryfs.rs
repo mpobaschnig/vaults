@@ -70,6 +70,7 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
         .env("CRYFS_FRONTEND", "noninteractive")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
+        .arg("--allow-replaced-filesystem")
         .arg(&vault_config.encrypted_data_directory)
         .arg(&vault_config.mount_directory)
         .spawn()?;
