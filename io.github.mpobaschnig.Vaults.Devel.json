@@ -79,8 +79,8 @@
             "sources": [
                 {
                     "type": "archive",
-                    "url": "https://github.com/rfjakob/gocryptfs/releases/download/v2.4.0/gocryptfs_v2.4.0_src-deps.tar.gz",
-                    "sha256": "45158daf20df7f94e0c9ec57ba07af21df2e25e15b8584bf3c7de96adbbc2efd"
+                    "url": "https://github.com/rfjakob/gocryptfs/releases/download/v2.5.2/gocryptfs_v2.5.2_src-deps.tar.gz",
+                    "sha256": "cc45bdc774592d392c4625c242529c2632bcf1e55ed16d8e81b142fc58616a60"
                 },
                 {
                     "type": "patch",
