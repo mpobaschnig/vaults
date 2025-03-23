@@ -106,38 +106,54 @@ impl Vault {
     }
 
     pub fn get_name(&self) -> Option<String> {
-        self.imp().name.borrow().clone()
+        log::trace!("get_name");
+        let name = self.imp().name.borrow().clone();
+        log::debug!("Name: {:?}", name);
+        name
     }
 
     pub fn set_name(&self, name: String) {
+        log::trace!("set_name({})", name);
         self.imp().name.borrow_mut().replace(name);
     }
 
     pub fn get_config(&self) -> Option<VaultConfig> {
-        self.imp().config.borrow().clone()
+        log::trace!("get_config");
+        let config = self.imp().config.borrow().clone();
+        log::debug!("Config: {:?}", config);
+        config
     }
 
     pub fn set_config(&self, config: VaultConfig) {
+        log::trace!("set_config({:?})", config);
         self.imp().config.borrow_mut().replace(config);
     }
 
     pub fn init(&self, password: String) -> Result<(), BackendError> {
+        log::trace!("init(password: <redacted>)");
         Backend::init(&self.get_config().unwrap(), password)
     }
 
     pub fn unlock(&self, password: String) -> Result<(), BackendError> {
+        log::trace!("unlock(password: <redacted>)");
         Backend::open(&self.get_config().unwrap(), password)
     }
 
     pub fn lock(&self) -> Result<(), BackendError> {
+        log::trace!("lock");
         Backend::close(&self.get_config().unwrap())
     }
 
     pub fn is_mounted(&self) -> bool {
+        log::trace!("is_mounted");
+
         let config_mount_directory = self.get_config().unwrap().mount_directory;
 
         if self.is_mount_hidden() {
-            return self.is_mounted_all();
+            log::debug!("Vault is hidden");
+            let is_vault_mounted_all = self.is_mounted_all();
+            log::debug!("Vault is mounted (all): {}", is_vault_mounted_all);
+            return is_vault_mounted_all;
         }
 
         let canon_config_path = std::path::Path::new(&config_mount_directory)
@@ -162,13 +178,16 @@ impl Vault {
                 }
             }
         } else {
-            log::debug!("Could not get canonical mount directory path");
+            log::error!("Could not get canonical mount directory path");
         }
 
+        log::debug!("Vault is not mounted");
         false
     }
 
     pub fn is_mount_hidden(&self) -> bool {
+        log::trace!("is_mount_hidden");
+
         let vault_config = self.get_config().unwrap();
 
         let components: Vec<_> = std::path::Path::new(&vault_config.mount_directory)
@@ -183,6 +202,8 @@ impl Vault {
     }
 
     pub fn is_mounted_all(&self) -> bool {
+        log::trace!("is_mounted_all");
+
         use proc_mounts::*;
 
         let mount_list = MountList::new();
@@ -200,6 +221,7 @@ impl Vault {
     }
 
     pub fn is_backend_available(&self) -> bool {
+        log::trace!("is_backend_available");
         if let Some(config) = self.get_config() {
             if let Ok(success) = config.backend.is_available(&config) {
                 return success;
@@ -209,8 +231,11 @@ impl Vault {
     }
 
     pub fn delete_encrypted_data(&self) -> std::io::Result<()> {
+        log::trace!("delete_encrypted_data");
+
         if let Some(config) = self.get_config() {
             let path = std::path::Path::new(&config.encrypted_data_directory);
+            log::debug!("Deleting encrypted data directory: {:?}", path);
             return std::fs::remove_dir_all(path);
         }
 
