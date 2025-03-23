@@ -97,7 +97,7 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 
         let err_code = output.status.code();
         log::error!("gocryptfs init failed: {:?}", err_code);
-        Err(status_to_err(err_code))
+        Err(gocryptfs_ret_status_to_err(err_code))
     }
 }
 
@@ -135,7 +135,7 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
 
         let err_code = output.status.code();
         log::error!("gocryptfs open failed: {:?}", err_code);
-        Err(status_to_err(err_code))
+        Err(gocryptfs_ret_status_to_err(err_code))
     }
 }
 
@@ -160,11 +160,11 @@ pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
 
         let err_code = output.status.code();
         log::error!("gocryptfs close failed: {:?}", err_code);
-        Err(status_to_err(err_code))
+        Err(gocryptfs_ret_status_to_err(err_code))
     }
 }
 
-fn status_to_err(status: Option<i32>) -> BackendError {
+fn gocryptfs_ret_status_to_err(status: Option<i32>) -> BackendError {
     log::trace!("status_to_err({:?})", status);
 
     struct GocryptfsExitStatus {}
