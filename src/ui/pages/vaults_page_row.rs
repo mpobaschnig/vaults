@@ -234,6 +234,8 @@ impl VaultsPageRow {
     }
 
     fn open_folder_button_clicked(&self) {
+        log::trace!("open_folder_button_clicked");
+
         let output_res = Command::new("xdg-open")
             .arg(&self.imp().config.borrow().as_ref().unwrap().mount_directory)
             .output();
@@ -244,6 +246,8 @@ impl VaultsPageRow {
     }
 
     fn locker_button_clicked_is_mounted(&self, vault: Vault) {
+        log::trace!("locker_button_clicked_is_mounted");
+
         if !self.imp().open_folder_button.is_visible() {
             self.set_vault_row_state_opened();
             return;
@@ -330,6 +334,8 @@ impl VaultsPageRow {
     }
 
     fn locker_button_clicked_is_not_mounted(&self, vault: Vault) {
+        log::trace!("locker_button_clicked_is_not_mounted");
+
         if self.imp().open_folder_button.is_visible() {
             self.set_vault_row_state_closed();
             return;
@@ -442,6 +448,8 @@ impl VaultsPageRow {
     }
 
     fn locker_button_clicked(&self) {
+        log::trace!("Locker button clicked");
+
         let vault = self.get_vault();
 
         if !vault.is_backend_available() {
@@ -459,6 +467,8 @@ impl VaultsPageRow {
     }
 
     fn settings_button_clicked(&self) {
+        log::trace!("settings_button_clicked");
+
         let dialog = VaultsPageRowSettingsWindow::new(self.get_vault());
 
         dialog.connect_closure(
@@ -506,6 +516,8 @@ impl VaultsPageRow {
     }
 
     pub fn get_vault(&self) -> Vault {
+        log::trace!("get_vault");
+
         let name = self.imp().vaults_page_row.title();
         let config = self.imp().config.borrow().clone();
         match config {
@@ -519,13 +531,15 @@ impl VaultsPageRow {
                 config.custom_binary_path,
             ),
             _ => {
-                log::error!("Vault not initialised!");
+                log::error!("Vault not initialized!");
                 Vault::new_none()
             }
         }
     }
 
     pub fn set_vault(&self, vault: Vault) {
+        log::trace!("set_vault");
+
         let name = vault.get_name();
         let config = vault.get_config();
         match (name, config) {
@@ -534,7 +548,7 @@ impl VaultsPageRow {
                 self.imp().config.replace(Some(config));
             }
             (_, _) => {
-                log::error!("Vault not initialised!");
+                log::error!("Vault not initialized!");
             }
         }
     }
@@ -544,10 +558,13 @@ impl VaultsPageRow {
     }
 
     fn is_mounted(&self) -> bool {
+        log::trace!("is_mounted");
         self.get_vault().is_mounted()
     }
 
     fn set_vault_row_state_opened(&self) {
+        log::trace!("set_vault_row_state_opened");
+
         self.imp()
             .locker_button
             .set_icon_name("changes-allow-symbolic");
@@ -560,6 +577,8 @@ impl VaultsPageRow {
     }
 
     fn set_vault_row_state_closed(&self) {
+        log::trace!("set_vault_row_state_closed");
+
         self.imp()
             .locker_button
             .set_icon_name("changes-prevent-symbolic");
@@ -572,6 +591,7 @@ impl VaultsPageRow {
     }
 
     fn set_vault_row_state_backend_unavailable(&self) {
+        log::trace!("set_vault_row_state_backend_unavailable");
         self.imp()
             .vaults_page_row
             .set_subtitle(&gettext("Backend is not installed."));
@@ -579,11 +599,14 @@ impl VaultsPageRow {
     }
 
     fn set_vault_row_state_backend_available(&self) {
+        log::trace!("set_vault_row_state_backend_available");
         self.imp().vaults_page_row.set_subtitle("");
         self.imp().locker_button.set_sensitive(true);
     }
 
     fn mount_added_triggered(&self, mount: &Mount) {
+        log::trace!("mount_added_triggered({:?})", mount.name());
+
         let config_mount_directory = self.imp().config.borrow().clone().unwrap().mount_directory;
 
         let config_mount_directory_path = std::path::Path::new(&config_mount_directory)
@@ -600,21 +623,28 @@ impl VaultsPageRow {
                         let eq_path =
                             mount.default_location().path().unwrap() == config_mount_directory_path;
                         if eq_name && eq_path {
+                            log::debug!(
+                                "Setting row state opened for mount with name: \"{}\", and path \"{}\"",
+                                file_name,
+                                config_mount_directory_path.display()
+                            );
                             self.set_vault_row_state_opened();
                         }
                     }
                     None => {
-                        log::debug!("Could not get mount directory path");
+                        log::error!("Could not get mount directory path");
                     }
                 }
             }
             None => {
-                log::debug!("Could not get config mount directory file name");
+                log::error!("Could not get config mount directory file name");
             }
         }
     }
 
     fn mount_removed_triggered(&self, mount: &Mount) {
+        log::trace!("mount_removed_triggered({:?})", mount.name());
+
         let config_mount_directory = self.imp().config.borrow().clone().unwrap().mount_directory;
 
         let config_mount_directory_path = std::path::Path::new(&config_mount_directory)
@@ -631,16 +661,21 @@ impl VaultsPageRow {
                         let eq_path =
                             mount.default_location().path().unwrap() == config_mount_directory_path;
                         if eq_name && eq_path {
+                            log::debug!(
+                                "Setting row state closed for mount with name: \"{}\", and path \"{}\"",
+                                file_name,
+                                config_mount_directory_path.display()
+                            );
                             self.set_vault_row_state_closed();
                         }
                     }
                     None => {
-                        log::debug!("Could not get mount directory path");
+                        log::error!("Could not get mount directory path");
                     }
                 }
             }
             None => {
-                log::debug!("Could not get config mount directory file name");
+                log::error!("Could not get config mount directory file name");
             }
         }
     }
