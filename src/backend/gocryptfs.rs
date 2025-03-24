@@ -160,7 +160,7 @@ pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
 
         let err_code = output.status.code();
         log::error!("gocryptfs close failed: {:?}", err_code);
-        Err(gocryptfs_ret_status_to_err(err_code))
+        Err(umount_ret_status_to_err(err_code))
     }
 }
 
@@ -207,5 +207,22 @@ fn gocryptfs_ret_status_to_err(status: Option<i32>) -> BackendError {
             _ => BackendError::ToUser(gettext("An unknown error occurred.")),
         },
         None => BackendError::Generic,
+    }
+}
+
+fn umount_ret_status_to_err(status: Option<i32>) -> BackendError {
+    log::trace!("umount_ret_status_to_err({:?})", status);
+
+    // We are guaranteed to have a non-zero errno here
+    if let Some(status) = status {
+        match status {
+            1 => BackendError::ToUser(gettext("You don't have the necessary privileges to unmount the directory.")),
+            2 => BackendError::ToUser(gettext("The data directory (mount point) does not exist.")),
+            4 => BackendError::ToUser(gettext("Internal error.")),
+            32 => BackendError::ToUser(gettext("The data directory (mount point) is busy. There are open files or processes using the filesystem.")),
+            _ => BackendError::Generic,
+        }
+    } else {
+        BackendError::Generic
     }
 }
