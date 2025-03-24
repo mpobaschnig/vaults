@@ -150,9 +150,9 @@ pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
         .spawn()?;
 
     let output = child.wait_with_output()?;
-    log::debug!("gocryptfs output: {:?}", output);
+    log::debug!("umount output: {:?}", output);
     if output.status.success() {
-        log::info!("gocryptfs close successful");
+        log::info!("umount close successful");
         Ok(())
     } else {
         std::io::stdout().write_all(&output.stdout).unwrap();
