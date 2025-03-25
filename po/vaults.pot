@@ -7,8 +7,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: vaults\n"
-"POT-Creation-Date: 2025-03-13 18:53+0100\n"
-"PO-Revision-Date: 2025-03-13 18:53+0100\n"
+"POT-Creation-Date: 2025-03-25 20:59+0100\n"
+"PO-Revision-Date: 2025-03-25 20:59+0100\n"
 "Last-Translator: Martin Pobaschnig <mpobaschnig@protonmail.com>\n"
 "Language-Team: en <LL@li.org>\n"
 "Language: en\n"
@@ -274,8 +274,8 @@ msgstr ""
 msgid "Open Folder"
 msgstr ""
 
-#: data/resources/ui/vaults_page_row.ui:25 src/ui/pages/vaults_page_row.rs:280
-#: src/ui/pages/vaults_page_row.rs:387 src/ui/pages/vaults_page_row.rs:568
+#: data/resources/ui/vaults_page_row.ui:25 src/ui/pages/vaults_page_row.rs:284
+#: src/ui/pages/vaults_page_row.rs:393 src/ui/pages/vaults_page_row.rs:587
 msgid "Open Vault"
 msgstr ""
 
@@ -327,162 +327,180 @@ msgstr ""
 msgid "_About Vaults"
 msgstr ""
 
-#: src/backend/cryfs.rs:186 src/backend/cryfs.rs:203
-#: src/backend/gocryptfs.rs:178
+#: src/backend/cryfs.rs:216 src/backend/cryfs.rs:233
+#: src/backend/gocryptfs.rs:207
 msgid "An unknown error occurred."
 msgstr ""
 
-#: src/backend/cryfs.rs:187
+#: src/backend/cryfs.rs:217
 msgid "Invalid arguments were given."
 msgstr ""
 
-#: src/backend/cryfs.rs:188 src/backend/gocryptfs.rs:164
+#: src/backend/cryfs.rs:218 src/backend/gocryptfs.rs:193
 msgid "The password is wrong."
 msgstr ""
 
-#: src/backend/cryfs.rs:189 src/backend/gocryptfs.rs:167
+#: src/backend/cryfs.rs:219 src/backend/gocryptfs.rs:196
 msgid "The password is empty."
 msgstr ""
 
-#: src/backend/cryfs.rs:190
+#: src/backend/cryfs.rs:220
 msgid ""
 "The format of the encrypted data directory is too new for this CryFS "
 "version. Please update CryFS."
 msgstr ""
 
-#: src/backend/cryfs.rs:191
+#: src/backend/cryfs.rs:221
 msgid ""
 "The format of the encrypted data directory is too old for this CryFS version."
 msgstr ""
 
-#: src/backend/cryfs.rs:192
+#: src/backend/cryfs.rs:222
 msgid "The vault uses a different cipher than the default of CryFS."
 msgstr ""
 
-#: src/backend/cryfs.rs:193
+#: src/backend/cryfs.rs:223
 msgid "The encrypted data directory does not exist or is inaccessible."
 msgstr ""
 
-#: src/backend/cryfs.rs:194
+#: src/backend/cryfs.rs:224
 msgid "The mount directory does not exist or is inaccessible."
 msgstr ""
 
-#: src/backend/cryfs.rs:195
+#: src/backend/cryfs.rs:225
 msgid "The mount directory is inside the encrypted data directory."
 msgstr ""
 
-#: src/backend/cryfs.rs:196
+#: src/backend/cryfs.rs:226
 msgid "The encrypted data directory is invalid."
 msgstr ""
 
-#: src/backend/cryfs.rs:197
+#: src/backend/cryfs.rs:227
 msgid ""
 "The encrypted data id in the configuration file is different to the last "
 "time this vault was opened. This could mean someone replaced files in the "
 "encrypted data directory with different ones."
 msgstr ""
 
-#: src/backend/cryfs.rs:198
+#: src/backend/cryfs.rs:228
 msgid ""
 "The encryption key for your encrypted files is different to the last time "
 "this vault was opened. This could mean someone replaced files in the "
 "encrypted data directory with different ones."
 msgstr ""
 
-#: src/backend/cryfs.rs:199
+#: src/backend/cryfs.rs:229
 msgid "Vaults' configuration and the encrypted data configuration mismatches."
 msgstr ""
 
-#: src/backend/cryfs.rs:200
+#: src/backend/cryfs.rs:230
 msgid ""
 "The encrypted data directory is in single-user mode and can only be used "
 "from the user that created it."
 msgstr ""
 
-#: src/backend/cryfs.rs:201
+#: src/backend/cryfs.rs:231
 msgid ""
 "CryFS detected an integrity violation. The encrypted data directory will be "
 "accessible again after the integrity state file has been deleted."
 msgstr ""
 
-#: src/backend/cryfs.rs:202
+#: src/backend/cryfs.rs:232
 msgid "An integrity violation was detected. Vault will be unmounted."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:158
+#: src/backend/gocryptfs.rs:187
 msgid "The encrypted data directory is not empty."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:161
+#: src/backend/gocryptfs.rs:190
 msgid "The mount directory is not empty."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:170
+#: src/backend/gocryptfs.rs:199
 msgid "Vaults cannot read configuration file."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:173
+#: src/backend/gocryptfs.rs:202
 msgid "Vaults cannot write configuration file."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:176
+#: src/backend/gocryptfs.rs:205
 msgid "The file system check reported an error."
 msgstr ""
 
-#: src/backend/mod.rs:128
+#: src/backend/gocryptfs.rs:219
+msgid "You don't have the necessary privileges to unmount the directory."
+msgstr ""
+
+#: src/backend/gocryptfs.rs:220
+msgid "The data directory (mount point) does not exist."
+msgstr ""
+
+#: src/backend/gocryptfs.rs:221
+msgid "Internal error."
+msgstr ""
+
+#: src/backend/gocryptfs.rs:222
+msgid ""
+"The data directory (mount point) is busy. There are open files or processes "
+"using the filesystem."
+msgstr ""
+
+#: src/backend/mod.rs:142
 msgid "Failed to create encrypted data directory: Permission denied."
 msgstr ""
 
-#: src/backend/mod.rs:131
+#: src/backend/mod.rs:145
 msgid "Failed to create encrypted data directory: Connection refused."
 msgstr ""
 
-#: src/backend/mod.rs:134
+#: src/backend/mod.rs:148
 msgid "Failed to create encrypted data directory: Connection reset."
 msgstr ""
 
-#: src/backend/mod.rs:137
+#: src/backend/mod.rs:151
 msgid "Failed to create encrypted data directory: Connection aborted."
 msgstr ""
 
-#: src/backend/mod.rs:140
+#: src/backend/mod.rs:154
 msgid "Failed to create encrypted data directory: Not connected."
 msgstr ""
 
-#: src/backend/mod.rs:143
+#: src/backend/mod.rs:157
 msgid "Failed to create encrypted data directory."
 msgstr ""
 
-#: src/backend/mod.rs:158
+#: src/backend/mod.rs:174
 msgid "Failed to create mount directory: Permission denied."
 msgstr ""
 
-#: src/backend/mod.rs:161
+#: src/backend/mod.rs:177
 msgid "Failed to create mount directory: Connection refused."
 msgstr ""
 
-#: src/backend/mod.rs:164
+#: src/backend/mod.rs:180
 msgid "Failed to create mount directory: Connection reset."
 msgstr ""
 
-#: src/backend/mod.rs:167
+#: src/backend/mod.rs:183
 msgid "Failed to create mount directory: Connection aborted."
 msgstr ""
 
-#: src/backend/mod.rs:170
+#: src/backend/mod.rs:186
 msgid "Failed to create mount directory: Not connected."
 msgstr ""
 
-#: src/backend/mod.rs:173
+#: src/backend/mod.rs:189
 msgid "Failed to create mount directory."
 msgstr ""
 
-#: src/ui/pages/vaults_page_row.rs:289 src/ui/pages/vaults_page_row.rs:378
-#: src/ui/pages/vaults_page_row.rs:556
+#: src/ui/pages/vaults_page_row.rs:293 src/ui/pages/vaults_page_row.rs:384
+#: src/ui/pages/vaults_page_row.rs:573
 msgid "Close Vault"
 msgstr ""
 
-#: src/ui/pages/vaults_page_row.rs:577
+#: src/ui/pages/vaults_page_row.rs:597
 msgid "Backend is not installed."
 msgstr ""
 
@@ -617,11 +635,10 @@ msgstr ""
 msgid "Saved preferences successfully!"
 msgstr ""
 
-#: src/application.rs:171
+#: src/application.rs:193
 msgid "Cannot open and close at the same time."
 msgstr ""
 
-#. Translators: Replace "translator-credits" with your names, one name per line
-#: src/application.rs:288
+#: src/application.rs:310
 msgid "translator-credits"
 msgstr ""
