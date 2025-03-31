@@ -126,6 +126,176 @@
                 </property>
               </object>
             </child>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="name">CryFS</property>
+                <property name="title" translatable="no">_CryFS</property>
+                <property name="use-underline">True</property>
+                <property name="icon-name">security-high-symbolic</property>
+                <property name="child">
+                  <object class="AdwToastOverlay" id="cryfs_toast_overlay_cryfs">
+                    <child>
+                      <object class="AdwClamp">
+                        <property name="margin-start">12</property>
+                        <property name="margin-end">12</property>
+                        <property name="hexpand">True</property>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">12</property>
+                            <child>
+                              <object class="AdwPreferencesGroup">
+                                <property name="title" translatable="yes">General</property>
+                                <child>
+                                  <object class="AdwComboRow" id="cryfs_combo_row_backend">
+                                    <property name="title" translatable="yes">Backend</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="AdwExpanderRow" id="cryfs_custom_binary_expander_row">
+                                    <property name="show_enable_switch">True</property>
+                                    <property name="enable-expansion">False</property>
+                                    <property name="title" translatable="yes">Use custom binary</property>
+                                    <child>
+                                      <object class="AdwEntryRow" id="cryfs_custom_binary_entry_row">
+                                        <property name="title" translatable="yes">Custom Binary Path</property>
+                                        <child type="suffix">
+                                          <object class="GtkButton" id="cryfs_custom_binary_button">
+                                            <property name="valign">center</property>
+                                            <property name="icon_name">document-open-symbolic</property>
+                                            <property name="tooltip-text" translatable="yes">Choose Custom Binary</property>
+                                            <style>
+                                              <class name="flat"/>
+                                            </style>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="cryfs_backend_error_label">
+                                    <property name="margin-top">12</property>
+                                    <property name="visible">False</property>
+                                    <property name="wrap">True</property>
+                                    <style>
+                                      <class name="error"/>
+                                      <class name="caption"/>
+                                    </style>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="halign">end</property>
+                                <property name="valign">end</property>
+                                <property name="margin-top">18</property>
+                                <child>
+                                  <object class="GtkButton" id="cryfs_apply_changes_button">
+                                    <property name="label" translatable="yes">_Apply Changes</property>
+                                    <property name="use_underline">True</property>
+                                    <property name="sensitive">False</property>
+                                    <style>
+                                      <class name="suggested-action"/>
+                                    </style>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
+            <child>
+              <object class="AdwViewStackPage">
+                <property name="name">gocryptfs</property>
+                <property name="title" translatable="no">_gocryptfs</property>
+                <property name="use-underline">True</property>
+                <property name="icon-name">security-high-symbolic</property>
+                <property name="child">
+                  <object class="AdwToastOverlay" id="gocryptfs_toast_overlay">
+                    <child>
+                      <object class="AdwClamp">
+                        <property name="margin-start">12</property>
+                        <property name="margin-end">12</property>
+                        <property name="hexpand">True</property>
+                        <child>
+                          <object class="GtkBox">
+                            <property name="orientation">vertical</property>
+                            <property name="spacing">12</property>
+                            <child>
+                              <object class="AdwPreferencesGroup">
+                                <property name="title" translatable="yes">General</property>
+                                <child>
+                                  <object class="AdwComboRow" id="gocryptfs_combo_row_backend">
+                                    <property name="title" translatable="yes">Backend</property>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="AdwExpanderRow" id="gocryptfs_custom_binary_expander_row">
+                                    <property name="show_enable_switch">True</property>
+                                    <property name="enable-expansion">False</property>
+                                    <property name="title" translatable="yes">Use custom binary</property>
+                                    <child>
+                                      <object class="AdwEntryRow" id="gocryptfs_custom_binary_entry_row">
+                                        <property name="title" translatable="yes">Custom Binary Path</property>
+                                        <child type="suffix">
+                                          <object class="GtkButton" id="gocryptfs_custom_binary_button">
+                                            <property name="valign">center</property>
+                                            <property name="icon_name">document-open-symbolic</property>
+                                            <property name="tooltip-text" translatable="yes">Choose Custom Binary</property>
+                                            <style>
+                                              <class name="flat"/>
+                                            </style>
+                                          </object>
+                                        </child>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkLabel" id="gocryptfs_backend_error_label">
+                                    <property name="margin-top">12</property>
+                                    <property name="visible">False</property>
+                                    <property name="wrap">True</property>
+                                    <style>
+                                      <class name="error"/>
+                                      <class name="caption"/>
+                                    </style>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="GtkBox">
+                                <property name="halign">end</property>
+                                <property name="valign">end</property>
+                                <property name="margin-top">18</property>
+                                <child>
+                                  <object class="GtkButton" id="gocryptfs_apply_changes_button">
+                                    <property name="label" translatable="yes">_Apply Changes</property>
+                                    <property name="use_underline">True</property>
+                                    <property name="sensitive">False</property>
+                                    <style>
+                                      <class name="suggested-action"/>
+                                    </style>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                          </object>
+                        </child>
+                      </object>
+                    </child>
+                  </object>
+                </property>
+              </object>
+            </child>
           </object>
         </property>
         <child type="bottom">

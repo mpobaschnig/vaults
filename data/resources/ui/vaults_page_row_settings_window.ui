@@ -27,8 +27,7 @@
                 <property name="vscrollbar_policy">automatic</property>
                 <child>
                   <object class="AdwClamp">
-                    <property name="margin-top">30</property>
-                    <property name="margin-bottom">30</property>
+                    <property name="margin-bottom">12</property>
                     <property name="margin-start">12</property>
                     <property name="margin-end">12</property>
                     <property name="hexpand">True</property>
@@ -63,28 +62,7 @@
                             <child>
                               <object class="AdwComboRow" id="combo_row_backend">
                                 <property name="title" translatable="yes">Backend</property>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="AdwExpanderRow" id="custom_binary_expander_row">
-                                <property name="show_enable_switch">True</property>
-                                <property name="enable-expansion">False</property>
-                                <property name="title" translatable="yes">Use custom binary</property>
-                                <child>
-                                  <object class="AdwEntryRow" id="custom_binary_entry_row">
-                                    <property name="title" translatable="yes">Custom Binary Path</property>
-                                    <child type="suffix">
-                                      <object class="GtkButton" id="custom_binary_button">
-                                        <property name="valign">center</property>
-                                        <property name="icon_name">document-open-symbolic</property>
-                                        <property name="tooltip-text" translatable="yes">Choose Custom Binary</property>
-                                        <style>
-                                          <class name="flat"/>
-                                        </style>
-                                      </object>
-                                    </child>
-                                  </object>
-                                </child>
+                                <property name="sensitive">false</property>
                               </object>
                             </child>
                             <child>
