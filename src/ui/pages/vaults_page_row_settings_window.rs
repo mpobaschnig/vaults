@@ -21,7 +21,6 @@ use crate::application::VApplication;
 use crate::ui::pages::vaults_page_row_settings_window;
 use adw::prelude::AlertDialogExt;
 use adw::prelude::AlertDialogExtManual;
-use adw::prelude::ExpanderRowExt;
 use adw::subclass::dialog::AdwDialogImpl;
 use adw::subclass::prelude::*;
 use adw::{prelude::ComboRowExt, prelude::PreferencesGroupExt};
@@ -74,12 +73,6 @@ mod imp {
         pub toast_overlay: TemplateChild<adw::ToastOverlay>,
         #[template_child]
         pub lock_screen_switch_row: TemplateChild<adw::SwitchRow>,
-        #[template_child]
-        pub custom_binary_expander_row: TemplateChild<adw::ExpanderRow>,
-        #[template_child]
-        pub custom_binary_entry_row: TemplateChild<adw::EntryRow>,
-        #[template_child]
-        pub custom_binary_button: TemplateChild<gtk::Button>,
 
         pub current_vault: RefCell<Option<Vault>>,
         pub to_remove: RefCell<bool>,
@@ -107,9 +100,6 @@ mod imp {
                 mount_directory_error_label: TemplateChild::default(),
                 toast_overlay: TemplateChild::default(),
                 lock_screen_switch_row: TemplateChild::default(),
-                custom_binary_expander_row: TemplateChild::default(),
-                custom_binary_entry_row: TemplateChild::default(),
-                custom_binary_button: TemplateChild::default(),
                 current_vault: RefCell::new(None),
                 to_remove: RefCell::new(false),
             }
@@ -242,34 +232,6 @@ impl VaultsPageRowSettingsWindow {
                     obj.check_add_button_enable_conditions();
                 }
             ));
-
-        self.imp()
-            .custom_binary_expander_row
-            .connect_expanded_notify(clone!(
-                #[weak(rename_to = obj)]
-                self,
-                move |_| {
-                    obj.check_add_button_enable_conditions();
-                }
-            ));
-
-        self.imp()
-            .custom_binary_entry_row
-            .connect_text_notify(clone!(
-                #[weak(rename_to = obj)]
-                self,
-                move |_| {
-                    obj.check_add_button_enable_conditions();
-                }
-            ));
-
-        self.imp().custom_binary_button.connect_clicked(clone!(
-            #[weak(rename_to = obj)]
-            self,
-            move |_| {
-                obj.custom_binary_button_clicked();
-            }
-        ));
     }
 
     fn remove_button_clicked(&self) {
@@ -367,10 +329,8 @@ impl VaultsPageRowSettingsWindow {
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
             Some(self.imp().lock_screen_switch_row.is_active()),
-            Some(self.imp().custom_binary_expander_row.is_expanded()),
-            Some(String::from(
-                self.imp().custom_binary_entry_row.text().as_str(),
-            )),
+            Some(false),
+            None
         );
 
         UserConfigManager::instance()
@@ -615,8 +575,6 @@ impl VaultsPageRowSettingsWindow {
         curr_encrypted_data_directory: &GString,
         curr_mount_directory: &GString,
         curr_session_locking: &bool,
-        curr_use_custom_binary: &bool,
-        curr_custom_binary_path: &GString,
     ) -> bool {
         let prev_vault = self.get_current_vault().unwrap();
         let prev_config = &prev_vault.get_config().unwrap();
@@ -649,20 +607,6 @@ impl VaultsPageRowSettingsWindow {
             }
         } else if *curr_session_locking {
             return true;
-        }
-
-        if let Some(prev_use_custom_binary) = prev_config.use_custom_binary {
-            if prev_use_custom_binary != *curr_use_custom_binary {
-                return true;
-            }
-        } else if *curr_use_custom_binary {
-            return true;
-        }
-
-        if let Some(prev_custom_binary_path) = &prev_config.custom_binary_path {
-            if !prev_custom_binary_path.eq(curr_custom_binary_path) {
-                return true;
-            }
         }
 
         false
@@ -727,16 +671,12 @@ impl VaultsPageRowSettingsWindow {
                 false
             };
         let is_session_locking = self.imp().lock_screen_switch_row.is_active();
-        let use_custom_binary = self.imp().custom_binary_expander_row.is_expanded();
-        let custom_binary_path = self.imp().custom_binary_entry_row.text();
         let has_something_changed = self.has_something_changed(
             &vault_name,
             backend_str,
             &encrypted_data_directory,
             &mount_directory,
             &is_session_locking,
-            &use_custom_binary,
-            &custom_binary_path,
         );
         let exists_config_file = self.exists_config_file(backend, &encrypted_data_directory);
 
@@ -752,47 +692,6 @@ impl VaultsPageRowSettingsWindow {
         } else {
             self.imp().apply_changes_button.set_sensitive(false);
         }
-    }
-
-    fn custom_binary_button_clicked(&self) {
-        let window = gtk::gio::Application::default()
-            .unwrap()
-            .downcast_ref::<VApplication>()
-            .unwrap()
-            .active_window()
-            .unwrap()
-            .clone();
-
-        glib::spawn_future_local(clone!(
-            #[strong]
-            window,
-            #[strong(rename_to = obj)]
-            self,
-            async move {
-                let dialog = gtk::FileDialog::builder()
-                    .title(gettext("Choose Custom Binary"))
-                    .modal(true)
-                    .accept_label(gettext("Select"))
-                    .build();
-
-                dialog.select_folder(
-                    Some(&window),
-                    gio::Cancellable::NONE,
-                    clone!(
-                        #[strong]
-                        obj,
-                        move |file| {
-                            if let Ok(file) = file {
-                                let path = String::from(
-                                    file.path().unwrap().as_os_str().to_str().unwrap(),
-                                );
-                                obj.imp().custom_binary_entry_row.set_text(&path);
-                            }
-                        }
-                    ),
-                );
-            }
-        ));
     }
 
     fn fill_combo_box_text(&self) {
@@ -829,10 +728,8 @@ impl VaultsPageRowSettingsWindow {
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
             Some(self.imp().lock_screen_switch_row.is_active()),
-            Some(self.imp().custom_binary_expander_row.is_expanded()),
-            Some(String::from(
-                self.imp().custom_binary_entry_row.text().as_str(),
-            )),
+            Some(false),
+            None,
         )
     }
 
@@ -866,16 +763,6 @@ impl VaultsPageRowSettingsWindow {
                     .set_text(&config.mount_directory.to_string());
                 if let Some(session_lock) = config.session_lock {
                     self.imp().lock_screen_switch_row.set_active(session_lock);
-                }
-                if let Some(use_custom_binary) = config.use_custom_binary {
-                    self.imp()
-                        .custom_binary_expander_row
-                        .set_enable_expansion(use_custom_binary);
-                }
-                if let Some(custom_binary_path) = config.custom_binary_path {
-                    self.imp()
-                        .custom_binary_entry_row
-                        .set_text(&custom_binary_path);
                 }
             }
             (_, _) => {
