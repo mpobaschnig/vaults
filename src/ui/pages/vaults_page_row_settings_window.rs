@@ -330,7 +330,7 @@ impl VaultsPageRowSettingsWindow {
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
             Some(self.imp().lock_screen_switch_row.is_active()),
             Some(false),
-            None
+            None,
         );
 
         UserConfigManager::instance()
