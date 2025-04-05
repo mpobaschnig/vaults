@@ -22,7 +22,6 @@ use adw::subclass::dialog::AdwDialogImpl;
 use gettextrs::gettext;
 use glib::clone;
 use gtk::gio;
-use gtk::glib::GString;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 
