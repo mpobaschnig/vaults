@@ -296,6 +296,26 @@ impl VApplication {
 
     fn show_preferences(&self) {
         let preferences = VaultsSettingsWindow::new();
+
+        preferences.connect_closure(
+            "refresh",
+            false,
+            closure_local!(
+                #[strong(rename_to = obj)]
+                self,
+                move |_: VaultsSettingsWindow| {
+                    log::debug!("Refreshing preferences!");
+                    obj.imp()
+                        .window
+                        .borrow()
+                        .as_ref()
+                        .unwrap()
+                        .clone()
+                        .refresh_clicked();
+                }
+            ),
+        );
+
         AdwDialogExt::present(&preferences, Some(&self.active_window().unwrap()));
     }
 

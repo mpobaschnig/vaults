@@ -593,7 +593,7 @@ impl ApplicationWindow {
         AdwDialogExt::present(&dialog, Some(&window));
     }
 
-    fn refresh_clicked(&self) {
+    pub fn refresh_clicked(&self) {
         self.clear();
 
         UserConfigManager::instance().read_config();

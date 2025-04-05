@@ -22,8 +22,10 @@ use adw::subclass::dialog::AdwDialogImpl;
 use gettextrs::gettext;
 use glib::clone;
 use gtk::gio;
+use gtk::glib::subclass::Signal;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
+use once_cell::sync::Lazy;
 
 use crate::application::VApplication;
 use crate::GlobalConfigManager;
@@ -94,6 +96,12 @@ mod imp {
     impl ObjectImpl for VaultsSettingsWindow {
         fn constructed(&self) {
             self.parent_constructed();
+        }
+
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> =
+                Lazy::new(|| vec![Signal::builder("refresh").build()]);
+            SIGNALS.as_ref()
         }
     }
 
@@ -219,6 +227,7 @@ impl VaultsSettingsWindow {
                     GlobalConfigManager::instance().write_config();
                     let toast = adw::Toast::new(&gettext("Saved preferences successfully!"));
                     obj.imp().toast_overlay.add_toast(toast);
+                    obj.emit_by_name::<()>("refresh", &[]);
                 }
             ));
 
@@ -233,6 +242,7 @@ impl VaultsSettingsWindow {
                     GlobalConfigManager::instance().write_config();
                     let toast = adw::Toast::new(&gettext("Saved preferences successfully!"));
                     obj.imp().toast_overlay.add_toast(toast);
+                    obj.emit_by_name::<()>("refresh", &[]);
                 }
             ));
 
@@ -247,6 +257,7 @@ impl VaultsSettingsWindow {
                     GlobalConfigManager::instance().write_config();
                     let toast = adw::Toast::new(&gettext("Saved preferences successfully!"));
                     obj.imp().toast_overlay.add_toast(toast);
+                    obj.emit_by_name::<()>("refresh", &[]);
                 }
             ));
 
@@ -262,6 +273,7 @@ impl VaultsSettingsWindow {
                     GlobalConfigManager::instance().write_config();
                     let toast = adw::Toast::new(&gettext("Saved preferences successfully!"));
                     obj.imp().toast_overlay.add_toast(toast);
+                    obj.emit_by_name::<()>("refresh", &[]);
                 }
             ));
     }
