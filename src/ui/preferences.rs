@@ -225,8 +225,6 @@ impl VaultsSettingsWindow {
                     GlobalConfigManager::instance()
                         .set_cryfs_custom_binary(expander_row.is_expanded());
                     GlobalConfigManager::instance().write_config();
-                    let toast = adw::Toast::new(&gettext("Saved preferences successfully!"));
-                    obj.imp().toast_overlay.add_toast(toast);
                     obj.emit_by_name::<()>("refresh", &[]);
                 }
             ));
@@ -240,8 +238,6 @@ impl VaultsSettingsWindow {
                     let text = entry_row.text();
                     GlobalConfigManager::instance().set_cryfs_custom_binary_path(text.to_string());
                     GlobalConfigManager::instance().write_config();
-                    let toast = adw::Toast::new(&gettext("Saved preferences successfully!"));
-                    obj.imp().toast_overlay.add_toast(toast);
                     obj.emit_by_name::<()>("refresh", &[]);
                 }
             ));
@@ -255,8 +251,6 @@ impl VaultsSettingsWindow {
                     GlobalConfigManager::instance()
                         .set_gocryptfs_custom_binary(expander_row.is_expanded());
                     GlobalConfigManager::instance().write_config();
-                    let toast = adw::Toast::new(&gettext("Saved preferences successfully!"));
-                    obj.imp().toast_overlay.add_toast(toast);
                     obj.emit_by_name::<()>("refresh", &[]);
                 }
             ));
@@ -271,8 +265,6 @@ impl VaultsSettingsWindow {
                     GlobalConfigManager::instance()
                         .set_gocryptfs_custom_binary_path(text.to_string());
                     GlobalConfigManager::instance().write_config();
-                    let toast = adw::Toast::new(&gettext("Saved preferences successfully!"));
-                    obj.imp().toast_overlay.add_toast(toast);
                     obj.emit_by_name::<()>("refresh", &[]);
                 }
             ));
