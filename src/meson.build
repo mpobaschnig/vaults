@@ -38,8 +38,9 @@ sources = files(
   'config.rs',
   'global_config_manager.rs',
   'main.rs',
-  'vault.rs',
+  'mod.rs',
   'user_config_manager.rs',
+  'vault.rs',
 )
 
 custom_target(
