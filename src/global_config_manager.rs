@@ -35,8 +35,12 @@ mod imp {
 
     #[derive(Debug, Serialize, Deserialize)]
     pub struct GlobalConfig {
-        pub encrypted_data_directory: RefCell<String>,
-        pub mount_directory: RefCell<String>,
+        pub encrypted_data_directory: RefCell<Option<String>>,
+        pub mount_directory: RefCell<Option<String>>,
+        pub gocryptfs_custom_binary: RefCell<Option<bool>>,
+        pub gocryptfs_custom_binary_path: RefCell<Option<String>>,
+        pub cryfs_custom_binary: RefCell<Option<bool>>,
+        pub cryfs_custom_binary_path: RefCell<Option<String>>,
     }
 
     impl Clone for GlobalConfig {
@@ -44,6 +48,10 @@ mod imp {
             GlobalConfig {
                 encrypted_data_directory: self.encrypted_data_directory.clone(),
                 mount_directory: self.mount_directory.clone(),
+                gocryptfs_custom_binary: self.gocryptfs_custom_binary.clone(),
+                gocryptfs_custom_binary_path: self.gocryptfs_custom_binary_path.clone(),
+                cryfs_custom_binary: self.cryfs_custom_binary.clone(),
+                cryfs_custom_binary_path: self.cryfs_custom_binary_path.clone(),
             }
         }
     }
@@ -66,8 +74,12 @@ mod imp {
             Self {
                 user_config_directory: RefCell::new(None),
                 global_config: RefCell::new(GlobalConfig {
-                    encrypted_data_directory: RefCell::new("".to_string()),
-                    mount_directory: RefCell::new("".to_string()),
+                    encrypted_data_directory: RefCell::new(Some("".to_string())),
+                    mount_directory: RefCell::new(Some("".to_string())),
+                    cryfs_custom_binary: RefCell::new(Some(false)),
+                    cryfs_custom_binary_path: RefCell::new(Some("".to_string())),
+                    gocryptfs_custom_binary: RefCell::new(Some(false)),
+                    gocryptfs_custom_binary_path: RefCell::new(Some("".to_string())),
                 }),
                 flatpak_info: RefCell::new(Ini::new()),
             }
@@ -149,7 +161,7 @@ impl GlobalConfigManager {
                             log::info!("Got user data directory: {}", user_data_directory);
 
                             *global_config.encrypted_data_directory.borrow_mut() =
-                                user_data_directory.to_owned() + "/";
+                                Some(user_data_directory.to_owned() + "/");
                         }
                         None => {
                             log::error!("Could not get user data directory");
@@ -161,7 +173,7 @@ impl GlobalConfigManager {
                             log::debug!("Got home directory: {}", &home_directory);
 
                             *global_config.mount_directory.borrow_mut() =
-                                home_directory.to_owned() + "/Vaults/";
+                                Some(home_directory.to_owned() + "/Vaults/");
                         }
                         None => {
                             log::error!("Could not get home directory");
@@ -220,7 +232,7 @@ impl GlobalConfigManager {
             .global_config
             .borrow_mut()
             .encrypted_data_directory
-            .borrow_mut() = path;
+            .borrow_mut() = Some(path);
     }
 
     pub fn set_mount_directory(&self, path: String) {
@@ -231,12 +243,104 @@ impl GlobalConfigManager {
             .global_config
             .borrow_mut()
             .mount_directory
-            .borrow_mut() = path;
+            .borrow_mut() = Some(path);
     }
 
     pub fn get_flatpak_info(&self) -> Ini {
         log::trace!("get_flatpak_info()");
 
         self.imp().flatpak_info.borrow().clone()
+    }
+
+    pub fn cryfs_custom_binary(&self) -> bool {
+        log::trace!("cryfs_custom_binary()");
+
+        (*self
+            .imp()
+            .global_config
+            .borrow()
+            .cryfs_custom_binary
+            .borrow())
+        .unwrap()
+    }
+
+    pub fn set_cryfs_custom_binary(&self, enabled: bool) {
+        log::trace!("set_cryfs_custom_binary({})", enabled);
+
+        *self
+            .imp()
+            .global_config
+            .borrow_mut()
+            .cryfs_custom_binary
+            .borrow_mut() = Some(enabled);
+    }
+
+    pub fn cryfs_custom_binary_path(&self) -> String {
+        log::trace!("cryfs_custom_binary_path()");
+
+        self.imp()
+            .global_config
+            .borrow()
+            .cryfs_custom_binary_path
+            .borrow()
+            .clone()
+            .unwrap()
+    }
+
+    pub fn set_cryfs_custom_binary_path(&self, path: String) {
+        log::trace!("set_cryfs_custom_binary_path({})", path);
+
+        *self
+            .imp()
+            .global_config
+            .borrow_mut()
+            .cryfs_custom_binary_path
+            .borrow_mut() = Some(path);
+    }
+
+    pub fn gocryptfs_custom_binary(&self) -> bool {
+        log::trace!("gocryptfs_custom_binary()");
+
+        (*self
+            .imp()
+            .global_config
+            .borrow()
+            .gocryptfs_custom_binary
+            .borrow())
+        .unwrap()
+    }
+
+    pub fn set_gocryptfs_custom_binary(&self, enabled: bool) {
+        log::trace!("set_gocryptfs_custom_binary({})", enabled);
+
+        *self
+            .imp()
+            .global_config
+            .borrow_mut()
+            .gocryptfs_custom_binary
+            .borrow_mut() = Some(enabled);
+    }
+
+    pub fn gocryptfs_custom_binary_path(&self) -> String {
+        log::trace!("gocryptfs_custom_binary_path()");
+
+        self.imp()
+            .global_config
+            .borrow()
+            .gocryptfs_custom_binary_path
+            .borrow()
+            .clone()
+            .unwrap()
+    }
+
+    pub fn set_gocryptfs_custom_binary_path(&self, path: String) {
+        log::trace!("set_gocrypfs_custom_binary_path({})", path);
+
+        *self
+            .imp()
+            .global_config
+            .borrow_mut()
+            .gocryptfs_custom_binary_path
+            .borrow_mut() = Some(path);
     }
 }

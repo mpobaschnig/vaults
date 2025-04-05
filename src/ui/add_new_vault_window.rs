@@ -738,13 +738,23 @@ impl AddNewVaultWindow {
         let vault_name = self.imp().entry_row_name.text().to_string();
         let global_config = GlobalConfigManager::instance().get_global_config();
 
-        let mut path = global_config.encrypted_data_directory.borrow().clone();
+        let mut path = global_config
+            .encrypted_data_directory
+            .borrow()
+            .clone()
+            .unwrap()
+            .clone();
         if !path.ends_with("/") {
             path.push('/');
         }
         let encrypted_data_directory = path + &vault_name;
 
-        path = global_config.mount_directory.borrow().clone();
+        path = global_config
+            .mount_directory
+            .borrow()
+            .clone()
+            .unwrap()
+            .clone();
         if !path.ends_with("/") {
             path.push('/');
         }

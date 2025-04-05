@@ -27,7 +27,6 @@
                 <property name="vscrollbar_policy">automatic</property>
                 <child>
                   <object class="AdwClamp">
-                    <property name="margin-bottom">12</property>
                     <property name="margin-start">12</property>
                     <property name="margin-end">12</property>
                     <property name="hexpand">True</property>
