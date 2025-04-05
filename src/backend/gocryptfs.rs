@@ -27,12 +27,8 @@ use std::{io::Write, process::Stdio};
 fn get_binary_path(vault_config: &VaultConfig) -> String {
     log::trace!("get_binary_path({:?})", vault_config);
 
-    if let Some(use_custom_binary) = vault_config.use_custom_binary {
-        if use_custom_binary {
-            if let Some(custom_binary_path) = &vault_config.custom_binary_path {
-                return custom_binary_path.to_string();
-            }
-        }
+    if GlobalConfigManager::instance().gocryptfs_custom_binary() {
+        return GlobalConfigManager::instance().gocryptfs_custom_binary_path();
     }
 
     let global_config = GlobalConfigManager::instance().get_flatpak_info();
