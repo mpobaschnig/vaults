@@ -22,13 +22,14 @@ use adw::subclass::dialog::AdwDialogImpl;
 use gettextrs::gettext;
 use glib::clone;
 use gtk::gio;
+use gtk::gio::{Settings, SettingsBindFlags};
 use gtk::glib::subclass::Signal;
 use gtk::subclass::prelude::*;
 use gtk::{glib, CompositeTemplate};
 use once_cell::sync::Lazy;
 
 use crate::application::VApplication;
-use crate::GlobalConfigManager;
+use crate::config::APP_ID;
 
 mod imp {
     use super::*;
@@ -60,6 +61,8 @@ mod imp {
         pub gocryptfs_custom_binary_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub gocryptfs_custom_binary_button: TemplateChild<gtk::Button>,
+
+        pub settings: Settings,
     }
 
     #[glib::object_subclass]
@@ -81,6 +84,8 @@ mod imp {
                 gocryptfs_custom_binary_expander_row: TemplateChild::default(),
                 gocryptfs_custom_binary_entry_row: TemplateChild::default(),
                 gocryptfs_custom_binary_button: TemplateChild::default(),
+
+                settings: Settings::new(APP_ID),
             }
         }
 
@@ -124,77 +129,8 @@ impl Default for VaultsSettingsWindow {
 impl VaultsSettingsWindow {
     pub fn new() -> Self {
         let o: Self = glib::Object::builder().build();
-        o.init();
         o.setup_signals();
         o
-    }
-
-    fn init(&self) {
-        log::trace!("init()");
-
-        let global_config = GlobalConfigManager::instance().get_global_config();
-
-        if let Some(encrypted_data_directory) =
-            global_config.encrypted_data_directory.borrow().as_ref()
-        {
-            self.imp()
-                .encrypted_data_directory_entry_row
-                .set_text(encrypted_data_directory);
-        } else {
-            log::error!("Didn't find encrypted data directory");
-        };
-
-        if let Some(mount_directory) = global_config.mount_directory.borrow().as_ref() {
-            self.imp()
-                .mount_directory_entry_row
-                .set_text(mount_directory);
-        } else {
-            log::error!("Didn't find mount directory");
-        };
-
-        if let Some(cryfs_custom_binary) = global_config.cryfs_custom_binary.borrow().as_ref() {
-            self.imp()
-                .cryfs_custom_binary_expander_row
-                .set_enable_expansion(*cryfs_custom_binary);
-            self.imp()
-                .cryfs_custom_binary_expander_row
-                .set_expanded(*cryfs_custom_binary);
-        } else {
-            log::error!("Didn't find cryfs custom binary");
-        };
-
-        if let Some(cryfs_custom_binary_path) =
-            global_config.cryfs_custom_binary_path.borrow().as_ref()
-        {
-            self.imp()
-                .cryfs_custom_binary_entry_row
-                .set_text(cryfs_custom_binary_path);
-        } else {
-            log::error!("Didn't find cryfs custom binary path");
-        };
-
-        if let Some(gocryptfs_custom_binary) =
-            global_config.gocryptfs_custom_binary.borrow().as_ref()
-        {
-            self.imp()
-                .gocryptfs_custom_binary_expander_row
-                .set_enable_expansion(*gocryptfs_custom_binary);
-            self.imp()
-                .gocryptfs_custom_binary_expander_row
-                .set_expanded(*gocryptfs_custom_binary);
-        } else {
-            log::error!("Didn't find gocryptfs custom binary");
-        };
-
-        if let Some(gocryptfs_custom_binary_path) =
-            global_config.gocryptfs_custom_binary_path.borrow().as_ref()
-        {
-            self.imp()
-                .gocryptfs_custom_binary_entry_row
-                .set_text(gocryptfs_custom_binary_path);
-        } else {
-            log::error!("Didn't find gocryptfs custom binary path");
-        };
     }
 
     fn setup_signals(&self) {
@@ -208,18 +144,6 @@ impl VaultsSettingsWindow {
                 }
             ));
 
-        self.imp()
-            .encrypted_data_directory_entry_row
-            .connect_apply(clone!(
-                #[weak(rename_to = _obj)]
-                self,
-                move |entry_row| {
-                    let text = entry_row.text();
-                    GlobalConfigManager::instance().set_encrypted_data_directory(text.to_string());
-                    GlobalConfigManager::instance().write_config();
-                }
-            ));
-
         self.imp().mount_directory_button.connect_clicked(clone!(
             #[weak(rename_to = obj)]
             self,
@@ -228,68 +152,79 @@ impl VaultsSettingsWindow {
             }
         ));
 
-        self.imp().mount_directory_entry_row.connect_apply(clone!(
-            #[weak(rename_to = _obj)]
-            self,
-            move |entry_row| {
-                let text = entry_row.text();
-                GlobalConfigManager::instance().set_mount_directory(text.to_string());
-                GlobalConfigManager::instance().write_config();
-            }
-        ));
+        self.imp()
+            .settings
+            .bind(
+                "encrypted-data-directory",
+                &self.imp().encrypted_data_directory_entry_row.get(),
+                "text",
+            )
+            .build();
 
         self.imp()
-            .cryfs_custom_binary_expander_row
-            .connect_enable_expansion_notify(clone!(
-                #[weak(rename_to = obj)]
-                self,
-                move |expander_row| {
-                    GlobalConfigManager::instance()
-                        .set_cryfs_custom_binary(expander_row.is_expanded());
-                    GlobalConfigManager::instance().write_config();
-                    obj.emit_by_name::<()>("refresh", &[]);
-                }
-            ));
+            .settings
+            .bind(
+                "mount-directory",
+                &self.imp().mount_directory_entry_row.get(),
+                "text",
+            )
+            .build();
 
         self.imp()
-            .cryfs_custom_binary_entry_row
-            .connect_apply(clone!(
-                #[weak(rename_to = obj)]
-                self,
-                move |entry_row| {
-                    let text = entry_row.text();
-                    GlobalConfigManager::instance().set_cryfs_custom_binary_path(text.to_string());
-                    GlobalConfigManager::instance().write_config();
-                    obj.emit_by_name::<()>("refresh", &[]);
-                }
-            ));
+            .settings
+            .bind(
+                "use-custom-cryfs-binary",
+                &self.imp().cryfs_custom_binary_expander_row.get(),
+                "expanded",
+            )
+            .build();
 
         self.imp()
-            .gocryptfs_custom_binary_expander_row
-            .connect_enable_expansion_notify(clone!(
-                #[weak(rename_to = obj)]
-                self,
-                move |expander_row| {
-                    GlobalConfigManager::instance()
-                        .set_gocryptfs_custom_binary(expander_row.is_expanded());
-                    GlobalConfigManager::instance().write_config();
-                    obj.emit_by_name::<()>("refresh", &[]);
-                }
-            ));
+            .settings
+            .bind(
+                "use-custom-cryfs-binary",
+                &self.imp().cryfs_custom_binary_expander_row.get(),
+                "enable-expansion",
+            )
+            .flags(SettingsBindFlags::GET)
+            .build();
 
         self.imp()
-            .gocryptfs_custom_binary_entry_row
-            .connect_apply(clone!(
-                #[weak(rename_to = obj)]
-                self,
-                move |entry_row| {
-                    let text = entry_row.text();
-                    GlobalConfigManager::instance()
-                        .set_gocryptfs_custom_binary_path(text.to_string());
-                    GlobalConfigManager::instance().write_config();
-                    obj.emit_by_name::<()>("refresh", &[]);
-                }
-            ));
+            .settings
+            .bind(
+                "custom-cryfs-binary-path",
+                &self.imp().cryfs_custom_binary_entry_row.get(),
+                "text",
+            )
+            .build();
+
+        self.imp()
+            .settings
+            .bind(
+                "use-custom-gocryptfs-binary",
+                &self.imp().gocryptfs_custom_binary_expander_row.get(),
+                "expanded",
+            )
+            .build();
+
+        self.imp()
+            .settings
+            .bind(
+                "use-custom-gocryptfs-binary",
+                &self.imp().gocryptfs_custom_binary_expander_row.get(),
+                "enable-expansion",
+            )
+            .flags(SettingsBindFlags::GET)
+            .build();
+
+        self.imp()
+            .settings
+            .bind(
+                "custom-gocryptfs-binary-path",
+                &self.imp().gocryptfs_custom_binary_entry_row.get(),
+                "text",
+            )
+            .build();
     }
 
     fn encrypted_data_directory_button_clicked(&self) {
