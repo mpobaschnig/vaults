@@ -208,11 +208,33 @@ impl VaultsSettingsWindow {
                 }
             ));
 
+        self.imp()
+            .encrypted_data_directory_entry_row
+            .connect_apply(clone!(
+                #[weak(rename_to = _obj)]
+                self,
+                move |entry_row| {
+                    let text = entry_row.text();
+                    GlobalConfigManager::instance().set_encrypted_data_directory(text.to_string());
+                    GlobalConfigManager::instance().write_config();
+                }
+            ));
+
         self.imp().mount_directory_button.connect_clicked(clone!(
             #[weak(rename_to = obj)]
             self,
             move |_| {
                 obj.mount_directory_button_clicked();
+            }
+        ));
+
+        self.imp().mount_directory_entry_row.connect_apply(clone!(
+            #[weak(rename_to = _obj)]
+            self,
+            move |entry_row| {
+                let text = entry_row.text();
+                GlobalConfigManager::instance().set_mount_directory(text.to_string());
+                GlobalConfigManager::instance().write_config();
             }
         ));
 
