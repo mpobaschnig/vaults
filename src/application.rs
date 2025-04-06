@@ -29,6 +29,7 @@ use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gio::ApplicationFlags;
 use glib::clone;
+use gtk::gio::Settings;
 use gtk::glib::closure_local;
 use gtk::glib::VariantTy;
 use gtk::prelude::*;
@@ -53,6 +54,8 @@ mod imp {
 
         only_prompt_type: RefCell<OnlyPromptType>,
         only_pompt_vault: RefCell<String>,
+
+        pub settings: RefCell<Settings>,
     }
 
     #[glib::object_subclass]
@@ -66,6 +69,7 @@ mod imp {
                 window: RefCell::new(None),
                 only_prompt_type: RefCell::new(OnlyPromptType::None),
                 only_pompt_vault: RefCell::new(String::new()),
+                settings: RefCell::new(Settings::new(config::APP_ID)),
             }
         }
     }
