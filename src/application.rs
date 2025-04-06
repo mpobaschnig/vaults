@@ -47,7 +47,7 @@ mod imp {
         Close = 2,
     }
 
-    #[derive(Debug, Default)]
+    #[derive(Debug)]
     pub struct VApplication {
         pub window: RefCell<Option<ApplicationWindow>>,
 
@@ -60,6 +60,14 @@ mod imp {
         const NAME: &'static str = "VApplication";
         type Type = super::VApplication;
         type ParentType = adw::Application;
+
+        fn new() -> Self {
+            Self {
+                window: RefCell::new(None),
+                only_prompt_type: RefCell::new(OnlyPromptType::None),
+                only_pompt_vault: RefCell::new(String::new()),
+            }
+        }
     }
 
     impl ObjectImpl for VApplication {}
