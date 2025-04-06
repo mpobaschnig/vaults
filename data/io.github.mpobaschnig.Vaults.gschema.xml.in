@@ -1,20 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <schemalist>
-  <schema path="/io/github/mpobaschnig/Vaults/" id="@app-id@" gettext-domain="@gettext-package@">
-    <key name="window-width" type="i">
-      <default>-1</default>
-      <summary>Default window width</summary>
-      <description>Default window width</description>
-    </key>
-    <key name="window-height" type="i">
-      <default>-1</default>
-      <summary>Default window height</summary>
-      <description>Default window height</description>
-    </key>
-    <key name="is-maximized" type="b">
-      <default>false</default>
-      <summary>Default window maximized behaviour</summary>
-      <description></description>
-    </key>
-  </schema>
+    <schema path="/io/github/mpobaschnig/Vaults/" id="@app-id@" gettext-domain="@gettext-package@">
+        <key name="window-width" type="i">
+            <default>-1</default>
+            <summary>Default window width</summary>
+            <description>Default window width</description>
+        </key>
+        <key name="window-height" type="i">
+            <default>-1</default>
+            <summary>Default window height</summary>
+            <description>Default window height</description>
+        </key>
+        <key name="is-maximized" type="b">
+            <default>false</default>
+            <summary>Default window maximized behaviour</summary>
+            <description></description>
+        </key>
+        <key name="encrypted-data-directory" type="s">
+            <default>"~/.var/app/@app-id@/data/"</default>
+            <summary>The encrypted data directory path</summary>
+            <description>The path to the encrypted data directory</description>
+        </key>
+        <key name="mount-directory" type="s">
+            <default>"~/Vaults"</default>
+            <summary>The path to the custom cryfs binary</summary>
+            <description>The path to the custom cryfs binary</description>
+        </key>
+
+        <key name="use-custom-cryfs-binary" type="b">
+            <default>false</default>
+            <summary>Use custom binary</summary>
+            <description>Wether to use the provided custom binary to execute CryFS</description>
+        </key>
+        <key name="custom-cryfs-binary-path" type="s">
+            <default>""</default>
+            <summary>The path to the custom cryfs binary</summary>
+            <description>The path to the custom cryfs binary</description>
+        </key>
+        <key name="use-custom-gocryptfs-binary" type="b">
+            <default>false</default>
+            <summary>Use custom binary</summary>
+            <description>Wether to use the provided custom binary to execute gocryptfs</description>
+        </key>
+        <key name="custom-gocryptfs-binary-path" type="s">
+            <default>""</default>
+            <summary>The path to the custom gocryptfs binary</summary>
+            <description>The path to the custom gocryptfs binary</description>
+        </key>
+    </schema>
 </schemalist>
