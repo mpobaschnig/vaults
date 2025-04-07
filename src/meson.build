@@ -23,6 +23,9 @@ sources = files(
   'backend/gocryptfs.rs',
   'backend/mod.rs',
 
+  'legacy/global_config_converter.rs',
+  'legacy/mod.rs',
+
   'ui/pages/mod.rs',
   'ui/pages/vaults_page_row.rs',
   'ui/pages/vaults_page_row_settings_window.rs',

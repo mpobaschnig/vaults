@@ -1,6 +1,6 @@
 // mod.rs
 //
-// Copyright 2021 Martin Pobaschnig
+// Copyright 2025 Martin Pobaschnig
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,6 +17,3 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-pub mod backend;
-pub mod legacy;
-pub mod pages;
