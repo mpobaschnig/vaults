@@ -20,8 +20,9 @@
 pub mod cryfs;
 pub mod gocryptfs;
 
-use crate::vault::VaultConfig;
+use crate::{config::APP_ID, vault::VaultConfig};
 use gettextrs::gettext;
+use gtk::gio::Settings;
 use serde::{Deserialize, Serialize};
 use std::string::String;
 use strum_macros::EnumIter;
@@ -57,15 +58,18 @@ impl Backend {
     pub fn is_available(&self, vault_config: &VaultConfig) -> Result<bool, BackendError> {
         log::trace!("is_available({:?}, {:?})", self, vault_config);
 
+        let settings = Settings::new(APP_ID);
+
         match &self {
-            Backend::Cryfs => cryfs::is_available(vault_config),
-            Backend::Gocryptfs => gocryptfs::is_available(vault_config),
+            Backend::Cryfs => cryfs::is_available(&settings, vault_config),
+            Backend::Gocryptfs => gocryptfs::is_available(&settings, vault_config),
         }
     }
 
     pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
         log::trace!("init({:?}, password: <redacted>)", vault_config);
 
+        let settings = Settings::new(APP_ID);
         let encrypted_data_directory = &vault_config.encrypted_data_directory;
         let mount_directory = &vault_config.mount_directory;
 
@@ -84,26 +88,30 @@ impl Backend {
         }
 
         match vault_config.backend {
-            Backend::Cryfs => cryfs::init(vault_config, password),
-            Backend::Gocryptfs => gocryptfs::init(vault_config, password),
+            Backend::Cryfs => cryfs::init(&settings, vault_config, password),
+            Backend::Gocryptfs => gocryptfs::init(&settings, vault_config, password),
         }
     }
 
     pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
         log::trace!("open({:?}, password: <redacted>)", vault_config);
 
+        let settings = Settings::new(APP_ID);
+
         match vault_config.backend {
-            Backend::Cryfs => cryfs::open(vault_config, password),
-            Backend::Gocryptfs => gocryptfs::open(vault_config, password),
+            Backend::Cryfs => cryfs::open(&settings, vault_config, password),
+            Backend::Gocryptfs => gocryptfs::open(&settings, vault_config, password),
         }
     }
 
     pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
         log::trace!("close({:?})", vault_config);
 
+        let settings = Settings::new(APP_ID);
+
         match vault_config.backend {
-            Backend::Cryfs => cryfs::close(vault_config),
-            Backend::Gocryptfs => gocryptfs::close(vault_config),
+            Backend::Cryfs => cryfs::close(&settings, vault_config),
+            Backend::Gocryptfs => gocryptfs::close(&settings, vault_config),
         }
     }
 }
