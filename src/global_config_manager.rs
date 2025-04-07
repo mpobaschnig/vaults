@@ -343,4 +343,28 @@ impl GlobalConfigManager {
             .gocryptfs_custom_binary_path
             .borrow_mut() = Some(path);
     }
+
+    pub fn get_cryfs_binary_path(&self) -> String {
+        let flatpak_info = self.get_flatpak_info();
+        let instance_path = flatpak_info
+            .section(Some("Instance"))
+            .unwrap()
+            .get("app-path")
+            .unwrap();
+        let cryfs_instance_path = instance_path.to_owned() + "/bin/cryfs";
+        log::info!("CryFS binary path: {}", cryfs_instance_path);
+        cryfs_instance_path
+    }
+
+    pub fn get_gocryptfs_binary_path(&self) -> String {
+        let flatpak_info = self.get_flatpak_info();
+        let instance_path = flatpak_info
+            .section(Some("Instance"))
+            .unwrap()
+            .get("app-path")
+            .unwrap();
+        let gocryptfs_instance_path = instance_path.to_owned() + "/bin/gocryptfs";
+        log::info!("gocryptfs binary path: {}", gocryptfs_instance_path);
+        gocryptfs_instance_path
+    }
 }

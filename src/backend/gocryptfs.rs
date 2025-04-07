@@ -33,15 +33,7 @@ fn get_binary_path(settings: &Settings, vault_config: &VaultConfig) -> String {
         return settings.string("custom-gocryptfs-binary-path").to_string();
     }
 
-    let global_config = GlobalConfigManager::instance().get_flatpak_info();
-    let instance_path = global_config
-        .section(Some("Instance"))
-        .unwrap()
-        .get("app-path")
-        .unwrap();
-    let gocryptfs_instance_path = instance_path.to_owned() + "/bin/gocryptfs";
-    log::info!("gocryptfs binary path: {}", gocryptfs_instance_path);
-    gocryptfs_instance_path
+    GlobalConfigManager::instance().get_gocryptfs_binary_path()
 }
 
 pub fn is_available(settings: &Settings, vault_config: &VaultConfig) -> Result<bool, BackendError> {
