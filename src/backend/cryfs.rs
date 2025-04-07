@@ -21,14 +21,16 @@ use super::BackendError;
 use crate::global_config_manager::GlobalConfigManager;
 use crate::vault::VaultConfig;
 use gettextrs::gettext;
+use gtk::gio::prelude::SettingsExt;
+use gtk::gio::Settings;
 use std::process::Command;
 use std::{self, io::Write, process::Stdio};
 
-fn get_binary_path(vault_config: &VaultConfig) -> String {
+fn get_binary_path(settings: &Settings, vault_config: &VaultConfig) -> String {
     log::trace!("get_binary_path({:?})", vault_config);
 
-    if GlobalConfigManager::instance().cryfs_custom_binary() {
-        return GlobalConfigManager::instance().cryfs_custom_binary_path();
+    if settings.boolean("use-custom-cryfs-binary") {
+        return settings.string("custom-cryfs-binary-path").to_string();
     }
 
     let global_config = GlobalConfigManager::instance().get_flatpak_info();
@@ -42,12 +44,12 @@ fn get_binary_path(vault_config: &VaultConfig) -> String {
     cryfs_instance_path
 }
 
-pub fn is_available(vault_config: &VaultConfig) -> Result<bool, BackendError> {
+pub fn is_available(settings: &Settings, vault_config: &VaultConfig) -> Result<bool, BackendError> {
     log::trace!("is_available({:?})", vault_config);
 
     let output = Command::new("flatpak-spawn")
         .arg("--host")
-        .arg(get_binary_path(vault_config))
+        .arg(get_binary_path(settings, vault_config))
         .arg("--version")
         .output()?;
     log::debug!("CryFS output: {:?}", output);
@@ -57,12 +59,16 @@ pub fn is_available(vault_config: &VaultConfig) -> Result<bool, BackendError> {
     Ok(success)
 }
 
-pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
+pub fn init(
+    settings: &Settings,
+    vault_config: &VaultConfig,
+    password: String,
+) -> Result<(), BackendError> {
     log::trace!("init({:?}, password: <redacted>)", vault_config);
 
     let mut child = Command::new("flatpak-spawn")
         .arg("--host")
-        .arg(get_binary_path(vault_config))
+        .arg(get_binary_path(settings, vault_config))
         .env("CRYFS_FRONTEND", "noninteractive")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -88,7 +94,7 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
     log::debug!("CryFS output: {:?}", output);
     if output.status.success() {
         log::info!("CryFS init successful. Closing now");
-        close(vault_config)
+        close(settings, vault_config)
     } else {
         std::io::stdout().write_all(&output.stdout).unwrap();
         std::io::stderr().write_all(&output.stderr).unwrap();
@@ -99,12 +105,16 @@ pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
     }
 }
 
-pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
+pub fn open(
+    settings: &Settings,
+    vault_config: &VaultConfig,
+    password: String,
+) -> Result<(), BackendError> {
     log::trace!("open({:?}, password: <redacted>)", vault_config);
 
     let mut child = Command::new("flatpak-spawn")
         .arg("--host")
-        .arg(get_binary_path(vault_config))
+        .arg(get_binary_path(settings, vault_config))
         .env("CRYFS_FRONTEND", "noninteractive")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -136,7 +146,7 @@ pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendE
     }
 }
 
-pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
+pub fn close(_settings: &Settings, vault_config: &VaultConfig) -> Result<(), BackendError> {
     log::trace!("close({:?})", vault_config);
 
     let child = Command::new("flatpak-spawn")

@@ -18,8 +18,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::application::VApplication;
+use crate::config::APP_ID;
 use crate::user_config_manager::UserConfigManager;
-use crate::{backend, global_config_manager::GlobalConfigManager, vault::*};
+use crate::{backend, vault::*};
 use adw::prelude::AdwDialogExt;
 use adw::prelude::ComboRowExt;
 use gettextrs::gettext;
@@ -27,13 +28,13 @@ use gtk::gio;
 
 use adw::subclass::prelude::*;
 use gtk::{self, prelude::*};
+use gtk::{gio::Settings, glib::subclass::Signal};
 use gtk::{glib, CompositeTemplate};
 use gtk::{glib::clone, glib::GString};
 use std::cell::RefCell;
 use strum::IntoEnumIterator;
 
 mod imp {
-    use gtk::glib::subclass::Signal;
     use once_cell::sync::Lazy;
 
     use super::*;
@@ -77,6 +78,8 @@ mod imp {
         pub mount_directory_error_label: TemplateChild<gtk::Label>,
 
         pub current_page: RefCell<u32>,
+
+        pub settings: Settings,
     }
 
     #[glib::object_subclass]
@@ -106,6 +109,8 @@ mod imp {
                 mount_directory_error_label: TemplateChild::default(),
 
                 current_page: RefCell::new(0),
+
+                settings: Settings::new(APP_ID),
             }
         }
 
@@ -736,25 +741,18 @@ impl AddNewVaultWindow {
 
     fn fill_directories(&self) {
         let vault_name = self.imp().entry_row_name.text().to_string();
-        let global_config = GlobalConfigManager::instance().get_global_config();
 
-        let mut path = global_config
-            .encrypted_data_directory
-            .borrow()
-            .clone()
-            .unwrap()
-            .clone();
+        let mut path = self
+            .imp()
+            .settings
+            .string("encrypted-data-directory")
+            .to_string();
         if !path.ends_with("/") {
             path.push('/');
         }
         let encrypted_data_directory = path + &vault_name;
 
-        path = global_config
-            .mount_directory
-            .borrow()
-            .clone()
-            .unwrap()
-            .clone();
+        path = self.imp().settings.string("mount-directory").to_string();
         if !path.ends_with("/") {
             path.push('/');
         }
