@@ -29,10 +29,7 @@
         "prepend-ld-library-path": "/usr/lib/sdk/llvm18/lib",
         "env": {
             "RUSTFLAGS": "-C force-frame-pointers=yes -C symbol-mangling-version=v0 -C linker=clang -C link-arg=-fuse-ld=/usr/lib/sdk/rust-stable/bin/mold"
-        },
-        "build-args": [
-            "--share=network"
-        ]
+        }
     },
     "modules": [
         {
