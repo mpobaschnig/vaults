@@ -23,7 +23,7 @@ sources = files(
   'backend/gocryptfs.rs',
   'backend/mod.rs',
 
-  'legacy/global_config_converter.rs',
+  'legacy/global_config.rs',
   'legacy/mod.rs',
 
   'ui/pages/mod.rs',

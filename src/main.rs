@@ -21,6 +21,7 @@ mod application;
 #[rustfmt::skip]
 mod config;
 mod global_config_manager;
+mod legacy;
 mod user_config_manager;
 mod vault;
 
@@ -35,7 +36,7 @@ extern crate serde;
 extern crate toml;
 
 use application::VApplication;
-use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
+use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE, VERSION};
 use gettextrs::*;
 use global_config_manager::GlobalConfigManager;
 use gtk::gio;
@@ -55,6 +56,10 @@ fn main() {
     }
 
     GlobalConfigManager::instance().read_config();
+
+    if legacy::global_config::needs_conversion() {
+        legacy::global_config::convert();
+    }
 
     UserConfigManager::instance().read_config();
 
