@@ -21,6 +21,7 @@ mod application;
 #[rustfmt::skip]
 mod config;
 mod global_config_manager;
+mod legacy;
 mod user_config_manager;
 mod vault;
 
@@ -55,6 +56,10 @@ fn main() {
     }
 
     GlobalConfigManager::instance().read_config();
+
+    if legacy::global_config::needs_conversion() {
+        legacy::global_config::convert();
+    }
 
     UserConfigManager::instance().read_config();
 

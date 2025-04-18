@@ -29,6 +29,7 @@ use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use gio::ApplicationFlags;
 use glib::clone;
+use gtk::gio::Settings;
 use gtk::glib::closure_local;
 use gtk::glib::VariantTy;
 use gtk::prelude::*;
@@ -47,12 +48,14 @@ mod imp {
         Close = 2,
     }
 
-    #[derive(Debug, Default)]
+    #[derive(Debug)]
     pub struct VApplication {
         pub window: RefCell<Option<ApplicationWindow>>,
 
         only_prompt_type: RefCell<OnlyPromptType>,
         only_pompt_vault: RefCell<String>,
+
+        pub settings: RefCell<Settings>,
     }
 
     #[glib::object_subclass]
@@ -60,6 +63,15 @@ mod imp {
         const NAME: &'static str = "VApplication";
         type Type = super::VApplication;
         type ParentType = adw::Application;
+
+        fn new() -> Self {
+            Self {
+                window: RefCell::new(None),
+                only_prompt_type: RefCell::new(OnlyPromptType::None),
+                only_pompt_vault: RefCell::new(String::new()),
+                settings: RefCell::new(Settings::new(config::APP_ID)),
+            }
+        }
     }
 
     impl ObjectImpl for VApplication {}
