@@ -16,6 +16,10 @@
             <summary>Default window maximized behaviour</summary>
             <description></description>
         </key>
+        <key name="legacy-converted" type="b">
+            <default>false</default>
+            <summary>Status of legacy conversion</summary>
+        </key>
         <key name="encrypted-data-directory" type="s">
             <default>"~/.var/app/@app-id@/data/"</default>
             <summary>The encrypted data directory path</summary>

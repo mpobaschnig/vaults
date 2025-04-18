@@ -39,8 +39,14 @@ pub fn needs_conversion() -> bool {
 }
 
 pub fn convert() {
-    let global_config = global_config_manager::GlobalConfigManager::instance().get_global_config();
     let settings = Settings::new(APP_ID);
+
+    if settings.boolean("legacy-converted") {
+        log::debug!("Already converted, skipping");
+        return;
+    }
+
+    let global_config = global_config_manager::GlobalConfigManager::instance().get_global_config();
 
     if let Some(encrypted_data_directory) = global_config.encrypted_data_directory.borrow().clone()
     {
@@ -81,6 +87,12 @@ pub fn convert() {
             );
         }
     };
+
+    let ret = settings.set_boolean("legacy-converted", true);
+    log::debug!(
+        "Converted to new settings format successfully: {}",
+        ret.is_ok()
+    );
 }
 
 fn get_sem_version(current_version: &str) -> Option<(u32, u32, u32)> {
