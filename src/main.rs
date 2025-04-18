@@ -36,7 +36,7 @@ extern crate serde;
 extern crate toml;
 
 use application::VApplication;
-use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE, VERSION};
+use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};
 use gettextrs::*;
 use global_config_manager::GlobalConfigManager;
 use gtk::gio;
