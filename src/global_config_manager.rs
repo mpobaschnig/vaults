@@ -261,7 +261,7 @@ impl GlobalConfigManager {
             .borrow()
             .cryfs_custom_binary
             .borrow())
-        .unwrap()
+        .unwrap_or(false)
     }
 
     pub fn set_cryfs_custom_binary(&self, enabled: bool) {
@@ -307,7 +307,7 @@ impl GlobalConfigManager {
             .borrow()
             .gocryptfs_custom_binary
             .borrow())
-        .unwrap()
+        .unwrap_or(false)
     }
 
     pub fn set_gocryptfs_custom_binary(&self, enabled: bool) {
