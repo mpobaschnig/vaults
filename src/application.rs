@@ -32,6 +32,7 @@ use glib::clone;
 use gtk::gio::Settings;
 use gtk::glib::closure_local;
 use gtk::glib::VariantTy;
+use gtk::glib::{home_dir, user_data_dir};
 use gtk::prelude::*;
 use gtk::{gio, glib};
 use gtk_macros::action;
@@ -89,6 +90,7 @@ mod imp {
 
             app.setup_accels();
             app.setup_gactions();
+            app.setup_gsettings();
             app.set_resource_base_path(Some("/io/github/mpobaschnig/Vaults/"));
 
             match *self.only_prompt_type.borrow() {
@@ -292,6 +294,43 @@ impl VApplication {
                 }
             )
         );
+    }
+
+    fn setup_gsettings(&self) {
+        let settings = self.imp().settings.borrow();
+
+        if settings.string("encrypted-data-directory").is_empty() {
+            match user_data_dir().as_os_str().to_str() {
+                Some(user_data_directory) => {
+                    let encrypted_data_directory = user_data_directory.to_owned() + "/";
+                    log::info!("Got user data directory: {}", &encrypted_data_directory);
+                    settings
+                        .set_string("encrypted-data-directory", &encrypted_data_directory)
+                        .unwrap();
+                }
+                None => {
+                    log::error!("Could not get user data directory");
+                }
+            }
+        }
+
+        if settings.string("mount-directory").is_empty() {
+            match home_dir().to_str() {
+                Some(home_directory) => {
+                    let mount_directory = home_directory.to_owned() + "/Vaults/";
+                    log::debug!(
+                        "Setting mount directory preference to: {}",
+                        &mount_directory
+                    );
+                    settings
+                        .set_string("mount-directory", &mount_directory)
+                        .unwrap();
+                }
+                None => {
+                    log::error!("Could not get home directory");
+                }
+            }
+        }
     }
 
     fn setup_accels(&self) {

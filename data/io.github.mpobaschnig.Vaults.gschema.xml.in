@@ -21,12 +21,12 @@
             <summary>Status of legacy conversion</summary>
         </key>
         <key name="encrypted-data-directory" type="s">
-            <default>"~/.var/app/@app-id@/data/"</default>
+            <default>""</default>
             <summary>The encrypted data directory path</summary>
             <description>The path to the encrypted data directory</description>
         </key>
         <key name="mount-directory" type="s">
-            <default>"~/Vaults"</default>
+            <default>""</default>
             <summary>The path to the custom cryfs binary</summary>
             <description>The path to the custom cryfs binary</description>
         </key>
