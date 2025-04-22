@@ -27,10 +27,9 @@ use adw::{prelude::ComboRowExt, prelude::PreferencesGroupExt};
 use gettextrs::gettext;
 use gtk::glib::subclass::Signal;
 use gtk::{
-    self, gio,
-    glib::{self, clone, GString},
+    self, CompositeTemplate, gio,
+    glib::{self, GString, clone},
     prelude::*,
-    CompositeTemplate,
 };
 use once_cell::sync::Lazy;
 

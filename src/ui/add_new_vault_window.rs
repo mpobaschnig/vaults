@@ -28,9 +28,9 @@ use gtk::gio;
 
 use adw::subclass::prelude::*;
 use gtk::{self, prelude::*};
+use gtk::{CompositeTemplate, glib};
 use gtk::{gio::Settings, glib::subclass::Signal};
-use gtk::{glib, CompositeTemplate};
-use gtk::{glib::clone, glib::GString};
+use gtk::{glib::GString, glib::clone};
 use std::cell::RefCell;
 use strum::IntoEnumIterator;
 

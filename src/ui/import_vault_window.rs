@@ -20,7 +20,7 @@
 use adw::prelude::{AdwDialogExt, ComboRowExt};
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
-use gtk::{self, gio, gio::File, glib, glib::clone, glib::GString, prelude::*, CompositeTemplate};
+use gtk::{self, CompositeTemplate, gio, gio::File, glib, glib::GString, glib::clone, prelude::*};
 use std::cell::RefCell;
 use strum::IntoEnumIterator;
 

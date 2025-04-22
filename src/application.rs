@@ -19,9 +19,9 @@
 
 use crate::backend::Backend;
 use crate::config;
-use crate::ui::pages::VaultsPageRowPasswordPromptWindow;
 use crate::ui::ApplicationWindow;
 use crate::ui::VaultsSettingsWindow;
+use crate::ui::pages::VaultsPageRowPasswordPromptWindow;
 use crate::user_config_manager::UserConfigManager;
 
 use adw::prelude::AdwDialogExt;
@@ -30,8 +30,8 @@ use gettextrs::gettext;
 use gio::ApplicationFlags;
 use glib::clone;
 use gtk::gio::Settings;
-use gtk::glib::closure_local;
 use gtk::glib::VariantTy;
+use gtk::glib::closure_local;
 use gtk::glib::{home_dir, user_data_dir};
 use gtk::prelude::*;
 use gtk::{gio, glib};

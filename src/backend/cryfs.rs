@@ -21,8 +21,8 @@ use super::BackendError;
 use crate::global_config_manager::GlobalConfigManager;
 use crate::vault::VaultConfig;
 use gettextrs::gettext;
-use gtk::gio::prelude::SettingsExt;
 use gtk::gio::Settings;
+use gtk::gio::prelude::SettingsExt;
 use std::process::Command;
 use std::{self, io::Write, process::Stdio};
 
@@ -211,25 +211,59 @@ fn status_to_err(status: Option<i32>) -> BackendError {
 
     match status {
         Some(status) => match status {
-            CryfsExitStatus::UNSPECIFIED_ERROR => BackendError::ToUser(gettext("An unknown error occurred.")),
-            CryfsExitStatus::INVALID_ARGUMENTS => BackendError::ToUser(gettext("Invalid arguments were given.")),
-            CryfsExitStatus::WRONG_PASSWORD => BackendError::ToUser(gettext("The password is wrong.")),
-            CryfsExitStatus::EMPTY_PASSWORD => BackendError::ToUser(gettext("The password is empty.")),
-            CryfsExitStatus::TOO_NEW_FILESYSTEM_FORMAT => BackendError::ToUser(gettext("The format of the encrypted data directory is too new for this CryFS version. Please update CryFS.")),
-            CryfsExitStatus::TOO_OLD_FILESYSTEM_FORMAT => BackendError::ToUser(gettext("The format of the encrypted data directory is too old for this CryFS version.")),
-            CryfsExitStatus::WRONG_CIPHER => BackendError::ToUser(gettext("The vault uses a different cipher than the default of CryFS.")),
-            CryfsExitStatus::INACCESSIBLE_BASE_DIR => BackendError::ToUser(gettext("The encrypted data directory does not exist or is inaccessible.")),
-            CryfsExitStatus::INACCESSIBLE_MOUNT_DIR => BackendError::ToUser(gettext("The mount directory does not exist or is inaccessible.")),
-            CryfsExitStatus::BASE_DIR_INSIDE_MOUNT_DIR => BackendError::ToUser(gettext("The mount directory is inside the encrypted data directory.")),
-            CryfsExitStatus::INVALID_FILESYSTEM => BackendError::ToUser(gettext("The encrypted data directory is invalid.")),
-            CryfsExitStatus::FILESYSTEM_ID_CHANGED => BackendError::ToUser(gettext("The encrypted data id in the configuration file is different to the last time this vault was opened. This could mean someone replaced files in the encrypted data directory with different ones.")),
-            CryfsExitStatus::ENCRYPTION_KEY_CHANGED => BackendError::ToUser(gettext("The encryption key for your encrypted files is different to the last time this vault was opened. This could mean someone replaced files in the encrypted data directory with different ones.")),
-            CryfsExitStatus::FILESYSTEM_HAS_DIFFERENT_INTEGRITY_SETUP => BackendError::ToUser(gettext("Vaults' configuration and the encrypted data configuration mismatches.")),
-            CryfsExitStatus::SINGLE_CLIENT_FILE_SYSTEM => BackendError::ToUser(gettext("The encrypted data directory is in single-user mode and can only be used from the user that created it.")),
-            CryfsExitStatus::INTEGRITY_VIOLATION_ON_PREVIOUS_RUN => BackendError::ToUser(gettext("CryFS detected an integrity violation. The encrypted data directory will be accessible again after the integrity state file has been deleted.")),
-            CryfsExitStatus::INTEGRITY_VIOLATION => BackendError::ToUser(gettext("An integrity violation was detected. Vault will be unmounted.")),
+            CryfsExitStatus::UNSPECIFIED_ERROR => {
+                BackendError::ToUser(gettext("An unknown error occurred."))
+            }
+            CryfsExitStatus::INVALID_ARGUMENTS => {
+                BackendError::ToUser(gettext("Invalid arguments were given."))
+            }
+            CryfsExitStatus::WRONG_PASSWORD => {
+                BackendError::ToUser(gettext("The password is wrong."))
+            }
+            CryfsExitStatus::EMPTY_PASSWORD => {
+                BackendError::ToUser(gettext("The password is empty."))
+            }
+            CryfsExitStatus::TOO_NEW_FILESYSTEM_FORMAT => BackendError::ToUser(gettext(
+                "The format of the encrypted data directory is too new for this CryFS version. Please update CryFS.",
+            )),
+            CryfsExitStatus::TOO_OLD_FILESYSTEM_FORMAT => BackendError::ToUser(gettext(
+                "The format of the encrypted data directory is too old for this CryFS version.",
+            )),
+            CryfsExitStatus::WRONG_CIPHER => BackendError::ToUser(gettext(
+                "The vault uses a different cipher than the default of CryFS.",
+            )),
+            CryfsExitStatus::INACCESSIBLE_BASE_DIR => BackendError::ToUser(gettext(
+                "The encrypted data directory does not exist or is inaccessible.",
+            )),
+            CryfsExitStatus::INACCESSIBLE_MOUNT_DIR => BackendError::ToUser(gettext(
+                "The mount directory does not exist or is inaccessible.",
+            )),
+            CryfsExitStatus::BASE_DIR_INSIDE_MOUNT_DIR => BackendError::ToUser(gettext(
+                "The mount directory is inside the encrypted data directory.",
+            )),
+            CryfsExitStatus::INVALID_FILESYSTEM => {
+                BackendError::ToUser(gettext("The encrypted data directory is invalid."))
+            }
+            CryfsExitStatus::FILESYSTEM_ID_CHANGED => BackendError::ToUser(gettext(
+                "The encrypted data id in the configuration file is different to the last time this vault was opened. This could mean someone replaced files in the encrypted data directory with different ones.",
+            )),
+            CryfsExitStatus::ENCRYPTION_KEY_CHANGED => BackendError::ToUser(gettext(
+                "The encryption key for your encrypted files is different to the last time this vault was opened. This could mean someone replaced files in the encrypted data directory with different ones.",
+            )),
+            CryfsExitStatus::FILESYSTEM_HAS_DIFFERENT_INTEGRITY_SETUP => BackendError::ToUser(
+                gettext("Vaults' configuration and the encrypted data configuration mismatches."),
+            ),
+            CryfsExitStatus::SINGLE_CLIENT_FILE_SYSTEM => BackendError::ToUser(gettext(
+                "The encrypted data directory is in single-user mode and can only be used from the user that created it.",
+            )),
+            CryfsExitStatus::INTEGRITY_VIOLATION_ON_PREVIOUS_RUN => BackendError::ToUser(gettext(
+                "CryFS detected an integrity violation. The encrypted data directory will be accessible again after the integrity state file has been deleted.",
+            )),
+            CryfsExitStatus::INTEGRITY_VIOLATION => BackendError::ToUser(gettext(
+                "An integrity violation was detected. Vault will be unmounted.",
+            )),
             _ => BackendError::ToUser(gettext("An unknown error occurred.")),
-        }
-        None => BackendError::Generic
+        },
+        None => BackendError::Generic,
     }
 }
