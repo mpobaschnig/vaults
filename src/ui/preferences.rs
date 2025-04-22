@@ -25,7 +25,7 @@ use gtk::gio;
 use gtk::gio::{Settings, SettingsBindFlags};
 use gtk::glib::subclass::Signal;
 use gtk::subclass::prelude::*;
-use gtk::{glib, CompositeTemplate};
+use gtk::{CompositeTemplate, glib};
 use once_cell::sync::Lazy;
 
 use crate::application::VApplication;

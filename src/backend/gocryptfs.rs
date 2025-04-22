@@ -21,8 +21,8 @@ use super::BackendError;
 use crate::global_config_manager::GlobalConfigManager;
 use crate::vault::VaultConfig;
 use gettextrs::gettext;
-use gtk::gio::prelude::SettingsExt;
 use gtk::gio::Settings;
+use gtk::gio::prelude::SettingsExt;
 use std::process::Command;
 use std::{io::Write, process::Stdio};
 
@@ -214,10 +214,14 @@ fn umount_ret_status_to_err(status: Option<i32>) -> BackendError {
     // We are guaranteed to have a non-zero errno here
     if let Some(status) = status {
         match status {
-            1 => BackendError::ToUser(gettext("You don't have the necessary privileges to unmount the directory.")),
+            1 => BackendError::ToUser(gettext(
+                "You don't have the necessary privileges to unmount the directory.",
+            )),
             2 => BackendError::ToUser(gettext("The data directory (mount point) does not exist.")),
             4 => BackendError::ToUser(gettext("Internal error.")),
-            32 => BackendError::ToUser(gettext("The data directory (mount point) is busy. There are open files or processes using the filesystem.")),
+            32 => BackendError::ToUser(gettext(
+                "The data directory (mount point) is busy. There are open files or processes using the filesystem.",
+            )),
             _ => BackendError::Generic,
         }
     } else {

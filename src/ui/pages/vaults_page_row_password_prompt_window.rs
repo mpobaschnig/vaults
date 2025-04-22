@@ -21,7 +21,7 @@ use adw::{
     prelude::{AdwDialogExt, EntryRowExt},
     subclass::prelude::*,
 };
-use gtk::{self, glib, glib::clone, prelude::*, CompositeTemplate};
+use gtk::{self, CompositeTemplate, glib, glib::clone, prelude::*};
 
 mod imp {
     use gtk::glib::subclass::Signal;

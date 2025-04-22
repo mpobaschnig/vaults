@@ -18,9 +18,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::backend::{Backend, BackendError};
+use gio::VolumeMonitor;
 use gio::prelude::*;
 use gio::subclass::prelude::*;
-use gio::VolumeMonitor;
 use gtk::{gio, glib};
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;

@@ -21,22 +21,22 @@ use adw::prelude::AdwDialogExt;
 use adw::{prelude::ActionRowExt, prelude::PreferencesRowExt, subclass::prelude::*};
 use gettextrs::gettext;
 use glib::{clone, subclass};
+use gtk::CompositeTemplate;
 use gtk::gio;
 use gtk::gio::Mount;
 use gtk::gio::VolumeMonitor;
 use gtk::glib::subclass::Signal;
 use gtk::glib::{self, closure_local};
 use gtk::prelude::*;
-use gtk::CompositeTemplate;
 use once_cell::sync::Lazy;
 use std::cell::RefCell;
 use std::process::Command;
 
 use super::{VaultsPageRowPasswordPromptWindow, VaultsPageRowSettingsWindow};
 use crate::{
+    VApplication,
     backend::{Backend, BackendError},
     vault::*,
-    VApplication,
 };
 
 mod imp {

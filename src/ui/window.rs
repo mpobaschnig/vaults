@@ -32,7 +32,7 @@ use glib::clone;
 use gtk::gio::ListStore;
 use gtk::glib::closure_local;
 use gtk::{self, prelude::*};
-use gtk::{gio, glib, CompositeTemplate};
+use gtk::{CompositeTemplate, gio, glib};
 use gtk_macros::action;
 
 use std::cell::RefCell;
