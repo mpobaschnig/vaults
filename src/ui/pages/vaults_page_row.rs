@@ -480,14 +480,14 @@ impl VaultsPageRow {
                 move |dialog: VaultsPageRowSettingsWindow| {
                     obj.emit_by_name::<()>("save", &[]);
 
-                    let vault = &dialog.get_vault();
+                    let vault = &dialog.create_vault_from_settings();
                     if !vault.is_backend_available() {
                         obj.set_vault_row_state_backend_unavailable();
                     } else {
                         obj.set_vault_row_state_backend_available();
                     }
 
-                    obj.set_vault(dialog.get_vault());
+                    obj.set_vault(vault.clone());
                 }
             ),
         );
