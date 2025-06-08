@@ -1,4 +1,4 @@
-// mod.rs
+// user_config.rs
 //
 // Copyright 2025 Martin Pobaschnig
 //
@@ -17,5 +17,3 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-pub mod global_config;
-pub mod user_config;

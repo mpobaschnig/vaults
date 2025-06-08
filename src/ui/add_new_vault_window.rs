@@ -19,8 +19,7 @@
 
 use crate::application::VApplication;
 use crate::config::APP_ID;
-use crate::user_config_manager::UserConfigManager;
-use crate::{backend, vault::*};
+use crate::{backend, util, vault::*};
 use adw::prelude::AdwDialogExt;
 use adw::prelude::ComboRowExt;
 use gettextrs::gettext;
@@ -360,26 +359,6 @@ impl AddNewVaultWindow {
 
             return;
         }
-
-        let is_duplicate = UserConfigManager::instance()
-            .get_map()
-            .contains_key(&vault_name.to_string());
-
-        if is_duplicate {
-            self.imp().next_button.set_sensitive(false);
-
-            self.imp().entry_row_name.add_css_class("error");
-            self.imp().name_error_label.set_visible(true);
-            self.imp()
-                .name_error_label
-                .set_text(&gettext("Name is already taken."));
-        } else {
-            self.imp().next_button.set_sensitive(true);
-
-            self.imp().entry_row_name.remove_css_class("error");
-            self.imp().name_error_label.set_visible(false);
-            self.imp().name_error_label.set_text("");
-        }
     }
 
     pub fn combo_box_changed(&self) {
@@ -714,6 +693,7 @@ impl AddNewVaultWindow {
         .unwrap();
 
         Vault::new(
+            util::generate_uuid(),
             String::from(self.imp().entry_row_name.text().as_str()),
             backend,
             String::from(
