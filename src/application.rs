@@ -108,10 +108,13 @@ mod imp {
                     self.window.replace(Some(window));
 
                     let map = UserConfigManager::instance().get_map();
-                    let vault_config = map.get(&*self.only_pompt_vault.borrow());
+                    let vault = map
+                        .iter()
+                        .find(|&kv| kv.1.name == *self.only_pompt_vault.borrow());
 
-                    match vault_config {
-                        Some(vault_config) => {
+                    match vault {
+                        Some(vault) => {
+                            let vault_config = vault.1;
                             log::debug!(
                                 "Opening vault {:?}: {:?}",
                                 *self.only_pompt_vault.borrow(),
@@ -158,17 +161,20 @@ mod imp {
                     self.window.replace(Some(window));
 
                     let map = UserConfigManager::instance().get_map();
-                    let vault_config = map.get(&*self.only_pompt_vault.borrow());
+                    let vault = map
+                        .iter()
+                        .find(|&kv| kv.1.name == *self.only_pompt_vault.borrow());
 
-                    match vault_config {
-                        Some(vault_config) => {
+                    match vault {
+                        Some(vault) => {
+                            let vault_config = vault.1;
                             log::debug!(
                                 "Closing vault {:?}: {:?}",
                                 *self.only_pompt_vault.borrow(),
                                 &vault_config
                             );
 
-                            let result = Backend::close(vault_config);
+                            let result = Backend::close(&vault_config);
                             match result {
                                 Ok(_) => log::info!("Closed vault successfully."),
                                 Err(e) => log::error!("{e}"),

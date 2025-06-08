@@ -17,7 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use crate::vault::*;
+use crate::{legacy, vault::*};
 use gtk::{
     gio::subclass::prelude::*,
     glib::{self, prelude::*, subclass::Signal, user_config_dir},
@@ -25,6 +25,7 @@ use gtk::{
 use once_cell::sync::Lazy;
 use std::{cell::RefCell, collections::HashMap};
 use toml::de::Error;
+use uuid::Uuid;
 
 static mut USER_CONFIG_MANAGER: Option<UserConfigManager> = None;
 
@@ -33,10 +34,8 @@ mod imp {
 
     #[derive(Debug)]
     pub struct UserConfigManager {
-        pub vaults: RefCell<HashMap<String, VaultConfig>>,
+        pub vaults: RefCell<HashMap<Uuid, VaultConfig>>,
         pub user_config_directory: RefCell<Option<String>>,
-
-        pub current_vault: RefCell<Option<Vault>>,
     }
 
     #[glib::object_subclass]
@@ -49,7 +48,6 @@ mod imp {
             Self {
                 vaults: RefCell::new(HashMap::new()),
                 user_config_directory: RefCell::new(None),
-                current_vault: RefCell::new(None),
             }
         }
     }
@@ -130,7 +128,7 @@ impl UserConfigManager {
                 log::info!("Got user config dir: {}", user_config_directory);
 
                 *object.imp().user_config_directory.borrow_mut() =
-                    Some(user_config_directory.to_owned() + "/user_config.toml");
+                    Some(user_config_directory.to_owned() + "/user_config_v2.toml");
             }
             None => {
                 log::error!("Could not get user data directory");
@@ -140,7 +138,7 @@ impl UserConfigManager {
         object
     }
 
-    pub fn get_map(&self) -> HashMap<String, VaultConfig> {
+    pub fn get_map(&self) -> HashMap<Uuid, VaultConfig> {
         log::trace!("get_map()");
 
         self.imp().vaults.borrow().clone()
@@ -150,14 +148,23 @@ impl UserConfigManager {
         log::trace!("read_config()");
 
         if let Some(path) = self.imp().user_config_directory.borrow().as_ref() {
-            let map = &mut *self.imp().vaults.borrow_mut();
+            if !std::path::Path::new(path).exists() {
+                log::info!("User config file does not exist: {}", path);
+                log::info!("Trying to read legacy user config...");
+                let user_config = legacy::user_config::get_user_config_from_legacy_config();
+                let map = &mut *self.imp().vaults.borrow_mut();
+                map.clear();
+                *map = user_config;
+                return;
+            }
 
+            let map = &mut *self.imp().vaults.borrow_mut();
             map.clear();
 
             let contents = std::fs::read_to_string(path);
             match contents {
                 Ok(content) => {
-                    let res: Result<HashMap<String, VaultConfig>, Error> =
+                    let res: Result<HashMap<Uuid, VaultConfig>, Error> =
                         toml::from_str(&content.clone());
                     match res {
                         Ok(v) => {
@@ -175,9 +182,8 @@ impl UserConfigManager {
         }
     }
 
-    pub fn write_config(&self, map: &mut HashMap<String, VaultConfig>) {
+    pub fn write_config(&self, map: &mut HashMap<Uuid, VaultConfig>) {
         log::trace!("write_config({:?})", &map);
-
         if let Some(path) = self.imp().user_config_directory.borrow().as_ref() {
             match toml::to_string_pretty(&map) {
                 Ok(contents) => match std::fs::write(path, &contents) {
@@ -195,93 +201,38 @@ impl UserConfigManager {
         }
     }
 
-    pub fn get_current_vault(&self) -> Option<Vault> {
-        log::trace!("get_current_vault()");
-
-        self.imp().current_vault.borrow().clone()
-    }
-
-    pub fn set_current_vault(&self, vault: Vault) {
-        log::trace!("set_current_vault({:?})", &vault);
-
-        self.imp().current_vault.borrow_mut().replace(vault);
-    }
-
     pub fn add_vault(&self, vault: Vault) {
-        log::trace!("add_vault({:?})", &vault);
+        log::debug!(
+            "Add vault: {:?}, {:?}",
+            &vault.get_name().unwrap(),
+            &vault.get_config().unwrap()
+        );
 
         let map = &mut self.imp().vaults.borrow_mut();
-        match (vault.get_name(), vault.get_config()) {
-            (Some(name), Some(config)) => {
-                log::debug!("Add vault: {:?}, {:?}", &name, &config);
+        map.insert(vault.get_uuid(), vault.get_config().unwrap());
+        self.write_config(map);
 
-                *self.imp().current_vault.borrow_mut() = Some(vault.clone());
-                map.insert(name, config);
-
-                self.write_config(map);
-
-                self.emit_by_name::<()>("add-vault", &[]);
-            }
-            (_, _) => {
-                log::error!("Vault not initialised!");
-            }
-        }
+        self.emit_by_name::<()>("add-vault", &[]);
     }
 
-    pub fn remove_vault(self, vault: Vault) {
-        log::trace!("remove_vault({:?})", &vault);
+    pub fn remove_vault(self, uuid: Uuid) {
+        log::trace!("remove_vault({:?})", &uuid);
 
         let map = &mut self.imp().vaults.borrow_mut();
-        match vault.get_name() {
-            Some(name) => {
-                log::debug!("Remove vault: {:?}", &name);
+        map.remove(&uuid);
+        self.write_config(map);
 
-                *self.imp().current_vault.borrow_mut() = Some(vault.clone());
-
-                map.remove(&name);
-
-                self.write_config(map);
-
-                self.emit_by_name::<()>("remove-vault", &[]);
-                self.emit_by_name::<()>("refresh", &[&map.is_empty()]);
-            }
-            None => {
-                log::error!("Vault not initialised!");
-            }
-        }
+        self.emit_by_name::<()>("remove-vault", &[]);
+        self.emit_by_name::<()>("refresh", &[&map.is_empty()]);
     }
 
-    pub fn change_vault(&self, old_vault: Vault, new_vault: Vault) {
-        log::trace!("change_vault({:?}, {:?})", &old_vault, &new_vault);
+    pub fn change_vault(&self, uuid: Uuid, new_vault_config: VaultConfig) {
+        log::trace!("change_vault({:?}, {:?})", &uuid, &new_vault_config);
 
-        match (
-            old_vault.get_name(),
-            new_vault.get_name(),
-            new_vault.get_config(),
-        ) {
-            (Some(old_name), Some(new_name), Some(config)) => {
-                log::debug!(
-                    "Change vault: {:?}, {:?}, {:?}",
-                    &old_name,
-                    &new_name,
-                    &config
-                );
+        let map = &mut self.imp().vaults.borrow_mut();
+        map.insert(uuid, new_vault_config);
+        self.write_config(map);
 
-                let map = &mut self.imp().vaults.borrow_mut();
-
-                map.remove(&old_name);
-
-                map.insert(new_name, config);
-
-                self.write_config(map);
-
-                *self.imp().current_vault.borrow_mut() = Some(new_vault);
-
-                self.emit_by_name::<()>("change-vault", &[]);
-            }
-            (_, _, _) => {
-                log::error!("Vault(s) not initialised!");
-            }
-        }
+        self.emit_by_name::<()>("change-vault", &[]);
     }
 }

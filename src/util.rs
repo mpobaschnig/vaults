@@ -1,4 +1,4 @@
-// mod.rs
+// uuid.rs
 //
 // Copyright 2025 Martin Pobaschnig
 //
@@ -17,5 +17,23 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-pub mod global_config;
-pub mod user_config;
+use crate::user_config_manager::UserConfigManager;
+use uuid::Uuid;
+
+pub fn generate_uuid() -> Uuid {
+    let map = UserConfigManager::instance().get_map();
+    for _ in 0..1000 {
+        let uuid = Uuid::new_v4();
+        if map.contains_key(&uuid) {
+            log::debug!(
+                "Generated UUID {} already exists, generating a new one",
+                uuid
+            );
+            continue;
+        }
+        log::debug!("Generated unique UUID: {}", uuid);
+        return uuid;
+    }
+    log::error!("Failed to generate a unique UUID after 10 attempts");
+    Uuid::nil()
+}

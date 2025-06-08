@@ -209,6 +209,7 @@ impl VaultsPageRowSettingsWindow {
 
     fn apply_changes(&self) {
         let new_vault = Vault::new(
+            self.vault().unwrap().get_uuid(),
             String::from(self.imp().name_entry_row.text().as_str()),
             backend::get_backend_from_ui_string(
                 &self
@@ -242,7 +243,10 @@ impl VaultsPageRowSettingsWindow {
                 .custom_binary_path,
         );
 
-        UserConfigManager::instance().change_vault(self.vault().unwrap(), new_vault.clone());
+        UserConfigManager::instance().change_vault(
+            self.vault().unwrap().get_uuid(),
+            new_vault.get_config().unwrap().clone(),
+        );
         self.set_vault(new_vault);
         self.notify_vault();
     }
@@ -333,6 +337,7 @@ impl VaultsPageRowSettingsWindow {
 
     pub fn create_vault_from_settings(&self) -> Vault {
         Vault::new(
+            self.vault().unwrap().get_uuid(),
             String::from(self.imp().name_entry_row.text().as_str()),
             backend::get_backend_from_ui_string(
                 &self

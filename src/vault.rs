@@ -17,16 +17,21 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use crate::backend::{Backend, BackendError};
+use crate::{
+    backend::{Backend, BackendError},
+    util,
+};
 use gio::VolumeMonitor;
 use gio::prelude::*;
 use gio::subclass::prelude::*;
 use gtk::{gio, glib};
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
+use uuid::Uuid;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Deserialize, Clone, Serialize)]
 pub struct VaultConfig {
+    pub name: String,
     pub backend: Backend,
     pub encrypted_data_directory: String,
     pub mount_directory: String,
@@ -38,9 +43,9 @@ pub struct VaultConfig {
 mod imp {
     use super::*;
 
-    #[derive(Debug, Serialize, Deserialize)]
+    #[derive(Debug, Deserialize, Serialize)]
     pub struct Vault {
-        pub name: RefCell<Option<String>>,
+        pub uuid: RefCell<Uuid>,
         pub config: RefCell<Option<VaultConfig>>,
     }
 
@@ -52,7 +57,7 @@ mod imp {
 
         fn new() -> Self {
             Self {
-                name: RefCell::new(None),
+                uuid: RefCell::new(Uuid::nil()),
                 config: RefCell::new(None),
             }
         }
@@ -61,7 +66,7 @@ mod imp {
     impl Default for Vault {
         fn default() -> Self {
             Vault {
-                name: RefCell::new(None),
+                uuid: RefCell::new(util::generate_uuid()),
                 config: RefCell::new(None),
             }
         }
@@ -76,6 +81,7 @@ glib::wrapper! {
 
 impl Vault {
     pub fn new(
+        uuid: Uuid,
         name: String,
         backend: Backend,
         encrypted_data_directory: String,
@@ -86,8 +92,9 @@ impl Vault {
     ) -> Vault {
         let object: Self = glib::Object::new();
 
-        object.imp().name.replace(Some(name));
+        object.imp().uuid.replace(uuid);
         object.imp().config.replace(Some(VaultConfig {
+            name,
             backend,
             encrypted_data_directory,
             mount_directory,
@@ -105,16 +112,27 @@ impl Vault {
         object
     }
 
+    pub fn get_uuid(&self) -> Uuid {
+        log::trace!("get_uuid");
+        let uuid = self.imp().uuid.borrow();
+        *uuid
+    }
+
+    pub fn set_uuid(&self, uuid: Uuid) {
+        log::trace!("set_uuid({})", uuid);
+        *self.imp().uuid.borrow_mut() = uuid;
+    }
+
     pub fn get_name(&self) -> Option<String> {
         log::trace!("get_name");
-        let name = self.imp().name.borrow().clone();
+        let name = self.imp().config.borrow().as_ref().unwrap().name.clone();
         log::debug!("Name: {:?}", name);
-        name
+        Some(name)
     }
 
     pub fn set_name(&self, name: String) {
         log::trace!("set_name({})", name);
-        self.imp().name.borrow_mut().replace(name);
+        self.imp().config.borrow_mut().as_mut().unwrap().name = name.clone();
     }
 
     pub fn get_config(&self) -> Option<VaultConfig> {

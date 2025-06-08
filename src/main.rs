@@ -23,6 +23,7 @@ mod config;
 mod global_config_manager;
 mod legacy;
 mod user_config_manager;
+mod util;
 mod vault;
 
 mod backend;
@@ -34,6 +35,7 @@ extern crate ini;
 extern crate proc_mounts;
 extern crate serde;
 extern crate toml;
+extern crate uuid;
 
 use application::VApplication;
 use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};

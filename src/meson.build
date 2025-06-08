@@ -25,6 +25,7 @@ sources = files(
 
   'legacy/global_config.rs',
   'legacy/mod.rs',
+  'legacy/user_config.rs',
 
   'ui/pages/mod.rs',
   'ui/pages/vaults_page_row.rs',
@@ -43,6 +44,7 @@ sources = files(
   'main.rs',
   'mod.rs',
   'user_config_manager.rs',
+  'util.rs',
   'vault.rs',
 )
 
