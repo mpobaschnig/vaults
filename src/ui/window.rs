@@ -200,7 +200,7 @@ impl ApplicationWindow {
         let mut found = false;
         let map = UserConfigManager::instance().get_map();
         for (k, v) in &map {
-            let k_search = &k.to_lowercase();
+            let k_search = &v.name.to_lowercase();
 
             if k_search.contains(&text.to_string().to_lowercase()) {
                 if !found {
@@ -209,7 +209,8 @@ impl ApplicationWindow {
                 }
 
                 let vault = Vault::new(
-                    k.to_owned(),
+                    *k,
+                    v.name.to_owned(),
                     v.backend,
                     v.encrypted_data_directory.to_owned(),
                     v.mount_directory.to_owned(),
@@ -220,7 +221,7 @@ impl ApplicationWindow {
 
                 let row = VaultsPageRow::new(vault);
                 self.search_row_connect_remove(&row);
-                self.row_connect_save(&row);
+                //self.row_connect_save(&row);
 
                 self.imp().search_list_store.insert_sorted(&row, |v1, v2| {
                     let row1 = v1.downcast_ref::<VaultsPageRow>().unwrap();
@@ -352,7 +353,8 @@ impl ApplicationWindow {
         let map = UserConfigManager::instance().get_map();
         for (k, v) in map.iter() {
             let vault = Vault::new(
-                k.to_owned(),
+                *k,
+                v.name.to_owned(),
                 v.backend,
                 v.encrypted_data_directory.to_owned(),
                 v.mount_directory.to_owned(),
@@ -363,7 +365,7 @@ impl ApplicationWindow {
 
             let row = VaultsPageRow::new(vault);
             self.row_connect_remove(&row);
-            self.row_connect_save(&row);
+            //self.row_connect_save(&row);
 
             self.imp().list_store.insert_sorted(&row, |v1, v2| {
                 let row1 = v1.downcast_ref::<VaultsPageRow>().unwrap();
@@ -431,43 +433,44 @@ impl ApplicationWindow {
         ));
     }
 
-    pub fn row_connect_save(&self, row: &VaultsPageRow) {
-        row.connect_save(clone!(
-            #[weak(rename_to = _obj)]
-            self,
-            #[weak(rename_to = r)]
-            row,
-            move || {
-                let vault = UserConfigManager::instance().get_current_vault();
-                if let Some(vault) = vault {
-                    r.set_vault(vault);
-                } else {
-                    log::error!("Vault not initialised!");
-                }
-            }
-        ));
-    }
+    //pub fn row_connect_save(&self, row: &VaultsPageRow) {
+    //    row.connect_save(clone!(
+    //        #[weak(rename_to = _obj)]
+    //        self,
+    //        #[weak(rename_to = r)]
+    //        row,
+    //        move || {
+    //            let vault = UserConfigManager::instance().get_current_vault();
+    //            if let Some(vault) = vault {
+    //                r.set_vault(vault);
+    //            } else {
+    //                log::error!("Vault not initialised!");
+    //            }
+    //        }
+    //    ));
+    //}
 
     pub fn add_vault(&self) {
-        let vault = UserConfigManager::instance().get_current_vault();
+        // TODO: Updating model
+        //let vault = UserConfigManager::instance().get_current_vault();
 
-        if let Some(vault) = vault {
-            let row = VaultsPageRow::new(vault.clone());
-            self.row_connect_remove(&row);
-            self.row_connect_save(&row);
+        //if let Some(vault) = vault {
+        //    let row = VaultsPageRow::new(vault.clone());
+        //    self.row_connect_remove(&row);
+        //    self.row_connect_save(&row);
 
-            self.imp().list_store.insert_sorted(&row, |v1, v2| {
-                let row1 = v1.downcast_ref::<VaultsPageRow>().unwrap();
-                let name1 = row1.get_name();
-                let row2 = v2.downcast_ref::<VaultsPageRow>().unwrap();
-                let name2 = row2.get_name();
-                name1.cmp(&name2)
-            });
+        //    self.imp().list_store.insert_sorted(&row, |v1, v2| {
+        //        let row1 = v1.downcast_ref::<VaultsPageRow>().unwrap();
+        //        let name1 = row1.get_name();
+        //        let row2 = v2.downcast_ref::<VaultsPageRow>().unwrap();
+        //        let name2 = row2.get_name();
+        //        name1.cmp(&name2)
+        //    });
 
-            self.imp().search_toggle_button.set_sensitive(true);
-        } else {
-            log::error!("Vault not initialised!");
-        }
+        //    self.imp().search_toggle_button.set_sensitive(true);
+        //} else {
+        //    log::error!("Vault not initialised!");
+        //}
     }
 
     pub fn refresh(&self, map_is_empty: bool) {

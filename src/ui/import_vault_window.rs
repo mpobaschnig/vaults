@@ -25,7 +25,8 @@ use std::cell::RefCell;
 use strum::IntoEnumIterator;
 
 use crate::application::VApplication;
-use crate::{backend, user_config_manager::UserConfigManager, vault::*};
+use crate::util;
+use crate::{backend, vault::*};
 
 mod imp {
     use gtk::glib::subclass::Signal;
@@ -325,26 +326,6 @@ impl ImportVaultDialog {
             return;
         }
 
-        let is_duplicate = UserConfigManager::instance()
-            .get_map()
-            .contains_key(&vault_name.to_string());
-
-        if is_duplicate {
-            self.imp().import_button.set_sensitive(false);
-
-            self.imp().name_entry_row.add_css_class("error");
-            self.imp().name_error_label.set_visible(true);
-            self.imp()
-                .name_error_label
-                .set_text(&gettext("Name is already taken."));
-
-            return;
-        } else {
-            self.imp().name_entry_row.remove_css_class("error");
-            self.imp().name_error_label.set_visible(false);
-            self.imp().name_error_label.set_text("");
-        }
-
         self.imp().import_button.set_sensitive(true);
     }
 
@@ -596,6 +577,7 @@ impl ImportVaultDialog {
 
     pub fn get_vault(&self) -> Vault {
         Vault::new(
+            util::generate_uuid(),
             String::from(self.imp().name_entry_row.text().as_str()),
             backend::get_backend_from_ui_string(
                 &self

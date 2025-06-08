@@ -31,6 +31,7 @@ use gtk::prelude::*;
 use once_cell::sync::Lazy;
 use std::cell::RefCell;
 use std::process::Command;
+use uuid::Uuid;
 
 use super::{VaultsPageRowPasswordPromptWindow, VaultsPageRowSettingsWindow};
 use crate::{
@@ -56,6 +57,7 @@ mod imp {
 
         pub spinner: RefCell<gtk::Spinner>,
 
+        pub uuid: RefCell<Option<Uuid>>,
         pub config: RefCell<Option<VaultConfig>>,
 
         pub volume_monitor: RefCell<VolumeMonitor>,
@@ -73,6 +75,7 @@ mod imp {
                 open_folder_button: TemplateChild::default(),
                 locker_button: TemplateChild::default(),
                 settings_button: TemplateChild::default(),
+                uuid: RefCell::new(None),
                 config: RefCell::new(None),
                 spinner: RefCell::new(gtk::Spinner::new()),
                 volume_monitor: RefCell::new(VolumeMonitor::get()),
@@ -138,6 +141,7 @@ impl VaultsPageRow {
         match (vault.get_name(), vault.get_config()) {
             (Some(name), Some(config)) => {
                 object.imp().vaults_page_row.set_title(&name);
+                object.imp().uuid.replace(Some(vault.get_uuid()));
                 object.imp().config.replace(Some(config));
             }
             (_, _) => {
@@ -518,11 +522,12 @@ impl VaultsPageRow {
     pub fn get_vault(&self) -> Vault {
         log::trace!("get_vault");
 
-        let name = self.imp().vaults_page_row.title();
+        let uuid = self.imp().uuid.borrow().unwrap();
         let config = self.imp().config.borrow().clone();
         match config {
             Some(config) => Vault::new(
-                name.to_string(),
+                uuid,
+                config.name,
                 config.backend,
                 config.encrypted_data_directory,
                 config.mount_directory,
@@ -540,10 +545,12 @@ impl VaultsPageRow {
     pub fn set_vault(&self, vault: Vault) {
         log::trace!("set_vault");
 
+        let uuid = vault.get_uuid();
         let name = vault.get_name();
         let config = vault.get_config();
         match (name, config) {
             (Some(name), Some(config)) => {
+                self.imp().uuid.replace(Some(uuid));
                 self.imp().vaults_page_row.set_title(&name);
                 self.imp().config.replace(Some(config));
             }
