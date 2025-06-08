@@ -17,10 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use crate::{
-    backend::{Backend, BackendError},
-    util,
-};
+use crate::backend::{Backend, BackendError};
 use gio::VolumeMonitor;
 use gio::prelude::*;
 use gio::subclass::prelude::*;
@@ -43,7 +40,7 @@ pub struct VaultConfig {
 mod imp {
     use super::*;
 
-    #[derive(Debug, Deserialize, Serialize)]
+    #[derive(Debug, Deserialize, Serialize, Default)]
     pub struct Vault {
         pub uuid: RefCell<Uuid>,
         pub config: RefCell<Option<VaultConfig>>,
@@ -54,22 +51,6 @@ mod imp {
         const NAME: &'static str = "Vault";
         type ParentType = glib::Object;
         type Type = super::Vault;
-
-        fn new() -> Self {
-            Self {
-                uuid: RefCell::new(Uuid::nil()),
-                config: RefCell::new(None),
-            }
-        }
-    }
-
-    impl Default for Vault {
-        fn default() -> Self {
-            Vault {
-                uuid: RefCell::new(util::generate_uuid()),
-                config: RefCell::new(None),
-            }
-        }
     }
 
     impl ObjectImpl for Vault {}
