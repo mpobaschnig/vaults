@@ -122,8 +122,7 @@ mod imp {
                     .unwrap()
                     .get_config()
                     .unwrap()
-                    .session_lock
-                    .unwrap_or(false),
+                    .session_lock,
             );
 
             self.obj().connect_vault_notify(clone!(move |obj| {
@@ -230,7 +229,7 @@ impl VaultsPageRowSettingsWindow {
                     .as_str(),
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
-            Some(self.imp().lock_screen_switch_row.is_active()),
+            self.imp().lock_screen_switch_row.is_active(),
         );
 
         UserConfigManager::instance().change_vault(
@@ -348,7 +347,7 @@ impl VaultsPageRowSettingsWindow {
                     .as_str(),
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
-            Some(self.imp().lock_screen_switch_row.is_active()),
+            self.imp().lock_screen_switch_row.is_active(),
         )
     }
 }
