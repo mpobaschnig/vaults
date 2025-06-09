@@ -32,7 +32,7 @@ pub struct VaultConfig {
     pub backend: Backend,
     pub encrypted_data_directory: String,
     pub mount_directory: String,
-    pub session_lock: Option<bool>,
+    pub session_lock: bool,
 }
 
 mod imp {
@@ -65,7 +65,7 @@ impl Vault {
         backend: Backend,
         encrypted_data_directory: String,
         mount_directory: String,
-        session_lock: Option<bool>,
+        session_lock: bool,
     ) -> Vault {
         let object: Self = glib::Object::new();
 
@@ -249,63 +249,70 @@ mod tests {
             Backend::Gocryptfs,
             "".to_string(),
             "".to_string(),
-            None,
+            false,
         );
         assert!(!vault.is_mount_hidden());
 
         vault.set_config(VaultConfig {
+            name: "".to_string(),
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: ".".to_string(),
-            session_lock: None,
+            session_lock: false,
         });
         assert!(!vault.is_mount_hidden());
 
         vault.set_config(VaultConfig {
+            name: "".to_string(),
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "..".to_string(),
-            session_lock: None,
+            session_lock: false,
         });
         assert!(!vault.is_mount_hidden());
 
         vault.set_config(VaultConfig {
+            name: "".to_string(),
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "./".to_string(),
-            session_lock: None,
+            session_lock: false,
         });
         assert!(!vault.is_mount_hidden());
 
         vault.set_config(VaultConfig {
+            name: "".to_string(),
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "./Hidden".to_string(),
-            session_lock: None,
+            session_lock: false,
         });
         assert!(!vault.is_mount_hidden());
 
         vault.set_config(VaultConfig {
+            name: "".to_string(),
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "Test/.Test".to_string(),
-            session_lock: None,
+            session_lock: false,
         });
         assert!(vault.is_mount_hidden());
 
         vault.set_config(VaultConfig {
+            name: "".to_string(),
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "./Test/.Test".to_string(),
-            session_lock: None,
+            session_lock: false,
         });
         assert!(vault.is_mount_hidden());
 
         vault.set_config(VaultConfig {
+            name: "".to_string(),
             backend: Backend::Gocryptfs,
             encrypted_data_directory: "".to_string(),
             mount_directory: "../.Test".to_string(),
-            session_lock: None,
+            session_lock: false,
         });
         assert!(vault.is_mount_hidden());
     }
