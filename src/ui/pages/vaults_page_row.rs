@@ -217,20 +217,18 @@ impl VaultsPageRow {
             self,
             move |_| {
                 let config = obj.imp().config.borrow().clone().unwrap();
-                if let Some(session_locking) = config.session_lock {
-                    if session_locking {
-                        let vault = obj.get_vault();
+                if config.session_lock {
+                    let vault = obj.get_vault();
 
-                        if !vault.is_backend_available() {
-                            obj.set_vault_row_state_backend_unavailable();
-                            return;
-                        } else {
-                            obj.set_vault_row_state_backend_available();
-                        }
+                    if !vault.is_backend_available() {
+                        obj.set_vault_row_state_backend_unavailable();
+                        return;
+                    } else {
+                        obj.set_vault_row_state_backend_available();
+                    }
 
-                        if obj.is_mounted() {
-                            obj.locker_button_clicked_is_mounted(vault);
-                        }
+                    if obj.is_mounted() {
+                        obj.locker_button_clicked_is_mounted(vault);
                     }
                 }
             }

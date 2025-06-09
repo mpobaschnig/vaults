@@ -46,7 +46,7 @@ pub fn get_user_config_from_legacy_config() -> HashMap<Uuid, VaultConfig> {
                 backend: vault_config.backend,
                 encrypted_data_directory: vault_config.encrypted_data_directory,
                 mount_directory: vault_config.mount_directory,
-                session_lock: vault_config.session_lock,
+                session_lock: vault_config.session_lock.unwrap_or(false),
             };
             new_user_config.insert(util::generate_uuid(), new_vault_config);
         }
