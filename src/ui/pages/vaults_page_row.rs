@@ -532,8 +532,6 @@ impl VaultsPageRow {
                 config.encrypted_data_directory,
                 config.mount_directory,
                 config.session_lock,
-                config.use_custom_binary,
-                config.custom_binary_path,
             ),
             _ => {
                 log::error!("Vault not initialized!");

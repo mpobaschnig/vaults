@@ -231,16 +231,6 @@ impl VaultsPageRowSettingsWindow {
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
             Some(self.imp().lock_screen_switch_row.is_active()),
-            self.vault()
-                .unwrap()
-                .get_config()
-                .unwrap()
-                .use_custom_binary,
-            self.vault()
-                .unwrap()
-                .get_config()
-                .unwrap()
-                .custom_binary_path,
         );
 
         UserConfigManager::instance().change_vault(
@@ -359,8 +349,6 @@ impl VaultsPageRowSettingsWindow {
             ),
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
             Some(self.imp().lock_screen_switch_row.is_active()),
-            Some(false),
-            None,
         )
     }
 }
