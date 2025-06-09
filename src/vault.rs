@@ -244,6 +244,7 @@ mod tests {
     #[test]
     fn check_hidden_paths() {
         let vault = Vault::new(
+            Uuid::nil(),
             "".to_string(),
             Backend::Gocryptfs,
             "".to_string(),
