@@ -22,7 +22,7 @@ pub mod gocryptfs;
 
 use crate::{config::APP_ID, vault::VaultConfig};
 use gettextrs::gettext;
-use gtk::gio::Settings;
+use gtk::{gio::Settings, glib};
 use serde::{Deserialize, Serialize};
 use std::string::String;
 use strum_macros::EnumIter;
@@ -48,9 +48,15 @@ quick_error! {
     strum_macros::EnumString,
     Copy,
     Clone,
+    glib::Enum,
+    Default,
 )]
+#[enum_type(name = "Backend")]
 pub enum Backend {
+    #[default]
+    #[enum_value(name = "cryfs")]
     Cryfs,
+    #[enum_value(name = "gocryptfs")]
     Gocryptfs,
 }
 

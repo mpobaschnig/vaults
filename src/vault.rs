@@ -21,12 +21,13 @@ use crate::backend::{Backend, BackendError};
 use gio::VolumeMonitor;
 use gio::prelude::*;
 use gio::subclass::prelude::*;
-use gtk::{gio, glib};
+use gtk::{gio, glib, glib::Properties};
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 use uuid::Uuid;
 
-#[derive(Debug, Deserialize, Clone, Serialize)]
+#[derive(Debug, Default, Deserialize, Clone, Serialize, glib::Boxed)]
+#[boxed_type(name = "VaultConfig")]
 pub struct VaultConfig {
     pub name: String,
     pub backend: Backend,
@@ -38,10 +39,17 @@ pub struct VaultConfig {
 mod imp {
     use super::*;
 
-    #[derive(Debug, Deserialize, Serialize, Default)]
+    #[derive(Debug, Default, Deserialize, Properties, Serialize)]
+    #[properties(wrapper_type = super::Vault)]
     pub struct Vault {
         pub uuid: RefCell<Uuid>,
-        pub config: RefCell<Option<VaultConfig>>,
+        #[property(name = "config", get, set, type = VaultConfig)]
+        #[property(name = "name", get, set, type = String, member = name)]
+        #[property(name = "backend", get, set, type = Backend, member = backend, builder(Backend::Gocryptfs))]
+        #[property(name = "encrypted-data-directory", get, set, type = String, member = encrypted_data_directory)]
+        #[property(name = "mount-directory", get, set, type = String, member = mount_directory)]
+        #[property(name = "session-lock", get, set, type = bool, member = session_lock)]
+        pub config: RefCell<VaultConfig>,
     }
 
     #[glib::object_subclass]
@@ -51,6 +59,7 @@ mod imp {
         type Type = super::Vault;
     }
 
+    #[glib::derived_properties]
     impl ObjectImpl for Vault {}
 }
 
@@ -70,13 +79,13 @@ impl Vault {
         let object: Self = glib::Object::new();
 
         object.imp().uuid.replace(uuid);
-        object.imp().config.replace(Some(VaultConfig {
+        object.imp().config.replace(VaultConfig {
             name,
             backend,
             encrypted_data_directory,
             mount_directory,
             session_lock,
-        }));
+        });
 
         object
     }
@@ -98,49 +107,25 @@ impl Vault {
         *self.imp().uuid.borrow_mut() = uuid;
     }
 
-    pub fn get_name(&self) -> Option<String> {
-        log::trace!("get_name");
-        let name = self.imp().config.borrow().as_ref().unwrap().name.clone();
-        log::debug!("Name: {:?}", name);
-        Some(name)
-    }
-
-    pub fn set_name(&self, name: String) {
-        log::trace!("set_name({})", name);
-        self.imp().config.borrow_mut().as_mut().unwrap().name = name.clone();
-    }
-
-    pub fn get_config(&self) -> Option<VaultConfig> {
-        log::trace!("get_config");
-        let config = self.imp().config.borrow().clone();
-        log::debug!("Config: {:?}", config);
-        config
-    }
-
-    pub fn set_config(&self, config: VaultConfig) {
-        log::trace!("set_config({:?})", config);
-        self.imp().config.borrow_mut().replace(config);
-    }
-
     pub fn init(&self, password: String) -> Result<(), BackendError> {
         log::trace!("init(password: <redacted>)");
-        Backend::init(&self.get_config().unwrap(), password)
+        Backend::init(&self.config(), password)
     }
 
     pub fn unlock(&self, password: String) -> Result<(), BackendError> {
         log::trace!("unlock(password: <redacted>)");
-        Backend::open(&self.get_config().unwrap(), password)
+        Backend::open(&self.config(), password)
     }
 
     pub fn lock(&self) -> Result<(), BackendError> {
         log::trace!("lock");
-        Backend::close(&self.get_config().unwrap())
+        Backend::close(&self.config())
     }
 
     pub fn is_mounted(&self) -> bool {
         log::trace!("is_mounted");
 
-        let config_mount_directory = self.get_config().unwrap().mount_directory;
+        let config_mount_directory = self.config().mount_directory;
 
         if self.is_mount_hidden() {
             log::debug!("Vault is hidden");
@@ -181,7 +166,7 @@ impl Vault {
     pub fn is_mount_hidden(&self) -> bool {
         log::trace!("is_mount_hidden");
 
-        let vault_config = self.get_config().unwrap();
+        let vault_config = self.config();
 
         let components: Vec<_> = std::path::Path::new(&vault_config.mount_directory)
             .components()
@@ -201,11 +186,9 @@ impl Vault {
 
         let mount_list = MountList::new();
         match mount_list {
-            Ok(mount_list) => MountList::get_mount_by_dest(
-                &mount_list,
-                &self.get_config().unwrap().mount_directory,
-            )
-            .is_some(),
+            Ok(mount_list) => {
+                MountList::get_mount_by_dest(&mount_list, &self.config().mount_directory).is_some()
+            }
             Err(e) => {
                 log::error!("Could not check if there exists any mounted vaults: {}", e);
                 false
@@ -215,25 +198,18 @@ impl Vault {
 
     pub fn is_backend_available(&self) -> bool {
         log::trace!("is_backend_available");
-        if let Some(config) = self.get_config() {
-            if let Ok(success) = config.backend.is_available(&config) {
-                return success;
-            }
+        if let Ok(success) = self.backend().is_available(&self.config()) {
+            return success;
         }
         false
     }
 
     pub fn delete_encrypted_data(&self) -> std::io::Result<()> {
         log::trace!("delete_encrypted_data");
-
-        if let Some(config) = self.get_config() {
-            let path = std::path::Path::new(&config.encrypted_data_directory);
-            log::debug!("Deleting encrypted data directory: {:?}", path);
-            return std::fs::remove_dir_all(path);
-        }
-
-        log::error!("Could not get config");
-        Ok(())
+        let encrypted_data_directory = self.encrypted_data_directory();
+        let path = std::path::Path::new(&encrypted_data_directory);
+        log::debug!("Deleting encrypted data directory: {:?}", path);
+        return std::fs::remove_dir_all(path);
     }
 }
 
