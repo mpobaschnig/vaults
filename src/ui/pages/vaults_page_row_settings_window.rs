@@ -81,10 +81,10 @@ mod imp {
             self.parent_constructed();
 
             self.name_entry_row
-                .set_text(&self.obj().vault().unwrap().get_name().unwrap());
+                .set_text(&self.obj().vault().unwrap().name());
 
             let mut model_position = 0;
-            let vault_backend = self.obj().vault().unwrap().get_config().unwrap().backend;
+            let vault_backend = self.obj().vault().unwrap().backend();
             let list = gtk::StringList::new(&[]);
             for (position, backend) in Backend::iter().enumerate() {
                 let backend = &backend::get_ui_string_from_backend(&backend);
@@ -96,34 +96,14 @@ mod imp {
             self.combo_row_backend.set_model(Some(&list));
             self.combo_row_backend.set_selected(model_position as u32);
 
-            self.encrypted_data_directory_entry_row.set_text(
-                &self
-                    .obj()
-                    .vault()
-                    .unwrap()
-                    .get_config()
-                    .unwrap()
-                    .encrypted_data_directory,
-            );
+            self.encrypted_data_directory_entry_row
+                .set_text(&self.obj().vault().unwrap().encrypted_data_directory());
 
-            self.mount_directory_entry_row.set_text(
-                &self
-                    .obj()
-                    .vault()
-                    .unwrap()
-                    .get_config()
-                    .unwrap()
-                    .mount_directory,
-            );
+            self.mount_directory_entry_row
+                .set_text(&self.obj().vault().unwrap().mount_directory());
 
-            self.lock_screen_switch_row.set_active(
-                self.obj()
-                    .vault()
-                    .unwrap()
-                    .get_config()
-                    .unwrap()
-                    .session_lock,
-            );
+            self.lock_screen_switch_row
+                .set_active(self.obj().vault().unwrap().session_lock());
 
             self.obj().connect_vault_notify(clone!(move |obj| {
                 obj.emit_by_name::<()>("save", &[]);
@@ -232,10 +212,8 @@ impl VaultsPageRowSettingsWindow {
             self.imp().lock_screen_switch_row.is_active(),
         );
 
-        UserConfigManager::instance().change_vault(
-            self.vault().unwrap().get_uuid(),
-            new_vault.get_config().unwrap().clone(),
-        );
+        UserConfigManager::instance()
+            .change_vault(self.vault().unwrap().get_uuid(), new_vault.config().clone());
         self.set_vault(new_vault);
         self.notify_vault();
     }

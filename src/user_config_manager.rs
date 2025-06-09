@@ -202,14 +202,10 @@ impl UserConfigManager {
     }
 
     pub fn add_vault(&self, vault: Vault) {
-        log::debug!(
-            "Add vault: {:?}, {:?}",
-            &vault.get_name().unwrap(),
-            &vault.get_config().unwrap()
-        );
+        log::debug!("Add vault: {:?}, {:?}", &vault.name(), &vault.config());
 
         let map = &mut self.imp().vaults.borrow_mut();
-        map.insert(vault.get_uuid(), vault.get_config().unwrap());
+        map.insert(vault.get_uuid(), vault.config());
         self.write_config(map);
 
         self.emit_by_name::<()>("add-vault", &[]);

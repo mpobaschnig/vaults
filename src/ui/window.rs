@@ -505,7 +505,7 @@ impl ApplicationWindow {
                 move |dialog: AddNewVaultWindow| {
                     let vault = dialog.get_vault();
                     let password = dialog.get_password();
-                    match Backend::init(&vault.get_config().unwrap(), password) {
+                    match Backend::init(&vault.config(), password) {
                         Ok(_) => {
                             UserConfigManager::instance().add_vault(vault);
                             obj.set_view(View::Vaults);
@@ -521,7 +521,7 @@ impl ApplicationWindow {
                                     .unwrap()
                                     .clone();
                                 let info_dialog = gtk::AlertDialog::builder()
-                                    .message(vault.get_name().unwrap())
+                                    .message(vault.name())
                                     .detail(format!("{}", e))
                                     .modal(true)
                                     .build();

@@ -138,16 +138,9 @@ impl VaultsPageRow {
     pub fn new(vault: Vault) -> Self {
         let object: Self = glib::Object::new();
 
-        match (vault.get_name(), vault.get_config()) {
-            (Some(name), Some(config)) => {
-                object.imp().vaults_page_row.set_title(&name);
-                object.imp().uuid.replace(Some(vault.get_uuid()));
-                object.imp().config.replace(Some(config));
-            }
-            (_, _) => {
-                log::error!("Vault(s) not initialised!");
-            }
-        }
+        object.imp().vaults_page_row.set_title(&vault.name());
+        object.imp().uuid.replace(Some(vault.get_uuid()));
+        object.imp().config.replace(Some(vault.config()));
 
         if vault.is_mounted() {
             object.set_vault_row_state_opened();
@@ -273,7 +266,7 @@ impl VaultsPageRow {
         }
 
         let (sender, receiver) = async_channel::unbounded();
-        let vault_config = vault.get_config().clone().unwrap();
+        let vault_config = vault.config().clone();
         let locker_button = self.imp().locker_button.clone();
         let open_folder_button = self.imp().open_folder_button.clone();
         let settings_button = self.imp().settings_button.clone();
@@ -348,7 +341,7 @@ impl VaultsPageRow {
         }
 
         let dialog = VaultsPageRowPasswordPromptWindow::new();
-        dialog.set_name(&vault.get_name().unwrap());
+        dialog.set_name(&vault.name());
         dialog.connect_closure(
             "unlock",
             false,
@@ -373,7 +366,7 @@ impl VaultsPageRow {
                     }
 
                     let (sender, receiver) = async_channel::unbounded();
-                    let vault_config = vault.get_config().clone().unwrap();
+                    let vault_config = vault.config().clone();
                     let locker_button = obj.imp().locker_button.clone();
                     let open_folder_button = obj.imp().open_folder_button.clone();
                     let settings_button = obj.imp().settings_button.clone();
@@ -542,18 +535,11 @@ impl VaultsPageRow {
         log::trace!("set_vault");
 
         let uuid = vault.get_uuid();
-        let name = vault.get_name();
-        let config = vault.get_config();
-        match (name, config) {
-            (Some(name), Some(config)) => {
-                self.imp().uuid.replace(Some(uuid));
-                self.imp().vaults_page_row.set_title(&name);
-                self.imp().config.replace(Some(config));
-            }
-            (_, _) => {
-                log::error!("Vault not initialized!");
-            }
-        }
+        let name = vault.name();
+        let config = vault.config();
+        self.imp().uuid.replace(Some(uuid));
+        self.imp().vaults_page_row.set_title(&name);
+        self.imp().config.replace(Some(config));
     }
 
     pub fn get_name(&self) -> String {
