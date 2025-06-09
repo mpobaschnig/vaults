@@ -33,8 +33,6 @@ pub struct VaultConfig {
     pub encrypted_data_directory: String,
     pub mount_directory: String,
     pub session_lock: Option<bool>,
-    pub use_custom_binary: Option<bool>,
-    pub custom_binary_path: Option<String>,
 }
 
 mod imp {
@@ -68,8 +66,6 @@ impl Vault {
         encrypted_data_directory: String,
         mount_directory: String,
         session_lock: Option<bool>,
-        use_custom_binary: Option<bool>,
-        custom_binary_path: Option<String>,
     ) -> Vault {
         let object: Self = glib::Object::new();
 
@@ -80,8 +76,6 @@ impl Vault {
             encrypted_data_directory,
             mount_directory,
             session_lock,
-            use_custom_binary,
-            custom_binary_path,
         }));
 
         object
@@ -255,8 +249,6 @@ mod tests {
             "".to_string(),
             "".to_string(),
             None,
-            None,
-            None,
         );
         assert!(!vault.is_mount_hidden());
 
@@ -265,8 +257,6 @@ mod tests {
             encrypted_data_directory: "".to_string(),
             mount_directory: ".".to_string(),
             session_lock: None,
-            use_custom_binary: None,
-            custom_binary_path: None,
         });
         assert!(!vault.is_mount_hidden());
 
@@ -275,8 +265,6 @@ mod tests {
             encrypted_data_directory: "".to_string(),
             mount_directory: "..".to_string(),
             session_lock: None,
-            use_custom_binary: None,
-            custom_binary_path: None,
         });
         assert!(!vault.is_mount_hidden());
 
@@ -285,8 +273,6 @@ mod tests {
             encrypted_data_directory: "".to_string(),
             mount_directory: "./".to_string(),
             session_lock: None,
-            use_custom_binary: None,
-            custom_binary_path: None,
         });
         assert!(!vault.is_mount_hidden());
 
@@ -295,8 +281,6 @@ mod tests {
             encrypted_data_directory: "".to_string(),
             mount_directory: "./Hidden".to_string(),
             session_lock: None,
-            use_custom_binary: None,
-            custom_binary_path: None,
         });
         assert!(!vault.is_mount_hidden());
 
@@ -305,8 +289,6 @@ mod tests {
             encrypted_data_directory: "".to_string(),
             mount_directory: "Test/.Test".to_string(),
             session_lock: None,
-            use_custom_binary: None,
-            custom_binary_path: None,
         });
         assert!(vault.is_mount_hidden());
 
@@ -315,8 +297,6 @@ mod tests {
             encrypted_data_directory: "".to_string(),
             mount_directory: "./Test/.Test".to_string(),
             session_lock: None,
-            use_custom_binary: None,
-            custom_binary_path: None,
         });
         assert!(vault.is_mount_hidden());
 
@@ -325,8 +305,6 @@ mod tests {
             encrypted_data_directory: "".to_string(),
             mount_directory: "../.Test".to_string(),
             session_lock: None,
-            use_custom_binary: None,
-            custom_binary_path: None,
         });
         assert!(vault.is_mount_hidden());
     }
