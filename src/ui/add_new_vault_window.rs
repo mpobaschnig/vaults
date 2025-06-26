@@ -356,8 +356,6 @@ impl AddNewVaultWindow {
             self.imp().entry_row_name.remove_css_class("error");
             self.imp().name_error_label.set_visible(false);
             self.imp().name_error_label.set_text("");
-
-            return;
         }
     }
 
