@@ -81,7 +81,7 @@ pub fn read_legacy_user_config() -> Option<HashMap<String, LegacyVaultConfig>> {
         }
     }
 
-    return None;
+    None
 }
 
 fn get_legacy_user_config_path() -> Option<String> {
