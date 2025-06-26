@@ -174,7 +174,7 @@ mod imp {
                                 &vault_config
                             );
 
-                            let result = Backend::close(&vault_config);
+                            let result = Backend::close(vault_config);
                             match result {
                                 Ok(_) => log::info!("Closed vault successfully."),
                                 Err(e) => log::error!("{e}"),
