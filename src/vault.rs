@@ -209,7 +209,7 @@ impl Vault {
         let encrypted_data_directory = self.encrypted_data_directory();
         let path = std::path::Path::new(&encrypted_data_directory);
         log::debug!("Deleting encrypted data directory: {:?}", path);
-        return std::fs::remove_dir_all(path);
+        std::fs::remove_dir_all(path)
     }
 }
 
