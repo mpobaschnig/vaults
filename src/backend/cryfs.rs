@@ -26,11 +26,11 @@ use gtk::gio::prelude::SettingsExt;
 use std::process::Command;
 use std::{self, io::Write, process::Stdio};
 
-fn get_binary_path(settings: &Settings, vault_config: &VaultConfig) -> String {
+fn get_binary_path(settings: &Settings, vault_config: &VaultConfig) -> Option<String> {
     log::trace!("get_binary_path({:?})", vault_config);
 
     if settings.boolean("use-custom-cryfs-binary") {
-        return settings.string("custom-cryfs-binary-path").to_string();
+        return Some(settings.string("custom-cryfs-binary-path").to_string());
     }
 
     GlobalConfigManager::instance().get_cryfs_binary_path()
@@ -39,9 +39,15 @@ fn get_binary_path(settings: &Settings, vault_config: &VaultConfig) -> String {
 pub fn is_available(settings: &Settings, vault_config: &VaultConfig) -> Result<bool, BackendError> {
     log::trace!("is_available({:?})", vault_config);
 
+    let binary_path = get_binary_path(settings, vault_config);
+    if binary_path.is_none() {
+        log::error!("cryfs binary path is not set");
+        return Err(BackendError::ToUser(gettext("No CryFs binary path set")));
+    }
+
     let output = Command::new("flatpak-spawn")
         .arg("--host")
-        .arg(get_binary_path(settings, vault_config))
+        .arg(binary_path.unwrap())
         .arg("--version")
         .output()?;
     log::debug!("CryFS output: {:?}", output);
@@ -58,9 +64,15 @@ pub fn init(
 ) -> Result<(), BackendError> {
     log::trace!("init({:?}, password: <redacted>)", vault_config);
 
+    let binary_path = get_binary_path(settings, vault_config);
+    if binary_path.is_none() {
+        log::error!("cryfs binary path is not set");
+        return Err(BackendError::ToUser(gettext("No CryFs binary path set")));
+    }
+
     let mut child = Command::new("flatpak-spawn")
         .arg("--host")
-        .arg(get_binary_path(settings, vault_config))
+        .arg(binary_path.unwrap())
         .env("CRYFS_FRONTEND", "noninteractive")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -104,9 +116,15 @@ pub fn open(
 ) -> Result<(), BackendError> {
     log::trace!("open({:?}, password: <redacted>)", vault_config);
 
+    let binary_path = get_binary_path(settings, vault_config);
+    if binary_path.is_none() {
+        log::error!("cryfs binary path is not set");
+        return Err(BackendError::ToUser(gettext("No CryFs binary path set")));
+    }
+
     let mut child = Command::new("flatpak-spawn")
         .arg("--host")
-        .arg(get_binary_path(settings, vault_config))
+        .arg(binary_path.unwrap())
         .env("CRYFS_FRONTEND", "noninteractive")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
