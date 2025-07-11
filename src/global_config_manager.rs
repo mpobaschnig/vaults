@@ -23,7 +23,7 @@ use gtk::{
 };
 use ini::Ini;
 use serde::{Deserialize, Serialize};
-use std::cell::RefCell;
+use std::{cell::RefCell, fs, process::ExitStatus};
 use toml::de::Error;
 
 use self::imp::GlobalConfig;
@@ -356,7 +356,7 @@ impl GlobalConfigManager {
         cryfs_instance_path
     }
 
-    pub fn get_gocryptfs_binary_path(&self) -> String {
+    pub fn get_gocryptfs_binary_path(&self) -> Option<String> {
         let flatpak_info = self.get_flatpak_info();
         let instance_path = flatpak_info
             .section(Some("Instance"))
@@ -365,6 +365,19 @@ impl GlobalConfigManager {
             .unwrap();
         let gocryptfs_instance_path = instance_path.to_owned() + "/bin/gocryptfs";
         log::info!("gocryptfs binary path: {}", gocryptfs_instance_path);
-        gocryptfs_instance_path
+        let exists = fs::exists(&gocryptfs_instance_path);
+        match exists {
+            Ok(exists) => {
+                if exists {
+                    log::info!("gocryptfs binary exists, taking it");
+                    return Some(gocryptfs_instance_path);
+                }
+            }
+            Err(e) => {
+                log::error!("Error checking gocryptfs binary path existence: {}", e);
+            }
+        }
+
+        None
     }
 }
