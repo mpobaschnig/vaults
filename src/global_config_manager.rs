@@ -344,7 +344,7 @@ impl GlobalConfigManager {
             .borrow_mut() = Some(path);
     }
 
-    pub fn get_cryfs_binary_path(&self) -> String {
+    pub fn get_cryfs_binary_path(&self) -> Option<String> {
         let flatpak_info = self.get_flatpak_info();
         let instance_path = flatpak_info
             .section(Some("Instance"))
@@ -353,7 +353,20 @@ impl GlobalConfigManager {
             .unwrap();
         let cryfs_instance_path = instance_path.to_owned() + "/bin/cryfs";
         log::info!("CryFS binary path: {}", cryfs_instance_path);
-        cryfs_instance_path
+        let exists = fs::exists(&cryfs_instance_path);
+        match exists {
+            Ok(exists) => {
+                if exists {
+                    log::info!("cryfs binary exists, taking it");
+                    return Some(cryfs_instance_path);
+                }
+            }
+            Err(e) => {
+                log::error!("Error checking cryfs binary path existence: {}", e);
+            }
+        }
+
+        None
     }
 
     pub fn get_gocryptfs_binary_path(&self) -> Option<String> {
