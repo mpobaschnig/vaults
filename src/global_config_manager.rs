@@ -358,11 +358,7 @@ impl GlobalConfigManager {
 
     pub fn get_gocryptfs_binary_path(&self) -> Option<String> {
         let flatpak_info = self.get_flatpak_info();
-        let instance_path = flatpak_info
-            .section(Some("Instance"))
-            .unwrap()
-            .get("app-path")
-            .unwrap();
+        let instance_path = flatpak_info.section(Some("Instance"))?.get("app-path")?;
         let gocryptfs_instance_path = instance_path.to_owned() + "/bin/gocryptfs";
         log::info!("gocryptfs binary path: {}", gocryptfs_instance_path);
         let exists = fs::exists(&gocryptfs_instance_path);
