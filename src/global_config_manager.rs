@@ -346,11 +346,7 @@ impl GlobalConfigManager {
 
     pub fn get_cryfs_binary_path(&self) -> Option<String> {
         let flatpak_info = self.get_flatpak_info();
-        let instance_path = flatpak_info
-            .section(Some("Instance"))
-            .unwrap()
-            .get("app-path")
-            .unwrap();
+        let instance_path = flatpak_info.section(Some("Instance"))?.get("app-path")?;
         let cryfs_instance_path = instance_path.to_owned() + "/bin/cryfs";
         log::info!("CryFS binary path: {}", cryfs_instance_path);
         let exists = fs::exists(&cryfs_instance_path);
