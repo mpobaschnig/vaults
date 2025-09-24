@@ -214,7 +214,7 @@ impl VaultsSettingsWindow {
                 &self.imp().gocryptfs_custom_binary_expander_row.get(),
                 "enable-expansion",
             )
-            .flags(SettingsBindFlags::GET)
+            .flags(SettingsBindFlags::INVERT_BOOLEAN)
             .build();
 
         self.imp()
