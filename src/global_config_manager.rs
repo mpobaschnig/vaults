@@ -23,7 +23,7 @@ use gtk::{
 };
 use ini::Ini;
 use serde::{Deserialize, Serialize};
-use std::{cell::RefCell, fs, process::ExitStatus};
+use std::{cell::RefCell, fs};
 use toml::de::Error;
 
 use self::imp::GlobalConfig;
