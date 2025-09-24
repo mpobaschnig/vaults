@@ -31,6 +31,12 @@
               </object>
             </child>
             <child type="end">
+              <object class="GtkToggleButton" id="select_toggle_button">
+                <property name="icon_name">selection-mode-symbolic</property>
+                <property name="tooltip-text" translatable="yes">Select Vaults</property>
+              </object>
+            </child>
+            <child type="end">
               <object class="GtkToggleButton" id="search_toggle_button">
                 <property name="icon_name">system-search-symbolic</property>
                 <property name="tooltip-text" translatable="yes">Toggle Search</property>
