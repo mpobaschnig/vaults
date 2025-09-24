@@ -348,14 +348,15 @@ impl AddNewVaultWindow {
             return;
         }
 
-        let vault_name = self.imp().entry_row_name.text();
+        self.imp().entry_row_name.remove_css_class("error");
+        self.imp().name_error_label.set_visible(false);
+        self.imp().name_error_label.set_text("");
 
+        let vault_name = self.imp().entry_row_name.text();
         if vault_name.is_empty() {
             self.imp().next_button.set_sensitive(false);
-
-            self.imp().entry_row_name.remove_css_class("error");
-            self.imp().name_error_label.set_visible(false);
-            self.imp().name_error_label.set_text("");
+        } else {
+            self.imp().next_button.set_sensitive(true);
         }
     }
 
