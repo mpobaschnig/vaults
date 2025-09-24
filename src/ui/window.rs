@@ -268,7 +268,7 @@ impl ApplicationWindow {
             #[weak(rename_to = obj)]
             self,
             move |map_is_empty| {
-                obj.refresh(map_is_empty);
+                obj.refresh_view(map_is_empty);
             }
         ));
 
@@ -469,7 +469,7 @@ impl ApplicationWindow {
         //}
     }
 
-    pub fn refresh(&self, map_is_empty: bool) {
+    pub fn refresh_view(&self, map_is_empty: bool) {
         if self.imp().search_toggle_button.is_active() {
             return;
         }
@@ -508,6 +508,7 @@ impl ApplicationWindow {
                     match Backend::init(&vault.config(), password) {
                         Ok(_) => {
                             UserConfigManager::instance().add_vault(vault);
+                            obj.refresh_model();
                             obj.set_view(View::Vaults);
                         }
                         Err(e) => {
@@ -593,6 +594,10 @@ impl ApplicationWindow {
     }
 
     pub fn refresh_clicked(&self) {
+        self.refresh_model();
+    }
+
+    pub fn refresh_model(&self) {
         self.clear();
 
         UserConfigManager::instance().read_config();
