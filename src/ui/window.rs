@@ -566,9 +566,8 @@ impl ApplicationWindow {
                 self,
                 move |dialog: ImportVaultDialog| {
                     let vault = dialog.get_vault();
-
                     UserConfigManager::instance().add_vault(vault);
-
+                    obj.refresh_model();
                     obj.set_view(View::Vaults);
                 }
             ),
