@@ -72,6 +72,8 @@ mod imp {
         pub add_menu_button: TemplateChild<gtk::MenuButton>,
         #[template_child]
         pub select_toggle_button: TemplateChild<gtk::ToggleButton>,
+        #[template_child]
+        pub remove_button: TemplateChild<gtk::Button>,
 
         pub list_store: ListStore,
         pub search_list_store: ListStore,
@@ -104,6 +106,7 @@ mod imp {
                 settings: gio::Settings::new(APP_ID),
                 add_menu_button: TemplateChild::default(),
                 select_toggle_button: TemplateChild::default(),
+                remove_button: TemplateChild::default(),
             }
         }
 
@@ -343,6 +346,11 @@ impl ApplicationWindow {
     }
 
     fn setup_signals(&self) {
+        self.imp()
+            .settings
+            .bind("select-vaults", &self.imp().remove_button.get(), "visible")
+            .build();
+
         self.imp()
             .settings
             .bind(
