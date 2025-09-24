@@ -1,0 +1,671 @@
+# Russian translation for Vaults.
+# Copyright (C) 2025
+# This file is distributed under the same license as the vaults package.
+# Vladislav Lishchenko <vladleegit@proton.me>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: vaults\n"
+"POT-Creation-Date: 2025-03-25 20:59+0100\n"
+"PO-Revision-Date: 2025-09-24 18:12+0300\n"
+"Last-Translator: Vladislav Lishchenko <vladleegit@proton.me>\n"
+"Language-Team: Russian\n"
+"Language: ru\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Gtranslator 49.0\n"
+"X-Poedit-Basepath: ..\n"
+"X-Poedit-KeywordsList: gettext\n"
+"X-Poedit-SearchPath-0: src\n"
+"X-Poedit-SearchPath-1: data\n"
+
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:3
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:6
+msgid "Vaults"
+msgstr "Vaults"
+
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:4
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:7
+msgid "Keep important files safe"
+msgstr "Держите важные файлы в сохранности"
+
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:9
+msgid "Gnome;GTK;"
+msgstr "Gnome;GTK;"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:6
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:7
+msgid "Default window width"
+msgstr "Стандартная ширина окна"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:11
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:12
+msgid "Default window height"
+msgstr "Стандартная высота окна"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:16
+msgid "Default window maximized behaviour"
+msgstr "Стандартное поведение окна при разворачивании"
+
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:9
+msgid ""
+"Vaults lets you create encrypted vaults in which you can safely store files. "
+"It uses gocryptfs and CryFS for encryption."
+msgstr ""
+"Vaults позволяет создавать зашифрованные хранилища с целью безопасного "
+"хранения ваших файлов. Для шифрования программа использует gocryptfs и CryFS."
+
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:14
+msgid "Welcome Window"
+msgstr "Окно приветствия"
+
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:18
+msgid "Main Window"
+msgstr "Главное окно"
+
+#: data/resources/ui/add_new_vault_window.ui:16
+msgid "New Vault"
+msgstr "Новое хранилище"
+
+#: data/resources/ui/add_new_vault_window.ui:22
+#: data/resources/ui/import_vault_window.ui:22
+msgid "_Cancel"
+msgstr "_Отмена"
+
+#: data/resources/ui/add_new_vault_window.ui:28
+#: data/resources/ui/import_vault_window.ui:28
+msgid "_Previous"
+msgstr "_Назад"
+
+#: data/resources/ui/add_new_vault_window.ui:35
+#: data/resources/ui/import_vault_window.ui:35
+msgid "_Next"
+msgstr "_Далее"
+
+#: data/resources/ui/add_new_vault_window.ui:46
+msgid "_Add"
+msgstr "_Добавить"
+
+#: data/resources/ui/add_new_vault_window.ui:87
+#: data/resources/ui/import_vault_window.ui:169
+#: data/resources/ui/vaults_page_row_settings_window.ui:45
+msgid "Name"
+msgstr "Имя"
+
+#: data/resources/ui/add_new_vault_window.ui:107
+#: data/resources/ui/import_vault_window.ui:189
+#: data/resources/ui/vaults_page_row_settings_window.ui:65
+msgid "Backend"
+msgstr "Бэкенд"
+
+#: data/resources/ui/add_new_vault_window.ui:111
+msgid "gocryptfs"
+msgstr "gocryptfs"
+
+#: data/resources/ui/add_new_vault_window.ui:112
+msgid "CryFS"
+msgstr "CryFS"
+
+#: data/resources/ui/add_new_vault_window.ui:150
+#: data/resources/ui/vaults_page_row_password_prompt_window.ui:29
+msgid "Password"
+msgstr "Пароль"
+
+#: data/resources/ui/add_new_vault_window.ui:159
+msgid "Confirm Password"
+msgstr "Подтвердите пароль"
+
+#: data/resources/ui/add_new_vault_window.ui:183
+#: data/resources/ui/import_vault_window.ui:87
+#: data/resources/ui/preferences.ui:44
+#: data/resources/ui/vaults_page_row_settings_window.ui:107
+msgid "Encrypted Data Directory"
+msgstr "Шифруемый каталог"
+
+#: data/resources/ui/add_new_vault_window.ui:188
+#: data/resources/ui/import_vault_window.ui:92
+#: data/resources/ui/preferences.ui:49
+#: data/resources/ui/vaults_page_row_settings_window.ui:112
+#: src/ui/pages/vaults_page_row_settings_window.rs:403
+#: src/ui/add_new_vault_window.rs:450 src/ui/import_vault_window.rs:367
+#: src/ui/preferences.rs:192
+msgid "Choose Encrypted Data Directory"
+msgstr "Выберите каталог для зашифрованных данных"
+
+#: data/resources/ui/add_new_vault_window.ui:213
+#: data/resources/ui/import_vault_window.ui:124
+#: data/resources/ui/preferences.ui:74
+#: data/resources/ui/vaults_page_row_settings_window.ui:137
+msgid "Mount Directory"
+msgstr "Точка монтирования"
+
+#: data/resources/ui/add_new_vault_window.ui:218
+#: data/resources/ui/import_vault_window.ui:129
+#: data/resources/ui/preferences.ui:79
+#: data/resources/ui/vaults_page_row_settings_window.ui:142
+#: src/ui/pages/vaults_page_row_settings_window.rs:444
+#: src/ui/add_new_vault_window.rs:491 src/ui/import_vault_window.rs:410
+#: src/ui/preferences.rs:233
+msgid "Choose Mount Directory"
+msgstr "Выберите точку монтирования"
+
+#: data/resources/ui/import_vault_window.ui:16
+msgid "Import Vault"
+msgstr "Импортировать хранилище"
+
+#: data/resources/ui/import_vault_window.ui:46
+msgid "_Import"
+msgstr "_Импорт"
+
+#: data/resources/ui/preferences.ui:16
+msgid "Preferences"
+msgstr "Параметры"
+
+#: data/resources/ui/preferences.ui:41
+msgid "Default Paths"
+msgstr "Пути по умолчанию"
+
+#: data/resources/ui/preferences.ui:107
+#: data/resources/ui/vaults_page_row_settings_window.ui:191
+msgid "_Apply Changes"
+msgstr "_Применить изменения"
+
+#: data/resources/ui/shortcuts.ui:11
+msgctxt "shortcut window"
+msgid "General"
+msgstr "Главный"
+
+#: data/resources/ui/shortcuts.ui:14
+msgctxt "preferences"
+msgid "Show Preferences"
+msgstr "Показать параметры"
+
+#: data/resources/ui/shortcuts.ui:20
+msgctxt "shortcut window"
+msgid "Show Shortcuts"
+msgstr "Показать комбинации клавиш"
+
+#: data/resources/ui/shortcuts.ui:26
+msgctxt "shortcut window"
+msgid "Quit"
+msgstr "Выйти"
+
+#: data/resources/ui/shortcuts.ui:34
+msgctxt "shortcut window"
+msgid "Vaults"
+msgstr "Хранилища"
+
+#: data/resources/ui/shortcuts.ui:37
+msgctxt "vaults"
+msgid "Add New Vault"
+msgstr "Добавить новое хранилище"
+
+#: data/resources/ui/shortcuts.ui:43
+msgctxt "vaults"
+msgid "Import Vault"
+msgstr "Импортировать хранилище"
+
+#: data/resources/ui/shortcuts.ui:49
+msgctxt "vaults"
+msgid "Search"
+msgstr "Поиск"
+
+#: data/resources/ui/shortcuts.ui:55
+msgctxt "vaults"
+msgid "Refresh"
+msgstr "Обновить"
+
+#: data/resources/ui/start_page.ui:15 data/resources/ui/window.ui:133
+msgid "Welcome to Vaults"
+msgstr "Добро пожаловать в Vaults"
+
+#: data/resources/ui/start_page.ui:16 data/resources/ui/window.ui:134
+msgid "Add or Import a Vault."
+msgstr "Добавьте или импортируйте хранилище."
+
+#: data/resources/ui/vaults_page_row_password_prompt_window.ui:23
+msgid "Unlock Vault"
+msgstr "Разблокировать хранилище"
+
+#: data/resources/ui/vaults_page_row_password_prompt_window.ui:24
+msgid "Enter the password to unlock the Vault."
+msgstr "Введите пароль для разблокировки хранилища."
+
+#: data/resources/ui/vaults_page_row_password_prompt_window.ui:36
+msgid "Unlock"
+msgstr "Разблокировать"
+
+#: data/resources/ui/vaults_page_row_settings_window.ui:16
+msgid "Vault Settings"
+msgstr "Настройки хранилища"
+
+#: data/resources/ui/vaults_page_row_settings_window.ui:72
+msgid "Use custom binary"
+msgstr "Использовать сторонний бинарник"
+
+#: data/resources/ui/vaults_page_row_settings_window.ui:75
+msgid "Custom Binary Path"
+msgstr "Путь до стороннего бинарника"
+
+#: data/resources/ui/vaults_page_row_settings_window.ui:80
+#: src/ui/pages/vaults_page_row_settings_window.rs:773
+msgid "Choose Custom Binary"
+msgstr "Выберите сторонний бинарник"
+
+#: data/resources/ui/vaults_page_row_settings_window.ui:167
+msgid "Session lock"
+msgstr "Блокировка сессии"
+
+#: data/resources/ui/vaults_page_row_settings_window.ui:168
+msgid "Automatically lock when screen is locked and screen saver is activated"
+msgstr ""
+"Автоматически блокирует хранилище при блокировке экрана и активации "
+"скринсейвера"
+
+#: data/resources/ui/vaults_page_row_settings_window.ui:181
+msgid "_Remove"
+msgstr "_Удалить"
+
+#: data/resources/ui/vaults_page_row.ui:10
+msgid "Vault X"
+msgstr "Хранилище X"
+
+#: data/resources/ui/vaults_page_row.ui:15
+msgid "Open Folder"
+msgstr "Открыть папку"
+
+#: data/resources/ui/vaults_page_row.ui:25 src/ui/pages/vaults_page_row.rs:284
+#: src/ui/pages/vaults_page_row.rs:393 src/ui/pages/vaults_page_row.rs:587
+msgid "Open Vault"
+msgstr "Открыть хранилище"
+
+#: data/resources/ui/vaults_page_row.ui:35
+msgid "Open Settings"
+msgstr "Открыть настройки"
+
+#: data/resources/ui/window.ui:13
+msgid "Add or Import New Vault"
+msgstr "Добавить или импортировать новое хранилище"
+
+#: data/resources/ui/window.ui:36
+msgid "Toggle Search"
+msgstr "Поиск"
+
+#: data/resources/ui/window.ui:48
+msgid "Search vaults"
+msgstr "Поиск хранилища"
+
+#: data/resources/ui/window.ui:90
+msgid "No Results"
+msgstr "Не найдено"
+
+#: data/resources/ui/window.ui:91
+msgid "No Vault matching your search was found."
+msgstr "Не найдено ни одного хранилища, удовлетворяющего вашему запросу"
+
+#: data/resources/ui/window.ui:181
+msgid "_New Vault"
+msgstr "_Новое хранилище"
+
+#: data/resources/ui/window.ui:185
+msgid "_Import Vault"
+msgstr "_Импортировать хранилище"
+
+#: data/resources/ui/window.ui:193
+msgid "_Refresh"
+msgstr "_Обновить"
+
+#: data/resources/ui/window.ui:199
+msgid "_Preferences"
+msgstr "_Параметры"
+
+#: data/resources/ui/window.ui:203
+msgid "_Keyboard Shortcuts"
+msgstr "_Комбинации клавиш"
+
+#: data/resources/ui/window.ui:207
+msgid "_About Vaults"
+msgstr "_О Vaults"
+
+#: src/backend/cryfs.rs:216 src/backend/cryfs.rs:233
+#: src/backend/gocryptfs.rs:207
+msgid "An unknown error occurred."
+msgstr "Возникла неизвестная ошибка."
+
+#: src/backend/cryfs.rs:217
+msgid "Invalid arguments were given."
+msgstr "Передан неправильный аргумент."
+
+#: src/backend/cryfs.rs:218 src/backend/gocryptfs.rs:193
+msgid "The password is wrong."
+msgstr "Неправильный пароль."
+
+#: src/backend/cryfs.rs:219 src/backend/gocryptfs.rs:196
+msgid "The password is empty."
+msgstr "Пустой пароль."
+
+#: src/backend/cryfs.rs:220
+msgid ""
+"The format of the encrypted data directory is too new for this CryFS "
+"version. Please update CryFS."
+msgstr ""
+"Формат зашифрованных данных слишком новый для данной версии CryFS. "
+"Пожалуйста, обновите CryFS."
+
+#: src/backend/cryfs.rs:221
+msgid ""
+"The format of the encrypted data directory is too old for this CryFS version."
+msgstr "Формат зашифрованных данных слишком стар для данной версии CryFS."
+
+#: src/backend/cryfs.rs:222
+msgid "The vault uses a different cipher than the default of CryFS."
+msgstr "Используемый хранилищем шифр отличается от стандартного шифра CryFS."
+
+#: src/backend/cryfs.rs:223
+msgid "The encrypted data directory does not exist or is inaccessible."
+msgstr "Шифруемый каталог недоступен или не существует."
+
+#: src/backend/cryfs.rs:224
+msgid "The mount directory does not exist or is inaccessible."
+msgstr "Точка монтирования недоступна или не существует."
+
+#: src/backend/cryfs.rs:225
+msgid "The mount directory is inside the encrypted data directory."
+msgstr "Точка монтирования находится внутри шифруемого каталога."
+
+#: src/backend/cryfs.rs:226
+msgid "The encrypted data directory is invalid."
+msgstr "Шифруемый каталог недействителен."
+
+#: src/backend/cryfs.rs:227
+msgid ""
+"The encrypted data id in the configuration file is different to the last "
+"time this vault was opened. This could mean someone replaced files in the "
+"encrypted data directory with different ones."
+msgstr ""
+"Идентификатор зашифрованных данных в файле конфигурации отличается от "
+"используемого ранее. Это может означать, что кто-то заменил файлы в "
+"шифруемом каталоге на другие."
+
+#: src/backend/cryfs.rs:228
+msgid ""
+"The encryption key for your encrypted files is different to the last time "
+"this vault was opened. This could mean someone replaced files in the "
+"encrypted data directory with different ones."
+msgstr ""
+"Ключ шифрования для ваших данных отличается от используемого ранее. Это "
+"может означать, что кто-то заменил файлы в шифруемом каталоге на другие."
+
+#: src/backend/cryfs.rs:229
+msgid "Vaults' configuration and the encrypted data configuration mismatches."
+msgstr "Конфигурация Vaults и конфигурация зашифрованных данных отличаются."
+
+#: src/backend/cryfs.rs:230
+msgid ""
+"The encrypted data directory is in single-user mode and can only be used "
+"from the user that created it."
+msgstr ""
+"Шифруемый каталог работает в однопользовательском режиме и может быть "
+"использован только пользователем, создавшим его."
+
+#: src/backend/cryfs.rs:231
+msgid ""
+"CryFS detected an integrity violation. The encrypted data directory will be "
+"accessible again after the integrity state file has been deleted."
+msgstr ""
+"CryFS обнаружил нарушение целостности. Вы сможете получить доступ к "
+"зашифрованным данным после удаления файла состояния целостности."
+
+#: src/backend/cryfs.rs:232
+msgid "An integrity violation was detected. Vault will be unmounted."
+msgstr "Обнаружено нарушение целостности. Хранилище будет отключено."
+
+#: src/backend/gocryptfs.rs:187
+msgid "The encrypted data directory is not empty."
+msgstr "Шифруемый каталог не пуст."
+
+#: src/backend/gocryptfs.rs:190
+msgid "The mount directory is not empty."
+msgstr "Точка монтирования не пуста."
+
+#: src/backend/gocryptfs.rs:199
+msgid "Vaults cannot read configuration file."
+msgstr "Vaults не может прочитать файл конфигурации."
+
+#: src/backend/gocryptfs.rs:202
+msgid "Vaults cannot write configuration file."
+msgstr "Vaults не может записать файл конфигурации."
+
+#: src/backend/gocryptfs.rs:205
+msgid "The file system check reported an error."
+msgstr "Проверка файловой системы вернула ошибку."
+
+#: src/backend/gocryptfs.rs:219
+msgid "You don't have the necessary privileges to unmount the directory."
+msgstr "У вас нет необходимых разрешений для отключения каталога."
+
+#: src/backend/gocryptfs.rs:220
+msgid "The data directory (mount point) does not exist."
+msgstr "Каталог данных (точка монтирования) не существует."
+
+#: src/backend/gocryptfs.rs:221
+msgid "Internal error."
+msgstr "Внутренняя ошибка."
+
+#: src/backend/gocryptfs.rs:222
+msgid ""
+"The data directory (mount point) is busy. There are open files or processes "
+"using the filesystem."
+msgstr ""
+"Каталог данных (точка монтирования) занята. Имеются открытые файлы или "
+"процессы, использующие файловую систему."
+
+#: src/backend/mod.rs:142
+msgid "Failed to create encrypted data directory: Permission denied."
+msgstr "Не удалось создать каталог шифруемых данных: В доступе отказано."
+
+#: src/backend/mod.rs:145
+msgid "Failed to create encrypted data directory: Connection refused."
+msgstr "Не удалось создать каталог шифруемых данных: В соединении отказано."
+
+#: src/backend/mod.rs:148
+msgid "Failed to create encrypted data directory: Connection reset."
+msgstr "Не удалось создать каталог шифруемых данных: Соединение сброшено."
+
+#: src/backend/mod.rs:151
+msgid "Failed to create encrypted data directory: Connection aborted."
+msgstr "Не удалось создать каталог шифруемых данных: Соединение разорвано."
+
+#: src/backend/mod.rs:154
+msgid "Failed to create encrypted data directory: Not connected."
+msgstr "Не удалось создать каталог шифруемых данных: Нет соединения."
+
+#: src/backend/mod.rs:157
+msgid "Failed to create encrypted data directory."
+msgstr "Не удалось создать каталог шифруемых данных."
+
+#: src/backend/mod.rs:174
+msgid "Failed to create mount directory: Permission denied."
+msgstr "Не удалось создать точку монтирования: В доступе отказано."
+
+#: src/backend/mod.rs:177
+msgid "Failed to create mount directory: Connection refused."
+msgstr "Не удалось создать точку монтирования: В соединении отказано."
+
+#: src/backend/mod.rs:180
+msgid "Failed to create mount directory: Connection reset."
+msgstr "Не удалось создать точку монтирования: Соединение сброшено."
+
+#: src/backend/mod.rs:183
+msgid "Failed to create mount directory: Connection aborted."
+msgstr "Не удалось создать точку монтирования: Соединение разорвано."
+
+#: src/backend/mod.rs:186
+msgid "Failed to create mount directory: Not connected."
+msgstr "Не удалось создать точку монтирования: Нет соединения."
+
+#: src/backend/mod.rs:189
+msgid "Failed to create mount directory."
+msgstr "Не удалось создать точку монтирования."
+
+#: src/ui/pages/vaults_page_row.rs:293 src/ui/pages/vaults_page_row.rs:384
+#: src/ui/pages/vaults_page_row.rs:573
+msgid "Close Vault"
+msgstr "Закрыть хранилище"
+
+#: src/ui/pages/vaults_page_row.rs:597
+msgid "Backend is not installed."
+msgstr "Бэкенд не установлен."
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:277
+msgid "Remove Vault?"
+msgstr "Удалить хранилище?"
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:278
+#: src/ui/pages/vaults_page_row_settings_window.rs:281
+msgid "Cancel"
+msgstr "Отмена"
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:282
+msgid "Remove"
+msgstr "Удалить"
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:289
+msgid "Delete encrypted data"
+msgstr "Удалить зашифрованные данные"
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:320
+msgid "Could not remove encrypted data."
+msgstr "Не удалось удалить зашифрованные данные."
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:322
+msgid "Close"
+msgstr "Закрыть"
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:381
+msgid "Saved settings successfully!"
+msgstr "Настройки успешно сохранены!"
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:405
+#: src/ui/pages/vaults_page_row_settings_window.rs:446
+#: src/ui/pages/vaults_page_row_settings_window.rs:775
+#: src/ui/add_new_vault_window.rs:452 src/ui/add_new_vault_window.rs:493
+#: src/ui/import_vault_window.rs:369 src/ui/import_vault_window.rs:412
+#: src/ui/preferences.rs:194 src/ui/preferences.rs:235
+msgid "Select"
+msgstr "Выбрать"
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:475
+msgid "Name is not valid."
+msgstr "Неправильное имя."
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:499
+msgid "Name already exists."
+msgstr "Имя уже существует."
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:535
+msgid "Directory is empty."
+msgstr "Каталог пуст."
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:553
+#: src/ui/pages/vaults_page_row_settings_window.rs:581
+msgid "Directory is not valid."
+msgstr "Каталог недействителен."
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:571
+msgid "Directory is not empty."
+msgstr "Каталог не пуст."
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:598
+#: src/ui/add_new_vault_window.rs:538 src/ui/import_vault_window.rs:464
+#: src/ui/preferences.rs:283
+msgid "Directories must not be equal."
+msgstr "Каталоги не должны совпадать."
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:697
+#: src/ui/import_vault_window.rs:712
+msgid "No configuration file found."
+msgstr "Файл конфигурации не найден."
+
+#: src/ui/add_new_vault_window.rs:341 src/ui/import_vault_window.rs:300
+msgid "No backend installed. Please install gocryptfs or CryFS."
+msgstr ""
+"Нет установленного бэкенда. Пожалуйста, установите gocryptfs или CryFS."
+
+#: src/ui/add_new_vault_window.rs:370 src/ui/import_vault_window.rs:339
+msgid "Name is already taken."
+msgstr "Имя уже занято."
+
+#: src/ui/add_new_vault_window.rs:396
+msgid ""
+"CryFS works well together with cloud services like Dropbox, iCloud, OneDrive "
+"and others. It does not expose directory structure, number of files or file "
+"sizes in the encrypted data directory. While being considered safe, there is "
+"no independent audit of CryFS."
+msgstr ""
+"CryFS отлично работает с облачными сервисами, такими как Dropbox, iCloud, "
+"OneDrive и др. Он не раскрывает структуру каталогов, количество файлов или "
+"их размер. Хотя CryFS достаточно защищён, его независимый аудит не "
+"осуществлялся."
+
+#: src/ui/add_new_vault_window.rs:399
+msgid ""
+"Fast and robust, gocryptfs works well in general cases where third-parties "
+"do not always have access to the encrypted data directory (e.g. file hosting "
+"services). It exposes directory structure, number of files and file sizes. A "
+"security audit in 2017 verified gocryptfs is safe against third-parties that "
+"can read or write to encrypted data."
+msgstr ""
+"Быстрый и надёжный, gocryptfs отлично работает в тех случаях, когда третья "
+"сторона не всегда имеет доступ к каталогу с зашифрованными данными "
+"(например, в файловом хостинге). Он раскрывает структуру каталогов, "
+"количество файлов и их размер. Аудит безопасности, проведённый в 2017 году, "
+"подтверждает защищённость gocryptfs от третьих сторон, способных читать или "
+"записывать зашифрованные файлы."
+
+#: src/ui/add_new_vault_window.rs:575
+msgid "Encrypted data directory is not empty."
+msgstr "Шифрованный каталог не пуст."
+
+#: src/ui/add_new_vault_window.rs:604 src/ui/import_vault_window.rs:522
+msgid "Encrypted data directory is not valid."
+msgstr "Шифрованный каталог недействителен."
+
+#: src/ui/add_new_vault_window.rs:643 src/ui/import_vault_window.rs:560
+msgid "Mount directory is not empty."
+msgstr "Точка монтирования не пуста."
+
+#: src/ui/add_new_vault_window.rs:666 src/ui/import_vault_window.rs:571
+msgid "Mount directory is not valid."
+msgstr "Точка монтирования недействительна."
+
+#: src/ui/import_vault_window.rs:495
+msgid "Encrypted data directory is empty."
+msgstr "Шифрованный каталог пуст."
+
+#: src/ui/import_vault_window.rs:654
+msgid "Found gocryptfs configuration file."
+msgstr "Найден файл конфигурации gocryptfs."
+
+#: src/ui/import_vault_window.rs:678
+msgid "Found CryFS configuration file."
+msgstr "Найден файл конфигурации CryFS."
+
+#: src/ui/window.rs:256 src/ui/window.rs:607
+msgid "Add or import a Vault."
+msgstr "Добавить или импортировать хранилище."
+
+#: src/ui/preferences.rs:271
+msgid "Saved preferences successfully!"
+msgstr "Параметры успешно сохранены!"
+
+#: src/application.rs:193
+msgid "Cannot open and close at the same time."
+msgstr "Операции открытия и закрытия не могут осуществляться одновременно."
+
+#: src/application.rs:310
+msgid "translator-credits"
+msgstr "Vladislav Lishchenko <vladleegit@proton.me>"
