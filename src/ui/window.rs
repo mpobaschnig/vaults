@@ -255,14 +255,6 @@ impl ApplicationWindow {
     }
 
     fn setup_vaults_page(&self) {
-        UserConfigManager::instance().connect_add_vault(clone!(
-            #[weak(rename_to = obj)]
-            self,
-            move || {
-                obj.add_vault();
-            }
-        ));
-
         UserConfigManager::instance().connect_refresh(clone!(
             #[weak(rename_to = obj)]
             self,
@@ -427,28 +419,6 @@ impl ApplicationWindow {
         ));
     }
 
-    pub fn add_vault(&self) {
-        // TODO: Updating model
-        let vault = UserConfigManager::instance().get_current_vault();
-
-        if let Some(vault) = vault {
-            let row = VaultsPageRow::new(vault.clone());
-            self.row_connect_remove(&row);
-
-            self.imp().list_store.insert_sorted(&row, |v1, v2| {
-                let row1 = v1.downcast_ref::<VaultsPageRow>().unwrap();
-                let name1 = row1.get_name();
-                let row2 = v2.downcast_ref::<VaultsPageRow>().unwrap();
-                let name2 = row2.get_name();
-                name1.cmp(&name2)
-            });
-
-            self.imp().search_toggle_button.set_sensitive(true);
-        } else {
-            log::error!("Vault not initialised!");
-        }
-    }
-
     pub fn refresh_view(&self, map_is_empty: bool) {
         if self.imp().search_toggle_button.is_active() {
             return;
@@ -577,6 +547,8 @@ impl ApplicationWindow {
     }
 
     pub fn refresh_model(&self) {
+        log::info!("refresh_model()");
+
         self.clear();
 
         UserConfigManager::instance().read_config();
