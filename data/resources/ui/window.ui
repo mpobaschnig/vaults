@@ -19,6 +19,9 @@
                 <property name="icon_name">user-trash-symbolic</property>
                 <property name="tooltip-text" translatable="yes">Remove Vaults</property>
                 <property name="visible">False</property>
+                <style>
+                  <class name="destructive-action"/>
+                </style>
               </object>
             </child>
             <property name="title-widget">
