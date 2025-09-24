@@ -29,7 +29,7 @@ use adw::prelude::AdwDialogExt;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
-use gtk::gio::ListStore;
+use gtk::gio::{ListStore, SettingsBindFlags};
 use gtk::glib::closure_local;
 use gtk::{self, prelude::*};
 use gtk::{CompositeTemplate, gio, glib};
@@ -70,6 +70,8 @@ mod imp {
         pub search_stack: TemplateChild<gtk::Stack>,
         #[template_child]
         pub add_menu_button: TemplateChild<gtk::MenuButton>,
+        #[template_child]
+        pub select_toggle_button: TemplateChild<gtk::ToggleButton>,
 
         pub list_store: ListStore,
         pub search_list_store: ListStore,
@@ -101,6 +103,7 @@ mod imp {
                 search_results: RefCell::new(0),
                 settings: gio::Settings::new(APP_ID),
                 add_menu_button: TemplateChild::default(),
+                select_toggle_button: TemplateChild::default(),
             }
         }
 
@@ -119,6 +122,7 @@ mod imp {
             self.parent_constructed();
 
             obj.setup_gactions();
+            obj.setup_signals();
         }
     }
 
@@ -336,6 +340,27 @@ impl ApplicationWindow {
                 }
             )
         );
+    }
+
+    fn setup_signals(&self) {
+        self.imp()
+            .settings
+            .bind(
+                "select-vaults",
+                &self.imp().select_toggle_button.get(),
+                "active",
+            )
+            .build();
+
+        self.imp()
+            .settings
+            .bind(
+                "select-vaults",
+                &self.imp().add_menu_button.get(),
+                "visible",
+            )
+            .flags(SettingsBindFlags::INVERT_BOOLEAN)
+            .build();
     }
 
     fn fill_list_store(&self) {
