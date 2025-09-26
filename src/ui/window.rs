@@ -369,6 +369,14 @@ impl ApplicationWindow {
             )
             .flags(SettingsBindFlags::INVERT_BOOLEAN)
             .build();
+
+        self.imp().remove_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
+                obj.remove_button_clicked();
+            }
+        ));
     }
 
     fn fill_list_store(&self) {
@@ -617,5 +625,15 @@ impl ApplicationWindow {
 
     pub fn get_view(&self) -> Option<GString> {
         self.imp().window_stack.visible_child_name()
+    }
+
+    pub fn remove_button_clicked(&self) {
+        self.imp().list_store.into_iter().for_each(|item| {
+            let item = item.unwrap();
+            let row = item.downcast_ref::<VaultsPageRow>().unwrap();
+            if row.is_selected() {
+                println!("Removing: {}", row.get_name());
+            }
+        });
     }
 }
