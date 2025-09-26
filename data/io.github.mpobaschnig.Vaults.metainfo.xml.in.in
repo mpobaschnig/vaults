@@ -8,6 +8,10 @@
   <description>
     <p>Vaults lets you create encrypted vaults in which you can safely store files. It uses gocryptfs and CryFS for encryption.</p>
   </description>
+  <branding>
+    <color type="primary" scheme_preference="light">#ffbe6f</color>
+    <color type="primary" scheme_preference="dark">#62462d</color>
+  </branding>
   <screenshots>
     <screenshot type="default">
       <image>https://raw.githubusercontent.com/mpobaschnig/Vaults/master/data/resources/screenshots/welcome.png</image>
