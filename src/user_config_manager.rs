@@ -212,11 +212,14 @@ impl UserConfigManager {
     pub fn add_vault(&self, vault: Vault) {
         log::debug!("Add vault: {:?}, {:?}", &vault.name(), &vault.config());
 
-        let map = &mut self.imp().vaults.borrow_mut();
-        map.insert(vault.get_uuid(), vault.config());
-        self.write_config(map);
-
-        self.set_has_vaults(!map.is_empty());
+        let mut is_map_empty = false;
+        {
+            let map = &mut self.imp().vaults.borrow_mut();
+            map.insert(vault.get_uuid(), vault.config());
+            self.write_config(map);
+            is_map_empty = map.is_empty();
+        };
+        self.set_has_vaults(!is_map_empty);
 
         self.emit_by_name::<()>("add-vault", &[]);
     }
@@ -224,14 +227,17 @@ impl UserConfigManager {
     pub fn remove_vault(self, uuid: Uuid) {
         log::trace!("remove_vault({:?})", &uuid);
 
-        let map = &mut self.imp().vaults.borrow_mut();
-        map.remove(&uuid);
-        self.write_config(map);
-
-        self.set_has_vaults(!map.is_empty());
+        let mut is_map_empty = false;
+        {
+            let map = &mut self.imp().vaults.borrow_mut();
+            map.remove(&uuid);
+            self.write_config(map);
+            is_map_empty = map.is_empty();
+        }
+        self.set_has_vaults(!is_map_empty);
 
         self.emit_by_name::<()>("remove-vault", &[]);
-        self.emit_by_name::<()>("refresh", &[&map.is_empty()]);
+        self.emit_by_name::<()>("refresh", &[&is_map_empty]);
     }
 
     pub fn change_vault(&self, uuid: Uuid, new_vault_config: VaultConfig) {
