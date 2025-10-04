@@ -124,6 +124,8 @@ mod imp {
             let obj = self.obj();
             self.parent_constructed();
 
+            let _ = self.settings.set_boolean("select-vaults", false);
+
             obj.setup_gactions();
             obj.setup_signals();
         }
