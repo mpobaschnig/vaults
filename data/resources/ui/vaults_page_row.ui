@@ -8,6 +8,17 @@
     <child>
       <object class="AdwActionRow" id="vaults_page_row">
         <property name="title" translatable="yes">Vault X</property>
+        <property name="activatable_widget">select_vault_button</property>
+        <child type="prefix">
+          <object class="GtkCheckButton" id="select_vault_button">
+            <property name="valign">center</property>
+            <property name="tooltip-text" translatable="yes">Select Vault</property>
+            <property name="group">select_vault_button</property>
+            <style>
+              <class name="selection-mode"/>
+            </style>
+          </object>
+        </child>
         <child>
           <object class="GtkButton" id="open_folder_button">
             <property name="valign">center</property>
