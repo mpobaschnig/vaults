@@ -212,6 +212,7 @@ impl UserConfigManager {
     pub fn add_vault(&self, vault: Vault) {
         log::debug!("Add vault: {:?}, {:?}", &vault.name(), &vault.config());
 
+        #[allow(unused_assignments)]
         let mut is_map_empty = false;
         {
             let map = &mut self.imp().vaults.borrow_mut();
@@ -227,6 +228,7 @@ impl UserConfigManager {
     pub fn remove_vault(self, uuid: Uuid) {
         log::trace!("remove_vault({:?})", &uuid);
 
+        #[allow(unused_assignments)]
         let mut is_map_empty = false;
         {
             let map = &mut self.imp().vaults.borrow_mut();
