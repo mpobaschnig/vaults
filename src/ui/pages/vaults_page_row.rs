@@ -106,6 +106,7 @@ mod imp {
             obj.setup_connect_handlers();
 
             self.open_folder_button.set_visible(false);
+            self.select_vault_button.set_visible(false);
         }
 
         fn signals() -> &'static [Signal] {
