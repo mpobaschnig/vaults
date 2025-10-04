@@ -37,6 +37,7 @@ use super::{VaultsPageRowPasswordPromptWindow, VaultsPageRowSettingsWindow};
 use crate::{
     VApplication,
     backend::{Backend, BackendError},
+    config::APP_ID,
     vault::*,
 };
 
@@ -48,6 +49,8 @@ mod imp {
     pub struct VaultsPageRow {
         #[template_child]
         pub vaults_page_row: TemplateChild<adw::ActionRow>,
+        #[template_child]
+        pub select_vault_button: TemplateChild<gtk::CheckButton>,
         #[template_child]
         pub open_folder_button: TemplateChild<gtk::Button>,
         #[template_child]
@@ -61,6 +64,8 @@ mod imp {
         pub config: RefCell<Option<VaultConfig>>,
 
         pub volume_monitor: RefCell<VolumeMonitor>,
+
+        pub settings: gio::Settings,
     }
 
     #[glib::object_subclass]
@@ -72,6 +77,7 @@ mod imp {
         fn new() -> Self {
             Self {
                 vaults_page_row: TemplateChild::default(),
+                select_vault_button: TemplateChild::default(),
                 open_folder_button: TemplateChild::default(),
                 locker_button: TemplateChild::default(),
                 settings_button: TemplateChild::default(),
@@ -79,6 +85,7 @@ mod imp {
                 config: RefCell::new(None),
                 spinner: RefCell::new(gtk::Spinner::new()),
                 volume_monitor: RefCell::new(VolumeMonitor::get()),
+                settings: gio::Settings::new(APP_ID),
             }
         }
 
@@ -154,6 +161,32 @@ impl VaultsPageRow {
     }
 
     pub fn setup_connect_handlers(&self) {
+        self.imp().settings.connect_changed(
+            Some("select-vaults"),
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |settings, key| {
+                    if key != "select-vaults" {
+                        return;
+                    }
+
+                    if !settings.boolean("select-vaults") {
+                        obj.imp().select_vault_button.set_active(false);
+                    }
+                }
+            ),
+        );
+
+        self.imp()
+            .settings
+            .bind(
+                "select-vaults",
+                &self.imp().select_vault_button.get(),
+                "visible",
+            )
+            .build();
+
         self.imp().open_folder_button.connect_clicked(clone!(
             #[weak(rename_to = obj)]
             self,
@@ -667,5 +700,9 @@ impl VaultsPageRow {
                 log::error!("Could not get config mount directory file name");
             }
         }
+    }
+
+    pub fn selected(&self) -> bool {
+        self.imp().select_vault_button.is_active()
     }
 }
