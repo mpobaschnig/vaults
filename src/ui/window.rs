@@ -29,8 +29,9 @@ use adw::prelude::AdwDialogExt;
 use adw::subclass::prelude::*;
 use gettextrs::gettext;
 use glib::clone;
-use gtk::gio::{ListStore, SettingsBindFlags};
+use gtk::gio::ListStore;
 use gtk::glib::closure_local;
+use gtk::glib::{BindingFlags, Properties};
 use gtk::{self, prelude::*};
 use gtk::{CompositeTemplate, gio, glib};
 use gtk_macros::action;
@@ -47,7 +48,8 @@ pub enum View {
 mod imp {
     use super::*;
 
-    #[derive(Debug, CompositeTemplate)]
+    #[derive(Debug, CompositeTemplate, Properties)]
+    #[properties(wrapper_type = super::ApplicationWindow)]
     #[template(resource = "/io/github/mpobaschnig/Vaults/window.ui")]
     pub struct ApplicationWindow {
         #[template_child]
@@ -80,7 +82,8 @@ mod imp {
 
         pub search_results: RefCell<u32>,
 
-        pub settings: gio::Settings,
+        #[property(name = "is-selected", default = false, get = |_| { *self.is_selected.borrow() }, set)]
+        pub is_selected: RefCell<bool>,
     }
 
     #[glib::object_subclass]
@@ -103,10 +106,10 @@ mod imp {
                 list_store: ListStore::new::<gtk::Widget>(),
                 search_list_store: ListStore::new::<gtk::Widget>(),
                 search_results: RefCell::new(0),
-                settings: gio::Settings::new(APP_ID),
                 add_menu_button: TemplateChild::default(),
                 select_toggle_button: TemplateChild::default(),
                 remove_button: TemplateChild::default(),
+                is_selected: RefCell::new(false),
             }
         }
 
@@ -119,12 +122,11 @@ mod imp {
         }
     }
 
+    #[glib::derived_properties]
     impl ObjectImpl for ApplicationWindow {
         fn constructed(&self) {
             let obj = self.obj();
             self.parent_constructed();
-
-            let _ = self.settings.set_boolean("select-vaults", false);
 
             obj.setup_gactions();
             obj.setup_signals();
@@ -349,27 +351,16 @@ impl ApplicationWindow {
 
     fn setup_signals(&self) {
         self.imp()
-            .settings
-            .bind("select-vaults", &self.imp().remove_button.get(), "visible")
+            .select_toggle_button
+            .bind_property("active", self, "is-selected")
+            .bidirectional()
             .build();
 
-        self.imp()
-            .settings
-            .bind(
-                "select-vaults",
-                &self.imp().select_toggle_button.get(),
-                "active",
-            )
+        self.bind_property("is-selected", &self.imp().remove_button.get(), "visible")
             .build();
 
-        self.imp()
-            .settings
-            .bind(
-                "select-vaults",
-                &self.imp().add_menu_button.get(),
-                "visible",
-            )
-            .flags(SettingsBindFlags::INVERT_BOOLEAN)
+        self.bind_property("is-selected", &self.imp().add_menu_button.get(), "visible")
+            .flags(BindingFlags::INVERT_BOOLEAN)
             .build();
 
         self.imp().remove_button.connect_clicked(clone!(
@@ -403,6 +394,13 @@ impl ApplicationWindow {
 
             let row = VaultsPageRow::new(vault);
             self.row_connect_remove(&row);
+            self.bind_property(
+                "is-selected",
+                &row.imp().select_vault_button.get(),
+                "visible",
+            )
+            .sync_create()
+            .build();
 
             self.imp().list_store.insert_sorted(&row, |v1, v2| {
                 let row1 = v1.downcast_ref::<VaultsPageRow>().unwrap();
