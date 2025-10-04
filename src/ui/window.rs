@@ -180,6 +180,9 @@ impl ApplicationWindow {
         ));
 
         self.imp().add_menu_button.set_sensitive(true);
+        self.imp()
+            .select_toggle_button
+            .set_sensitive(self.imp().list_store.n_items() > 0);
     }
 
     fn setup_search_page(&self) {
