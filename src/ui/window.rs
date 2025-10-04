@@ -369,6 +369,22 @@ impl ApplicationWindow {
             )
             .flags(SettingsBindFlags::INVERT_BOOLEAN)
             .build();
+
+        self.imp().remove_button.connect_clicked(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |_| {
+                for row in obj.imp().list_store.into_iter() {
+                    let vault_row = row.unwrap();
+                    let vault_row = vault_row.downcast_ref::<VaultsPageRow>().unwrap();
+                    if vault_row.selected() {
+                        let vault = vault_row.get_vault();
+                        UserConfigManager::instance().remove_vault(vault.get_uuid());
+                    }
+                }
+                obj.refresh_model();
+            }
+        ));
     }
 
     fn fill_list_store(&self) {
