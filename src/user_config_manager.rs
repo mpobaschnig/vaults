@@ -18,6 +18,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::{legacy, vault::*};
+use gtk::glib::Properties;
 use gtk::{
     gio::subclass::prelude::*,
     glib::{self, prelude::*, subclass::Signal, user_config_dir},
@@ -32,10 +33,13 @@ static mut USER_CONFIG_MANAGER: Option<UserConfigManager> = None;
 mod imp {
     use super::*;
 
-    #[derive(Debug)]
+    #[derive(Debug, Properties)]
+    #[properties(wrapper_type = super::UserConfigManager)]
     pub struct UserConfigManager {
         pub vaults: RefCell<HashMap<Uuid, VaultConfig>>,
         pub user_config_directory: RefCell<Option<String>>,
+        #[property(name = "has-vaults", default = false, get, set)]
+        pub has_vaults: RefCell<bool>,
     }
 
     #[glib::object_subclass]
@@ -48,10 +52,12 @@ mod imp {
             Self {
                 vaults: RefCell::new(HashMap::new()),
                 user_config_directory: RefCell::new(None),
+                has_vaults: RefCell::new(false),
             }
         }
     }
 
+    #[glib::derived_properties]
     impl ObjectImpl for UserConfigManager {
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
@@ -179,6 +185,8 @@ impl UserConfigManager {
                     log::warn!("Failed to read user data config: {}", e);
                 }
             }
+
+            self.set_has_vaults(!map.is_empty());
         }
     }
 
@@ -208,6 +216,8 @@ impl UserConfigManager {
         map.insert(vault.get_uuid(), vault.config());
         self.write_config(map);
 
+        self.set_has_vaults(!map.is_empty());
+
         self.emit_by_name::<()>("add-vault", &[]);
     }
 
@@ -217,6 +227,8 @@ impl UserConfigManager {
         let map = &mut self.imp().vaults.borrow_mut();
         map.remove(&uuid);
         self.write_config(map);
+
+        self.set_has_vaults(!map.is_empty());
 
         self.emit_by_name::<()>("remove-vault", &[]);
         self.emit_by_name::<()>("refresh", &[&map.is_empty()]);
