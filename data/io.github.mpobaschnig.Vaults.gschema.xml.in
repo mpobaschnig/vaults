@@ -16,10 +16,6 @@
             <summary>Default window maximized behaviour</summary>
             <description></description>
         </key>
-        <key name="select-vaults" type="b">
-            <default>false</default>
-            <summary>Vault selection state</summary>
-        </key>
         <key name="legacy-converted" type="b">
             <default>false</default>
             <summary>Status of legacy conversion</summary>

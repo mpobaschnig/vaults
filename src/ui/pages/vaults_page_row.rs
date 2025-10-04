@@ -161,32 +161,6 @@ impl VaultsPageRow {
     }
 
     pub fn setup_connect_handlers(&self) {
-        self.imp().settings.connect_changed(
-            Some("select-vaults"),
-            clone!(
-                #[weak(rename_to = obj)]
-                self,
-                move |settings, key| {
-                    if key != "select-vaults" {
-                        return;
-                    }
-
-                    if !settings.boolean("select-vaults") {
-                        obj.imp().select_vault_button.set_active(false);
-                    }
-                }
-            ),
-        );
-
-        self.imp()
-            .settings
-            .bind(
-                "select-vaults",
-                &self.imp().select_vault_button.get(),
-                "visible",
-            )
-            .build();
-
         self.imp().open_folder_button.connect_clicked(clone!(
             #[weak(rename_to = obj)]
             self,
