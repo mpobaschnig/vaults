@@ -180,9 +180,6 @@ impl ApplicationWindow {
         ));
 
         self.imp().add_menu_button.set_sensitive(true);
-        self.imp()
-            .select_toggle_button
-            .set_sensitive(self.imp().list_store.n_items() > 0);
     }
 
     fn setup_search_page(&self) {
@@ -353,6 +350,35 @@ impl ApplicationWindow {
     }
 
     fn setup_signals(&self) {
+        UserConfigManager::instance()
+            .bind_property(
+                "has-vaults",
+                &self.imp().search_toggle_button.get(),
+                "sensitive",
+            )
+            .flags(BindingFlags::SYNC_CREATE)
+            .build();
+
+        UserConfigManager::instance()
+            .bind_property(
+                "has-vaults",
+                &self.imp().select_toggle_button.get(),
+                "sensitive",
+            )
+            .flags(BindingFlags::SYNC_CREATE)
+            .build();
+
+        UserConfigManager::instance().connect_has_vaults_notify(clone!(
+            #[weak(rename_to = obj)]
+            self,
+            move |user_config_manager| {
+                if !user_config_manager.has_vaults() {
+                    obj.set_is_selected(false);
+                    obj.imp().search_toggle_button.set_active(false);
+                }
+            }
+        ));
+
         self.imp()
             .select_toggle_button
             .bind_property("active", self, "is-selected")
@@ -381,21 +407,6 @@ impl ApplicationWindow {
                 obj.refresh_model();
             }
         ));
-
-        self.imp().list_store.connect_notify_local(
-            Some("n-items"),
-            clone!(
-                #[weak(rename_to = obj)]
-                self,
-                move |_, _| {
-                    let has_vaults = obj.imp().list_store.n_items() > 0;
-                    obj.imp().select_toggle_button.set_sensitive(has_vaults);
-                    if !has_vaults {
-                        obj.imp().select_toggle_button.set_active(false);
-                    }
-                }
-            ),
-        );
     }
 
     fn fill_list_store(&self) {
@@ -441,8 +452,6 @@ impl ApplicationWindow {
                         if UserConfigManager::instance().get_map().is_empty() {
                             obj_.search_stack.set_visible_child_name("start");
                             obj_.search_entry.set_text("");
-                            obj_.search_toggle_button.set_active(false);
-                            obj_.search_toggle_button.set_sensitive(false);
                             return;
                         }
                         if obj.get_view().unwrap() != "search" {
@@ -469,8 +478,6 @@ impl ApplicationWindow {
                     obj.imp().list_store.remove(index);
                     if UserConfigManager::instance().get_map().is_empty() {
                         obj.imp().search_entry.set_text("");
-                        obj.imp().search_toggle_button.set_active(false);
-                        obj.imp().search_toggle_button.set_sensitive(false);
                     }
                 } else {
                     log::error!("Vault not initialised!");
@@ -640,11 +647,9 @@ impl ApplicationWindow {
         match view {
             View::Search => self.imp().window_stack.set_visible_child_name("search"),
             View::Start => {
-                self.imp().search_toggle_button.set_sensitive(false);
                 self.imp().window_stack.set_visible_child_name("start");
             }
             View::Vaults => {
-                self.imp().search_toggle_button.set_sensitive(true);
                 self.imp().window_stack.set_visible_child_name("vaults");
             }
         }
