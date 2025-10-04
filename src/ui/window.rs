@@ -381,6 +381,21 @@ impl ApplicationWindow {
                 obj.refresh_model();
             }
         ));
+
+        self.imp().list_store.connect_notify_local(
+            Some("n-items"),
+            clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_, _| {
+                    let has_vaults = obj.imp().list_store.n_items() > 0;
+                    obj.imp().select_toggle_button.set_sensitive(has_vaults);
+                    if !has_vaults {
+                        obj.imp().select_toggle_button.set_active(false);
+                    }
+                }
+            ),
+        );
     }
 
     fn fill_list_store(&self) {
