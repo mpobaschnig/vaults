@@ -229,7 +229,7 @@ impl ApplicationWindow {
                 );
 
                 let row = VaultsPageRow::new(vault);
-                self.search_row_connect_remove(&row);
+                self.search_row_connect_signals(&row);
 
                 self.imp().search_list_store.insert_sorted(&row, |v1, v2| {
                     let row1 = v1.downcast_ref::<VaultsPageRow>().unwrap();
@@ -434,7 +434,7 @@ impl ApplicationWindow {
         }
     }
 
-    pub fn search_row_connect_remove(&self, row: &VaultsPageRow) {
+    pub fn search_row_connect_signals(&self, row: &VaultsPageRow) {
         row.connect_remove(clone!(
             #[weak(rename_to = obj)]
             self,
@@ -464,6 +464,14 @@ impl ApplicationWindow {
                 }
             }
         ));
+
+        self.bind_property(
+            "is-selected",
+            &row.imp().select_vault_button.get(),
+            "visible",
+        )
+        .sync_create()
+        .build();
     }
 
     pub fn row_connect_signals(&self, row: &VaultsPageRow) {
