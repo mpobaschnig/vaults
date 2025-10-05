@@ -355,6 +355,11 @@ impl GlobalConfigManager {
                 if exists {
                     log::info!("cryfs binary exists, taking it");
                     return Some(cryfs_instance_path);
+                } else {
+                    log::error!(
+                        "cryfs binary does not exist at path: {}",
+                        cryfs_instance_path
+                    );
                 }
             }
             Err(e) => {
@@ -376,6 +381,11 @@ impl GlobalConfigManager {
                 if exists {
                     log::info!("gocryptfs binary exists, taking it");
                     return Some(gocryptfs_instance_path);
+                } else {
+                    log::error!(
+                        "gocryptfs binary does not exist at path: {}",
+                        gocryptfs_instance_path
+                    );
                 }
             }
             Err(e) => {
