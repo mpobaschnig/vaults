@@ -117,7 +117,8 @@ mod imp {
 
 glib::wrapper! {
     pub struct VaultsSettingsWindow(ObjectSubclass<imp::VaultsSettingsWindow>)
-        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window;
+        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window,
+        @implements gio::ActionMap, gio::ActionGroup, gtk::Accessible, gtk::Native, gtk::Root, gtk::ShortcutManager, gtk::Buildable, gtk::ConstraintTarget;
 }
 
 impl Default for VaultsSettingsWindow {

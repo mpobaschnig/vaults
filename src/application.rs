@@ -30,6 +30,7 @@ use gettextrs::gettext;
 use gio::ApplicationFlags;
 use glib::clone;
 use gtk::gio::Settings;
+use gtk::glib::ExitCode;
 use gtk::glib::VariantTy;
 use gtk::glib::closure_local;
 use gtk::glib::{home_dir, user_data_dir};
@@ -198,7 +199,10 @@ mod imp {
             self.parent_startup();
         }
 
-        fn handle_local_options(&self, options: &glib::VariantDict) -> glib::ExitCode {
+        fn handle_local_options(
+            &self,
+            options: &glib::VariantDict,
+        ) -> std::ops::ControlFlow<ExitCode> {
             log::trace!("handle_local_options(...)");
 
             if let Some(vault_name) = options.lookup_value("open", Some(VariantTy::STRING)) {
@@ -211,14 +215,14 @@ mod imp {
                 log::debug!("Found close option");
                 if *self.only_prompt_type.borrow() != OnlyPromptType::None {
                     log::error!("{}", gettext("Cannot open and close at the same time."));
-                    return glib::ExitCode::from(2);
+                    return std::ops::ControlFlow::Break(ExitCode::FAILURE);
                 }
 
                 *self.only_prompt_type.borrow_mut() = OnlyPromptType::Close;
                 *self.only_pompt_vault.borrow_mut() = vault_name.get::<String>().unwrap();
             }
 
-            glib::ExitCode::from(-1)
+            std::ops::ControlFlow::Continue(())
         }
     }
 

@@ -132,15 +132,15 @@ mod imp {
         }
     }
 
-    impl AdwDialogImpl for ImportVaultDialog {}
-    impl DialogImpl for ImportVaultDialog {}
     impl WidgetImpl for ImportVaultDialog {}
     impl WindowImpl for ImportVaultDialog {}
+    impl AdwDialogImpl for ImportVaultDialog {}
 }
 
 glib::wrapper! {
     pub struct ImportVaultDialog(ObjectSubclass<imp::ImportVaultDialog>)
-        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window;
+        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window,
+        @implements gio::ActionMap, gio::ActionGroup, gtk::Accessible, gtk::Native, gtk::Root, gtk::ShortcutManager, gtk::Buildable, gtk::ConstraintTarget;
 }
 
 impl Default for ImportVaultDialog {

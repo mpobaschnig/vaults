@@ -143,15 +143,15 @@ mod imp {
         }
     }
 
-    impl AdwDialogImpl for AddNewVaultWindow {}
-    impl DialogImpl for AddNewVaultWindow {}
     impl WidgetImpl for AddNewVaultWindow {}
     impl WindowImpl for AddNewVaultWindow {}
+    impl AdwDialogImpl for AddNewVaultWindow {}
 }
 
 glib::wrapper! {
     pub struct AddNewVaultWindow(ObjectSubclass<imp::AddNewVaultWindow>)
-        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window;
+        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window,
+        @implements gio::ActionMap, gio::ActionGroup, gtk::Accessible, gtk::Native, gtk::Root, gtk::ShortcutManager, gtk::Buildable, gtk::ConstraintTarget;
 }
 
 impl Default for AddNewVaultWindow {
