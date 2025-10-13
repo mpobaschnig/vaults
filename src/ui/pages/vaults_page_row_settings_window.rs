@@ -170,15 +170,15 @@ mod imp {
         }
     }
 
-    impl AdwDialogImpl for VaultsPageRowSettingsWindow {}
-    impl DialogImpl for VaultsPageRowSettingsWindow {}
     impl WidgetImpl for VaultsPageRowSettingsWindow {}
     impl WindowImpl for VaultsPageRowSettingsWindow {}
+    impl AdwDialogImpl for VaultsPageRowSettingsWindow {}
 }
 
 glib::wrapper! {
     pub struct VaultsPageRowSettingsWindow(ObjectSubclass<imp::VaultsPageRowSettingsWindow>)
-        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window;
+        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window,
+        @implements gio::ActionMap, gio::ActionGroup, gtk::Accessible, gtk::Native, gtk::Root, gtk::ShortcutManager, gtk::Buildable, gtk::ConstraintTarget;
 }
 
 impl VaultsPageRowSettingsWindow {

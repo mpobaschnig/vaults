@@ -21,7 +21,7 @@ use adw::{
     prelude::{AdwDialogExt, EntryRowExt},
     subclass::prelude::*,
 };
-use gtk::{self, CompositeTemplate, glib, glib::clone, prelude::*};
+use gtk::{self, CompositeTemplate, gio, glib, glib::clone, prelude::*};
 
 mod imp {
     use gtk::glib::subclass::Signal;
@@ -80,15 +80,15 @@ mod imp {
         }
     }
 
-    impl AdwDialogImpl for VaultsPageRowPasswordPromptWindow {}
-    impl DialogImpl for VaultsPageRowPasswordPromptWindow {}
     impl WidgetImpl for VaultsPageRowPasswordPromptWindow {}
     impl WindowImpl for VaultsPageRowPasswordPromptWindow {}
+    impl AdwDialogImpl for VaultsPageRowPasswordPromptWindow {}
 }
 
 glib::wrapper! {
     pub struct VaultsPageRowPasswordPromptWindow(ObjectSubclass<imp::VaultsPageRowPasswordPromptWindow>)
-        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window;
+        @extends gtk::Widget, adw::Dialog, adw::Window, gtk::Window,
+        @implements gio::ActionMap, gio::ActionGroup, gtk::Accessible, gtk::Native, gtk::Root, gtk::ShortcutManager, gtk::Buildable, gtk::ConstraintTarget;
 }
 
 impl Default for VaultsPageRowPasswordPromptWindow {

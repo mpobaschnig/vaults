@@ -119,13 +119,15 @@ mod imp {
             SIGNALS.as_ref()
         }
     }
+
     impl WidgetImpl for VaultsPageRow {}
     impl ListBoxRowImpl for VaultsPageRow {}
 }
 
 glib::wrapper! {
     pub struct VaultsPageRow(ObjectSubclass<imp::VaultsPageRow>)
-        @extends gtk::Widget, gtk::ListBoxRow;
+        @extends gtk::Widget, gtk::ListBoxRow,
+        @implements gtk::Actionable, gtk::Accessible, gtk::Native, gtk::Root, gtk::ShortcutManager, gtk::Buildable, gtk::ConstraintTarget;
 }
 
 impl VaultsPageRow {
