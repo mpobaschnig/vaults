@@ -35,7 +35,6 @@ src/ui/preferences.rs
 
 # src/
 src/application.rs
-src/config.rs
 src/global_config_manager.rs
 src/main.rs
 src/mod.rs
