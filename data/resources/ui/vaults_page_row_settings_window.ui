@@ -100,7 +100,7 @@
             <child>
               <object class="AdwViewStackPage">
                 <property name="name">CryFS</property>
-                <property name="title" translatable="no">_Security</property>
+                <property name="title" translatable="yes">_Security</property>
                 <property name="use-underline">True</property>
                 <property name="icon-name">security-high-symbolic</property>
                 <property name="child">
