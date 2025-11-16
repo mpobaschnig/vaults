@@ -1,15 +1,15 @@
 # Turkish translation for io.github.mpobaschnig.Vaults.
-# Copyright (C) 2024 io.github.mpobaschnig.Vaults's COPYRIGHT HOLDER
+# Copyright (C) 2024-2025 io.github.mpobaschnig.Vaults's COPYRIGHT HOLDER
 # This file is distributed under the same license as the io.github.mpobaschnig.Vaults package.
 #
-# Sabri Ünal <yakushabb@gmail.com>, 2024.
+# Sabri Ünal <yakushabb@gmail.com>, 2024-2025.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: io.github.mpobaschnig.Vaults\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-20 17:55+0300\n"
-"PO-Revision-Date: 2024-04-20 17:59+0300\n"
+"POT-Creation-Date: 2025-11-17 01:17+0300\n"
+"PO-Revision-Date: 2025-11-17 01:20+0300\n"
 "Last-Translator: Sabri Ünal <yakushabb@gmail.com>\n"
 "Language-Team: Türkçe <takim@gnome.org.tr>\n"
 "Language: tr\n"
@@ -17,19 +17,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.8\n"
 
-#: data/io.github.mpobaschnig.Vaults.desktop.in.in:3
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:2
 #: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:6
 msgid "Vaults"
 msgstr "Vaults"
 
-#: data/io.github.mpobaschnig.Vaults.desktop.in.in:4
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:3
 #: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:7
 msgid "Keep important files safe"
 msgstr "Önemli dosyaları kasada ve güvende tutun"
 
-#: data/io.github.mpobaschnig.Vaults.desktop.in.in:9
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:8
 msgid "Gnome;GTK;"
 msgstr "Gnome;GTK;"
 
@@ -47,6 +47,45 @@ msgstr "Öntanımlı pencere yüksekliği"
 msgid "Default window maximized behaviour"
 msgstr "Öntanımlı pencere büyütülme davranışı"
 
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:21
+msgid "Status of legacy conversion"
+msgstr "Eski dönüşümün durumu"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:25
+msgid "The encrypted data directory path"
+msgstr "Şifrelenmiş veri dizini yolu"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:26
+msgid "The path to the encrypted data directory"
+msgstr "Şifrelenmiş veri dizinine giden yol"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:30
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:31
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:41
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:42
+msgid "The path to the custom cryfs binary"
+msgstr "Özel cryfs ikili dosyasına giden yol"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:36
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:46
+#: data/resources/ui/preferences.ui:109 data/resources/ui/preferences.ui:161
+msgid "Use custom binary"
+msgstr "Özel ikili kullan"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:37
+msgid "Wether to use the provided custom binary to execute CryFS"
+msgstr "CryFSʼyi çalıştırmak için sağlanan özel ikili dosyayı kullanma durumu"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:47
+msgid "Wether to use the provided custom binary to execute gocryptfs"
+msgstr ""
+"gocryptfsʼyi çalıştırmak için sağlanan özel ikili dosyayı kullanma durumu"
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:51
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:52
+msgid "The path to the custom gocryptfs binary"
+msgstr "Özel gocryptfs ikili dosyasına giden yol"
+
 #: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:9
 msgid ""
 "Vaults lets you create encrypted vaults in which you can safely store files. "
@@ -55,19 +94,11 @@ msgstr ""
 "Vaults, dosyaları güvenle depolayabileceğiniz şifreli kasalar oluşturmanızı "
 "sağlar. Şifreleme için gocryptfs ve CryFS kullanır."
 
-#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:10
-msgid ""
-"Note: This version does not bundle gocryptfs and CryFS yet, so you need to "
-"install them on the host."
-msgstr ""
-"Not: Bu sürüm henüz gocryptfs ve CryFS'i paketlenmiş olarak sunmuyor. Bu "
-"sebeple bunları bilgisayarınıza yüklemeniz gerekir."
-
-#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:15
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:14
 msgid "Welcome Window"
-msgstr "Hoş Geldiniz "
+msgstr "Hoş Geldiniz Penceresi"
 
-#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:19
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:18
 msgid "Main Window"
 msgstr "Ana Pencere"
 
@@ -96,13 +127,13 @@ msgstr "_Ekle"
 
 #: data/resources/ui/add_new_vault_window.ui:87
 #: data/resources/ui/import_vault_window.ui:169
-#: data/resources/ui/vaults_page_row_settings_window.ui:40
+#: data/resources/ui/vaults_page_row_settings_window.ui:48
 msgid "Name"
 msgstr "Ad"
 
 #: data/resources/ui/add_new_vault_window.ui:107
 #: data/resources/ui/import_vault_window.ui:189
-#: data/resources/ui/vaults_page_row_settings_window.ui:60
+#: data/resources/ui/vaults_page_row_settings_window.ui:54
 msgid "Backend"
 msgstr "Arka uç"
 
@@ -115,7 +146,7 @@ msgid "CryFS"
 msgstr "CryFS"
 
 #: data/resources/ui/add_new_vault_window.ui:150
-#: data/resources/ui/vaults_page_row_password_prompt_window.ui:26
+#: data/resources/ui/vaults_page_row_password_prompt_window.ui:29
 msgid "Password"
 msgstr "Parola"
 
@@ -125,56 +156,66 @@ msgstr "Parolayı Doğrula"
 
 #: data/resources/ui/add_new_vault_window.ui:183
 #: data/resources/ui/import_vault_window.ui:87
-#: data/resources/ui/preferences.ui:40
-#: data/resources/ui/vaults_page_row_settings_window.ui:80
+#: data/resources/ui/preferences.ui:46
+#: data/resources/ui/vaults_page_row_settings_window.ui:60
 msgid "Encrypted Data Directory"
 msgstr "Şifrelenmiş Veri Dizini"
 
 #: data/resources/ui/add_new_vault_window.ui:188
 #: data/resources/ui/import_vault_window.ui:92
-#: data/resources/ui/preferences.ui:45
-#: data/resources/ui/vaults_page_row_settings_window.ui:85
-#: src/ui/add_new_vault_window.rs:404 src/ui/import_vault_window.rs:328
-#: src/ui/pages/vaults_page_row_settings_window.rs:255
+#: data/resources/ui/preferences.ui:52
+#: data/resources/ui/vaults_page_row_settings_window.ui:66
+#: src/ui/pages/vaults_page_row_settings_window.rs:237
+#: src/ui/add_new_vault_window.rs:433 src/ui/import_vault_window.rs:348
+#: src/ui/preferences.rs:246
 msgid "Choose Encrypted Data Directory"
-msgstr "Şifrelenmiş Veri Dizini'ni Seç"
+msgstr "Şifrelenmiş Veri Diziniʼni Seç"
 
 #: data/resources/ui/add_new_vault_window.ui:213
 #: data/resources/ui/import_vault_window.ui:124
-#: data/resources/ui/preferences.ui:70
-#: data/resources/ui/vaults_page_row_settings_window.ui:110
+#: data/resources/ui/preferences.ui:62
+#: data/resources/ui/vaults_page_row_settings_window.ui:76
 msgid "Mount Directory"
 msgstr "Dizini Bağla"
 
 #: data/resources/ui/add_new_vault_window.ui:218
 #: data/resources/ui/import_vault_window.ui:129
-#: data/resources/ui/preferences.ui:75
-#: data/resources/ui/vaults_page_row_settings_window.ui:115
-#: src/ui/add_new_vault_window.rs:419 src/ui/import_vault_window.rs:345
-#: src/ui/pages/vaults_page_row_settings_window.rs:270
+#: data/resources/ui/preferences.ui:68
+#: data/resources/ui/vaults_page_row_settings_window.ui:82
+#: src/ui/pages/vaults_page_row_settings_window.rs:279
+#: src/ui/add_new_vault_window.rs:474 src/ui/import_vault_window.rs:391
+#: src/ui/preferences.rs:287
 msgid "Choose Mount Directory"
 msgstr "Bağlama Dizinini Seç"
 
 #: data/resources/ui/import_vault_window.ui:16
 msgid "Import Vault"
-msgstr "Kasa İçe Aktar"
+msgstr "Kasayı İçe Aktar"
 
 #: data/resources/ui/import_vault_window.ui:46
 msgid "_Import"
 msgstr "İçe _Aktar"
 
-#: data/resources/ui/preferences.ui:10
-msgid "Preferences"
-msgstr "Tercihler"
+#: data/resources/ui/preferences.ui:27
+#: data/resources/ui/vaults_page_row_settings_window.ui:27
+msgid "_General"
+msgstr "_Genel"
 
-#: data/resources/ui/preferences.ui:37
+#: data/resources/ui/preferences.ui:43
 msgid "Default Paths"
 msgstr "Öntanımlı Yollar"
 
-#: data/resources/ui/preferences.ui:103
-#: data/resources/ui/vaults_page_row_settings_window.ui:164
-msgid "_Apply Changes"
-msgstr "Değişiklikleri _Uygula"
+#: data/resources/ui/preferences.ui:105 data/resources/ui/preferences.ui:157
+msgid "General"
+msgstr "Genel"
+
+#: data/resources/ui/preferences.ui:112 data/resources/ui/preferences.ui:164
+msgid "Custom Binary Path"
+msgstr "Özel İkili Yolu"
+
+#: data/resources/ui/preferences.ui:118 data/resources/ui/preferences.ui:170
+msgid "Choose Custom Binary"
+msgstr "Özel İkili Seç"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -209,7 +250,7 @@ msgstr "Yeni Kasa Ekle"
 #: data/resources/ui/shortcuts.ui:43
 msgctxt "vaults"
 msgid "Import Vault"
-msgstr "Kasa İçe Aktar"
+msgstr "Kasayı İçe Aktar"
 
 #: data/resources/ui/shortcuts.ui:49
 msgctxt "vaults"
@@ -221,160 +262,168 @@ msgctxt "vaults"
 msgid "Refresh"
 msgstr "Yenile"
 
-#: data/resources/ui/start_page.ui:15 data/resources/ui/window.ui:137
+#: data/resources/ui/start_page.ui:15 data/resources/ui/window.ui:149
 msgid "Welcome to Vaults"
-msgstr "Vaults'a Hoş Geldiniz"
+msgstr "Vaultsʼa Hoş Geldiniz"
 
-#: data/resources/ui/start_page.ui:16 data/resources/ui/window.ui:138
+#: data/resources/ui/start_page.ui:16 data/resources/ui/window.ui:150
 msgid "Add or Import a Vault."
 msgstr "Kasa Ekle ya da İçe Aktar."
+
+#: data/resources/ui/vaults_page_row_password_prompt_window.ui:23
+msgid "Unlock Vault"
+msgstr "Kasa Kilidini Aç"
+
+#: data/resources/ui/vaults_page_row_password_prompt_window.ui:24
+msgid "Enter the password to unlock the Vault."
+msgstr "Kasanın kilidini açmak için parola gir."
+
+#: data/resources/ui/vaults_page_row_password_prompt_window.ui:36
+msgid "Unlock"
+msgstr "Kilidi Aç"
+
+#: data/resources/ui/vaults_page_row_settings_window.ui:103
+msgid "_Security"
+msgstr "_Güvenlik"
+
+#: data/resources/ui/vaults_page_row_settings_window.ui:122
+msgid "Session lock"
+msgstr "Oturum kilidi"
+
+#: data/resources/ui/vaults_page_row_settings_window.ui:123
+msgid "Automatically lock when screen is locked and screen saver is activated"
+msgstr ""
+"Ekran kilitlendiğinde ve ekran koruyucu etkinleştirildiğinde kendiliğinden "
+"kilitle"
 
 #: data/resources/ui/vaults_page_row.ui:10
 msgid "Vault X"
 msgstr "Kasa X"
 
 #: data/resources/ui/vaults_page_row.ui:15
+msgid "Select Vault"
+msgstr "Kasa Seç"
+
+#: data/resources/ui/vaults_page_row.ui:26
 msgid "Open Folder"
-msgstr "Klasör Aç"
+msgstr "Klasörü Aç"
 
-#: data/resources/ui/vaults_page_row.ui:25 src/ui/pages/vaults_page_row.rs:267
-#: src/ui/pages/vaults_page_row.rs:369 src/ui/pages/vaults_page_row.rs:515
+#: data/resources/ui/vaults_page_row.ui:36 src/ui/pages/vaults_page_row.rs:289
+#: src/ui/pages/vaults_page_row.rs:398 src/ui/pages/vaults_page_row.rs:586
 msgid "Open Vault"
-msgstr "Kasa Aç"
+msgstr "Kasayı Aç"
 
-#: data/resources/ui/vaults_page_row.ui:35
+#: data/resources/ui/vaults_page_row.ui:46
 msgid "Open Settings"
 msgstr "Ayarları Aç"
-
-#: data/resources/ui/vaults_page_row_password_prompt_window.ui:20
-msgid "Unlock Vault"
-msgstr "Kasa Kilidini Aç"
-
-#: data/resources/ui/vaults_page_row_password_prompt_window.ui:21
-msgid "Enter the password to unlock the Vault."
-msgstr "Kasanın kilidini açmak için parola gir."
-
-#: data/resources/ui/vaults_page_row_password_prompt_window.ui:33
-msgid "Unlock"
-msgstr "Kilidi Aç"
-
-#: data/resources/ui/vaults_page_row_settings_window.ui:10
-msgid "Vault Settings"
-msgstr "Kasa Ayarları"
-
-#: data/resources/ui/vaults_page_row_settings_window.ui:140
-msgid "Session lock"
-msgstr "Oturum kilidi"
-
-#: data/resources/ui/vaults_page_row_settings_window.ui:141
-msgid "Automatically lock when screen is locked and screen saver is activated"
-msgstr ""
-"Ekran kilitlendiğinde ve ekran koruyucu etkinleştirildiğinde kendiliğinden "
-"kilitle"
-
-#: data/resources/ui/vaults_page_row_settings_window.ui:154
-msgid "_Remove"
-msgstr "_Kaldır"
 
 #: data/resources/ui/window.ui:13
 msgid "Add or Import New Vault"
 msgstr "Yeni Kasa Ekle ya da İçe Aktar"
 
-#: data/resources/ui/window.ui:49
+#: data/resources/ui/window.ui:20
+msgid "Remove Vaults"
+msgstr "Kasaları Kaldır"
+
+#: data/resources/ui/window.ui:46
+msgid "Select Vaults"
+msgstr "Kasaları Seç"
+
+#: data/resources/ui/window.ui:52
 msgid "Toggle Search"
 msgstr "Aramayı Aç/Kapat"
 
-#: data/resources/ui/window.ui:94
+#: data/resources/ui/window.ui:64
+msgid "Search vaults"
+msgstr "Kasa ara"
+
+#: data/resources/ui/window.ui:106
 msgid "No Results"
 msgstr "Sonuç Yok"
 
-#: data/resources/ui/window.ui:95
+#: data/resources/ui/window.ui:107
 msgid "No Vault matching your search was found."
 msgstr "Aramanızla eşleşen kasa bulunamadı."
 
-#: data/resources/ui/window.ui:185
+#: data/resources/ui/window.ui:197
 msgid "_New Vault"
 msgstr "_Yeni Kasa"
 
-#: data/resources/ui/window.ui:189
+#: data/resources/ui/window.ui:201
 msgid "_Import Vault"
 msgstr "Kasayı İçe _Aktar"
 
-#: data/resources/ui/window.ui:197
+#: data/resources/ui/window.ui:209
 msgid "_Refresh"
 msgstr "_Yenile"
 
-#: data/resources/ui/window.ui:203
+#: data/resources/ui/window.ui:215
 msgid "_Preferences"
 msgstr "_Tercihler"
 
-#: data/resources/ui/window.ui:207
+#: data/resources/ui/window.ui:219
 msgid "_Keyboard Shortcuts"
 msgstr "_Klavye Kısayolları"
 
-#: data/resources/ui/window.ui:211
+#: data/resources/ui/window.ui:223
 msgid "_About Vaults"
 msgstr "Vaults _Hakkında"
 
-#: src/application.rs:171
-msgid "Cannot open and close at the same time."
-msgstr "Aynı anda açılıp kapanamaz."
+#: src/backend/cryfs.rs:45 src/backend/cryfs.rs:70 src/backend/cryfs.rs:122
+msgid "No CryFs binary path set"
+msgstr "CryFs ikili oylu ayarlanmadı"
 
-#: src/application.rs:270
-msgid "translator-credits"
-msgstr "Sabri Ünal <yakushabb@gmail.com>"
-
-#: src/backend/cryfs.rs:128 src/backend/cryfs.rs:145
-#: src/backend/gocryptfs.rs:149
+#: src/backend/cryfs.rs:233 src/backend/cryfs.rs:283
+#: src/backend/gocryptfs.rs:229
 msgid "An unknown error occurred."
 msgstr "Bilinmeyen hata oluştu."
 
-#: src/backend/cryfs.rs:129
+#: src/backend/cryfs.rs:236
 msgid "Invalid arguments were given."
 msgstr "Geçersiz argümanlar girildi."
 
-#: src/backend/cryfs.rs:130 src/backend/gocryptfs.rs:135
+#: src/backend/cryfs.rs:239 src/backend/gocryptfs.rs:215
 msgid "The password is wrong."
 msgstr "Parola yanlış."
 
-#: src/backend/cryfs.rs:131 src/backend/gocryptfs.rs:138
+#: src/backend/cryfs.rs:242 src/backend/gocryptfs.rs:218
 msgid "The password is empty."
 msgstr "Parola boş."
 
-#: src/backend/cryfs.rs:132
+#: src/backend/cryfs.rs:245
 msgid ""
 "The format of the encrypted data directory is too new for this CryFS "
 "version. Please update CryFS."
 msgstr ""
 "Şifrelenmiş veri dizininin biçimi bu CryFS sürümü için çok yeni. Lütfen "
-"CryFS'yi güncelleyin."
+"CryFSʼyi güncelleyin."
 
-#: src/backend/cryfs.rs:133
+#: src/backend/cryfs.rs:248
 msgid ""
 "The format of the encrypted data directory is too old for this CryFS version."
 msgstr "Şifrelenmiş veri dizininin biçimi bu CryFS sürümü için çok eski."
 
-#: src/backend/cryfs.rs:134
+#: src/backend/cryfs.rs:251
 msgid "The vault uses a different cipher than the default of CryFS."
 msgstr "Kasa, CryFS öntanımlılarından farklı şifre kullanır."
 
-#: src/backend/cryfs.rs:135
+#: src/backend/cryfs.rs:254
 msgid "The encrypted data directory does not exist or is inaccessible."
 msgstr "Şifrelenmiş veri dizini yok ya da erişilemiyor."
 
-#: src/backend/cryfs.rs:136
+#: src/backend/cryfs.rs:257
 msgid "The mount directory does not exist or is inaccessible."
 msgstr "Bağlama dizini yok ya da erişilemiyor."
 
-#: src/backend/cryfs.rs:137
+#: src/backend/cryfs.rs:260
 msgid "The mount directory is inside the encrypted data directory."
 msgstr "Bağlama dizini şifrelenmiş veri dizininin içinde."
 
-#: src/backend/cryfs.rs:138
+#: src/backend/cryfs.rs:263
 msgid "The encrypted data directory is invalid."
 msgstr "Şifrelenmiş veri dizini geçersiz."
 
-#: src/backend/cryfs.rs:139
+#: src/backend/cryfs.rs:266
 msgid ""
 "The encrypted data id in the configuration file is different to the last "
 "time this vault was opened. This could mean someone replaced files in the "
@@ -384,7 +433,7 @@ msgstr ""
 "açıldığı zamankinden farklı. Bu, birilerinin şifrelenmiş veri dizinindeki "
 "dosyaları farklı dosyalarla değiştirdiği anlamına gelebilir."
 
-#: src/backend/cryfs.rs:140
+#: src/backend/cryfs.rs:269
 msgid ""
 "The encryption key for your encrypted files is different to the last time "
 "this vault was opened. This could mean someone replaced files in the "
@@ -394,11 +443,11 @@ msgstr ""
 "zamankinden farklı. Bu, birilerinin şifrelenmiş veri dizinindeki dosyaları "
 "farklı dosyalarla değiştirdiği anlamına gelebilir."
 
-#: src/backend/cryfs.rs:141
+#: src/backend/cryfs.rs:272
 msgid "Vaults' configuration and the encrypted data configuration mismatches."
 msgstr "Vaults yapılandırması ve şifrelenmiş veri yapılandırması uyuşmuyor."
 
-#: src/backend/cryfs.rs:142
+#: src/backend/cryfs.rs:275
 msgid ""
 "The encrypted data directory is in single-user mode and can only be used "
 "from the user that created it."
@@ -406,7 +455,7 @@ msgstr ""
 "Şifrelenmiş veri dizini tek kullanıcı kipinde ve yalnızca onu oluşturan "
 "kullanıcı tarafından kullanılabilir."
 
-#: src/backend/cryfs.rs:143
+#: src/backend/cryfs.rs:278
 msgid ""
 "CryFS detected an integrity violation. The encrypted data directory will be "
 "accessible again after the integrity state file has been deleted."
@@ -414,87 +463,125 @@ msgstr ""
 "CryFS bütünlük ihlali algıladı. Şifrelenmiş veri dizini, bütünlük durumu "
 "dosyası silindikten sonra tekrar erişilebilir olacak."
 
-#: src/backend/cryfs.rs:144
+#: src/backend/cryfs.rs:281
 msgid "An integrity violation was detected. Vault will be unmounted."
 msgstr "Bütünlük ihlali algılandı. Kasa bağlantısı kaldırılacak."
 
-#: src/backend/gocryptfs.rs:129
+#: src/backend/gocryptfs.rs:46 src/backend/gocryptfs.rs:73
+#: src/backend/gocryptfs.rs:125
+msgid "No gocryptfs binary path set"
+msgstr "gocryptfs ikili yolu ayarlanmadı"
+
+#: src/backend/gocryptfs.rs:209
 msgid "The encrypted data directory is not empty."
 msgstr "Şifrelenmiş veri dizini boş değil."
 
-#: src/backend/gocryptfs.rs:132
+#: src/backend/gocryptfs.rs:212
 msgid "The mount directory is not empty."
 msgstr "Bağlama dizini boş değil."
 
-#: src/backend/gocryptfs.rs:141
+#: src/backend/gocryptfs.rs:221
 msgid "Vaults cannot read configuration file."
 msgstr "Vaults yapılandırma dosyasını okuyamadı."
 
-#: src/backend/gocryptfs.rs:144
+#: src/backend/gocryptfs.rs:224
 msgid "Vaults cannot write configuration file."
 msgstr "Vaults yapılandırma dosyasını yazamadı."
 
-#: src/backend/gocryptfs.rs:147
+#: src/backend/gocryptfs.rs:227
 msgid "The file system check reported an error."
 msgstr "Dosya sistemi denetimi hata bildirdi."
 
-#: src/backend/mod.rs:147
+#: src/backend/gocryptfs.rs:242
+msgid "You don't have the necessary privileges to unmount the directory."
+msgstr "Dizini çıkarmak için gerekli ayrıcalıklara sahip değilsiniz."
+
+#: src/backend/gocryptfs.rs:244
+msgid "The data directory (mount point) does not exist."
+msgstr "Veri dizini (bağlama noktası) yok."
+
+#: src/backend/gocryptfs.rs:245
+msgid "Internal error."
+msgstr "İç hata."
+
+#: src/backend/gocryptfs.rs:247
+msgid ""
+"The data directory (mount point) is busy. There are open files or processes "
+"using the filesystem."
+msgstr ""
+"Veri dizini (bağlantı noktası) meşgul. Dosya sistemini kullanan açık "
+"dosyalar ya da işlemler var."
+
+#: src/backend/mod.rs:156
 msgid "Failed to create encrypted data directory: Permission denied."
 msgstr "Şifrelenmiş veri dizini oluşturulamadı: İzin reddedildi."
 
-#: src/backend/mod.rs:150
+#: src/backend/mod.rs:159
 msgid "Failed to create encrypted data directory: Connection refused."
 msgstr "Şifrelenmiş veri dizini oluşturulamadı: Bağlantı reddedildi."
 
-#: src/backend/mod.rs:153
+#: src/backend/mod.rs:162
 msgid "Failed to create encrypted data directory: Connection reset."
 msgstr "Şifrelenmiş veri dizini oluşturulamadı: Bağlantı sıfırlandı."
 
-#: src/backend/mod.rs:156
+#: src/backend/mod.rs:165
 msgid "Failed to create encrypted data directory: Connection aborted."
 msgstr "Şifrelenmiş veri dizini oluşturulamadı: Bağlantı iptal edildi."
 
-#: src/backend/mod.rs:159
+#: src/backend/mod.rs:168
 msgid "Failed to create encrypted data directory: Not connected."
 msgstr "Şifrelenmiş veri dizini oluşturulamadı: Bağlı değil."
 
-#: src/backend/mod.rs:162
+#: src/backend/mod.rs:171
 msgid "Failed to create encrypted data directory."
 msgstr "Şifrelenmiş veri dizini oluşturulamadı."
 
-#: src/backend/mod.rs:177
+#: src/backend/mod.rs:188
 msgid "Failed to create mount directory: Permission denied."
 msgstr "Bağlama dizini oluşturulamadı: İzin reddedildi."
 
-#: src/backend/mod.rs:180
+#: src/backend/mod.rs:191
 msgid "Failed to create mount directory: Connection refused."
 msgstr "Bağlama dizini oluşturulamadı: Bağlantı reddedildi."
 
-#: src/backend/mod.rs:183
+#: src/backend/mod.rs:194
 msgid "Failed to create mount directory: Connection reset."
 msgstr "Bağlama dizini oluşturulamadı: Bağlantı sıfırlandı."
 
-#: src/backend/mod.rs:186
+#: src/backend/mod.rs:197
 msgid "Failed to create mount directory: Connection aborted."
 msgstr "Bağlama dizini oluşturulamadı: Bağlantı iptal edildi."
 
-#: src/backend/mod.rs:189
+#: src/backend/mod.rs:200
 msgid "Failed to create mount directory: Not connected."
 msgstr "Bağlama dizini oluşturulamadı: Bağlı değil."
 
-#: src/backend/mod.rs:192
+#: src/backend/mod.rs:203
 msgid "Failed to create mount directory."
 msgstr "Bağlama dizini oluşturulamadı."
 
-#: src/ui/add_new_vault_window.rs:309 src/ui/import_vault_window.rs:275
+#: src/ui/pages/vaults_page_row.rs:298 src/ui/pages/vaults_page_row.rs:389
+#: src/ui/pages/vaults_page_row.rs:572
+msgid "Close Vault"
+msgstr "Kasayı Kapat"
+
+#: src/ui/pages/vaults_page_row.rs:596
+msgid "Backend is not installed."
+msgstr "Arka uç kurulmamış."
+
+#: src/ui/pages/vaults_page_row_settings_window.rs:239
+#: src/ui/pages/vaults_page_row_settings_window.rs:281
+#: src/ui/add_new_vault_window.rs:435 src/ui/add_new_vault_window.rs:476
+#: src/ui/import_vault_window.rs:350 src/ui/import_vault_window.rs:393
+#: src/ui/preferences.rs:248 src/ui/preferences.rs:289
+msgid "Select"
+msgstr "Seç"
+
+#: src/ui/add_new_vault_window.rs:345 src/ui/import_vault_window.rs:301
 msgid "No backend installed. Please install gocryptfs or CryFS."
 msgstr "Kurulu arka uç yok. Lütfen gocryptfs ya da CryFS kurun."
 
-#: src/ui/add_new_vault_window.rs:338 src/ui/import_vault_window.rs:314
-msgid "Name is already taken."
-msgstr "Bu ad zaten var."
-
-#: src/ui/add_new_vault_window.rs:364
+#: src/ui/add_new_vault_window.rs:379
 msgid ""
 "CryFS works well together with cloud services like Dropbox, iCloud, OneDrive "
 "and others. It does not expose directory structure, number of files or file "
@@ -506,7 +593,7 @@ msgstr ""
 "boyutlarını göstermez. Güvenli olduğu düşünülse de, CryFS bağımsız olarak "
 "denetlenmemiştir."
 
-#: src/ui/add_new_vault_window.rs:367
+#: src/ui/add_new_vault_window.rs:382
 msgid ""
 "Fast and robust, gocryptfs works well in general cases where third-parties "
 "do not always have access to the encrypted data directory (e.g. file hosting "
@@ -517,91 +604,51 @@ msgstr ""
 "Hızlı ve sağlam olan gocryptfs, üçüncü tarafların şifrelenmiş veri dizinine "
 "her zaman erişemediği durumlarda (örneğin dosya barındırma hizmetleri) iyi "
 "çalışır. Dizin yapısını, dosya sayısını ve dosya boyutlarını gösterir. "
-"2017'de yapılan bir güvenlik denetimi, gocryptfs'in şifrelenmiş verileri "
+"2017ʼde yapılan bir güvenlik denetimi, gocryptfsʼin şifrelenmiş verileri "
 "okuyabilen ya da yazabilen üçüncü taraflara karşı güvenli olduğunu "
 "doğrulamıştır."
 
-#: src/ui/add_new_vault_window.rs:406 src/ui/add_new_vault_window.rs:421
-#: src/ui/import_vault_window.rs:330 src/ui/import_vault_window.rs:347
-#: src/ui/pages/vaults_page_row_settings_window.rs:257
-#: src/ui/pages/vaults_page_row_settings_window.rs:272
-msgid "Select"
-msgstr "Seç"
-
-#: src/ui/add_new_vault_window.rs:454 src/ui/import_vault_window.rs:387
-#: src/ui/pages/vaults_page_row_settings_window.rs:414
+#: src/ui/add_new_vault_window.rs:521 src/ui/import_vault_window.rs:445
 msgid "Directories must not be equal."
 msgstr "Dizinler eşit olmamalıdır."
 
-#: src/ui/add_new_vault_window.rs:491
+#: src/ui/add_new_vault_window.rs:558
 msgid "Encrypted data directory is not empty."
 msgstr "Şifrelenmiş veri dizini boş değil."
 
-#: src/ui/add_new_vault_window.rs:520 src/ui/import_vault_window.rs:445
+#: src/ui/add_new_vault_window.rs:587 src/ui/import_vault_window.rs:503
 msgid "Encrypted data directory is not valid."
 msgstr "Şifrelenmiş veri dizini geçersiz."
 
-#: src/ui/add_new_vault_window.rs:559 src/ui/import_vault_window.rs:483
+#: src/ui/add_new_vault_window.rs:626 src/ui/import_vault_window.rs:541
 msgid "Mount directory is not empty."
 msgstr "Bağlama dizini boş değil."
 
-#: src/ui/add_new_vault_window.rs:582 src/ui/import_vault_window.rs:494
+#: src/ui/add_new_vault_window.rs:649 src/ui/import_vault_window.rs:552
 msgid "Mount directory is not valid."
 msgstr "Bağlama dizini geçersiz."
 
-#: src/ui/import_vault_window.rs:418
+#: src/ui/import_vault_window.rs:476
 msgid "Encrypted data directory is empty."
 msgstr "Şifrelenmiş veri dizini boş."
 
-#: src/ui/import_vault_window.rs:575
+#: src/ui/import_vault_window.rs:634
 msgid "Found gocryptfs configuration file."
 msgstr "Gocryptfs yapılandırma dosyası bulundu."
 
-#: src/ui/import_vault_window.rs:599
+#: src/ui/import_vault_window.rs:658
 msgid "Found CryFS configuration file."
 msgstr "CryFS yapılandırma dosyası bulundu."
 
-#: src/ui/import_vault_window.rs:633
-#: src/ui/pages/vaults_page_row_settings_window.rs:498
+#: src/ui/import_vault_window.rs:692
 msgid "No configuration file found."
 msgstr "Yapılandırma dosyası bulunamadı."
 
-#: src/ui/pages/vaults_page_row.rs:276 src/ui/pages/vaults_page_row.rs:360
-#: src/ui/pages/vaults_page_row.rs:503
-msgid "Close Vault"
-msgstr "Kasayı Kapat"
+#: src/ui/window.rs:266 src/ui/window.rs:658
+msgid "Add or import a Vault."
+msgstr "Kasa Ekle ya da İçe Aktar."
 
-#: src/ui/pages/vaults_page_row.rs:524
-msgid "Backend is not installed."
-msgstr "Arka uç kurulmamış."
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:247
-msgid "Saved settings successfully!"
-msgstr "Ayarlar kaydedildi!"
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:289
-msgid "Name is not valid."
-msgstr "Geçersiz ad."
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:313
-msgid "Name already exists."
-msgstr "Ad zaten var."
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:349
-msgid "Directory is empty."
-msgstr "Dizin boş."
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:367
-#: src/ui/pages/vaults_page_row_settings_window.rs:397
-msgid "Directory is not valid."
-msgstr "Dizin geçersiz."
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:387
-msgid "Directory is not empty."
-msgstr "Dizin boş değil."
-
-#: src/ui/window.rs:256
-msgid ""
-"No backends available. Please install gocryptfs or CryFS on your system."
-msgstr ""
-"Kullanılabilir arka uç yok. Lütfen sisteminize gocryptfs ya da CryFS kurun."
+#. Translators: Replace "translator-credits" with your names, one name per line
+#: src/application.rs:391
+msgid "translator-credits"
+msgstr "Sabri Ünal <yakushabb@gmail.com>"
