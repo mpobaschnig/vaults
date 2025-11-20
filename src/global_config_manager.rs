@@ -61,7 +61,7 @@ mod imp {
         pub user_config_directory: RefCell<Option<String>>,
 
         pub global_config: RefCell<GlobalConfig>,
-        pub flatpak_info: RefCell<Ini>,
+        pub flatpak_info: RefCell<Option<Ini>>,
     }
 
     #[glib::object_subclass]
@@ -81,7 +81,7 @@ mod imp {
                     gocryptfs_custom_binary: RefCell::new(Some(false)),
                     gocryptfs_custom_binary_path: RefCell::new(Some("".to_string())),
                 }),
-                flatpak_info: RefCell::new(Ini::new()),
+                flatpak_info: RefCell::new(None),
             }
         }
     }
@@ -113,8 +113,12 @@ impl GlobalConfigManager {
 
         let object: Self = glib::Object::new();
 
-        *object.imp().flatpak_info.borrow_mut() =
-            Ini::load_from_file("/.flatpak-info").expect("Could not load .flatpak-info");
+        if let Ok(flatpak_info) = Ini::load_from_file("/.flatpak-info") {
+            log::debug!("Loaded .flatpak-info successfully");
+            *object.imp().flatpak_info.borrow_mut() = Some(flatpak_info);
+        } else {
+            log::error!("Could not load .flatpak-info");
+        }
 
         match user_config_dir().as_os_str().to_str() {
             Some(user_config_directory) => {
@@ -246,10 +250,10 @@ impl GlobalConfigManager {
             .borrow_mut() = Some(path);
     }
 
-    pub fn get_flatpak_info(&self) -> Ini {
+    pub fn get_flatpak_info(&self) -> Option<Ini> {
         log::trace!("get_flatpak_info()");
 
-        self.imp().flatpak_info.borrow().clone()
+        self.imp().flatpak_info.borrow().as_ref().cloned()
     }
 
     pub fn cryfs_custom_binary(&self) -> bool {
@@ -345,7 +349,7 @@ impl GlobalConfigManager {
     }
 
     pub fn get_cryfs_binary_path(&self) -> Option<String> {
-        let flatpak_info = self.get_flatpak_info();
+        let flatpak_info = self.get_flatpak_info()?;
         let instance_path = flatpak_info.section(Some("Instance"))?.get("app-path")?;
         let cryfs_instance_path = instance_path.to_owned() + "/bin/cryfs";
         log::info!("CryFS binary path: {}", cryfs_instance_path);
@@ -371,7 +375,7 @@ impl GlobalConfigManager {
     }
 
     pub fn get_gocryptfs_binary_path(&self) -> Option<String> {
-        let flatpak_info = self.get_flatpak_info();
+        let flatpak_info = self.get_flatpak_info()?;
         let instance_path = flatpak_info.section(Some("Instance"))?.get("app-path")?;
         let gocryptfs_instance_path = instance_path.to_owned() + "/bin/gocryptfs";
         log::info!("gocryptfs binary path: {}", gocryptfs_instance_path);
