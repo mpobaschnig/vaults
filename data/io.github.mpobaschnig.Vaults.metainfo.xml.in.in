@@ -15,7 +15,7 @@
   <screenshots>
     <screenshot type="default">
       <image>https://raw.githubusercontent.com/mpobaschnig/Vaults/master/data/resources/screenshots/main.png</image>
-      <caption>Main Window</caption>
+      <caption>Main window showing different vaults</caption>
     </screenshot>
   </screenshots>
   <url type="homepage">https://github.com/mpobaschnig/vaults</url>
