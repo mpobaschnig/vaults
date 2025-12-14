@@ -1,39 +1,32 @@
-# English translation for Vaults.
-# Copyright (C) 2025
-# This file is distributed under the same license as the vaults package.
-# Martin Pobaschnig <mpobaschnig@protonmail.com>, 2025.
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: vaults\n"
-"POT-Creation-Date: 2025-03-25 20:59+0100\n"
-"PO-Revision-Date: 2025-03-25 20:59+0100\n"
+"POT-Creation-Date: 2025-12-14 14:55+0100\n"
+"PO-Revision-Date: 2025-12-14 14:55+0100\n"
 "Last-Translator: Martin Pobaschnig <mpobaschnig@protonmail.com>\n"
 "Language-Team: en <LL@li.org>\n"
 "Language: en\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1.1\n"
-"X-Poedit-Basepath: ..\n"
-"X-Poedit-KeywordsList: gettext\n"
-"X-Poedit-SearchPath-0: src\n"
-"X-Poedit-SearchPath-1: data\n"
 
-
-#: data/io.github.mpobaschnig.Vaults.desktop.in.in:3
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:2
 #: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:6
 msgid "Vaults"
 msgstr ""
 
-#: data/io.github.mpobaschnig.Vaults.desktop.in.in:4
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:3
 #: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:7
 msgid "Keep important files safe"
 msgstr ""
 
-#: data/io.github.mpobaschnig.Vaults.desktop.in.in:9
+#: data/io.github.mpobaschnig.Vaults.desktop.in.in:8
 msgid "Gnome;GTK;"
 msgstr ""
 
@@ -51,18 +44,56 @@ msgstr ""
 msgid "Default window maximized behaviour"
 msgstr ""
 
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:21
+msgid "Status of legacy conversion"
+msgstr ""
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:25
+msgid "The encrypted data directory path"
+msgstr ""
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:26
+msgid "The path to the encrypted data directory"
+msgstr ""
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:30
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:31
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:41
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:42
+msgid "The path to the custom cryfs binary"
+msgstr ""
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:36
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:46
+#: data/resources/ui/preferences.ui:109 data/resources/ui/preferences.ui:161
+msgid "Use custom binary"
+msgstr ""
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:37
+msgid "Wether to use the provided custom binary to execute CryFS"
+msgstr ""
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:47
+msgid "Wether to use the provided custom binary to execute gocryptfs"
+msgstr ""
+
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:51
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:52
+msgid "The path to the custom gocryptfs binary"
+msgstr ""
+
 #: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:9
 msgid ""
 "Vaults lets you create encrypted vaults in which you can safely store files. "
 "It uses gocryptfs and CryFS for encryption."
 msgstr ""
 
-#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:14
-msgid "Welcome Window"
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:18
+msgid "Main window showing different vaults"
 msgstr ""
 
-#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:18
-msgid "Main Window"
+#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:31
+msgid "Martin Pobaschnig"
 msgstr ""
 
 #: data/resources/ui/add_new_vault_window.ui:16
@@ -90,13 +121,13 @@ msgstr ""
 
 #: data/resources/ui/add_new_vault_window.ui:87
 #: data/resources/ui/import_vault_window.ui:169
-#: data/resources/ui/vaults_page_row_settings_window.ui:45
+#: data/resources/ui/vaults_page_row_settings_window.ui:48
 msgid "Name"
 msgstr ""
 
 #: data/resources/ui/add_new_vault_window.ui:107
 #: data/resources/ui/import_vault_window.ui:189
-#: data/resources/ui/vaults_page_row_settings_window.ui:65
+#: data/resources/ui/vaults_page_row_settings_window.ui:54
 msgid "Backend"
 msgstr ""
 
@@ -119,35 +150,35 @@ msgstr ""
 
 #: data/resources/ui/add_new_vault_window.ui:183
 #: data/resources/ui/import_vault_window.ui:87
-#: data/resources/ui/preferences.ui:44
-#: data/resources/ui/vaults_page_row_settings_window.ui:107
+#: data/resources/ui/preferences.ui:46
+#: data/resources/ui/vaults_page_row_settings_window.ui:60
 msgid "Encrypted Data Directory"
 msgstr ""
 
 #: data/resources/ui/add_new_vault_window.ui:188
 #: data/resources/ui/import_vault_window.ui:92
-#: data/resources/ui/preferences.ui:49
-#: data/resources/ui/vaults_page_row_settings_window.ui:112
-#: src/ui/pages/vaults_page_row_settings_window.rs:403
-#: src/ui/add_new_vault_window.rs:450 src/ui/import_vault_window.rs:367
-#: src/ui/preferences.rs:192
+#: data/resources/ui/preferences.ui:52
+#: data/resources/ui/vaults_page_row_settings_window.ui:66
+#: src/ui/pages/vaults_page_row_settings_window.rs:237
+#: src/ui/add_new_vault_window.rs:433 src/ui/import_vault_window.rs:348
+#: src/ui/preferences.rs:246
 msgid "Choose Encrypted Data Directory"
 msgstr ""
 
 #: data/resources/ui/add_new_vault_window.ui:213
 #: data/resources/ui/import_vault_window.ui:124
-#: data/resources/ui/preferences.ui:74
-#: data/resources/ui/vaults_page_row_settings_window.ui:137
+#: data/resources/ui/preferences.ui:62
+#: data/resources/ui/vaults_page_row_settings_window.ui:76
 msgid "Mount Directory"
 msgstr ""
 
 #: data/resources/ui/add_new_vault_window.ui:218
 #: data/resources/ui/import_vault_window.ui:129
-#: data/resources/ui/preferences.ui:79
-#: data/resources/ui/vaults_page_row_settings_window.ui:142
-#: src/ui/pages/vaults_page_row_settings_window.rs:444
-#: src/ui/add_new_vault_window.rs:491 src/ui/import_vault_window.rs:410
-#: src/ui/preferences.rs:233
+#: data/resources/ui/preferences.ui:68
+#: data/resources/ui/vaults_page_row_settings_window.ui:82
+#: src/ui/pages/vaults_page_row_settings_window.rs:279
+#: src/ui/add_new_vault_window.rs:474 src/ui/import_vault_window.rs:391
+#: src/ui/preferences.rs:287
 msgid "Choose Mount Directory"
 msgstr ""
 
@@ -159,17 +190,25 @@ msgstr ""
 msgid "_Import"
 msgstr ""
 
-#: data/resources/ui/preferences.ui:16
-msgid "Preferences"
+#: data/resources/ui/preferences.ui:27
+#: data/resources/ui/vaults_page_row_settings_window.ui:27
+msgid "_General"
 msgstr ""
 
-#: data/resources/ui/preferences.ui:41
+#: data/resources/ui/preferences.ui:43
 msgid "Default Paths"
 msgstr ""
 
-#: data/resources/ui/preferences.ui:107
-#: data/resources/ui/vaults_page_row_settings_window.ui:191
-msgid "_Apply Changes"
+#: data/resources/ui/preferences.ui:105 data/resources/ui/preferences.ui:157
+msgid "General"
+msgstr ""
+
+#: data/resources/ui/preferences.ui:112 data/resources/ui/preferences.ui:164
+msgid "Custom Binary Path"
+msgstr ""
+
+#: data/resources/ui/preferences.ui:118 data/resources/ui/preferences.ui:170
+msgid "Choose Custom Binary"
 msgstr ""
 
 #: data/resources/ui/shortcuts.ui:11
@@ -217,11 +256,11 @@ msgctxt "vaults"
 msgid "Refresh"
 msgstr ""
 
-#: data/resources/ui/start_page.ui:15 data/resources/ui/window.ui:133
+#: data/resources/ui/start_page.ui:15 data/resources/ui/window.ui:149
 msgid "Welcome to Vaults"
 msgstr ""
 
-#: data/resources/ui/start_page.ui:16 data/resources/ui/window.ui:134
+#: data/resources/ui/start_page.ui:16 data/resources/ui/window.ui:150
 msgid "Add or Import a Vault."
 msgstr ""
 
@@ -237,33 +276,16 @@ msgstr ""
 msgid "Unlock"
 msgstr ""
 
-#: data/resources/ui/vaults_page_row_settings_window.ui:16
-msgid "Vault Settings"
+#: data/resources/ui/vaults_page_row_settings_window.ui:103
+msgid "_Security"
 msgstr ""
 
-#: data/resources/ui/vaults_page_row_settings_window.ui:72
-msgid "Use custom binary"
-msgstr ""
-
-#: data/resources/ui/vaults_page_row_settings_window.ui:75
-msgid "Custom Binary Path"
-msgstr ""
-
-#: data/resources/ui/vaults_page_row_settings_window.ui:80
-#: src/ui/pages/vaults_page_row_settings_window.rs:773
-msgid "Choose Custom Binary"
-msgstr ""
-
-#: data/resources/ui/vaults_page_row_settings_window.ui:167
+#: data/resources/ui/vaults_page_row_settings_window.ui:122
 msgid "Session lock"
 msgstr ""
 
-#: data/resources/ui/vaults_page_row_settings_window.ui:168
+#: data/resources/ui/vaults_page_row_settings_window.ui:123
 msgid "Automatically lock when screen is locked and screen saver is activated"
-msgstr ""
-
-#: data/resources/ui/vaults_page_row_settings_window.ui:181
-msgid "_Remove"
 msgstr ""
 
 #: data/resources/ui/vaults_page_row.ui:10
@@ -271,15 +293,19 @@ msgid "Vault X"
 msgstr ""
 
 #: data/resources/ui/vaults_page_row.ui:15
+msgid "Select Vault"
+msgstr ""
+
+#: data/resources/ui/vaults_page_row.ui:26
 msgid "Open Folder"
 msgstr ""
 
-#: data/resources/ui/vaults_page_row.ui:25 src/ui/pages/vaults_page_row.rs:284
-#: src/ui/pages/vaults_page_row.rs:393 src/ui/pages/vaults_page_row.rs:587
+#: data/resources/ui/vaults_page_row.ui:36 src/ui/pages/vaults_page_row.rs:289
+#: src/ui/pages/vaults_page_row.rs:398 src/ui/pages/vaults_page_row.rs:586
 msgid "Open Vault"
 msgstr ""
 
-#: data/resources/ui/vaults_page_row.ui:35
+#: data/resources/ui/vaults_page_row.ui:46
 msgid "Open Settings"
 msgstr ""
 
@@ -287,302 +313,253 @@ msgstr ""
 msgid "Add or Import New Vault"
 msgstr ""
 
-#: data/resources/ui/window.ui:36
+#: data/resources/ui/window.ui:20
+msgid "Remove Vaults"
+msgstr ""
+
+#: data/resources/ui/window.ui:46
+msgid "Select Vaults"
+msgstr ""
+
+#: data/resources/ui/window.ui:52
 msgid "Toggle Search"
 msgstr ""
 
-#: data/resources/ui/window.ui:48
+#: data/resources/ui/window.ui:64
 msgid "Search vaults"
 msgstr ""
 
-#: data/resources/ui/window.ui:90
+#: data/resources/ui/window.ui:106
 msgid "No Results"
 msgstr ""
 
-#: data/resources/ui/window.ui:91
+#: data/resources/ui/window.ui:107
 msgid "No Vault matching your search was found."
 msgstr ""
 
-#: data/resources/ui/window.ui:181
+#: data/resources/ui/window.ui:197
 msgid "_New Vault"
 msgstr ""
 
-#: data/resources/ui/window.ui:185
+#: data/resources/ui/window.ui:201
 msgid "_Import Vault"
 msgstr ""
 
-#: data/resources/ui/window.ui:193
+#: data/resources/ui/window.ui:209
 msgid "_Refresh"
 msgstr ""
 
-#: data/resources/ui/window.ui:199
+#: data/resources/ui/window.ui:215
 msgid "_Preferences"
 msgstr ""
 
-#: data/resources/ui/window.ui:203
+#: data/resources/ui/window.ui:219
 msgid "_Keyboard Shortcuts"
 msgstr ""
 
-#: data/resources/ui/window.ui:207
+#: data/resources/ui/window.ui:223
 msgid "_About Vaults"
 msgstr ""
 
-#: src/backend/cryfs.rs:216 src/backend/cryfs.rs:233
-#: src/backend/gocryptfs.rs:207
+#: src/backend/cryfs.rs:45 src/backend/cryfs.rs:70 src/backend/cryfs.rs:122
+msgid "No CryFs binary path set"
+msgstr ""
+
+#: src/backend/cryfs.rs:233 src/backend/cryfs.rs:283
+#: src/backend/gocryptfs.rs:229
 msgid "An unknown error occurred."
 msgstr ""
 
-#: src/backend/cryfs.rs:217
+#: src/backend/cryfs.rs:236
 msgid "Invalid arguments were given."
 msgstr ""
 
-#: src/backend/cryfs.rs:218 src/backend/gocryptfs.rs:193
+#: src/backend/cryfs.rs:239 src/backend/gocryptfs.rs:215
 msgid "The password is wrong."
 msgstr ""
 
-#: src/backend/cryfs.rs:219 src/backend/gocryptfs.rs:196
+#: src/backend/cryfs.rs:242 src/backend/gocryptfs.rs:218
 msgid "The password is empty."
 msgstr ""
 
-#: src/backend/cryfs.rs:220
+#: src/backend/cryfs.rs:245
 msgid ""
 "The format of the encrypted data directory is too new for this CryFS "
 "version. Please update CryFS."
 msgstr ""
 
-#: src/backend/cryfs.rs:221
+#: src/backend/cryfs.rs:248
 msgid ""
 "The format of the encrypted data directory is too old for this CryFS version."
 msgstr ""
 
-#: src/backend/cryfs.rs:222
+#: src/backend/cryfs.rs:251
 msgid "The vault uses a different cipher than the default of CryFS."
 msgstr ""
 
-#: src/backend/cryfs.rs:223
+#: src/backend/cryfs.rs:254
 msgid "The encrypted data directory does not exist or is inaccessible."
 msgstr ""
 
-#: src/backend/cryfs.rs:224
+#: src/backend/cryfs.rs:257
 msgid "The mount directory does not exist or is inaccessible."
 msgstr ""
 
-#: src/backend/cryfs.rs:225
+#: src/backend/cryfs.rs:260
 msgid "The mount directory is inside the encrypted data directory."
 msgstr ""
 
-#: src/backend/cryfs.rs:226
+#: src/backend/cryfs.rs:263
 msgid "The encrypted data directory is invalid."
 msgstr ""
 
-#: src/backend/cryfs.rs:227
+#: src/backend/cryfs.rs:266
 msgid ""
 "The encrypted data id in the configuration file is different to the last "
 "time this vault was opened. This could mean someone replaced files in the "
 "encrypted data directory with different ones."
 msgstr ""
 
-#: src/backend/cryfs.rs:228
+#: src/backend/cryfs.rs:269
 msgid ""
 "The encryption key for your encrypted files is different to the last time "
 "this vault was opened. This could mean someone replaced files in the "
 "encrypted data directory with different ones."
 msgstr ""
 
-#: src/backend/cryfs.rs:229
+#: src/backend/cryfs.rs:272
 msgid "Vaults' configuration and the encrypted data configuration mismatches."
 msgstr ""
 
-#: src/backend/cryfs.rs:230
+#: src/backend/cryfs.rs:275
 msgid ""
 "The encrypted data directory is in single-user mode and can only be used "
 "from the user that created it."
 msgstr ""
 
-#: src/backend/cryfs.rs:231
+#: src/backend/cryfs.rs:278
 msgid ""
 "CryFS detected an integrity violation. The encrypted data directory will be "
 "accessible again after the integrity state file has been deleted."
 msgstr ""
 
-#: src/backend/cryfs.rs:232
+#: src/backend/cryfs.rs:281
 msgid "An integrity violation was detected. Vault will be unmounted."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:187
+#: src/backend/gocryptfs.rs:46 src/backend/gocryptfs.rs:73
+#: src/backend/gocryptfs.rs:125
+msgid "No gocryptfs binary path set"
+msgstr ""
+
+#: src/backend/gocryptfs.rs:209
 msgid "The encrypted data directory is not empty."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:190
+#: src/backend/gocryptfs.rs:212
 msgid "The mount directory is not empty."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:199
+#: src/backend/gocryptfs.rs:221
 msgid "Vaults cannot read configuration file."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:202
+#: src/backend/gocryptfs.rs:224
 msgid "Vaults cannot write configuration file."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:205
+#: src/backend/gocryptfs.rs:227
 msgid "The file system check reported an error."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:219
+#: src/backend/gocryptfs.rs:242
 msgid "You don't have the necessary privileges to unmount the directory."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:220
+#: src/backend/gocryptfs.rs:244
 msgid "The data directory (mount point) does not exist."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:221
+#: src/backend/gocryptfs.rs:245
 msgid "Internal error."
 msgstr ""
 
-#: src/backend/gocryptfs.rs:222
+#: src/backend/gocryptfs.rs:247
 msgid ""
 "The data directory (mount point) is busy. There are open files or processes "
 "using the filesystem."
 msgstr ""
 
-#: src/backend/mod.rs:142
+#: src/backend/mod.rs:156
 msgid "Failed to create encrypted data directory: Permission denied."
 msgstr ""
 
-#: src/backend/mod.rs:145
+#: src/backend/mod.rs:159
 msgid "Failed to create encrypted data directory: Connection refused."
 msgstr ""
 
-#: src/backend/mod.rs:148
+#: src/backend/mod.rs:162
 msgid "Failed to create encrypted data directory: Connection reset."
 msgstr ""
 
-#: src/backend/mod.rs:151
+#: src/backend/mod.rs:165
 msgid "Failed to create encrypted data directory: Connection aborted."
 msgstr ""
 
-#: src/backend/mod.rs:154
+#: src/backend/mod.rs:168
 msgid "Failed to create encrypted data directory: Not connected."
 msgstr ""
 
-#: src/backend/mod.rs:157
+#: src/backend/mod.rs:171
 msgid "Failed to create encrypted data directory."
 msgstr ""
 
-#: src/backend/mod.rs:174
+#: src/backend/mod.rs:188
 msgid "Failed to create mount directory: Permission denied."
 msgstr ""
 
-#: src/backend/mod.rs:177
+#: src/backend/mod.rs:191
 msgid "Failed to create mount directory: Connection refused."
 msgstr ""
 
-#: src/backend/mod.rs:180
+#: src/backend/mod.rs:194
 msgid "Failed to create mount directory: Connection reset."
 msgstr ""
 
-#: src/backend/mod.rs:183
+#: src/backend/mod.rs:197
 msgid "Failed to create mount directory: Connection aborted."
 msgstr ""
 
-#: src/backend/mod.rs:186
+#: src/backend/mod.rs:200
 msgid "Failed to create mount directory: Not connected."
 msgstr ""
 
-#: src/backend/mod.rs:189
+#: src/backend/mod.rs:203
 msgid "Failed to create mount directory."
 msgstr ""
 
-#: src/ui/pages/vaults_page_row.rs:293 src/ui/pages/vaults_page_row.rs:384
-#: src/ui/pages/vaults_page_row.rs:573
+#: src/ui/pages/vaults_page_row.rs:298 src/ui/pages/vaults_page_row.rs:389
+#: src/ui/pages/vaults_page_row.rs:572
 msgid "Close Vault"
 msgstr ""
 
-#: src/ui/pages/vaults_page_row.rs:597
+#: src/ui/pages/vaults_page_row.rs:596
 msgid "Backend is not installed."
 msgstr ""
 
-#: src/ui/pages/vaults_page_row_settings_window.rs:277
-msgid "Remove Vault?"
-msgstr ""
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:278
+#: src/ui/pages/vaults_page_row_settings_window.rs:239
 #: src/ui/pages/vaults_page_row_settings_window.rs:281
-msgid "Cancel"
-msgstr ""
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:282
-msgid "Remove"
-msgstr ""
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:289
-msgid "Delete encrypted data"
-msgstr ""
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:320
-msgid "Could not remove encrypted data."
-msgstr ""
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:322
-msgid "Close"
-msgstr ""
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:381
-msgid "Saved settings successfully!"
-msgstr ""
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:405
-#: src/ui/pages/vaults_page_row_settings_window.rs:446
-#: src/ui/pages/vaults_page_row_settings_window.rs:775
-#: src/ui/add_new_vault_window.rs:452 src/ui/add_new_vault_window.rs:493
-#: src/ui/import_vault_window.rs:369 src/ui/import_vault_window.rs:412
-#: src/ui/preferences.rs:194 src/ui/preferences.rs:235
+#: src/ui/add_new_vault_window.rs:435 src/ui/add_new_vault_window.rs:476
+#: src/ui/import_vault_window.rs:350 src/ui/import_vault_window.rs:393
+#: src/ui/preferences.rs:248 src/ui/preferences.rs:289
 msgid "Select"
 msgstr ""
 
-#: src/ui/pages/vaults_page_row_settings_window.rs:475
-msgid "Name is not valid."
-msgstr ""
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:499
-msgid "Name already exists."
-msgstr ""
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:535
-msgid "Directory is empty."
-msgstr ""
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:553
-#: src/ui/pages/vaults_page_row_settings_window.rs:581
-msgid "Directory is not valid."
-msgstr ""
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:571
-msgid "Directory is not empty."
-msgstr ""
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:598
-#: src/ui/add_new_vault_window.rs:538 src/ui/import_vault_window.rs:464
-#: src/ui/preferences.rs:283
-msgid "Directories must not be equal."
-msgstr ""
-
-#: src/ui/pages/vaults_page_row_settings_window.rs:697
-#: src/ui/import_vault_window.rs:712
-msgid "No configuration file found."
-msgstr ""
-
-#: src/ui/add_new_vault_window.rs:341 src/ui/import_vault_window.rs:300
+#: src/ui/add_new_vault_window.rs:345 src/ui/import_vault_window.rs:301
 msgid "No backend installed. Please install gocryptfs or CryFS."
 msgstr ""
 
-#: src/ui/add_new_vault_window.rs:370 src/ui/import_vault_window.rs:339
-msgid "Name is already taken."
-msgstr ""
-
-#: src/ui/add_new_vault_window.rs:396
+#: src/ui/add_new_vault_window.rs:379
 msgid ""
 "CryFS works well together with cloud services like Dropbox, iCloud, OneDrive "
 "and others. It does not expose directory structure, number of files or file "
@@ -590,7 +567,7 @@ msgid ""
 "no independent audit of CryFS."
 msgstr ""
 
-#: src/ui/add_new_vault_window.rs:399
+#: src/ui/add_new_vault_window.rs:382
 msgid ""
 "Fast and robust, gocryptfs works well in general cases where third-parties "
 "do not always have access to the encrypted data directory (e.g. file hosting "
@@ -599,46 +576,46 @@ msgid ""
 "can read or write to encrypted data."
 msgstr ""
 
-#: src/ui/add_new_vault_window.rs:575
+#: src/ui/add_new_vault_window.rs:521 src/ui/import_vault_window.rs:445
+msgid "Directories must not be equal."
+msgstr ""
+
+#: src/ui/add_new_vault_window.rs:558
 msgid "Encrypted data directory is not empty."
 msgstr ""
 
-#: src/ui/add_new_vault_window.rs:604 src/ui/import_vault_window.rs:522
+#: src/ui/add_new_vault_window.rs:587 src/ui/import_vault_window.rs:503
 msgid "Encrypted data directory is not valid."
 msgstr ""
 
-#: src/ui/add_new_vault_window.rs:643 src/ui/import_vault_window.rs:560
+#: src/ui/add_new_vault_window.rs:626 src/ui/import_vault_window.rs:541
 msgid "Mount directory is not empty."
 msgstr ""
 
-#: src/ui/add_new_vault_window.rs:666 src/ui/import_vault_window.rs:571
+#: src/ui/add_new_vault_window.rs:649 src/ui/import_vault_window.rs:552
 msgid "Mount directory is not valid."
 msgstr ""
 
-#: src/ui/import_vault_window.rs:495
+#: src/ui/import_vault_window.rs:476
 msgid "Encrypted data directory is empty."
 msgstr ""
 
-#: src/ui/import_vault_window.rs:654
+#: src/ui/import_vault_window.rs:634
 msgid "Found gocryptfs configuration file."
 msgstr ""
 
-#: src/ui/import_vault_window.rs:678
+#: src/ui/import_vault_window.rs:658
 msgid "Found CryFS configuration file."
 msgstr ""
 
-#: src/ui/window.rs:256 src/ui/window.rs:607
+#: src/ui/import_vault_window.rs:692
+msgid "No configuration file found."
+msgstr ""
+
+#: src/ui/window.rs:266 src/ui/window.rs:658
 msgid "Add or import a Vault."
 msgstr ""
 
-#: src/ui/preferences.rs:271
-msgid "Saved preferences successfully!"
-msgstr ""
-
-#: src/application.rs:193
-msgid "Cannot open and close at the same time."
-msgstr ""
-
-#: src/application.rs:310
+#: src/application.rs:391
 msgid "translator-credits"
 msgstr ""
