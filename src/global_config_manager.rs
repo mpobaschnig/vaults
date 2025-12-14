@@ -353,25 +353,7 @@ impl GlobalConfigManager {
         let instance_path = flatpak_info.section(Some("Instance"))?.get("app-path")?;
         let cryfs_instance_path = instance_path.to_owned() + "/bin/cryfs";
         log::info!("CryFS binary path: {}", cryfs_instance_path);
-        let exists = fs::exists(&cryfs_instance_path);
-        match exists {
-            Ok(exists) => {
-                if exists {
-                    log::info!("cryfs binary exists, taking it");
-                    return Some(cryfs_instance_path);
-                } else {
-                    log::error!(
-                        "cryfs binary does not exist at path: {}",
-                        cryfs_instance_path
-                    );
-                }
-            }
-            Err(e) => {
-                log::error!("Error checking cryfs binary path existence: {}", e);
-            }
-        }
-
-        None
+        Some(cryfs_instance_path)
     }
 
     pub fn get_gocryptfs_binary_path(&self) -> Option<String> {
@@ -379,24 +361,6 @@ impl GlobalConfigManager {
         let instance_path = flatpak_info.section(Some("Instance"))?.get("app-path")?;
         let gocryptfs_instance_path = instance_path.to_owned() + "/bin/gocryptfs";
         log::info!("gocryptfs binary path: {}", gocryptfs_instance_path);
-        let exists = fs::exists(&gocryptfs_instance_path);
-        match exists {
-            Ok(exists) => {
-                if exists {
-                    log::info!("gocryptfs binary exists, taking it");
-                    return Some(gocryptfs_instance_path);
-                } else {
-                    log::error!(
-                        "gocryptfs binary does not exist at path: {}",
-                        gocryptfs_instance_path
-                    );
-                }
-            }
-            Err(e) => {
-                log::error!("Error checking gocryptfs binary path existence: {}", e);
-            }
-        }
-
-        None
+        Some(gocryptfs_instance_path)
     }
 }
