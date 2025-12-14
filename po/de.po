@@ -1,450 +1,145 @@
-# 
+#
 # Translators:
 # Martin Pobaschnig, 2023
-# 
+#
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: vaults\n"
-"POT-Creation-Date: 2023-02-26 20:16+0100\n"
-"PO-Revision-Date: 2023-04-26 14:04+0000\n"
-"Last-Translator: Martin Pobaschnig, 2023\n"
-"Language-Team: German (https://app.transifex.com/mpobaschnig/teams/163474/de/)\n"
+"POT-Creation-Date: 2025-12-14 15:01+0100\n"
+"PO-Revision-Date: 2025-12-14 15:10+0100\n"
+"Last-Translator: Martin Pobaschnig <mpobaschnig@protonmail.com>\n"
+"Language-Team: German (https://app.transifex.com/mpobaschnig/teams/163474/"
+"de/)\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.1.1\n"
+"X-Generator: Poedit 3.8\n"
 "X-Poedit-Basepath: ..\n"
 "X-Poedit-KeywordsList: gettext\n"
 "X-Poedit-SearchPath-0: src\n"
 "X-Poedit-SearchPath-1: data\n"
 
-#: src/backend/cryfs.rs:128 src/backend/cryfs.rs:145
-#: src/backend/gocryptfs.rs:149
-msgid "An unknown error occurred."
-msgstr "Ein unbekannter Fehler ist aufgetreten."
-
-#: src/backend/cryfs.rs:129
-msgid "Invalid arguments were given."
-msgstr "Es wurden ungültige Argumente eingegeben."
-
-#: src/backend/cryfs.rs:130 src/backend/gocryptfs.rs:135
-msgid "The password is wrong."
-msgstr "Das Passwort ist falsch."
-
-#: src/backend/cryfs.rs:131 src/backend/gocryptfs.rs:138
-msgid "The password is empty."
-msgstr "Das Passwort ist leer."
-
-#: src/backend/cryfs.rs:132
-msgid ""
-"The format of the encrypted data directory is too new for this CryFS "
-"version. Please update CryFS."
-msgstr ""
-"Das Format des verschlüsselten Datenverzeichnisses ist zu neu für diese "
-"Version von CryFS. Bitte aktualisieren Sie CryFS."
-
-#: src/backend/cryfs.rs:133
-msgid ""
-"The format of the encrypted data directory is too old for this CryFS "
-"version."
-msgstr ""
-"Das Format des verschlüsselten Datenverzeichnisses ist zu alt für diese "
-"Version von CryFS."
-
-#: src/backend/cryfs.rs:134
-msgid "The vault uses a different cipher than the default of CryFS."
-msgstr ""
-"Der Tresor verwendet eine andere Verschlüsselung als die "
-"Standardverschlüsselung von CryFS."
-
-#: src/backend/cryfs.rs:135
-msgid "The encrypted data directory does not exist or is inaccessible."
-msgstr ""
-"Das verschlüsselte Datenverzeichnis existiert nicht oder ist unzugänglich."
-
-#: src/backend/cryfs.rs:136
-msgid "The mount directory does not exist or is inaccessible."
-msgstr "Das Einhängeverzeichnis existiert nicht oder ist unzugänglich."
-
-#: src/backend/cryfs.rs:137
-msgid "The mount directory is inside the encrypted data directory."
-msgstr ""
-"Das Einhängeverzeichnis befindet sich im verschlüsselten Datenverzeichnis."
-
-#: src/backend/cryfs.rs:138
-msgid "The encrypted data directory is invalid."
-msgstr "Das verschlüsselte Datenverzeichnis ist ungültig."
-
-#: src/backend/cryfs.rs:139
-msgid ""
-"The encrypted data id in the configuration file is different to the last "
-"time this vault was opened. This could mean someone replaced files in the "
-"encrypted data directory with different ones."
-msgstr ""
-"Die ID der verschlüsselten Daten in der Konfigurationsdatei ist eine andere "
-"als beim letzten Öffnen dieses Tresors. Dies könnte bedeuten, dass jemand "
-"Dateien im verschlüsselten Datenverzeichnis durch andere ersetzt hat."
-
-#: src/backend/cryfs.rs:140
-msgid ""
-"The encryption key for your encrypted files is different to the last time "
-"this vault was opened. This could mean someone replaced files in the "
-"encrypted data directory with different ones."
-msgstr ""
-"Der Schlüssel für Ihre verschlüsselten Dateien ist ein anderer als beim "
-"letzten Öffnen dieses Tresors. Dies könnte bedeuten, dass jemand Dateien im "
-"verschlüsselten Datenverzeichnis durch andere ersetzt hat."
-
-#: src/backend/cryfs.rs:141
-msgid "Vaults' configuration and the encrypted data configuration mismatches."
-msgstr ""
-"Die Konfiguration von Vaults und die Konfiguration der verschlüsselten Daten"
-" stimmen nicht überein."
-
-#: src/backend/cryfs.rs:142
-msgid ""
-"The encrypted data directory is in single-user mode and can only be used "
-"from the user that created it."
-msgstr ""
-"Das Verzeichnis der verschlüsselten Daten befindet sich im "
-"Einzelbenutzermodus und kann nur von dem Benutzer verwendet werden, der es "
-"erstellt hat."
-
-#: src/backend/cryfs.rs:143
-msgid ""
-"CryFS detected an integrity violation. The encrypted data directory will be "
-"accessible again after the integrity state file has been deleted."
-msgstr ""
-"CryFS hat eine Integritätsverletzung festgestellt. Das Verzeichnis der "
-"verschlüsselten Daten ist wieder zugänglich, nachdem die Integritätsstatus-"
-"Datei gelöscht wurde."
-
-#: src/backend/cryfs.rs:144
-msgid "An integrity violation was detected. Vault will be unmounted."
-msgstr ""
-"Eine Integritätsverletzung wurde festgestellt. Der Tresor wird ausgehängt."
-
-#: src/backend/gocryptfs.rs:129
-msgid "The encrypted data directory is not empty."
-msgstr "Das verschlüsselte Datenverzeichnis ist nicht leer."
-
-#: src/backend/gocryptfs.rs:132
-msgid "The mount directory is not empty."
-msgstr "Das Einhängeverzeichnis ist nicht leer."
-
-#: src/backend/gocryptfs.rs:141
-msgid "Vaults cannot read configuration file."
-msgstr "Vaults kann die Konfigurationsdatei nicht lesen."
-
-#: src/backend/gocryptfs.rs:144
-msgid "Vaults cannot write configuration file."
-msgstr "Vaults kann die Konfigurationsdatei nicht schreiben."
-
-#: src/backend/gocryptfs.rs:147
-msgid "The file system check reported an error."
-msgstr "Die Dateisystemprüfung hat einen Fehler gemeldet."
-
-#: src/backend/mod.rs:147
-msgid "Failed to create encrypted data directory: Permission denied."
-msgstr ""
-"Das verschlüsselte Datenverzeichnis konnte nicht erstellt werden: "
-"Berechtigung verweigert."
-
-#: src/backend/mod.rs:150
-msgid "Failed to create encrypted data directory: Connection refused."
-msgstr ""
-"Das verschlüsselte Datenverzeichnis konnte nicht erstellt werden: Verbindung"
-" verweigert."
-
-#: src/backend/mod.rs:153
-msgid "Failed to create encrypted data directory: Connection reset."
-msgstr ""
-"Das verschlüsselte Datenverzeichnis konnte nicht erstellt werden: Verbindung"
-" zurückgesetzt."
-
-#: src/backend/mod.rs:156
-msgid "Failed to create encrypted data directory: Connection aborted."
-msgstr ""
-"Das verschlüsselte Datenverzeichnis konnte nicht erstellt werden: Verbindung"
-" abgebrochen."
-
-#: src/backend/mod.rs:159
-msgid "Failed to create encrypted data directory: Not connected."
-msgstr ""
-"Das verschlüsselte Datenverzeichnis konnte nicht erstellt werden: Nicht "
-"verbunden."
-
-#: src/backend/mod.rs:162
-msgid "Failed to create encrypted data directory."
-msgstr "Das verschlüsselte Datenverzeichnis konnte nicht erstellt werden."
-
-#: src/backend/mod.rs:177
-msgid "Failed to create mount directory: Permission denied."
-msgstr ""
-"Das Einhängeverzeichnis konnte nicht erstellt werden: Berechtigung "
-"verweigert."
-
-#: src/backend/mod.rs:180
-msgid "Failed to create mount directory: Connection refused."
-msgstr ""
-"Das Einhängeverzeichnis konnte nicht erstellt werden: Verbindung verweigert."
-
-#: src/backend/mod.rs:183
-msgid "Failed to create mount directory: Connection reset."
-msgstr ""
-"Das Einhängeverzeichnis konnte nicht erstellt werden: Verbindung "
-"zurückgesetzt."
-
-#: src/backend/mod.rs:186
-msgid "Failed to create mount directory: Connection aborted."
-msgstr ""
-"Das Einhängeverzeichnis konnte nicht erstellt werden: Verbindung "
-"abgebrochen."
-
-#: src/backend/mod.rs:189
-msgid "Failed to create mount directory: Not connected."
-msgstr ""
-"Das Einhängeverzeichnis konnte nicht erstellt werden: Nicht verbunden."
-
-#: src/backend/mod.rs:192
-msgid "Failed to create mount directory."
-msgstr "Das Einhängeverzeichnis konnte nicht erstellt werden."
-
-#: src/ui/add_new_vault_dialog.rs:302 src/ui/import_vault_dialog.rs:261
-msgid "No backend installed. Please install gocryptfs or CryFS."
-msgstr ""
-"Kein Backend ist installiert. Bitte installieren Sie gocryptfs oder CryFS."
-
-#: src/ui/add_new_vault_dialog.rs:331 src/ui/import_vault_dialog.rs:302
-msgid "Name is already taken."
-msgstr "Der Name ist bereits vergeben."
-
-#: src/ui/add_new_vault_dialog.rs:359
-msgid ""
-"CryFS works well together with cloud services like Dropbox, iCloud, OneDrive"
-" and others. It does not expose directory structure, number of files or file"
-" sizes in the encrypted data directory. While being considered safe, there "
-"is no independent audit of CryFS."
-msgstr ""
-"CryFS funktioniert gut mit Cloud-Diensten wie Dropbox, iCloud, OneDrive und "
-"anderen. Die Verzeichnisstruktur, die Anzahl der Dateien oder die "
-"Dateigrößen im verschlüsselten Datenverzeichnis werden nicht offengelegt. Es"
-" gilt zwar als sicher, es gibt jedoch kein unabhängiges Audit von CryFS."
-
-#: src/ui/add_new_vault_dialog.rs:362
-msgid ""
-"Fast and robust, gocryptfs works well in general cases where third-parties "
-"do not always have access to the encrypted data directory (e.g. file hosting"
-" services). It exposes directory structure, number of files and file sizes. "
-"A security audit in 2017 verified gocryptfs is safe against third-parties "
-"that can read or write to encrypted data."
-msgstr ""
-"Schnell und robust. Gocryptfs eignet sich gut für allgemeine Fälle, in denen"
-" Dritte nicht immer Zugriff auf das verschlüsselte Datenverzeichnis haben "
-"(z. B. Filehosting-Dienste). Es legt die Verzeichnisstruktur, die Anzahl der"
-" Dateien und die Dateigrößen offen. 2017 hat ein Sicherheitsaudit bestätigt,"
-" dass gocryptfs sicher gegen Dritte ist, die die verschlüsselten Daten lesen"
-" oder schreiben können."
-
-#: src/ui/add_new_vault_dialog.rs:403 src/ui/import_vault_dialog.rs:316
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:224
-#: src/ui/preferences.rs:169 data/resources/ui/add_new_vault_dialog.ui:215
-#: data/resources/ui/import_vault_dialog.ui:103
-#: data/resources/ui/preferences.ui:64
-#: data/resources/ui/vaults_page_row_settings_dialog.ui:100
-msgid "Choose Encrypted Data Directory"
-msgstr "Wählen Sie das verschlüsselte Datenverzeichnis"
-
-#: src/ui/add_new_vault_dialog.rs:407 src/ui/add_new_vault_dialog.rs:434
-#: src/ui/import_vault_dialog.rs:320 src/ui/import_vault_dialog.rs:349
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:228
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:255
-#: src/ui/preferences.rs:173 src/ui/preferences.rs:200
-msgid "Cancel"
-msgstr "Abbrechen"
-
-#: src/ui/add_new_vault_dialog.rs:408 src/ui/add_new_vault_dialog.rs:435
-#: src/ui/import_vault_dialog.rs:321 src/ui/import_vault_dialog.rs:350
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:229
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:256
-#: src/ui/preferences.rs:174 src/ui/preferences.rs:201
-msgid "Select"
-msgstr "Auswählen"
-
-#: src/ui/add_new_vault_dialog.rs:430 src/ui/import_vault_dialog.rs:345
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:251
-#: src/ui/preferences.rs:196 data/resources/ui/add_new_vault_dialog.ui:253
-#: data/resources/ui/import_vault_dialog.ui:147
-#: data/resources/ui/preferences.ui:102
-#: data/resources/ui/vaults_page_row_settings_dialog.ui:138
-msgid "Choose Mount Directory"
-msgstr "Wählen Sie das Einhängeverzeichnis"
-
-#: src/ui/add_new_vault_dialog.rs:477 src/ui/import_vault_dialog.rs:397
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:413
-#: src/ui/preferences.rs:246
-msgid "Directories must not be equal."
-msgstr "Die Verzeichnisse dürfen nicht gleich sein."
-
-#: src/ui/add_new_vault_dialog.rs:516
-msgid "Encrypted data directory is not empty."
-msgstr "Das verschlüsselte Datenverzeichnis ist nicht leer."
-
-#: src/ui/add_new_vault_dialog.rs:541 src/ui/import_vault_dialog.rs:453
-msgid "Encrypted data directory is not valid."
-msgstr "Das verschlüsselte Datenverzeichnis ist ungültig."
-
-#: src/ui/add_new_vault_dialog.rs:574 src/ui/import_vault_dialog.rs:485
-msgid "Mount directory is not empty."
-msgstr "Das Einhängeverzeichnis ist nicht leer."
-
-#: src/ui/add_new_vault_dialog.rs:595 src/ui/import_vault_dialog.rs:496
-msgid "Mount directory is not valid."
-msgstr "Das Einhängeverzeichnis ist ungültig."
-
-#: src/ui/import_vault_dialog.rs:430
-msgid "Encrypted data directory is empty."
-msgstr "Das verschlüsselte Datenverzeichnis ist leer."
-
-#: src/ui/import_vault_dialog.rs:573
-msgid "Found gocryptfs configuration file."
-msgstr "Gocryptfs-Konfigurationsdatei wurde gefunden."
-
-#: src/ui/import_vault_dialog.rs:587
-msgid "Found CryFS configuration file."
-msgstr "CryFS-Konfigurationsdatei wurde gefunden."
-
-#: src/ui/import_vault_dialog.rs:611
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:488
-msgid "No configuration file found."
-msgstr "Es wurde keine Konfigurationsdatei gefunden."
-
-#: src/ui/pages/vaults_page_row.rs:250 src/ui/pages/vaults_page_row.rs:364
-#: src/ui/pages/vaults_page_row.rs:511 data/resources/ui/vaults_page_row.ui:22
-msgid "Open Vault"
-msgstr "Tresor öffnen"
-
-#: src/ui/pages/vaults_page_row.rs:259 src/ui/pages/vaults_page_row.rs:355
-#: src/ui/pages/vaults_page_row.rs:497
-msgid "Close Vault"
-msgstr "Tresor schließen"
-
-#: src/ui/pages/vaults_page_row.rs:522
-msgid "Backend is not installed."
-msgstr "Backend ist nicht installiert."
-
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:218
-msgid "Saved settings successfully!"
-msgstr "Einstellung wurden erfolgreich gespeichert!"
-
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:284
-msgid "Name is not valid."
-msgstr "Der Name ist ungültig."
-
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:310
-msgid "Name already exists."
-msgstr "Der Name existiert bereits."
-
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:348
-msgid "Directory is empty."
-msgstr "Das Verzeichnis ist leer."
-
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:364
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:394
-msgid "Directory is not valid."
-msgstr "Das Verzeichnis ist ungültig."
-
-#: src/ui/pages/vaults_page_row_settings_dialog.rs:384
-msgid "Directory is not empty."
-msgstr "Das Verzeichnis ist nicht leer."
-
-#: src/ui/preferences.rs:232
-msgid "Saved preferences successfully!"
-msgstr "Einstellungen wurden erfolgreich gespeichert!"
-
-#: src/ui/window.rs:264
-msgid ""
-"No backends available. Please install gocryptfs or CryFS on your system."
-msgstr ""
-"Es stehen keine Backends zur Verfügung. Bitte installieren Sie gocryptfs "
-"oder CryFS auf Ihrem System."
-
-#: data/resources/ui/add_new_vault_dialog.ui:15
+#: data/resources/ui/add_new_vault_window.ui:16
 msgid "New Vault"
 msgstr "Neuer Tresor"
 
-#: data/resources/ui/add_new_vault_dialog.ui:21
-#: data/resources/ui/import_vault_dialog.ui:21
+#: data/resources/ui/add_new_vault_window.ui:22
+#: data/resources/ui/import_vault_window.ui:22
 msgid "_Cancel"
 msgstr "_Abbrechen"
 
-#: data/resources/ui/add_new_vault_dialog.ui:27
-#: data/resources/ui/import_vault_dialog.ui:27
+#: data/resources/ui/add_new_vault_window.ui:28
+#: data/resources/ui/import_vault_window.ui:28
 msgid "_Previous"
 msgstr "_Zurück"
 
-#: data/resources/ui/add_new_vault_dialog.ui:34
-#: data/resources/ui/import_vault_dialog.ui:34
+#: data/resources/ui/add_new_vault_window.ui:35
+#: data/resources/ui/import_vault_window.ui:35
 msgid "_Next"
 msgstr "_Weiter"
 
-#: data/resources/ui/add_new_vault_dialog.ui:45
+#: data/resources/ui/add_new_vault_window.ui:46
 msgid "_Add"
 msgstr "_Hinzufügen"
 
-#: data/resources/ui/add_new_vault_dialog.ui:85
-#: data/resources/ui/import_vault_dialog.ui:182
-#: data/resources/ui/vaults_page_row_settings_dialog.ui:35
-msgid "_Name"
-msgstr "_Name"
+#: data/resources/ui/add_new_vault_window.ui:87
+#: data/resources/ui/import_vault_window.ui:169
+#: data/resources/ui/vaults_page_row_settings_window.ui:48
+msgid "Name"
+msgstr "Name"
 
-#: data/resources/ui/add_new_vault_dialog.ui:108
-#: data/resources/ui/import_vault_dialog.ui:205
-#: data/resources/ui/vaults_page_row_settings_dialog.ui:58
-msgid "_Backend"
-msgstr "_Backend"
+#: data/resources/ui/add_new_vault_window.ui:107
+#: data/resources/ui/import_vault_window.ui:189
+#: data/resources/ui/vaults_page_row_settings_window.ui:54
+msgid "Backend"
+msgstr "Backend"
 
-#: data/resources/ui/add_new_vault_dialog.ui:158
-msgid "_Password"
-msgstr "_Passwort"
+#: data/resources/ui/add_new_vault_window.ui:111
+msgid "gocryptfs"
+msgstr "gocryptfs"
 
-#: data/resources/ui/add_new_vault_dialog.ui:197
-#: data/resources/ui/import_vault_dialog.ui:85
+#: data/resources/ui/add_new_vault_window.ui:112
+msgid "CryFS"
+msgstr "CryFS"
+
+#: data/resources/ui/add_new_vault_window.ui:150
+#: data/resources/ui/vaults_page_row_password_prompt_window.ui:29
+msgid "Password"
+msgstr "Passwort"
+
+#: data/resources/ui/add_new_vault_window.ui:159
+msgid "Confirm Password"
+msgstr "Passwort bestätigen"
+
+#: data/resources/ui/add_new_vault_window.ui:183
+#: data/resources/ui/import_vault_window.ui:87
 #: data/resources/ui/preferences.ui:46
-#: data/resources/ui/vaults_page_row_settings_dialog.ui:82
-msgid "_Encrypted Data Directory"
-msgstr "_Verschlüsseltes Datenverzeichnis"
+#: data/resources/ui/vaults_page_row_settings_window.ui:60
+msgid "Encrypted Data Directory"
+msgstr "Verschlüsseltes Datenverzeichnis"
 
-#: data/resources/ui/add_new_vault_dialog.ui:235
-#: data/resources/ui/import_vault_dialog.ui:129
-#: data/resources/ui/preferences.ui:84
-#: data/resources/ui/vaults_page_row_settings_dialog.ui:120
-msgid "_Mount Directory"
-msgstr "_Einhängeverzeichnis"
+#: data/resources/ui/add_new_vault_window.ui:188
+#: data/resources/ui/import_vault_window.ui:92
+#: data/resources/ui/preferences.ui:52
+#: data/resources/ui/vaults_page_row_settings_window.ui:66
+#: src/ui/add_new_vault_window.rs:433 src/ui/import_vault_window.rs:348
+#: src/ui/pages/vaults_page_row_settings_window.rs:237
+#: src/ui/preferences.rs:246
+msgid "Choose Encrypted Data Directory"
+msgstr "Wählen Sie das verschlüsselte Datenverzeichnis"
 
-#: data/resources/ui/import_vault_dialog.ui:15
+#: data/resources/ui/add_new_vault_window.ui:213
+#: data/resources/ui/import_vault_window.ui:124
+#: data/resources/ui/preferences.ui:62
+#: data/resources/ui/vaults_page_row_settings_window.ui:76
+msgid "Mount Directory"
+msgstr "Einhängeverzeichnis"
+
+#: data/resources/ui/add_new_vault_window.ui:218
+#: data/resources/ui/import_vault_window.ui:129
+#: data/resources/ui/preferences.ui:68
+#: data/resources/ui/vaults_page_row_settings_window.ui:82
+#: src/ui/add_new_vault_window.rs:474 src/ui/import_vault_window.rs:391
+#: src/ui/pages/vaults_page_row_settings_window.rs:279
+#: src/ui/preferences.rs:287
+msgid "Choose Mount Directory"
+msgstr "Wählen Sie das Einhängeverzeichnis"
+
+#: data/resources/ui/import_vault_window.ui:16
 msgid "Import Vault"
 msgstr "Tresor importieren"
 
-#: data/resources/ui/import_vault_dialog.ui:45
+#: data/resources/ui/import_vault_window.ui:46
 msgid "_Import"
 msgstr "_Importieren"
 
-#: data/resources/ui/preferences.ui:11
-msgid "Preferences"
-msgstr "Einstellungen"
+#: data/resources/ui/preferences.ui:27
+#: data/resources/ui/vaults_page_row_settings_window.ui:27
+msgid "_General"
+msgstr "_Allgemein"
 
-#: data/resources/ui/preferences.ui:35
-msgid "_Default Paths"
-msgstr "_Standardpfade"
+#: data/resources/ui/preferences.ui:43
+msgid "Default Paths"
+msgstr "Standardpfade"
 
-#: data/resources/ui/preferences.ui:126
-#: data/resources/ui/vaults_page_row_settings_dialog.ui:173
-msgid "_Apply Changes"
-msgstr "_Änderungen übernehmen"
+#: data/resources/ui/preferences.ui:105 data/resources/ui/preferences.ui:157
+msgid "General"
+msgstr "Allgemein"
+
+#: data/resources/ui/preferences.ui:109 data/resources/ui/preferences.ui:161
+msgid "Use custom binary"
+msgstr "Eigene Binärdatei verwenden"
+
+#: data/resources/ui/preferences.ui:112 data/resources/ui/preferences.ui:164
+msgid "Custom Binary Path"
+msgstr "Eigener Binärdateipfad"
+
+#: data/resources/ui/preferences.ui:118 data/resources/ui/preferences.ui:170
+msgid "Choose Custom Binary"
+msgstr "Wählen Sie das eigene Einhängeverzeichnis"
 
 #: data/resources/ui/shortcuts.ui:11
 msgctxt "shortcut window"
@@ -491,11 +186,11 @@ msgctxt "vaults"
 msgid "Refresh"
 msgstr "Aktualisieren"
 
-#: data/resources/ui/start_page.ui:15 data/resources/ui/window.ui:135
+#: data/resources/ui/start_page.ui:15 data/resources/ui/window.ui:149
 msgid "Welcome to Vaults"
 msgstr "Willkommen bei Vaults"
 
-#: data/resources/ui/start_page.ui:16 data/resources/ui/window.ui:136
+#: data/resources/ui/start_page.ui:16 data/resources/ui/window.ui:150
 msgid "Add or Import a Vault."
 msgstr "Erstellen oder importieren Sie einen Tresor."
 
@@ -504,65 +199,452 @@ msgid "Vault X"
 msgstr "Tresor X"
 
 #: data/resources/ui/vaults_page_row.ui:15
+msgid "Select Vault"
+msgstr "Tresor auswählen"
+
+#: data/resources/ui/vaults_page_row.ui:26
 msgid "Open Folder"
 msgstr "Ordner öffnen"
 
-#: data/resources/ui/vaults_page_row.ui:29
+#: data/resources/ui/vaults_page_row.ui:36 src/ui/pages/vaults_page_row.rs:289
+#: src/ui/pages/vaults_page_row.rs:398 src/ui/pages/vaults_page_row.rs:586
+msgid "Open Vault"
+msgstr "Tresor öffnen"
+
+#: data/resources/ui/vaults_page_row.ui:46
 msgid "Open Settings"
 msgstr "Einstellungen öffnen"
 
-#: data/resources/ui/vaults_page_row_password_prompt_dialog.ui:14
+#: data/resources/ui/vaults_page_row_password_prompt_window.ui:23
 msgid "Unlock Vault"
 msgstr "Tresor entsperren"
 
-#: data/resources/ui/vaults_page_row_password_prompt_dialog.ui:15
+#: data/resources/ui/vaults_page_row_password_prompt_window.ui:24
 msgid "Enter the password to unlock the Vault."
 msgstr "Geben Sie das Passwort ein, um den Tresor zu entsperren."
 
-#: data/resources/ui/vaults_page_row_settings_dialog.ui:11
-msgid "Vault Settings"
-msgstr "Tresor-Einstellungen"
+#: data/resources/ui/vaults_page_row_password_prompt_window.ui:36
+msgid "Unlock"
+msgstr "Tresor entsperren"
 
-#: data/resources/ui/vaults_page_row_settings_dialog.ui:163
-msgid "_Remove"
-msgstr "_Entfernen"
+#: data/resources/ui/vaults_page_row_settings_window.ui:103
+msgid "_Security"
+msgstr "_Sicherheit"
 
-#: data/resources/ui/window.ui:21
+#: data/resources/ui/vaults_page_row_settings_window.ui:122
+msgid "Session lock"
+msgstr "Sitzungssperre"
+
+#: data/resources/ui/vaults_page_row_settings_window.ui:123
+msgid "Automatically lock when screen is locked and screen saver is activated"
+msgstr ""
+"Automatisch sperren wenn der Bildschirm gesperrt und Bildschirmschoner "
+"aktiviert wird"
+
+#: data/resources/ui/window.ui:13
 msgid "Add or Import New Vault"
 msgstr "Erstellen oder importieren Sie einen neuen Tresor"
 
-#: data/resources/ui/window.ui:57
+#: data/resources/ui/window.ui:20
+msgid "Remove Vaults"
+msgstr "Tresor entfernen"
+
+#: data/resources/ui/window.ui:46
+msgid "Select Vaults"
+msgstr "Tresor auswählen"
+
+#: data/resources/ui/window.ui:52
 msgid "Toggle Search"
 msgstr "Suche umschalten"
 
-#: data/resources/ui/window.ui:92
+#: data/resources/ui/window.ui:64
+msgid "Search vaults"
+msgstr "Tresor suchen"
+
+#: data/resources/ui/window.ui:106
 msgid "No Results"
 msgstr "Keine Ergebnisse"
 
-#: data/resources/ui/window.ui:93
+#: data/resources/ui/window.ui:107
 msgid "No Vault matching your search was found."
 msgstr "Es wurde kein Tresor gefunden, der Ihrer Suche entspricht."
 
-#: data/resources/ui/window.ui:180
+#: data/resources/ui/window.ui:197
 msgid "_New Vault"
 msgstr "_Neuer Tresor"
 
-#: data/resources/ui/window.ui:184
+#: data/resources/ui/window.ui:201
 msgid "_Import Vault"
 msgstr "_Tresor importieren"
 
-#: data/resources/ui/window.ui:192
+#: data/resources/ui/window.ui:209
 msgid "_Refresh"
 msgstr "_Aktualisieren"
 
-#: data/resources/ui/window.ui:198
+#: data/resources/ui/window.ui:215
 msgid "_Preferences"
 msgstr "_Einstellungen"
 
-#: data/resources/ui/window.ui:202
+#: data/resources/ui/window.ui:219
 msgid "_Keyboard Shortcuts"
 msgstr "_Tastenkürzel"
 
-#: data/resources/ui/window.ui:206
+#: data/resources/ui/window.ui:223
 msgid "_About Vaults"
 msgstr "_Über Vaults"
+
+#: src/application.rs:391
+msgid "translator-credits"
+msgstr ""
+
+#: src/backend/cryfs.rs:45 src/backend/cryfs.rs:70 src/backend/cryfs.rs:122
+msgid "No CryFs binary path set"
+msgstr "Kein CryFS Binärdateipfad gesetzt"
+
+#: src/backend/cryfs.rs:233 src/backend/cryfs.rs:283
+#: src/backend/gocryptfs.rs:229
+msgid "An unknown error occurred."
+msgstr "Ein unbekannter Fehler ist aufgetreten."
+
+#: src/backend/cryfs.rs:236
+msgid "Invalid arguments were given."
+msgstr "Es wurden ungültige Argumente eingegeben."
+
+#: src/backend/cryfs.rs:239 src/backend/gocryptfs.rs:215
+msgid "The password is wrong."
+msgstr "Das Passwort ist falsch."
+
+#: src/backend/cryfs.rs:242 src/backend/gocryptfs.rs:218
+msgid "The password is empty."
+msgstr "Das Passwort ist leer."
+
+#: src/backend/cryfs.rs:245
+msgid ""
+"The format of the encrypted data directory is too new for this CryFS "
+"version. Please update CryFS."
+msgstr ""
+"Das Format des verschlüsselten Datenverzeichnisses ist zu neu für diese "
+"Version von CryFS. Bitte aktualisieren Sie CryFS."
+
+#: src/backend/cryfs.rs:248
+msgid ""
+"The format of the encrypted data directory is too old for this CryFS version."
+msgstr ""
+"Das Format des verschlüsselten Datenverzeichnisses ist zu alt für diese "
+"Version von CryFS."
+
+#: src/backend/cryfs.rs:251
+msgid "The vault uses a different cipher than the default of CryFS."
+msgstr ""
+"Der Tresor verwendet eine andere Verschlüsselung als die "
+"Standardverschlüsselung von CryFS."
+
+#: src/backend/cryfs.rs:254
+msgid "The encrypted data directory does not exist or is inaccessible."
+msgstr ""
+"Das verschlüsselte Datenverzeichnis existiert nicht oder ist unzugänglich."
+
+#: src/backend/cryfs.rs:257
+msgid "The mount directory does not exist or is inaccessible."
+msgstr "Das Einhängeverzeichnis existiert nicht oder ist unzugänglich."
+
+#: src/backend/cryfs.rs:260
+msgid "The mount directory is inside the encrypted data directory."
+msgstr ""
+"Das Einhängeverzeichnis befindet sich im verschlüsselten Datenverzeichnis."
+
+#: src/backend/cryfs.rs:263
+msgid "The encrypted data directory is invalid."
+msgstr "Das verschlüsselte Datenverzeichnis ist ungültig."
+
+#: src/backend/cryfs.rs:266
+msgid ""
+"The encrypted data id in the configuration file is different to the last "
+"time this vault was opened. This could mean someone replaced files in the "
+"encrypted data directory with different ones."
+msgstr ""
+"Die ID der verschlüsselten Daten in der Konfigurationsdatei ist eine andere "
+"als beim letzten Öffnen dieses Tresors. Dies könnte bedeuten, dass jemand "
+"Dateien im verschlüsselten Datenverzeichnis durch andere ersetzt hat."
+
+#: src/backend/cryfs.rs:269
+msgid ""
+"The encryption key for your encrypted files is different to the last time "
+"this vault was opened. This could mean someone replaced files in the "
+"encrypted data directory with different ones."
+msgstr ""
+"Der Schlüssel für Ihre verschlüsselten Dateien ist ein anderer als beim "
+"letzten Öffnen dieses Tresors. Dies könnte bedeuten, dass jemand Dateien im "
+"verschlüsselten Datenverzeichnis durch andere ersetzt hat."
+
+#: src/backend/cryfs.rs:272
+msgid "Vaults' configuration and the encrypted data configuration mismatches."
+msgstr ""
+"Die Konfiguration von Vaults und die Konfiguration der verschlüsselten Daten "
+"stimmen nicht überein."
+
+#: src/backend/cryfs.rs:275
+msgid ""
+"The encrypted data directory is in single-user mode and can only be used "
+"from the user that created it."
+msgstr ""
+"Das Verzeichnis der verschlüsselten Daten befindet sich im "
+"Einzelbenutzermodus und kann nur von dem Benutzer verwendet werden, der es "
+"erstellt hat."
+
+#: src/backend/cryfs.rs:278
+msgid ""
+"CryFS detected an integrity violation. The encrypted data directory will be "
+"accessible again after the integrity state file has been deleted."
+msgstr ""
+"CryFS hat eine Integritätsverletzung festgestellt. Das Verzeichnis der "
+"verschlüsselten Daten ist wieder zugänglich, nachdem die Integritätsstatus-"
+"Datei gelöscht wurde."
+
+#: src/backend/cryfs.rs:281
+msgid "An integrity violation was detected. Vault will be unmounted."
+msgstr ""
+"Eine Integritätsverletzung wurde festgestellt. Der Tresor wird ausgehängt."
+
+#: src/backend/gocryptfs.rs:46 src/backend/gocryptfs.rs:73
+#: src/backend/gocryptfs.rs:125
+msgid "No gocryptfs binary path set"
+msgstr "Kein gocryptfs Binärdateipfad gesetzt"
+
+#: src/backend/gocryptfs.rs:209
+msgid "The encrypted data directory is not empty."
+msgstr "Das verschlüsselte Datenverzeichnis ist nicht leer."
+
+#: src/backend/gocryptfs.rs:212
+msgid "The mount directory is not empty."
+msgstr "Das Einhängeverzeichnis ist nicht leer."
+
+#: src/backend/gocryptfs.rs:221
+msgid "Vaults cannot read configuration file."
+msgstr "Vaults kann die Konfigurationsdatei nicht lesen."
+
+#: src/backend/gocryptfs.rs:224
+msgid "Vaults cannot write configuration file."
+msgstr "Vaults kann die Konfigurationsdatei nicht schreiben."
+
+#: src/backend/gocryptfs.rs:227
+msgid "The file system check reported an error."
+msgstr "Die Dateisystemprüfung hat einen Fehler gemeldet."
+
+#: src/backend/gocryptfs.rs:242
+msgid "You don't have the necessary privileges to unmount the directory."
+msgstr "Sie haben nicht die benötigten Rechte um das Verzeichnis auszuhängen."
+
+#: src/backend/gocryptfs.rs:244
+msgid "The data directory (mount point) does not exist."
+msgstr "Das Datenverzeichnis existiert nicht."
+
+#: src/backend/gocryptfs.rs:245
+msgid "Internal error."
+msgstr "Interner Fehler."
+
+#: src/backend/gocryptfs.rs:247
+msgid ""
+"The data directory (mount point) is busy. There are open files or processes "
+"using the filesystem."
+msgstr ""
+"Das Datenverzeichnis ist beschäftigt. Offene Dateien oder Prozess verwenden "
+"noch das Dateisystem."
+
+#: src/backend/mod.rs:156
+msgid "Failed to create encrypted data directory: Permission denied."
+msgstr ""
+"Das verschlüsselte Datenverzeichnis konnte nicht erstellt werden: "
+"Berechtigung verweigert."
+
+#: src/backend/mod.rs:159
+msgid "Failed to create encrypted data directory: Connection refused."
+msgstr ""
+"Das verschlüsselte Datenverzeichnis konnte nicht erstellt werden: Verbindung "
+"verweigert."
+
+#: src/backend/mod.rs:162
+msgid "Failed to create encrypted data directory: Connection reset."
+msgstr ""
+"Das verschlüsselte Datenverzeichnis konnte nicht erstellt werden: Verbindung "
+"zurückgesetzt."
+
+#: src/backend/mod.rs:165
+msgid "Failed to create encrypted data directory: Connection aborted."
+msgstr ""
+"Das verschlüsselte Datenverzeichnis konnte nicht erstellt werden: Verbindung "
+"abgebrochen."
+
+#: src/backend/mod.rs:168
+msgid "Failed to create encrypted data directory: Not connected."
+msgstr ""
+"Das verschlüsselte Datenverzeichnis konnte nicht erstellt werden: Nicht "
+"verbunden."
+
+#: src/backend/mod.rs:171
+msgid "Failed to create encrypted data directory."
+msgstr "Das verschlüsselte Datenverzeichnis konnte nicht erstellt werden."
+
+#: src/backend/mod.rs:188
+msgid "Failed to create mount directory: Permission denied."
+msgstr ""
+"Das Einhängeverzeichnis konnte nicht erstellt werden: Berechtigung "
+"verweigert."
+
+#: src/backend/mod.rs:191
+msgid "Failed to create mount directory: Connection refused."
+msgstr ""
+"Das Einhängeverzeichnis konnte nicht erstellt werden: Verbindung verweigert."
+
+#: src/backend/mod.rs:194
+msgid "Failed to create mount directory: Connection reset."
+msgstr ""
+"Das Einhängeverzeichnis konnte nicht erstellt werden: Verbindung "
+"zurückgesetzt."
+
+#: src/backend/mod.rs:197
+msgid "Failed to create mount directory: Connection aborted."
+msgstr ""
+"Das Einhängeverzeichnis konnte nicht erstellt werden: Verbindung abgebrochen."
+
+#: src/backend/mod.rs:200
+msgid "Failed to create mount directory: Not connected."
+msgstr "Das Einhängeverzeichnis konnte nicht erstellt werden: Nicht verbunden."
+
+#: src/backend/mod.rs:203
+msgid "Failed to create mount directory."
+msgstr "Das Einhängeverzeichnis konnte nicht erstellt werden."
+
+#: src/ui/add_new_vault_window.rs:345 src/ui/import_vault_window.rs:301
+msgid "No backend installed. Please install gocryptfs or CryFS."
+msgstr ""
+"Kein Backend ist installiert. Bitte installieren Sie gocryptfs oder CryFS."
+
+#: src/ui/add_new_vault_window.rs:379
+msgid ""
+"CryFS works well together with cloud services like Dropbox, iCloud, OneDrive "
+"and others. It does not expose directory structure, number of files or file "
+"sizes in the encrypted data directory. While being considered safe, there is "
+"no independent audit of CryFS."
+msgstr ""
+"CryFS funktioniert gut mit Cloud-Diensten wie Dropbox, iCloud, OneDrive und "
+"anderen. Die Verzeichnisstruktur, die Anzahl der Dateien oder die "
+"Dateigrößen im verschlüsselten Datenverzeichnis werden nicht offengelegt. Es "
+"gilt zwar als sicher, es gibt jedoch kein unabhängiges Audit von CryFS."
+
+#: src/ui/add_new_vault_window.rs:382
+msgid ""
+"Fast and robust, gocryptfs works well in general cases where third-parties "
+"do not always have access to the encrypted data directory (e.g. file hosting "
+"services). It exposes directory structure, number of files and file sizes. A "
+"security audit in 2017 verified gocryptfs is safe against third-parties that "
+"can read or write to encrypted data."
+msgstr ""
+"Schnell und robust. Gocryptfs eignet sich gut für allgemeine Fälle, in denen "
+"Dritte nicht immer Zugriff auf das verschlüsselte Datenverzeichnis haben (z. "
+"B. Filehosting-Dienste). Es legt die Verzeichnisstruktur, die Anzahl der "
+"Dateien und die Dateigrößen offen. 2017 hat ein Sicherheitsaudit bestätigt, "
+"dass gocryptfs sicher gegen Dritte ist, die die verschlüsselten Daten lesen "
+"oder schreiben können."
+
+#: src/ui/add_new_vault_window.rs:435 src/ui/add_new_vault_window.rs:476
+#: src/ui/import_vault_window.rs:350 src/ui/import_vault_window.rs:393
+#: src/ui/pages/vaults_page_row_settings_window.rs:239
+#: src/ui/pages/vaults_page_row_settings_window.rs:281
+#: src/ui/preferences.rs:248 src/ui/preferences.rs:289
+msgid "Select"
+msgstr "Auswählen"
+
+#: src/ui/add_new_vault_window.rs:521 src/ui/import_vault_window.rs:445
+msgid "Directories must not be equal."
+msgstr "Die Verzeichnisse dürfen nicht gleich sein."
+
+#: src/ui/add_new_vault_window.rs:558
+msgid "Encrypted data directory is not empty."
+msgstr "Das verschlüsselte Datenverzeichnis ist nicht leer."
+
+#: src/ui/add_new_vault_window.rs:587 src/ui/import_vault_window.rs:503
+msgid "Encrypted data directory is not valid."
+msgstr "Das verschlüsselte Datenverzeichnis ist ungültig."
+
+#: src/ui/add_new_vault_window.rs:626 src/ui/import_vault_window.rs:541
+msgid "Mount directory is not empty."
+msgstr "Das Einhängeverzeichnis ist nicht leer."
+
+#: src/ui/add_new_vault_window.rs:649 src/ui/import_vault_window.rs:552
+msgid "Mount directory is not valid."
+msgstr "Das Einhängeverzeichnis ist ungültig."
+
+#: src/ui/import_vault_window.rs:476
+msgid "Encrypted data directory is empty."
+msgstr "Das verschlüsselte Datenverzeichnis ist leer."
+
+#: src/ui/import_vault_window.rs:634
+msgid "Found gocryptfs configuration file."
+msgstr "Gocryptfs-Konfigurationsdatei wurde gefunden."
+
+#: src/ui/import_vault_window.rs:658
+msgid "Found CryFS configuration file."
+msgstr "CryFS-Konfigurationsdatei wurde gefunden."
+
+#: src/ui/import_vault_window.rs:692
+msgid "No configuration file found."
+msgstr "Es wurde keine Konfigurationsdatei gefunden."
+
+#: src/ui/pages/vaults_page_row.rs:298 src/ui/pages/vaults_page_row.rs:389
+#: src/ui/pages/vaults_page_row.rs:572
+msgid "Close Vault"
+msgstr "Tresor schließen"
+
+#: src/ui/pages/vaults_page_row.rs:596
+msgid "Backend is not installed."
+msgstr "Backend ist nicht installiert."
+
+#: src/ui/window.rs:266 src/ui/window.rs:658
+msgid "Add or import a Vault."
+msgstr "Erstellen oder importieren Sie einen Tresor."
+
+#~ msgid "Name is already taken."
+#~ msgstr "Der Name ist bereits vergeben."
+
+#~ msgid "Cancel"
+#~ msgstr "Abbrechen"
+
+#~ msgid "Saved settings successfully!"
+#~ msgstr "Einstellung wurden erfolgreich gespeichert!"
+
+#~ msgid "Name is not valid."
+#~ msgstr "Der Name ist ungültig."
+
+#~ msgid "Name already exists."
+#~ msgstr "Der Name existiert bereits."
+
+#~ msgid "Directory is empty."
+#~ msgstr "Das Verzeichnis ist leer."
+
+#~ msgid "Directory is not valid."
+#~ msgstr "Das Verzeichnis ist ungültig."
+
+#~ msgid "Directory is not empty."
+#~ msgstr "Das Verzeichnis ist nicht leer."
+
+#~ msgid "Saved preferences successfully!"
+#~ msgstr "Einstellungen wurden erfolgreich gespeichert!"
+
+#~ msgid ""
+#~ "No backends available. Please install gocryptfs or CryFS on your system."
+#~ msgstr ""
+#~ "Es stehen keine Backends zur Verfügung. Bitte installieren Sie gocryptfs "
+#~ "oder CryFS auf Ihrem System."
+
+#~ msgid "Preferences"
+#~ msgstr "Einstellungen"
+
+#~ msgid "_Apply Changes"
+#~ msgstr "_Änderungen übernehmen"
+
+#~ msgid "Vault Settings"
+#~ msgstr "Tresor-Einstellungen"
+
+#~ msgid "_Remove"
+#~ msgstr "_Entfernen"
