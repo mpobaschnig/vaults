@@ -1,6 +1,6 @@
 project('vaults',
         'rust',
-        version: '0.11.0',
+        version: '0.12.0',
         license: 'GPL-3.0-or-later',
   meson_version: '>= 0.50')
 
