@@ -4,7 +4,7 @@ on: [pull_request, workflow_dispatch]
 
 jobs:
   quality:
-    runs-on: ubuntu-24.04
+    runs-on: ubuntu-latest
     container: fedora:42
     steps:
       - uses: actions/checkout@v4
