@@ -1,4 +1,5 @@
 _build/
+.idea
 .flatpak-builder/
 .flatpak/
 .vscode/settings.json
