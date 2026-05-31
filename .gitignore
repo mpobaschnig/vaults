@@ -1,13 +1,16 @@
-_build/
+# Folders
+.flatpak-builder
+.flatpak
 .idea
-.flatpak-builder/
-.flatpak/
-.vscode/settings.json
+.vscode
+_build
+build-aux/.flatpak-builder
+build-aux/app
+build
+builddir
+target
+
+# Files
 *.ui.in~
 *.ui~
-build-aux/.flatpak-builder/
-build-aux/app
-build/
-builddir/
 src/config.rs
-target/
