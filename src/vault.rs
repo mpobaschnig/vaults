@@ -134,14 +134,13 @@ impl Vault {
             return is_vault_mounted_all;
         }
 
-        let canon_config_path = std::path::Path::new(&config_mount_directory)
-            .canonicalize()
-            .ok();
+        let canonicalized_config_path =
+            std::path::Path::new(&config_mount_directory).canonicalize();
 
-        if let Some(canon_config_path) = canon_config_path {
+        if let Ok(canonicalized_config_path) = canonicalized_config_path {
             log::info!(
                 "Opening canonical path: {}",
-                &canon_config_path.as_os_str().to_str().unwrap()
+                &canonicalized_config_path.as_os_str().to_str().unwrap()
             );
             for mount in VolumeMonitor::get().mounts() {
                 let is_configured_mount = mount
@@ -149,7 +148,7 @@ impl Vault {
                     .path()
                     .map(|mount_path| std::path::Path::canonicalize(&mount_path))
                     .and_then(Result::ok)
-                    .map(|canon_mount_path| canon_mount_path == canon_config_path)
+                    .map(|canon_mount_path| canon_mount_path == canonicalized_config_path)
                     .unwrap_or(false);
                 if is_configured_mount {
                     return true;
