@@ -608,36 +608,39 @@ impl VaultsPageRow {
 
         let config_mount_directory = self.imp().config.borrow().clone().unwrap().mount_directory;
 
-        let config_mount_directory_path = std::path::Path::new(&config_mount_directory)
-            .canonicalize()
-            .unwrap();
-
-        let config_mount_directory_file_name = config_mount_directory_path.file_name();
-
-        match config_mount_directory_file_name {
-            Some(config_mount_directory_file_name) => {
-                match config_mount_directory_file_name.to_str() {
-                    Some(file_name) => {
-                        let eq_name = mount.name() == file_name;
-                        let eq_path =
-                            mount.default_location().path().unwrap() == config_mount_directory_path;
-                        if eq_name && eq_path {
-                            log::debug!(
-                                "Setting row state opened for mount with name: \"{}\", and path \"{}\"",
-                                file_name,
-                                config_mount_directory_path.display()
-                            );
-                            self.set_vault_row_state_opened();
+        let config_mount_directory_path =
+            std::path::Path::new(&config_mount_directory).canonicalize();
+        if let Ok(canonicalized_config_mount_directory_path) = config_mount_directory_path {
+            match canonicalized_config_mount_directory_path.file_name() {
+                Some(config_mount_directory_file_name) => {
+                    match config_mount_directory_file_name.to_str() {
+                        Some(file_name) => {
+                            let eq_name = mount.name() == file_name;
+                            let eq_path = mount.default_location().path().unwrap()
+                                == canonicalized_config_mount_directory_path;
+                            if eq_name && eq_path {
+                                log::debug!(
+                                    "Setting row state opened for mount with name: \"{}\", and path \"{}\"",
+                                    file_name,
+                                    canonicalized_config_mount_directory_path.display()
+                                );
+                                self.set_vault_row_state_opened();
+                            }
+                        }
+                        None => {
+                            log::error!("Could not get mount directory path");
                         }
                     }
-                    None => {
-                        log::error!("Could not get mount directory path");
-                    }
+                }
+                None => {
+                    log::error!("Could not get config mount directory file name");
                 }
             }
-            None => {
-                log::error!("Could not get config mount directory file name");
-            }
+        } else {
+            log::error!(
+                "Could not canonicalize config mount directory path: {:?}",
+                config_mount_directory
+            );
         }
     }
 
@@ -646,36 +649,40 @@ impl VaultsPageRow {
 
         let config_mount_directory = self.imp().config.borrow().clone().unwrap().mount_directory;
 
-        let config_mount_directory_path = std::path::Path::new(&config_mount_directory)
-            .canonicalize()
-            .unwrap();
+        let config_mount_directory_path =
+            std::path::Path::new(&config_mount_directory).canonicalize();
 
-        let config_mount_directory_file_name = config_mount_directory_path.file_name();
-
-        match config_mount_directory_file_name {
-            Some(config_mount_directory_file_name) => {
-                match config_mount_directory_file_name.to_str() {
-                    Some(file_name) => {
-                        let eq_name = mount.name() == file_name;
-                        let eq_path =
-                            mount.default_location().path().unwrap() == config_mount_directory_path;
-                        if eq_name && eq_path {
-                            log::debug!(
-                                "Setting row state closed for mount with name: \"{}\", and path \"{}\"",
-                                file_name,
-                                config_mount_directory_path.display()
-                            );
-                            self.set_vault_row_state_closed();
+        if let Ok(canonicalized_config_mount_directory_path) = config_mount_directory_path {
+            match canonicalized_config_mount_directory_path.file_name() {
+                Some(config_mount_directory_file_name) => {
+                    match config_mount_directory_file_name.to_str() {
+                        Some(file_name) => {
+                            let eq_name = mount.name() == file_name;
+                            let eq_path = mount.default_location().path().unwrap()
+                                == canonicalized_config_mount_directory_path;
+                            if eq_name && eq_path {
+                                log::debug!(
+                                    "Setting row state closed for mount with name: \"{}\", and path \"{}\"",
+                                    file_name,
+                                    canonicalized_config_mount_directory_path.display()
+                                );
+                                self.set_vault_row_state_closed();
+                            }
+                        }
+                        None => {
+                            log::error!("Could not get mount directory path");
                         }
                     }
-                    None => {
-                        log::error!("Could not get mount directory path");
-                    }
+                }
+                None => {
+                    log::error!("Could not get config mount directory file name");
                 }
             }
-            None => {
-                log::error!("Could not get config mount directory file name");
-            }
+        } else {
+            log::error!(
+                "Could not canonicalize config mount directory path: {:?}",
+                config_mount_directory
+            );
         }
     }
 
