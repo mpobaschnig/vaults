@@ -117,7 +117,9 @@ impl GlobalConfigManager {
             log::debug!("Loaded .flatpak-info successfully");
             *object.imp().flatpak_info.borrow_mut() = Some(flatpak_info);
         } else {
-            log::error!("Could not load .flatpak-info");
+            log::warn!(
+                "Could not load .flatpak-info. We are not running in a flatpak environment."
+            );
         }
 
         match user_config_dir().as_os_str().to_str() {
