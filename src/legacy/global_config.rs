@@ -22,17 +22,17 @@ use crate::{config::APP_ID, global_config_manager};
 use gtk::gio::{Settings, prelude::SettingsExt};
 
 pub fn needs_conversion() -> bool {
-    if let Some((major, minor, patch)) = get_sem_version(APP_ID) {
-        if major > 0 || minor >= 11 {
-            log::debug!(
-                "Version is {}.{}.{}, no conversion needed",
-                major,
-                minor,
-                patch
-            );
+    if let Some((major, minor, patch)) = get_sem_version(APP_ID)
+        && (major > 0 || minor >= 11)
+    {
+        log::debug!(
+            "Version is {}.{}.{}, no conversion needed",
+            major,
+            minor,
+            patch
+        );
 
-            return false;
-        }
+        return false;
     }
 
     true
