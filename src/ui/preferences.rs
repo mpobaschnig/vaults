@@ -99,14 +99,14 @@ mod imp {
     }
 
     impl ObjectImpl for VaultsSettingsWindow {
-        fn constructed(&self) {
-            self.parent_constructed();
-        }
-
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> =
                 Lazy::new(|| vec![Signal::builder("refresh").build()]);
             SIGNALS.as_ref()
+        }
+
+        fn constructed(&self) {
+            self.parent_constructed();
         }
     }
 
@@ -228,7 +228,7 @@ impl VaultsSettingsWindow {
     }
 
     fn encrypted_data_directory_button_clicked(&self) {
-        let window = gtk::gio::Application::default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
@@ -269,7 +269,7 @@ impl VaultsSettingsWindow {
     }
 
     fn mount_directory_button_clicked(&self) {
-        let window = gtk::gio::Application::default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()

@@ -559,8 +559,8 @@ impl ApplicationWindow {
                         }
                         Err(e) => {
                             log::error!("Could not init vault: {}", e);
-                            gtk::glib::MainContext::default().spawn_local(async move {
-                                let window = gtk::gio::Application::default()
+                            glib::MainContext::default().spawn_local(async move {
+                                let window = gio::Application::default()
                                     .unwrap()
                                     .downcast_ref::<VApplication>()
                                     .unwrap()
@@ -590,7 +590,7 @@ impl ApplicationWindow {
             }),
         );
 
-        let window = gtk::gio::Application::default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
@@ -627,7 +627,7 @@ impl ApplicationWindow {
             }),
         );
 
-        let window = gtk::gio::Application::default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()

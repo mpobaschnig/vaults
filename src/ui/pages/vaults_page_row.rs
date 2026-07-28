@@ -99,16 +99,6 @@ mod imp {
     }
 
     impl ObjectImpl for VaultsPageRow {
-        fn constructed(&self) {
-            let obj = self.obj();
-            self.parent_constructed();
-
-            obj.setup_connect_handlers();
-
-            self.open_folder_button.set_visible(false);
-            self.select_vault_button.set_visible(false);
-        }
-
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
                 vec![
@@ -117,6 +107,16 @@ mod imp {
                 ]
             });
             SIGNALS.as_ref()
+        }
+
+        fn constructed(&self) {
+            let obj = self.obj();
+            self.parent_constructed();
+
+            obj.setup_connect_handlers();
+
+            self.open_folder_button.set_visible(false);
+            self.select_vault_button.set_visible(false);
         }
     }
 
@@ -210,7 +210,7 @@ impl VaultsPageRow {
                 }
             ));
 
-        let window = gtk::gio::Application::default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
@@ -292,7 +292,7 @@ impl VaultsPageRow {
                         settings_button.set_sensitive(true);
                     }
                     Message::Error(e) => {
-                        log::error!("Error closing vault: {}", &e);
+                        log::error!("Error closing vault: {}", e);
 
                         locker_button.set_icon_name("changes-allow-symbolic");
                         locker_button.set_tooltip_text(Some(&gettext("Close Vault")));
@@ -301,8 +301,8 @@ impl VaultsPageRow {
                         settings_button.set_sensitive(false);
 
                         let vault_name = vaults_page_row.title().to_string();
-                        gtk::glib::MainContext::default().spawn_local(async move {
-                            let window = gtk::gio::Application::default()
+                        glib::MainContext::default().spawn_local(async move {
+                            let window = gio::Application::default()
                                 .unwrap()
                                 .downcast_ref::<VApplication>()
                                 .unwrap()
@@ -392,7 +392,7 @@ impl VaultsPageRow {
                                     settings_button.set_sensitive(false);
                                 }
                                 Message::Error(e) => {
-                                    log::error!("Error opening vault: {}", &e);
+                                    log::error!("Error opening vault: {}", e);
 
                                     locker_button.set_icon_name("changes-prevent-symbolic");
                                     locker_button.set_tooltip_text(Some(&gettext("Open Vault")));
@@ -401,8 +401,8 @@ impl VaultsPageRow {
                                     settings_button.set_sensitive(true);
 
                                     let vault_name = vaults_page_row.title().to_string();
-                                    gtk::glib::MainContext::default().spawn_local(async move {
-                                        let window = gtk::gio::Application::default()
+                                    glib::MainContext::default().spawn_local(async move {
+                                        let window = gio::Application::default()
                                             .unwrap()
                                             .downcast_ref::<VApplication>()
                                             .unwrap()
@@ -441,7 +441,7 @@ impl VaultsPageRow {
             ),
         );
 
-        let window = gtk::gio::Application::default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
@@ -510,7 +510,7 @@ impl VaultsPageRow {
             ),
         );
 
-        let window = gtk::gio::Application::default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()

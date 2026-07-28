@@ -176,7 +176,7 @@ impl GlobalConfigManager {
 
                     match home_dir().to_str() {
                         Some(home_directory) => {
-                            log::debug!("Got home directory: {}", &home_directory);
+                            log::debug!("Got home directory: {}", home_directory);
 
                             *global_config.mount_directory.borrow_mut() =
                                 Some(home_directory.to_owned() + "/Vaults/");
@@ -189,7 +189,7 @@ impl GlobalConfigManager {
                     match toml::to_string_pretty(&global_config) {
                         Ok(contents) => match std::fs::write(path, &contents) {
                             Ok(_) => {
-                                log::debug!("Successfully wrote user config: {}", &contents);
+                                log::debug!("Successfully wrote user config: {}", contents);
                             }
                             Err(e) => {
                                 log::error!("Failed to write user config: {}", e);
@@ -211,7 +211,7 @@ impl GlobalConfigManager {
             match toml::to_string_pretty(&self.imp().global_config.borrow().clone()) {
                 Ok(contents) => match std::fs::write(path, &contents) {
                     Ok(_) => {
-                        log::debug!("Successfully wrote user config: {}", &contents);
+                        log::debug!("Successfully wrote user config: {}", contents);
                     }
                     Err(e) => {
                         log::error!("Failed to write user config: {}", e);
