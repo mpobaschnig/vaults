@@ -140,7 +140,7 @@ impl Vault {
         if let Ok(canonicalized_config_path) = canonicalized_config_path {
             log::info!(
                 "Opening canonical path: {}",
-                &canonicalized_config_path.as_os_str().to_str().unwrap()
+                canonicalized_config_path.as_os_str().to_str().unwrap()
             );
             for mount in VolumeMonitor::get().mounts() {
                 let is_configured_mount = mount

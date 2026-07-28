@@ -112,15 +112,6 @@ mod imp {
     }
 
     impl ObjectImpl for ImportVaultDialog {
-        fn constructed(&self) {
-            let obj = self.obj();
-            self.parent_constructed();
-
-            obj.fill_combo_box_text();
-            obj.setup_actions();
-            obj.setup_signals();
-        }
-
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
                 vec![
@@ -129,6 +120,15 @@ mod imp {
                 ]
             });
             SIGNALS.as_ref()
+        }
+
+        fn constructed(&self) {
+            let obj = self.obj();
+            self.parent_constructed();
+
+            obj.fill_combo_box_text();
+            obj.setup_actions();
+            obj.setup_signals();
         }
     }
 
@@ -330,7 +330,7 @@ impl ImportVaultDialog {
     }
 
     pub fn encrypted_data_directory_button_clicked(&self) {
-        let window = gtk::gio::Application::default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
@@ -373,7 +373,7 @@ impl ImportVaultDialog {
     }
 
     pub fn mount_directory_button_clicked(&self) {
-        let window = gtk::gio::Application::default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()

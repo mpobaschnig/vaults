@@ -219,7 +219,7 @@ impl VaultsPageRowSettingsWindow {
     }
 
     fn encrypted_data_directory_button_clicked(&self) {
-        let window = gtk::gio::Application::default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
@@ -261,7 +261,7 @@ impl VaultsPageRowSettingsWindow {
     }
 
     fn mount_directory_button_clicked(&self) {
-        let window = gtk::gio::Application::default()
+        let window = gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()

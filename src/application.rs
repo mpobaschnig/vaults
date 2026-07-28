@@ -78,7 +78,7 @@ mod imp {
 
     impl ObjectImpl for VApplication {}
 
-    impl gio::subclass::prelude::ApplicationImpl for VApplication {
+    impl ApplicationImpl for VApplication {
         fn activate(&self) {
             log::trace!("GtkApplication<VApplication>::activate");
 
@@ -119,7 +119,7 @@ mod imp {
                             log::debug!(
                                 "Opening vault {:?}: {:?}",
                                 *self.only_pompt_vault.borrow(),
-                                &vault_config
+                                vault_config
                             );
 
                             let dialog = VaultsPageRowPasswordPromptWindow::new();
@@ -172,7 +172,7 @@ mod imp {
                             log::debug!(
                                 "Closing vault {:?}: {:?}",
                                 *self.only_pompt_vault.borrow(),
-                                &vault_config
+                                vault_config
                             );
 
                             let result = Backend::close(vault_config);
@@ -313,7 +313,7 @@ impl VApplication {
             match user_data_dir().as_os_str().to_str() {
                 Some(user_data_directory) => {
                     let encrypted_data_directory = user_data_directory.to_owned() + "/";
-                    log::info!("Got user data directory: {}", &encrypted_data_directory);
+                    log::info!("Got user data directory: {}", encrypted_data_directory);
                     settings
                         .set_string("encrypted-data-directory", &encrypted_data_directory)
                         .unwrap();
@@ -328,10 +328,7 @@ impl VApplication {
             match home_dir().to_str() {
                 Some(home_directory) => {
                     let mount_directory = home_directory.to_owned() + "/Vaults/";
-                    log::debug!(
-                        "Setting mount directory preference to: {}",
-                        &mount_directory
-                    );
+                    log::debug!("Setting mount directory preference to: {}", mount_directory);
                     settings
                         .set_string("mount-directory", &mount_directory)
                         .unwrap();
