@@ -191,12 +191,12 @@ impl UserConfigManager {
     }
 
     pub fn write_config(&self, map: &mut HashMap<Uuid, VaultConfig>) {
-        log::trace!("write_config({:?})", map);
+        log::trace!("write_config({:?})", &map);
         if let Some(path) = self.imp().user_config_directory.borrow().as_ref() {
             match toml::to_string_pretty(&map) {
                 Ok(contents) => match std::fs::write(path, &contents) {
                     Ok(_) => {
-                        log::debug!("Successfully wrote user config: {}", contents);
+                        log::debug!("Successfully wrote user config: {}", &contents);
                     }
                     Err(e) => {
                         log::error!("Failed to write user config: {}", e);
@@ -210,7 +210,7 @@ impl UserConfigManager {
     }
 
     pub fn add_vault(&self, vault: Vault) {
-        log::debug!("Add vault: {:?}, {:?}", vault.name(), vault.config());
+        log::debug!("Add vault: {:?}, {:?}", &vault.name(), &vault.config());
 
         #[allow(unused_assignments)]
         let mut is_map_empty = false;
@@ -226,7 +226,7 @@ impl UserConfigManager {
     }
 
     pub fn remove_vault(self, uuid: Uuid) {
-        log::trace!("remove_vault({:?})", uuid);
+        log::trace!("remove_vault({:?})", &uuid);
 
         #[allow(unused_assignments)]
         let mut is_map_empty = false;
@@ -243,7 +243,7 @@ impl UserConfigManager {
     }
 
     pub fn change_vault(&self, uuid: Uuid, new_vault_config: VaultConfig) {
-        log::trace!("change_vault({:?}, {:?})", uuid, new_vault_config);
+        log::trace!("change_vault({:?}, {:?})", &uuid, &new_vault_config);
 
         let map = &mut self.imp().vaults.borrow_mut();
         map.insert(uuid, new_vault_config);

@@ -100,8 +100,8 @@ pub fn init(
         log::info!("CryFS init successful. Closing now");
         close(settings, vault_config)
     } else {
-        std::io::stdout().write_all(&output.stdout)?;
-        std::io::stderr().write_all(&output.stderr)?;
+        std::io::stdout().write_all(&output.stdout).unwrap();
+        std::io::stderr().write_all(&output.stderr).unwrap();
 
         let err_code = output.status.code();
         log::error!("CryFS init failed: {:?}", err_code);
@@ -147,8 +147,8 @@ pub fn open(
         log::info!("CryFS open successful");
         Ok(())
     } else {
-        std::io::stdout().write_all(&output.stdout)?;
-        std::io::stderr().write_all(&output.stderr)?;
+        std::io::stdout().write_all(&output.stdout).unwrap();
+        std::io::stderr().write_all(&output.stderr).unwrap();
 
         let err_code = output.status.code();
         log::error!("CryFS open failed: {:?}", err_code);
@@ -173,8 +173,8 @@ pub fn close(_settings: &Settings, vault_config: &VaultConfig) -> Result<(), Bac
         log::info!("CryFS close successful");
         Ok(())
     } else {
-        std::io::stdout().write_all(&output.stdout)?;
-        std::io::stderr().write_all(&output.stderr)?;
+        std::io::stdout().write_all(&output.stdout).unwrap();
+        std::io::stderr().write_all(&output.stderr).unwrap();
 
         let err_code = output.status.code();
         log::error!("CryFS close failed: {:?}", err_code);

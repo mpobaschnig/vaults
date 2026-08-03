@@ -100,8 +100,11 @@ fn get_sem_version(current_version: &str) -> Option<(u32, u32, u32)> {
 
     if current_version.contains("-") {
         let parts: Vec<&str> = current_version.split("-").collect();
-        let first = parts.first()?;
-        version.push(first.to_string());
+        if let Some(first) = parts.first() {
+            version.push(first.to_string());
+        } else {
+            return None;
+        }
     } else {
         version.push(current_version.to_owned());
     }

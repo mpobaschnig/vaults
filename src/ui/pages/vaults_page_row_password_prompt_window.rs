@@ -66,17 +66,17 @@ mod imp {
     }
 
     impl ObjectImpl for VaultsPageRowPasswordPromptWindow {
-        fn signals() -> &'static [Signal] {
-            static SIGNALS: Lazy<Vec<Signal>> =
-                Lazy::new(|| vec![Signal::builder("unlock").build()]);
-            SIGNALS.as_ref()
-        }
-
         fn constructed(&self) {
             let obj = self.obj();
             self.parent_constructed();
 
             obj.setup_signals();
+        }
+
+        fn signals() -> &'static [Signal] {
+            static SIGNALS: Lazy<Vec<Signal>> =
+                Lazy::new(|| vec![Signal::builder("unlock").build()]);
+            SIGNALS.as_ref()
         }
     }
 

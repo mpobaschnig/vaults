@@ -123,6 +123,15 @@ mod imp {
     }
 
     impl ObjectImpl for AddNewVaultWindow {
+        fn constructed(&self) {
+            let obj = self.obj();
+            self.parent_constructed();
+
+            obj.setup_combo_box();
+            obj.setup_actions();
+            obj.setup_signals();
+        }
+
         fn signals() -> &'static [Signal] {
             static SIGNALS: Lazy<Vec<Signal>> = Lazy::new(|| {
                 vec![
@@ -131,15 +140,6 @@ mod imp {
                 ]
             });
             SIGNALS.as_ref()
-        }
-
-        fn constructed(&self) {
-            let obj = self.obj();
-            self.parent_constructed();
-
-            obj.setup_combo_box();
-            obj.setup_actions();
-            obj.setup_signals();
         }
     }
 
@@ -217,7 +217,7 @@ impl AddNewVaultWindow {
             clone!(
                 #[weak(rename_to = obj)]
                 self,
-                move |_, _| {
+                move |_, __| {
                     obj.combo_box_changed();
                 }
             ),
@@ -415,7 +415,7 @@ impl AddNewVaultWindow {
     }
 
     pub fn encrypted_data_directory_button_clicked(&self) {
-        let window = gio::Application::default()
+        let window = gtk::gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()
@@ -456,7 +456,7 @@ impl AddNewVaultWindow {
     }
 
     pub fn mount_directory_button_clicked(&self) {
-        let window = gio::Application::default()
+        let window = gtk::gio::Application::default()
             .unwrap()
             .downcast_ref::<VApplication>()
             .unwrap()

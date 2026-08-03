@@ -102,8 +102,8 @@ pub fn init(
         log::info!("gocryptfs init successful");
         Ok(())
     } else {
-        std::io::stdout().write_all(&output.stdout)?;
-        std::io::stderr().write_all(&output.stderr)?;
+        std::io::stdout().write_all(&output.stdout).unwrap();
+        std::io::stderr().write_all(&output.stderr).unwrap();
 
         let err_code = output.status.code();
         log::error!("gocryptfs init failed: {:?}", err_code);
@@ -152,8 +152,8 @@ pub fn open(
         log::info!("gocryptfs open successful");
         Ok(())
     } else {
-        std::io::stdout().write_all(&output.stdout)?;
-        std::io::stderr().write_all(&output.stderr)?;
+        std::io::stdout().write_all(&output.stdout).unwrap();
+        std::io::stderr().write_all(&output.stderr).unwrap();
 
         let err_code = output.status.code();
         log::error!("gocryptfs open failed: {:?}", err_code);
@@ -177,8 +177,8 @@ pub fn close(_settings: &Settings, vault_config: &VaultConfig) -> Result<(), Bac
         log::info!("umount close successful");
         Ok(())
     } else {
-        std::io::stdout().write_all(&output.stdout)?;
-        std::io::stderr().write_all(&output.stderr)?;
+        std::io::stdout().write_all(&output.stdout).unwrap();
+        std::io::stderr().write_all(&output.stderr).unwrap();
 
         let err_code = output.status.code();
         log::error!("gocryptfs close failed: {:?}", err_code);
