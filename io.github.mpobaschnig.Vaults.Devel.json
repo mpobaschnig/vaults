@@ -22,23 +22,27 @@
     ],
     "cleanup": [
         "/include",
-        "/lib/pkgconfig",
-        "/share/man",
-        "*.la",
-        "*.a"
+        "/lib/pkgconfig"
     ],
     "build-options": {
         "append-path": "/usr/lib/sdk/rust-stable/bin:/usr/lib/sdk/llvm21/bin",
         "prepend-ld-library-path": "/usr/lib/sdk/llvm21/lib",
         "env": {
             "RUSTFLAGS": "-C force-frame-pointers=yes -C symbol-mangling-version=v0 -C linker=clang -C link-arg=-fuse-ld=/usr/lib/sdk/rust-stable/bin/mold"
-        }
+        },
+        "build-args": [
+            "--share=network"
+        ]
     },
     "modules": [
         {
             "name": "libfuse",
             "buildsystem": "autotools",
             "cleanup": [
+                "/include",
+                "/lib/pkgconfig",
+                "*.a",
+                "*.la",
                 "/lib/libulockmgr*"
             ],
             "config-opts": [
@@ -70,6 +74,8 @@
                 "make install",
                 "rm -rf /app/bin/go"
             ],
+            "cleanup": [],
+            "config-opts": [],
             "sources": [
                 {
                     "type": "archive",
