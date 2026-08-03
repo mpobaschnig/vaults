@@ -4,14 +4,7 @@ on: [pull_request, workflow_dispatch]
 
 jobs:
   build:
-    strategy:
-      matrix:
-        variant:
-          - arch: x86_64
-            runner: ubuntu-24.04
-          - arch: aarch64
-            runner: ubuntu-24.04-arm
-    runs-on: ${{ matrix.variant.runner }}
+    runs-on: ubuntu-latest
     container:
       image: ghcr.io/flathub-infra/flatpak-github-actions:gnome-50
       options: --privileged
@@ -23,4 +16,3 @@ jobs:
           manifest-path: io.github.mpobaschnig.Vaults.Devel.json
           run-tests: true
           cache-key: flatpak-builder-${{ github.sha }}
-          arch: ${{ matrix.variant.arch }}

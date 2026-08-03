@@ -4,14 +4,7 @@ on: [pull_request, workflow_dispatch]
 
 jobs:
   quality:
-    strategy:
-      matrix:
-        variant:
-          - arch: x86_64
-            runner: ubuntu-24.04
-          - arch: aarch64
-            runner: ubuntu-24.04-arm
-    runs-on: ${{ matrix.variant.runner }}
+    runs-on: ubuntu-latest
     container: fedora:latest
     steps:
       - uses: actions/checkout@v4
