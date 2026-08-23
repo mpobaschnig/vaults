@@ -34,6 +34,7 @@ sources = files(
 
   'ui/add_new_vault_window.rs',
   'ui/import_vault_window.rs',
+  'ui/missing_libs_window.rs',
   'ui/mod.rs',
   'ui/preferences.rs',
   'ui/window.rs',

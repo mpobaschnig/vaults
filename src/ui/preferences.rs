@@ -38,6 +38,8 @@ mod imp {
     #[template(resource = "/io/github/mpobaschnig/Vaults/preferences.ui")]
     pub struct VaultsSettingsWindow {
         #[template_child]
+        pub show_missing_libs_window_switch_row: TemplateChild<adw::SwitchRow>,
+        #[template_child]
         pub encrypted_data_directory_entry_row: TemplateChild<adw::EntryRow>,
         #[template_child]
         pub encrypted_data_directory_button: TemplateChild<gtk::Button>,
@@ -73,6 +75,7 @@ mod imp {
 
         fn new() -> Self {
             Self {
+                show_missing_libs_window_switch_row: TemplateChild::default(),
                 encrypted_data_directory_entry_row: TemplateChild::default(),
                 encrypted_data_directory_button: TemplateChild::default(),
                 mount_directory_entry_row: TemplateChild::default(),
@@ -152,6 +155,15 @@ impl VaultsSettingsWindow {
                 obj.mount_directory_button_clicked();
             }
         ));
+
+        self.imp()
+            .settings
+            .bind(
+                "show-missing-libs-window",
+                &self.imp().show_missing_libs_window_switch_row.get(),
+                "active",
+            )
+            .build();
 
         self.imp()
             .settings
