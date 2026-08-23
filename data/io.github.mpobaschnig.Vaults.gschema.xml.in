@@ -51,5 +51,10 @@
             <summary>The path to the custom gocryptfs binary</summary>
             <description>The path to the custom gocryptfs binary</description>
         </key>
+        <key name="show-missing-libs-window" type="b">
+            <default>true</default>
+            <summary>Show window if host libraries might be missing</summary>
+            <description>Show window if host libraries might be missing</description>
+        </key>
     </schema>
 </schemalist>

@@ -40,6 +40,16 @@
                             <property name="spacing">12</property>
                             <child>
                               <object class="AdwPreferencesGroup">
+                                <property name="title" translatable="yes">Notifications</property>
+                                <child>
+                                  <object class="AdwSwitchRow" id="show_missing_libs_window_switch_row">
+                                    <property name="title" translatable="yes">Show notifications about missing dependencies</property>
+                                  </object>
+                                </child>
+                              </object>
+                            </child>
+                            <child>
+                              <object class="AdwPreferencesGroup">
                                 <property name="title" translatable="yes">Default Paths</property>
                                 <child>
                                   <object class="AdwEntryRow" id="encrypted_data_directory_entry_row">

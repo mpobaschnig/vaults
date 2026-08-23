@@ -20,9 +20,10 @@
 use crate::config::APP_ID;
 use crate::ui::pages::*;
 use crate::ui::window::glib::GString;
-use crate::ui::{AddNewVaultWindow, ImportVaultDialog};
+use crate::ui::{AddNewVaultWindow, ImportVaultDialog, MissingLibsWindow};
 use crate::{
-    application::VApplication, backend::Backend, user_config_manager::UserConfigManager, vault::*,
+    application::VApplication, backend, backend::Backend, user_config_manager::UserConfigManager,
+    vault::*,
 };
 
 use adw::prelude::AdwDialogExt;
@@ -47,6 +48,7 @@ pub enum View {
 
 mod imp {
     use super::*;
+    use gtk::gio::Settings;
 
     #[derive(Debug, CompositeTemplate, Properties)]
     #[properties(wrapper_type = super::ApplicationWindow)]
@@ -82,8 +84,11 @@ mod imp {
 
         pub search_results: RefCell<u32>,
 
-        #[property(name = "is-selected", default = false, get = |_| { *self.is_selected.borrow() }, set)]
+        #[property(name = "is-selected", default = false, get = |_| { *self.is_selected.borrow() }, set
+        )]
         pub is_selected: RefCell<bool>,
+
+        pub settings: Settings,
     }
 
     #[glib::object_subclass]
@@ -110,6 +115,7 @@ mod imp {
                 select_toggle_button: TemplateChild::default(),
                 remove_button: TemplateChild::default(),
                 is_selected: RefCell::new(false),
+                settings: Settings::new(APP_ID),
             }
         }
 
@@ -167,6 +173,8 @@ impl ApplicationWindow {
         let builder = gtk::Builder::from_resource("/io/github/mpobaschnig/Vaults/shortcuts.ui");
         gtk_macros::get_widget!(builder, gtk::ShortcutsWindow, shortcuts);
         object.set_help_overlay(Some(&shortcuts));
+
+        object.maybe_show_missing_libs_window();
 
         object
     }
@@ -420,6 +428,30 @@ impl ApplicationWindow {
                 }
             }
         ));
+    }
+
+    fn maybe_show_missing_libs_window(&self) {
+        if let Ok(available) = backend::cryfs::is_available(&self.imp().settings)
+            && available
+        {
+            return;
+        }
+
+        if !self.imp().settings.boolean("show-missing-libs-window") {
+            return;
+        }
+
+        let dialog = MissingLibsWindow::new();
+
+        let window = gio::Application::default()
+            .unwrap()
+            .downcast_ref::<VApplication>()
+            .unwrap()
+            .active_window()
+            .unwrap()
+            .clone();
+
+        AdwDialogExt::present(&dialog, Some(&window));
     }
 
     fn fill_list_store(&self) {
