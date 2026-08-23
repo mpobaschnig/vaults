@@ -67,7 +67,7 @@ impl Backend {
         let settings = Settings::new(APP_ID);
 
         match &self {
-            Backend::Cryfs => cryfs::is_available(&settings, vault_config),
+            Backend::Cryfs => cryfs::is_available(&settings),
             Backend::Gocryptfs => gocryptfs::is_available(&settings, vault_config),
         }
     }
