@@ -68,7 +68,7 @@ impl Backend {
 
         match &self {
             Backend::Cryfs => cryfs::is_available(&settings),
-            Backend::Gocryptfs => gocryptfs::is_available(&settings, vault_config),
+            Backend::Gocryptfs => gocryptfs::is_available(&settings),
         }
     }
 
