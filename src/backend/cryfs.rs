@@ -26,8 +26,8 @@ use gtk::gio::prelude::SettingsExt;
 use std::process::Command;
 use std::{self, io::Write, process::Stdio};
 
-fn get_binary_path(settings: &Settings, vault_config: &VaultConfig) -> Option<String> {
-    log::trace!("get_binary_path({:?})", vault_config);
+fn get_binary_path(settings: &Settings) -> Option<String> {
+    log::trace!("get_binary_path()");
 
     if settings.boolean("use-custom-cryfs-binary") {
         return Some(settings.string("custom-cryfs-binary-path").to_string());
@@ -36,10 +36,10 @@ fn get_binary_path(settings: &Settings, vault_config: &VaultConfig) -> Option<St
     GlobalConfigManager::instance().get_cryfs_binary_path()
 }
 
-pub fn is_available(settings: &Settings, vault_config: &VaultConfig) -> Result<bool, BackendError> {
-    log::trace!("is_available({:?})", vault_config);
+pub fn is_available(settings: &Settings) -> Result<bool, BackendError> {
+    log::trace!("is_available()");
 
-    let binary_path = get_binary_path(settings, vault_config);
+    let binary_path = get_binary_path(settings);
     if binary_path.is_none() {
         log::error!("cryfs binary path is not set");
         return Err(BackendError::ToUser(gettext("No CryFs binary path set")));
@@ -64,7 +64,7 @@ pub fn init(
 ) -> Result<(), BackendError> {
     log::trace!("init({:?}, password: <redacted>)", vault_config);
 
-    let binary_path = get_binary_path(settings, vault_config);
+    let binary_path = get_binary_path(settings);
     if binary_path.is_none() {
         log::error!("cryfs binary path is not set");
         return Err(BackendError::ToUser(gettext("No CryFs binary path set")));
@@ -116,7 +116,7 @@ pub fn open(
 ) -> Result<(), BackendError> {
     log::trace!("open({:?}, password: <redacted>)", vault_config);
 
-    let binary_path = get_binary_path(settings, vault_config);
+    let binary_path = get_binary_path(settings);
     if binary_path.is_none() {
         log::error!("cryfs binary path is not set");
         return Err(BackendError::ToUser(gettext("No CryFs binary path set")));
