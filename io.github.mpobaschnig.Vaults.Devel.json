@@ -212,6 +212,11 @@
             "name": "vaults",
             "buildsystem": "meson",
             "run-tests": true,
+            "build-options": {
+                "build-args": [
+                    "--share=network"
+                ]
+            },
             "config-opts": [
                 "-Dprofile=development"
             ],
