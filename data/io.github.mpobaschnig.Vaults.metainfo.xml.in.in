@@ -36,6 +36,15 @@
   <translation type="gettext">@gettext-package@</translation>
   <launchable type="desktop-id">@app-id@.desktop</launchable>
   <releases>
+    <release version="0.13.0" date="2026-08-24">
+      <description translate="no">
+        <p>Welcome to the 0.13.0 release of Vaults! This update includes:</p>
+        <ul>
+          <li>Notification of potential missing dependency on fuse2</li>
+          <li>Small internal improvements</li>
+        </ul>
+      </description>
+    </release>
     <release version="0.12.0" date="2026-07-26">
       <description translate="no">
         <p>Welcome to the 0.12.0 release of Vaults! This update includes:</p>
