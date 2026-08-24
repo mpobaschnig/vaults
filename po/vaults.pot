@@ -65,7 +65,7 @@ msgstr ""
 
 #: data/io.github.mpobaschnig.Vaults.gschema.xml.in:36
 #: data/io.github.mpobaschnig.Vaults.gschema.xml.in:46
-#: data/resources/ui/preferences.ui:109 data/resources/ui/preferences.ui:161
+#: data/resources/ui/preferences.ui:119 data/resources/ui/preferences.ui:171
 msgid "Use custom binary"
 msgstr ""
 
@@ -82,6 +82,11 @@ msgstr ""
 msgid "The path to the custom gocryptfs binary"
 msgstr ""
 
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:56
+#: data/io.github.mpobaschnig.Vaults.gschema.xml.in:57
+msgid "Show window if host libraries might be missing"
+msgstr ""
+
 #: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:9
 msgid ""
 "Vaults lets you create encrypted vaults in which you can safely store files. "
@@ -90,10 +95,6 @@ msgstr ""
 
 #: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:18
 msgid "Main window showing different vaults"
-msgstr ""
-
-#: data/io.github.mpobaschnig.Vaults.metainfo.xml.in.in:31
-msgid "Martin Pobaschnig"
 msgstr ""
 
 #: data/resources/ui/add_new_vault_window.ui:16
@@ -150,35 +151,35 @@ msgstr ""
 
 #: data/resources/ui/add_new_vault_window.ui:183
 #: data/resources/ui/import_vault_window.ui:87
-#: data/resources/ui/preferences.ui:46
+#: data/resources/ui/preferences.ui:56
 #: data/resources/ui/vaults_page_row_settings_window.ui:60
 msgid "Encrypted Data Directory"
 msgstr ""
 
 #: data/resources/ui/add_new_vault_window.ui:188
 #: data/resources/ui/import_vault_window.ui:92
-#: data/resources/ui/preferences.ui:52
+#: data/resources/ui/preferences.ui:62
 #: data/resources/ui/vaults_page_row_settings_window.ui:66
 #: src/ui/pages/vaults_page_row_settings_window.rs:237
 #: src/ui/add_new_vault_window.rs:433 src/ui/import_vault_window.rs:348
-#: src/ui/preferences.rs:246
+#: src/ui/preferences.rs:258
 msgid "Choose Encrypted Data Directory"
 msgstr ""
 
 #: data/resources/ui/add_new_vault_window.ui:213
 #: data/resources/ui/import_vault_window.ui:124
-#: data/resources/ui/preferences.ui:62
+#: data/resources/ui/preferences.ui:72
 #: data/resources/ui/vaults_page_row_settings_window.ui:76
 msgid "Mount Directory"
 msgstr ""
 
 #: data/resources/ui/add_new_vault_window.ui:218
 #: data/resources/ui/import_vault_window.ui:129
-#: data/resources/ui/preferences.ui:68
+#: data/resources/ui/preferences.ui:78
 #: data/resources/ui/vaults_page_row_settings_window.ui:82
 #: src/ui/pages/vaults_page_row_settings_window.rs:279
 #: src/ui/add_new_vault_window.rs:474 src/ui/import_vault_window.rs:391
-#: src/ui/preferences.rs:287
+#: src/ui/preferences.rs:299
 msgid "Choose Mount Directory"
 msgstr ""
 
@@ -196,18 +197,26 @@ msgid "_General"
 msgstr ""
 
 #: data/resources/ui/preferences.ui:43
+msgid "Notifications"
+msgstr ""
+
+#: data/resources/ui/preferences.ui:46
+msgid "Show notifications about missing dependencies"
+msgstr ""
+
+#: data/resources/ui/preferences.ui:53
 msgid "Default Paths"
 msgstr ""
 
-#: data/resources/ui/preferences.ui:105 data/resources/ui/preferences.ui:157
+#: data/resources/ui/preferences.ui:115 data/resources/ui/preferences.ui:167
 msgid "General"
 msgstr ""
 
-#: data/resources/ui/preferences.ui:112 data/resources/ui/preferences.ui:164
+#: data/resources/ui/preferences.ui:122 data/resources/ui/preferences.ui:174
 msgid "Custom Binary Path"
 msgstr ""
 
-#: data/resources/ui/preferences.ui:118 data/resources/ui/preferences.ui:170
+#: data/resources/ui/preferences.ui:128 data/resources/ui/preferences.ui:180
 msgid "Choose Custom Binary"
 msgstr ""
 
@@ -551,7 +560,7 @@ msgstr ""
 #: src/ui/pages/vaults_page_row_settings_window.rs:281
 #: src/ui/add_new_vault_window.rs:435 src/ui/add_new_vault_window.rs:476
 #: src/ui/import_vault_window.rs:350 src/ui/import_vault_window.rs:393
-#: src/ui/preferences.rs:248 src/ui/preferences.rs:289
+#: src/ui/preferences.rs:260 src/ui/preferences.rs:301
 msgid "Select"
 msgstr ""
 
@@ -612,10 +621,10 @@ msgstr ""
 msgid "No configuration file found."
 msgstr ""
 
-#: src/ui/window.rs:266 src/ui/window.rs:658
+#: src/ui/window.rs:274 src/ui/window.rs:690
 msgid "Add or import a Vault."
 msgstr ""
 
-#: src/application.rs:391
+#: src/application.rs:388
 msgid "translator-credits"
 msgstr ""
