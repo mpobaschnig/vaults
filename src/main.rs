@@ -47,7 +47,9 @@ use user_config_manager::UserConfigManager;
 fn main() {
     pretty_env_logger::init();
 
-    setlocale(LocaleCategory::LcAll, "");
+    unsafe {
+        setlocale(LocaleCategory::LcAll, "");
+    }
 
     if let Err(e) = bindtextdomain(GETTEXT_PACKAGE, LOCALEDIR) {
         log::error!("Could not bind text domain: {}", e);
