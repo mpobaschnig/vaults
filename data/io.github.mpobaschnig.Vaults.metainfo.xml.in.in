@@ -12,6 +12,22 @@
     <color type="primary" scheme_preference="light">#ffbe6f</color>
     <color type="primary" scheme_preference="dark">#62462d</color>
   </branding>
+  <keywords>
+      <keyword translatable="no">CryFS</keyword>
+      <keyword translatable="no">gocryptfs</keyword>
+      <keyword>enclave</keyword>
+      <keyword>encrypted files</keyword>
+      <keyword>encrypted folder</keyword>
+      <keyword>encryption</keyword>
+      <keyword>files</keyword>
+      <keyword>folders</keyword>
+      <keyword>privacy</keyword>
+      <keyword>private space</keyword>
+      <keyword>private storage</keyword>
+      <keyword>private</keyword>
+      <keyword>safe</keyword>
+      <keyword>security</keyword>
+  </keywords>
   <screenshots>
     <screenshot type="default">
       <image>https://raw.githubusercontent.com/mpobaschnig/Vaults/master/data/resources/screenshots/main.png</image>
