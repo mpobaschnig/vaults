@@ -2,7 +2,7 @@ project('vaults',
         'rust',
         version: '0.13.0',
         license: 'GPL-3.0-or-later',
-  meson_version: '>= 0.50')
+        meson_version: '>= 1.5.0')
 
 i18n = import('i18n')
 gnome = import('gnome')
@@ -34,12 +34,12 @@ localedir = prefix / get_option('localedir')
 datadir = prefix / get_option('datadir')
 pkgdatadir = datadir / meson.project_name()
 iconsdir = datadir / 'icons'
-podir = meson.source_root() / 'po'
+podir = meson.project_source_root() / 'po'
 gettext_package = meson.project_name()
 
 if get_option('profile') == 'development'
   profile = 'Devel'
-  vcs_tag = run_command('git', 'rev-parse', '--short', 'HEAD').stdout().strip()
+  vcs_tag = run_command('git', 'rev-parse', '--short', 'HEAD', check: true).stdout().strip()
   if vcs_tag == ''
     version_suffix = '-devel'
   else
@@ -54,14 +54,14 @@ endif
 
 meson.add_dist_script(
   'build-aux/dist-vendor.sh',
-  meson.build_root() / 'meson-dist' / meson.project_name() + '-' + version,
-  meson.source_root()
+  meson.project_build_root() / 'meson-dist' / meson.project_name() + '-' + version,
+  meson.project_source_root()
 )
 
 if get_option('profile') == 'development'
   # Setup pre-commit hook for ensuring coding style is always consistent
   message('Setting up git pre-commit hook..')
-  run_command('cp', '-f', 'build-aux/pre-commit.hook', '.git/hooks/pre-commit')
+  run_command('cp', '-f', 'build-aux/pre-commit.hook', '.git/hooks/pre-commit', check: true)
 endif
 
 subdir('data')
