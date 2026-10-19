@@ -1,6 +1,11 @@
 global_conf = configuration_data()
 global_conf.set_quoted('APP_ID', application_id)
-global_conf.set_quoted('PKGDATADIR', pkgdatadir)
+# For development builds, use the build directory so the app loads the updated gresource
+if get_option('profile') == 'development'
+  global_conf.set_quoted('PKGDATADIR', meson.project_build_root() / 'data')
+else
+  global_conf.set_quoted('PKGDATADIR', pkgdatadir)
+endif
 global_conf.set_quoted('PROFILE', profile)
 global_conf.set_quoted('VERSION', version + version_suffix)
 global_conf.set_quoted('GETTEXT_PACKAGE', gettext_package)
@@ -52,12 +57,11 @@ sources = files(
 custom_target(
   'cargo-build',
   build_by_default: true,
-  input: sources,
+  input: sources + resources,
   output: meson.project_name(),
   console: true,
   install: true,
   install_dir: bindir,
-  depends: resources,
   command: [
     cargo_script,
     meson.project_build_root(),
