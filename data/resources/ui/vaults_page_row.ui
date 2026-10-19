@@ -13,7 +13,6 @@
           <object class="GtkCheckButton" id="select_vault_button">
             <property name="valign">center</property>
             <property name="tooltip-text" translatable="yes">Select Vault</property>
-            <property name="group">select_vault_button</property>
             <style>
               <class name="selection-mode"/>
             </style>
