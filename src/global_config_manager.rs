@@ -24,6 +24,7 @@ use gtk::{
 use ini::Ini;
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
+use std::env;
 use toml::de::Error;
 
 use self::imp::GlobalConfig;
@@ -351,18 +352,61 @@ impl GlobalConfigManager {
     }
 
     pub fn get_cryfs_binary_path(&self) -> Option<String> {
-        let flatpak_info = self.get_flatpak_info()?;
-        let instance_path = flatpak_info.section(Some("Instance"))?.get("app-path")?;
-        let cryfs_instance_path = instance_path.to_owned() + "/bin/cryfs";
-        log::info!("CryFS binary path: {}", cryfs_instance_path);
-        Some(cryfs_instance_path)
+        if let Some(flatpak_info) = self.get_flatpak_info() {
+            if let Some(instance_path) = flatpak_info
+                .section(Some("Instance"))
+                .and_then(|s| s.get("app-path"))
+            {
+                let cryfs_instance_path = instance_path.to_owned() + "/bin/cryfs";
+                log::info!("CryFS binary path (Flatpak): {}", cryfs_instance_path);
+                return Some(cryfs_instance_path);
+            }
+        }
+
+        log::info!("Not running in Flatpak, checking system PATH for cryfs");
+        find_in_path("cryfs")
     }
 
     pub fn get_gocryptfs_binary_path(&self) -> Option<String> {
-        let flatpak_info = self.get_flatpak_info()?;
-        let instance_path = flatpak_info.section(Some("Instance"))?.get("app-path")?;
-        let gocryptfs_instance_path = instance_path.to_owned() + "/bin/gocryptfs";
-        log::info!("gocryptfs binary path: {}", gocryptfs_instance_path);
-        Some(gocryptfs_instance_path)
+        if let Some(flatpak_info) = self.get_flatpak_info() {
+            if let Some(instance_path) = flatpak_info
+                .section(Some("Instance"))
+                .and_then(|s| s.get("app-path"))
+            {
+                let gocryptfs_instance_path = instance_path.to_owned() + "/bin/gocryptfs";
+                log::info!(
+                    "gocryptfs binary path (Flatpak): {}",
+                    gocryptfs_instance_path
+                );
+                return Some(gocryptfs_instance_path);
+            }
+        }
+
+        log::info!("Not running in Flatpak, checking system PATH for gocryptfs");
+        find_in_path("gocryptfs")
     }
+}
+
+fn find_in_path(binary_name: &str) -> Option<String> {
+    log::trace!("find_in_path({})", binary_name);
+
+    let path_env = env::var("PATH").ok()?;
+
+    for dir in env::split_paths(&path_env) {
+        let binary_path = dir.join(binary_name);
+        if binary_path.exists() && binary_path.is_file() {
+            // Check if it's executable
+            if let Ok(metadata) = binary_path.metadata() {
+                use std::os::unix::fs::PermissionsExt;
+                if metadata.permissions().mode() & 0o111 != 0 {
+                    let path_str = binary_path.to_str()?.to_string();
+                    log::info!("Found {} in system PATH: {}", binary_name, path_str);
+                    return Some(path_str);
+                }
+            }
+        }
+    }
+
+    log::warn!("{} not found in system PATH", binary_name);
+    None
 }
