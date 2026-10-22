@@ -25,6 +25,7 @@ mod legacy;
 mod user_config_manager;
 mod util;
 mod vault;
+pub mod vault_config;
 
 mod backend;
 mod ui;

@@ -26,7 +26,7 @@ use strum::IntoEnumIterator;
 
 use crate::application::VApplication;
 use crate::util;
-use crate::{backend, vault::*};
+use crate::{backend, vault::*, vault_config::*};
 
 mod imp {
     use gtk::glib::subclass::Signal;

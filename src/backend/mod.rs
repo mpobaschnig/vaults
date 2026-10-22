@@ -17,10 +17,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+mod backend;
 pub mod cryfs;
 pub mod gocryptfs;
 
-use crate::{config::APP_ID, vault::VaultConfig};
+use crate::{config::APP_ID, vault_config::VaultConfig};
 use gettextrs::gettext;
 use gtk::{gio::Settings, glib};
 use serde::{Deserialize, Serialize};

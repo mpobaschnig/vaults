@@ -19,7 +19,7 @@
 
 use super::BackendError;
 use crate::global_config_manager::GlobalConfigManager;
-use crate::vault::VaultConfig;
+use crate::vault_config::VaultConfig;
 use gettextrs::gettext;
 use gtk::gio::Settings;
 use gtk::gio::prelude::SettingsExt;
