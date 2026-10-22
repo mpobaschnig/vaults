@@ -52,6 +52,7 @@ sources = files(
   'user_config_manager.rs',
   'util.rs',
   'vault.rs',
+  'vault_config.rs',
 )
 
 custom_target(

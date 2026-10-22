@@ -17,7 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use crate::{backend::Backend, util, vault::VaultConfig};
+use crate::{backend::Backend, util, vault_config::VaultConfig};
 use gtk::glib::user_config_dir;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

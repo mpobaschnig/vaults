@@ -39,6 +39,7 @@ use crate::{
     backend::{Backend, BackendError},
     config::APP_ID,
     vault::*,
+    vault_config::VaultConfig,
 };
 
 mod imp {

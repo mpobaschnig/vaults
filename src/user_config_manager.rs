@@ -17,7 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use crate::{legacy, vault::*};
+use crate::{legacy, vault::*, vault_config::*};
 use gtk::glib::Properties;
 use gtk::{
     gio::subclass::prelude::*,

@@ -18,6 +18,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::backend::{Backend, BackendError};
+use crate::vault_config::VaultConfig;
 use gio::VolumeMonitor;
 use gio::prelude::*;
 use gio::subclass::prelude::*;
@@ -25,16 +26,6 @@ use gtk::{gio, glib, glib::Properties};
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
 use uuid::Uuid;
-
-#[derive(Debug, Default, Deserialize, Clone, Serialize, glib::Boxed)]
-#[boxed_type(name = "VaultConfig")]
-pub struct VaultConfig {
-    pub name: String,
-    pub backend: Backend,
-    pub encrypted_data_directory: String,
-    pub mount_directory: String,
-    pub session_lock: bool,
-}
 
 mod imp {
     use super::*;
