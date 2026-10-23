@@ -41,6 +41,7 @@ quick_error! {
 
 #[derive(
     Debug,
+    PartialEq,
     EnumIter,
     strum_macros::Display,
     Serialize,
