@@ -19,10 +19,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-use crate::backend::{Backend, BackendError};
-use gio::prelude::*;
-use gio::subclass::prelude::*;
-use gtk::{gio, glib, glib::Properties};
+use crate::backend::Backend;
+use gtk::glib;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Default, Deserialize, Clone, Serialize, glib::Boxed)]
