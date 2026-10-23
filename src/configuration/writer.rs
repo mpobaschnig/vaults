@@ -152,7 +152,7 @@ mod tests {
     fn create_test_vault(name: &str, backend: Backend) -> VaultConfig {
         VaultConfig {
             name: name.to_string(),
-            backend,
+            backend: backend.into(),
             encrypted_data_directory: format!("/tmp/test/{}", name),
             mount_directory: format!("/tmp/mount/{}", name),
             session_lock: false,
@@ -245,7 +245,7 @@ mod tests {
 
         let config = VaultConfig {
             name: "Preserve Test".to_string(),
-            backend: Backend::Gocryptfs,
+            backend: Backend::Gocryptfs.into(),
             encrypted_data_directory: "/var/home/user/encrypted".to_string(),
             mount_directory: "/var/home/user/mounted".to_string(),
             session_lock: true,
@@ -300,7 +300,7 @@ mod tests {
 
         let config = VaultConfig {
             name: "Vault with \"quotes\" & <special> chars".to_string(),
-            backend: Backend::Cryfs,
+            backend: Backend::Cryfs.into(),
             encrypted_data_directory: "/tmp/special/path".to_string(),
             mount_directory: "/tmp/mount/special".to_string(),
             session_lock: false,
@@ -327,7 +327,7 @@ mod tests {
             uuid1,
             VaultConfig {
                 name: "Vault 1".to_string(),
-                backend: Backend::Cryfs,
+                backend: Backend::Cryfs.into(),
                 encrypted_data_directory: "/tmp/v1".to_string(),
                 mount_directory: "/tmp/m1".to_string(),
                 session_lock: false,
@@ -337,7 +337,7 @@ mod tests {
             uuid2,
             VaultConfig {
                 name: "Vault 2".to_string(),
-                backend: Backend::Gocryptfs,
+                backend: Backend::Gocryptfs.into(),
                 encrypted_data_directory: "/tmp/v2".to_string(),
                 mount_directory: "/tmp/m2".to_string(),
                 session_lock: true,
@@ -357,12 +357,12 @@ mod tests {
         // Verify data integrity
         let read_v1 = read_result.vaults.get(&uuid1).unwrap();
         assert_eq!(read_v1.name, "Vault 1");
-        assert_eq!(read_v1.backend, Backend::Cryfs);
+        assert_eq!(read_v1.backend.kind(), Backend::Cryfs);
         assert_eq!(read_v1.session_lock, false);
 
         let read_v2 = read_result.vaults.get(&uuid2).unwrap();
         assert_eq!(read_v2.name, "Vault 2");
-        assert_eq!(read_v2.backend, Backend::Gocryptfs);
+        assert_eq!(read_v2.backend.kind(), Backend::Gocryptfs);
         assert_eq!(read_v2.session_lock, true);
     }
 
@@ -379,9 +379,9 @@ mod tests {
                 VaultConfig {
                     name: format!("Vault {}", i),
                     backend: if i % 2 == 0 {
-                        Backend::Cryfs
+                        Backend::Cryfs.into()
                     } else {
-                        Backend::Gocryptfs
+                        Backend::Gocryptfs.into()
                     },
                     encrypted_data_directory: format!("/tmp/vaults/{}", i),
                     mount_directory: format!("/tmp/mounts/{}", i),

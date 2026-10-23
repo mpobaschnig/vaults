@@ -35,11 +35,7 @@ use uuid::Uuid;
 
 use super::{VaultsPageRowPasswordPromptWindow, VaultsPageRowSettingsWindow};
 use crate::{
-    VApplication,
-    backend::{Backend, BackendError},
-    config::APP_ID,
-    vault::*,
-    vault_config::VaultConfig,
+    VApplication, backend::BackendError, config::APP_ID, vault::*, vault_config::VaultConfig,
 };
 
 mod imp {
@@ -325,7 +321,7 @@ impl VaultsPageRow {
             }
         }));
 
-        std::thread::spawn(move || match Backend::close(&vault_config) {
+        std::thread::spawn(move || match vault_config.backend.close(&vault_config) {
             Ok(_) => gio::spawn_blocking(move || {
                 sender
                     .send_blocking(Message::Finished)
@@ -426,17 +422,19 @@ impl VaultsPageRow {
                         }
                     }));
 
-                    std::thread::spawn(move || match Backend::open(&vault_config, password) {
-                        Ok(_) => gio::spawn_blocking(move || {
-                            sender
-                                .send_blocking(Message::Finished)
-                                .expect("Channel needs to be open");
-                        }),
-                        Err(e) => gio::spawn_blocking(move || {
-                            sender
-                                .send_blocking(Message::Error(e))
-                                .expect("Channel needs to be open");
-                        }),
+                    std::thread::spawn(move || {
+                        match vault_config.backend.open(&vault_config, &password) {
+                            Ok(_) => gio::spawn_blocking(move || {
+                                sender
+                                    .send_blocking(Message::Finished)
+                                    .expect("Channel needs to be open");
+                            }),
+                            Err(e) => gio::spawn_blocking(move || {
+                                sender
+                                    .send_blocking(Message::Error(e))
+                                    .expect("Channel needs to be open");
+                            }),
+                        }
                     });
                 }
             ),

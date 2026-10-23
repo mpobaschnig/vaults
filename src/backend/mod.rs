@@ -17,12 +17,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+pub mod backend;
 pub mod cryfs;
 pub mod gocryptfs;
 
-use crate::{config::APP_ID, vault_config::VaultConfig};
 use gettextrs::gettext;
-use gtk::{gio::Settings, glib};
+use gtk::glib;
 use serde::{Deserialize, Serialize};
 use std::string::String;
 use strum_macros::EnumIter;
@@ -61,68 +61,6 @@ pub enum Backend {
     Gocryptfs,
 }
 
-impl Backend {
-    pub fn is_available(&self, vault_config: &VaultConfig) -> Result<bool, BackendError> {
-        log::trace!("is_available({:?}, {:?})", self, vault_config);
-
-        let settings = Settings::new(APP_ID);
-
-        match &self {
-            Backend::Cryfs => cryfs::is_available(&settings),
-            Backend::Gocryptfs => gocryptfs::is_available(&settings),
-        }
-    }
-
-    pub fn init(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
-        log::trace!("init({:?}, password: <redacted>)", vault_config);
-
-        let settings = Settings::new(APP_ID);
-        let encrypted_data_directory = &vault_config.encrypted_data_directory;
-        let mount_directory = &vault_config.mount_directory;
-
-        match create_edd_if_not_exists(encrypted_data_directory) {
-            Ok(_) => {}
-            Err(e) => {
-                return Err(e);
-            }
-        }
-
-        match create_md_if_not_exists(mount_directory) {
-            Ok(_) => {}
-            Err(e) => {
-                return Err(e);
-            }
-        }
-
-        match vault_config.backend {
-            Backend::Cryfs => cryfs::init(&settings, vault_config, password),
-            Backend::Gocryptfs => gocryptfs::init(&settings, vault_config, password),
-        }
-    }
-
-    pub fn open(vault_config: &VaultConfig, password: String) -> Result<(), BackendError> {
-        log::trace!("open({:?}, password: <redacted>)", vault_config);
-
-        let settings = Settings::new(APP_ID);
-
-        match vault_config.backend {
-            Backend::Cryfs => cryfs::open(&settings, vault_config, password),
-            Backend::Gocryptfs => gocryptfs::open(&settings, vault_config, password),
-        }
-    }
-
-    pub fn close(vault_config: &VaultConfig) -> Result<(), BackendError> {
-        log::trace!("close({:?})", vault_config);
-
-        let settings = Settings::new(APP_ID);
-
-        match vault_config.backend {
-            Backend::Cryfs => cryfs::close(&settings, vault_config),
-            Backend::Gocryptfs => gocryptfs::close(&settings, vault_config),
-        }
-    }
-}
-
 pub fn get_ui_string_from_backend(backend: &Backend) -> String {
     log::trace!("get_ui_string_from_backend({:?})", backend);
 
@@ -142,6 +80,14 @@ pub fn get_backend_from_ui_string(backend: &String) -> Option<Backend> {
     } else {
         None
     }
+}
+
+/// Creates the encrypted data and mount directories for a vault.
+pub fn create_directories(
+    vault_config: &crate::vault_config::VaultConfig,
+) -> Result<(), BackendError> {
+    create_edd_if_not_exists(&vault_config.encrypted_data_directory)?;
+    create_md_if_not_exists(&vault_config.mount_directory)
 }
 
 fn create_edd_if_not_exists(encrypted_data_directory: &String) -> Result<(), BackendError> {
