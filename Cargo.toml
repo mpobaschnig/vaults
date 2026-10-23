@@ -21,3 +21,6 @@ proc-mounts = "0.3"
 async-channel = "2"
 rust-ini = "0.21"
 uuid = { version = "1.17", features = ["serde", "v4"] }
+
+[dev-dependencies]
+tempfile = "3"

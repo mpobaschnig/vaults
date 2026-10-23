@@ -17,15 +17,19 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use crate::{legacy, vault::*, vault_config::*};
+use crate::{
+    configuration::{read_config, write_config},
+    legacy,
+    vault::*,
+    vault_config::*,
+};
 use gtk::glib::Properties;
 use gtk::{
     gio::subclass::prelude::*,
     glib::{self, prelude::*, subclass::Signal, user_config_dir},
 };
 use once_cell::sync::Lazy;
-use std::{cell::RefCell, collections::HashMap};
-use toml::de::Error;
+use std::{cell::RefCell, collections::HashMap, path::Path};
 use uuid::Uuid;
 
 static mut USER_CONFIG_MANAGER: Option<UserConfigManager> = None;
@@ -154,35 +158,30 @@ impl UserConfigManager {
         log::trace!("read_config()");
 
         if let Some(path) = self.imp().user_config_directory.borrow().as_ref() {
-            if !std::path::Path::new(path).exists() {
+            if !Path::new(path).exists() {
                 log::info!("User config file does not exist: {}", path);
                 log::info!("Trying to read legacy user config...");
                 let user_config = legacy::user_config::get_user_config_from_legacy_config();
                 let map = &mut *self.imp().vaults.borrow_mut();
                 map.clear();
                 *map = user_config;
+                self.set_has_vaults(!map.is_empty());
                 return;
             }
 
             let map = &mut *self.imp().vaults.borrow_mut();
             map.clear();
 
-            let contents = std::fs::read_to_string(path);
-            match contents {
-                Ok(content) => {
-                    let res: Result<HashMap<Uuid, VaultConfig>, Error> =
-                        toml::from_str(&content.clone());
-                    match res {
-                        Ok(v) => {
-                            *map = v;
-                        }
-                        Err(e) => {
-                            log::error!("Failed to parse user data config: {}", e);
-                        }
+            match read_config(Path::new(path)) {
+                Ok(result) => {
+                    // Log any per-vault parsing errors
+                    for error in &result.errors {
+                        log::warn!("Vault parse error: {:?}", error);
                     }
+                    *map = result.vaults;
                 }
                 Err(e) => {
-                    log::warn!("Failed to read user data config: {}", e);
+                    log::error!("Failed to read user data config: {:?}", e);
                 }
             }
 
@@ -193,17 +192,19 @@ impl UserConfigManager {
     pub fn write_config(&self, map: &mut HashMap<Uuid, VaultConfig>) {
         log::trace!("write_config({:?})", map);
         if let Some(path) = self.imp().user_config_directory.borrow().as_ref() {
-            match toml::to_string_pretty(&map) {
-                Ok(contents) => match std::fs::write(path, &contents) {
-                    Ok(_) => {
-                        log::debug!("Successfully wrote user config: {}", contents);
+            match write_config(Path::new(path), map) {
+                Ok(result) => {
+                    // Log any per-vault serialization errors
+                    for error in &result.errors {
+                        log::warn!("Vault serialize error: {:?}", error);
                     }
-                    Err(e) => {
-                        log::error!("Failed to write user config: {}", e);
-                    }
-                },
+                    log::debug!(
+                        "Successfully wrote {} vaults to config",
+                        result.written_count
+                    );
+                }
                 Err(e) => {
-                    log::error!("Failed to parse config: {}", e);
+                    log::error!("Failed to write user config: {:?}", e);
                 }
             }
         }

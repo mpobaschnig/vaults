@@ -20,6 +20,7 @@
 mod application;
 #[rustfmt::skip]
 mod config;
+mod configuration;
 mod global_config_manager;
 mod legacy;
 mod user_config_manager;
