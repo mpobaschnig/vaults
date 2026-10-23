@@ -18,6 +18,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use super::BackendError;
+use super::backend::BackendImpl;
+use crate::backend::{Backend, create_directories};
+use crate::config::APP_ID;
 use crate::global_config_manager::GlobalConfigManager;
 use crate::vault_config::VaultConfig;
 use gettextrs::gettext;
@@ -25,6 +28,45 @@ use gtk::gio::Settings;
 use gtk::gio::prelude::SettingsExt;
 use std::process::Command;
 use std::{io::Write, process::Stdio};
+
+#[derive(Debug, Clone, Default)]
+/// gocryptfs backend implementation.
+pub struct Gocryptfs {}
+
+impl BackendImpl for Gocryptfs {
+    fn is_available(&self) -> Result<bool, BackendError> {
+        let settings = Settings::new(APP_ID);
+        is_available(&settings)
+    }
+
+    fn init(&self, vault_config: &VaultConfig, password: &str) -> Result<(), BackendError> {
+        create_directories(vault_config)?;
+        let settings = Settings::new(APP_ID);
+        init(&settings, vault_config, password.to_owned())
+    }
+
+    fn open(&self, vault_config: &VaultConfig, password: &str) -> Result<(), BackendError> {
+        let settings = Settings::new(APP_ID);
+        open(&settings, vault_config, password.to_owned())
+    }
+
+    fn close(&self, vault_config: &VaultConfig) -> Result<(), BackendError> {
+        let settings = Settings::new(APP_ID);
+        close(&settings, vault_config)
+    }
+
+    fn name(&self) -> String {
+        String::from("gocryptfs")
+    }
+
+    fn kind(&self) -> Backend {
+        Backend::Gocryptfs
+    }
+
+    fn clone_box(&self) -> Box<dyn BackendImpl> {
+        Box::new(self.clone())
+    }
+}
 
 fn get_binary_path(settings: &Settings) -> Option<String> {
     log::trace!("get_binary_path()");
@@ -36,7 +78,7 @@ fn get_binary_path(settings: &Settings) -> Option<String> {
     GlobalConfigManager::instance().get_gocryptfs_binary_path()
 }
 
-pub fn is_available(settings: &Settings) -> Result<bool, BackendError> {
+fn is_available(settings: &Settings) -> Result<bool, BackendError> {
     log::trace!("is_available()");
 
     let binary_path = get_binary_path(settings);
@@ -59,7 +101,7 @@ pub fn is_available(settings: &Settings) -> Result<bool, BackendError> {
     Ok(success)
 }
 
-pub fn init(
+fn init(
     settings: &Settings,
     vault_config: &VaultConfig,
     password: String,
@@ -111,7 +153,7 @@ pub fn init(
     }
 }
 
-pub fn open(
+fn open(
     settings: &Settings,
     vault_config: &VaultConfig,
     password: String,
@@ -161,7 +203,7 @@ pub fn open(
     }
 }
 
-pub fn close(_settings: &Settings, vault_config: &VaultConfig) -> Result<(), BackendError> {
+fn close(_settings: &Settings, vault_config: &VaultConfig) -> Result<(), BackendError> {
     log::trace!("close({:?}, password: <redacted>)", vault_config);
 
     let child = Command::new("flatpak-spawn")

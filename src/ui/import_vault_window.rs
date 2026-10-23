@@ -590,7 +590,8 @@ impl ImportVaultDialog {
                     .string()
                     .to_string(),
             )
-            .unwrap(),
+            .unwrap()
+            .into(),
             String::from(
                 self.imp()
                     .encrypted_data_directory_entry_row

@@ -24,6 +24,7 @@ run_command(
 )
 
 sources = files(
+  'backend/backend.rs',
   'backend/cryfs.rs',
   'backend/gocryptfs.rs',
   'backend/mod.rs',

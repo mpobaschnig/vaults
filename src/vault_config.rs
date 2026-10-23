@@ -19,7 +19,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-use crate::backend::Backend;
+use crate::backend::backend::{BackendImpl, serde_backend};
 use gtk::glib;
 use serde::{Deserialize, Serialize};
 
@@ -27,7 +27,8 @@ use serde::{Deserialize, Serialize};
 #[boxed_type(name = "VaultConfig")]
 pub struct VaultConfig {
     pub name: String,
-    pub backend: Backend,
+    #[serde(with = "serde_backend")]
+    pub backend: Box<dyn BackendImpl>,
     pub encrypted_data_directory: String,
     pub mount_directory: String,
     pub session_lock: bool,

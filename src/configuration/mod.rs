@@ -45,7 +45,7 @@ mod tests {
     fn create_test_vault(_uuid: Uuid, name: &str, backend: Backend) -> VaultConfig {
         VaultConfig {
             name: name.to_string(),
-            backend,
+            backend: backend.into(),
             encrypted_data_directory: format!("/tmp/test/{}", name),
             mount_directory: format!("/tmp/mount/{}", name),
             session_lock: false,

@@ -160,7 +160,7 @@ session_lock = false
         let uuid = Uuid::parse_str("a19a941c-505a-4b46-86c0-abf39bcdc2e1").unwrap();
         let vault = read_result.vaults.get(&uuid).expect("vault should exist");
         assert_eq!(vault.name, "Test Vault");
-        assert_eq!(vault.backend, Backend::Cryfs);
+        assert_eq!(vault.backend.kind(), Backend::Cryfs);
         assert_eq!(vault.encrypted_data_directory, "/var/home/user/edd/test");
         assert_eq!(vault.mount_directory, "/var/home/user/md/test");
         assert_eq!(vault.session_lock, false);
@@ -187,7 +187,7 @@ session_lock = false
         let uuid = Uuid::parse_str("a19a941c-505a-4b46-86c0-abf39bcdc2e1").unwrap();
         let vault = read_result.vaults.get(&uuid).expect("vault should exist");
         assert_eq!(vault.name, "Test Vault");
-        assert_eq!(vault.backend, Backend::Gocryptfs);
+        assert_eq!(vault.backend.kind(), Backend::Gocryptfs);
         assert_eq!(vault.encrypted_data_directory, "/var/home/user/edd/test");
         assert_eq!(vault.mount_directory, "/var/home/user/md/test");
         assert_eq!(vault.session_lock, false);

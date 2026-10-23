@@ -694,7 +694,7 @@ impl AddNewVaultWindow {
         Vault::new(
             util::generate_uuid(),
             String::from(self.imp().entry_row_name.text().as_str()),
-            backend,
+            backend.into(),
             String::from(
                 self.imp()
                     .encrypted_data_directory_entry_row

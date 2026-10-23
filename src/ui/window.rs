@@ -17,14 +17,13 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use crate::backend::backend::BackendImpl;
+use crate::backend::cryfs::CryFs;
 use crate::config::APP_ID;
 use crate::ui::pages::*;
 use crate::ui::window::glib::GString;
 use crate::ui::{AddNewVaultWindow, ImportVaultDialog, MissingLibsWindow};
-use crate::{
-    application::VApplication, backend, backend::Backend, user_config_manager::UserConfigManager,
-    vault::*,
-};
+use crate::{application::VApplication, user_config_manager::UserConfigManager, vault::*};
 
 use adw::prelude::AdwDialogExt;
 use adw::subclass::prelude::*;
@@ -231,7 +230,7 @@ impl ApplicationWindow {
                 let vault = Vault::new(
                     *k,
                     v.name.to_owned(),
-                    v.backend,
+                    v.backend.clone(),
                     v.encrypted_data_directory.to_owned(),
                     v.mount_directory.to_owned(),
                     v.session_lock,
@@ -431,7 +430,7 @@ impl ApplicationWindow {
     }
 
     fn maybe_show_missing_libs_window(&self) {
-        if let Ok(available) = backend::cryfs::is_available(&self.imp().settings)
+        if let Ok(available) = CryFs::default().is_available()
             && available
         {
             return;
@@ -460,7 +459,7 @@ impl ApplicationWindow {
             let vault = Vault::new(
                 *k,
                 v.name.to_owned(),
-                v.backend,
+                v.backend.clone(),
                 v.encrypted_data_directory.to_owned(),
                 v.mount_directory.to_owned(),
                 v.session_lock,
@@ -583,7 +582,7 @@ impl ApplicationWindow {
                 move |dialog: AddNewVaultWindow| {
                     let vault = dialog.get_vault();
                     let password = dialog.get_password();
-                    match Backend::init(&vault.config(), password) {
+                    match vault.init(password) {
                         Ok(_) => {
                             UserConfigManager::instance().add_vault(vault);
                             obj.refresh_model();

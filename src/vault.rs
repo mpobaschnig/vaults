@@ -17,7 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use crate::backend::{Backend, BackendError};
+use crate::backend::{Backend, BackendError, backend::BackendImpl};
 use crate::vault_config::VaultConfig;
 use gio::VolumeMonitor;
 use gio::prelude::*;
@@ -36,7 +36,6 @@ mod imp {
         pub uuid: RefCell<Uuid>,
         #[property(name = "config", get, set, type = VaultConfig)]
         #[property(name = "name", get, set, type = String, member = name)]
-        #[property(name = "backend", get, set, type = Backend, member = backend, builder(Backend::Gocryptfs))]
         #[property(name = "encrypted-data-directory", get, set, type = String, member = encrypted_data_directory)]
         #[property(name = "mount-directory", get, set, type = String, member = mount_directory)]
         #[property(name = "session-lock", get, set, type = bool, member = session_lock)]
@@ -62,7 +61,7 @@ impl Vault {
     pub fn new(
         uuid: Uuid,
         name: String,
-        backend: Backend,
+        backend: Box<dyn BackendImpl>,
         encrypted_data_directory: String,
         mount_directory: String,
         session_lock: bool,
@@ -100,17 +99,20 @@ impl Vault {
 
     pub fn init(&self, password: String) -> Result<(), BackendError> {
         log::trace!("init(password: <redacted>)");
-        Backend::init(&self.config(), password)
+        let config = self.config();
+        config.backend.init(&config, &password)
     }
 
     pub fn unlock(&self, password: String) -> Result<(), BackendError> {
         log::trace!("unlock(password: <redacted>)");
-        Backend::open(&self.config(), password)
+        let config = self.config();
+        config.backend.open(&config, &password)
     }
 
     pub fn lock(&self) -> Result<(), BackendError> {
         log::trace!("lock");
-        Backend::close(&self.config())
+        let config = self.config();
+        config.backend.close(&config)
     }
 
     pub fn is_mounted(&self) -> bool {
@@ -188,10 +190,14 @@ impl Vault {
 
     pub fn is_backend_available(&self) -> bool {
         log::trace!("is_backend_available");
-        if let Ok(success) = self.backend().is_available(&self.config()) {
+        if let Ok(success) = self.config().backend.is_available() {
             return success;
         }
         false
+    }
+
+    pub fn backend(&self) -> Backend {
+        self.config().backend.kind()
     }
 
     pub fn delete_encrypted_data(&self) -> std::io::Result<()> {
@@ -212,7 +218,7 @@ mod tests {
         let vault = Vault::new(
             Uuid::nil(),
             "".to_string(),
-            Backend::Gocryptfs,
+            Backend::Gocryptfs.into(),
             "".to_string(),
             "".to_string(),
             false,
@@ -221,7 +227,7 @@ mod tests {
 
         vault.set_config(VaultConfig {
             name: "".to_string(),
-            backend: Backend::Gocryptfs,
+            backend: Backend::Gocryptfs.into(),
             encrypted_data_directory: "".to_string(),
             mount_directory: ".".to_string(),
             session_lock: false,
@@ -230,7 +236,7 @@ mod tests {
 
         vault.set_config(VaultConfig {
             name: "".to_string(),
-            backend: Backend::Gocryptfs,
+            backend: Backend::Gocryptfs.into(),
             encrypted_data_directory: "".to_string(),
             mount_directory: "..".to_string(),
             session_lock: false,
@@ -239,7 +245,7 @@ mod tests {
 
         vault.set_config(VaultConfig {
             name: "".to_string(),
-            backend: Backend::Gocryptfs,
+            backend: Backend::Gocryptfs.into(),
             encrypted_data_directory: "".to_string(),
             mount_directory: "./".to_string(),
             session_lock: false,
@@ -248,7 +254,7 @@ mod tests {
 
         vault.set_config(VaultConfig {
             name: "".to_string(),
-            backend: Backend::Gocryptfs,
+            backend: Backend::Gocryptfs.into(),
             encrypted_data_directory: "".to_string(),
             mount_directory: "./Hidden".to_string(),
             session_lock: false,
@@ -257,7 +263,7 @@ mod tests {
 
         vault.set_config(VaultConfig {
             name: "".to_string(),
-            backend: Backend::Gocryptfs,
+            backend: Backend::Gocryptfs.into(),
             encrypted_data_directory: "".to_string(),
             mount_directory: "Test/.Test".to_string(),
             session_lock: false,
@@ -266,7 +272,7 @@ mod tests {
 
         vault.set_config(VaultConfig {
             name: "".to_string(),
-            backend: Backend::Gocryptfs,
+            backend: Backend::Gocryptfs.into(),
             encrypted_data_directory: "".to_string(),
             mount_directory: "./Test/.Test".to_string(),
             session_lock: false,
@@ -275,7 +281,7 @@ mod tests {
 
         vault.set_config(VaultConfig {
             name: "".to_string(),
-            backend: Backend::Gocryptfs,
+            backend: Backend::Gocryptfs.into(),
             encrypted_data_directory: "".to_string(),
             mount_directory: "../.Test".to_string(),
             session_lock: false,
