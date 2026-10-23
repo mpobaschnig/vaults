@@ -210,18 +210,49 @@ fn close(_settings: &Settings, vault_config: &VaultConfig) -> Result<(), Backend
         .spawn()?;
 
     let output = child.wait_with_output()?;
-    log::debug!("CryFS output: {:?}", output);
+    log::debug!("fusermount output: {:?}", output);
     if output.status.success() {
         log::info!("CryFS close successful");
-        Ok(())
-    } else {
+        return Ok(());
+    }
+
+    let err_code = output.status.code();
+    if err_code == Some(1) {
+        log::warn!(
+            "Mount point is busy, attempting lazy unmount for: {}",
+            vault_config.mount_directory
+        );
         std::io::stdout().write_all(&output.stdout)?;
         std::io::stderr().write_all(&output.stderr)?;
 
-        let err_code = output.status.code();
-        log::error!("CryFS close failed: {:?}", err_code);
-        Err(status_to_err(err_code))
+        let child = Command::new("flatpak-spawn")
+            .arg("--host")
+            .arg("fusermount")
+            .arg("-u")
+            .arg("-z")
+            .stdout(Stdio::piped())
+            .arg(&vault_config.mount_directory)
+            .spawn()?;
+
+        let output = child.wait_with_output()?;
+        log::debug!("lazy fusermount output: {:?}", output);
+        if output.status.success() {
+            log::info!("CryFS lazy close successful");
+            return Ok(());
+        }
+
+        std::io::stdout().write_all(&output.stdout)?;
+        std::io::stderr().write_all(&output.stderr)?;
+        let lazy_err_code = output.status.code();
+        log::error!("CryFS lazy close failed: {:?}", lazy_err_code);
+        return Err(status_to_err(lazy_err_code));
     }
+
+    // Other error codes
+    std::io::stdout().write_all(&output.stdout)?;
+    std::io::stderr().write_all(&output.stderr)?;
+    log::error!("CryFS close failed: {:?}", err_code);
+    Err(status_to_err(err_code))
 }
 
 fn status_to_err(status: Option<i32>) -> BackendError {

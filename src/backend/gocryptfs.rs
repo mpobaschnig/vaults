@@ -206,6 +206,7 @@ fn open(
 fn close(_settings: &Settings, vault_config: &VaultConfig) -> Result<(), BackendError> {
     log::trace!("close({:?}, password: <redacted>)", vault_config);
 
+    // First, try a normal unmount
     let child = Command::new("flatpak-spawn")
         .arg("--host")
         .arg("umount")
@@ -217,15 +218,45 @@ fn close(_settings: &Settings, vault_config: &VaultConfig) -> Result<(), Backend
     log::debug!("umount output: {:?}", output);
     if output.status.success() {
         log::info!("umount close successful");
-        Ok(())
-    } else {
+        return Ok(());
+    }
+
+    let err_code = output.status.code();
+    if err_code == Some(32) {
+        log::warn!(
+            "Mount point is busy, attempting lazy unmount for: {}",
+            vault_config.mount_directory
+        );
         std::io::stdout().write_all(&output.stdout)?;
         std::io::stderr().write_all(&output.stderr)?;
 
-        let err_code = output.status.code();
-        log::error!("gocryptfs close failed: {:?}", err_code);
-        Err(umount_ret_status_to_err(err_code))
+        let child = Command::new("flatpak-spawn")
+            .arg("--host")
+            .arg("umount")
+            .arg("-l")
+            .stdout(Stdio::piped())
+            .arg(&vault_config.mount_directory)
+            .spawn()?;
+
+        let output = child.wait_with_output()?;
+        log::debug!("lazy umount output: {:?}", output);
+        if output.status.success() {
+            log::info!("lazy umount close successful");
+            return Ok(());
+        }
+
+        std::io::stdout().write_all(&output.stdout)?;
+        std::io::stderr().write_all(&output.stderr)?;
+        let lazy_err_code = output.status.code();
+        log::error!("gocryptfs lazy close failed: {:?}", lazy_err_code);
+        return Err(umount_ret_status_to_err(lazy_err_code));
     }
+
+    // Other error codes
+    std::io::stdout().write_all(&output.stdout)?;
+    std::io::stderr().write_all(&output.stderr)?;
+    log::error!("gocryptfs close failed: {:?}", err_code);
+    Err(umount_ret_status_to_err(err_code))
 }
 
 fn gocryptfs_ret_status_to_err(status: Option<i32>) -> BackendError {
