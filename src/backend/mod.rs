@@ -17,7 +17,6 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-mod backend;
 pub mod cryfs;
 pub mod gocryptfs;
 

@@ -32,6 +32,7 @@ use uuid::Uuid;
 
 /// Describes what went wrong while reading a configuration file.
 #[derive(Debug)]
+#[allow(dead_code)]
 pub enum ReadError {
     /// The file could not be read from the disk.
     Io(std::io::Error),
