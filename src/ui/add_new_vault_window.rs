@@ -19,7 +19,7 @@
 
 use crate::application::VApplication;
 use crate::config::APP_ID;
-use crate::{backend, util, vault::*, vault_config::*};
+use crate::{backend, util, vault::*};
 use adw::prelude::AdwDialogExt;
 use adw::prelude::ComboRowExt;
 use gettextrs::gettext;

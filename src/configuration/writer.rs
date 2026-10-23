@@ -32,6 +32,7 @@ use uuid::Uuid;
 
 /// Describes what went wrong while writing a configuration file.
 #[derive(Debug)]
+#[allow(dead_code)]
 pub enum WriteError {
     /// The file could not be written to disk.
     Io(std::io::Error),
