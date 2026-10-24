@@ -25,10 +25,10 @@
 //! prevent the others from being loaded. Errors are collected and returned
 //! alongside the successfully parsed vaults.
 
+use crate::util::Uuid;
 use crate::vault_config::VaultConfig;
 use std::collections::HashMap;
 use std::path::Path;
-use uuid::Uuid;
 
 /// Describes what went wrong while reading a configuration file.
 #[derive(Debug)]

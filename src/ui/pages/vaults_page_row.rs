@@ -31,7 +31,8 @@ use gtk::prelude::*;
 use once_cell::sync::Lazy;
 use std::cell::RefCell;
 use std::process::Command;
-use uuid::Uuid;
+
+use crate::util::Uuid;
 
 use super::{VaultsPageRowPasswordPromptWindow, VaultsPageRowSettingsWindow};
 use crate::{
@@ -522,7 +523,7 @@ impl VaultsPageRow {
     pub fn get_vault(&self) -> Vault {
         log::trace!("get_vault");
 
-        let uuid = self.imp().uuid.borrow().unwrap();
+        let uuid = self.imp().uuid.borrow().as_ref().unwrap().clone();
         let config = self.imp().config.borrow().clone();
         match config {
             Some(config) => Vault::new(

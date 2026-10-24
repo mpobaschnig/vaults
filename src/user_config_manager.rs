@@ -20,6 +20,7 @@
 use crate::{
     configuration::{read_config, write_config},
     legacy,
+    util::Uuid,
     vault::*,
     vault_config::*,
 };
@@ -30,7 +31,6 @@ use gtk::{
 };
 use once_cell::sync::Lazy;
 use std::{cell::RefCell, collections::HashMap, path::Path};
-use uuid::Uuid;
 
 static mut USER_CONFIG_MANAGER: Option<UserConfigManager> = None;
 

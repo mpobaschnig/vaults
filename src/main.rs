@@ -37,7 +37,6 @@ extern crate ini;
 extern crate proc_mounts;
 extern crate serde;
 extern crate toml;
-extern crate uuid;
 
 use application::VApplication;
 use config::{GETTEXT_PACKAGE, LOCALEDIR, RESOURCES_FILE};

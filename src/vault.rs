@@ -18,6 +18,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::backend::{Backend, BackendError, backend::BackendImpl};
+use crate::util::Uuid;
 use crate::vault_config::VaultConfig;
 use gio::VolumeMonitor;
 use gio::prelude::*;
@@ -25,7 +26,6 @@ use gio::subclass::prelude::*;
 use gtk::{gio, glib, glib::Properties};
 use serde::{Deserialize, Serialize};
 use std::cell::RefCell;
-use uuid::Uuid;
 
 mod imp {
     use super::*;
@@ -89,7 +89,7 @@ impl Vault {
     pub fn get_uuid(&self) -> Uuid {
         log::trace!("get_uuid");
         let uuid = self.imp().uuid.borrow();
-        *uuid
+        uuid.clone()
     }
 
     pub fn set_uuid(&self, uuid: Uuid) {
