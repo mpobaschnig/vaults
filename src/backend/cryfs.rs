@@ -96,6 +96,53 @@ fn is_available(settings: &Settings) -> Result<bool, BackendError> {
     Ok(success)
 }
 
+/// Checks whether the CryFS binary asks the user on the first run whether the
+/// default settings should be used.
+///
+/// CryFS 1.0 introduced a first-run question on stdin that is answered with
+/// "y". Older versions do not ask this question and would instead consume the
+/// answer as the password.
+///
+/// Returns `true` if the version could not be determined, matching the
+/// behavior of the CryFS version bundled in the Flatpak.
+fn needs_default_settings_answer(binary_path: &str) -> bool {
+    log::trace!("needs_default_settings_answer({:?})", binary_path);
+
+    let output = match host_command(binary_path).arg("--version").output() {
+        Ok(output) => output,
+        Err(e) => {
+            log::warn!("Could not run CryFS to determine its version: {}", e);
+            return true;
+        }
+    };
+
+    let version_output = String::from_utf8_lossy(&output.stdout);
+    log::debug!("CryFS version output: {}", version_output);
+
+    let Some(position) = version_output.find("Version") else {
+        log::warn!("Could not parse CryFS version output");
+        return true;
+    };
+
+    let version: String = version_output[position + "Version".len()..]
+        .trim_start()
+        .chars()
+        .take_while(|c| c.is_ascii_digit() || *c == '.')
+        .collect();
+
+    let major = version
+        .split('.')
+        .next()
+        .and_then(|m| m.parse::<u32>().ok());
+    match major {
+        Some(major) => major >= 1,
+        None => {
+            log::warn!("Could not parse CryFS version output");
+            true
+        }
+    }
+}
+
 fn init(
     settings: &Settings,
     vault_config: &VaultConfig,
@@ -108,8 +155,9 @@ fn init(
         log::error!("cryfs binary path is not set");
         return Err(BackendError::ToUser(gettext("No CryFs binary path set")));
     }
+    let binary_path = binary_path.unwrap();
 
-    let mut child = host_command(&binary_path.unwrap())
+    let mut child = host_command(&binary_path)
         .env("CRYFS_FRONTEND", "noninteractive")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -118,8 +166,10 @@ fn init(
         .arg(&vault_config.mount_directory)
         .spawn()?;
 
-    let mut pw = String::from("y");
-    pw.push('\n');
+    let mut pw = String::new();
+    if needs_default_settings_answer(&binary_path) {
+        pw.push_str("y\n");
+    }
     pw.push_str(&password);
     pw.push('\n');
     pw.push_str(&password);
