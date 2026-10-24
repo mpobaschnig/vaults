@@ -228,7 +228,7 @@ impl ApplicationWindow {
                 }
 
                 let vault = Vault::new(
-                    *k,
+                    k.clone(),
                     v.name.to_owned(),
                     v.backend.clone(),
                     v.encrypted_data_directory.to_owned(),
@@ -457,7 +457,7 @@ impl ApplicationWindow {
         let map = UserConfigManager::instance().get_map();
         for (k, v) in map.iter() {
             let vault = Vault::new(
-                *k,
+                k.clone(),
                 v.name.to_owned(),
                 v.backend.clone(),
                 v.encrypted_data_directory.to_owned(),

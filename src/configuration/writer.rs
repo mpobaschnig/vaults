@@ -25,10 +25,10 @@
 //! not prevent the others from being saved.  Errors are collected and
 //! returned alongside the count of successfully written vaults.
 
+use crate::util::Uuid;
 use crate::vault_config::VaultConfig;
 use std::collections::HashMap;
 use std::path::Path;
-use uuid::Uuid;
 
 /// Describes what went wrong while writing a configuration file.
 #[derive(Debug)]
@@ -81,7 +81,7 @@ pub fn write_config(
                             e
                         );
                         errors.push(WriteError::VaultSerialize {
-                            uuid: *uuid,
+                            uuid: uuid.clone(),
                             error: e.to_string(),
                         });
                     }
@@ -94,7 +94,7 @@ pub fn write_config(
                     e
                 );
                 errors.push(WriteError::VaultSerialize {
-                    uuid: *uuid,
+                    uuid: uuid.clone(),
                     error: e.to_string(),
                 });
             }
@@ -324,7 +324,7 @@ mod tests {
         let uuid2 = Uuid::parse_str("b29b941c-505a-4b46-86c0-abf39bcdc2e2").unwrap();
 
         original_vaults.insert(
-            uuid1,
+            uuid1.clone(),
             VaultConfig {
                 name: "Vault 1".to_string(),
                 backend: Backend::Cryfs.into(),
@@ -334,7 +334,7 @@ mod tests {
             },
         );
         original_vaults.insert(
-            uuid2,
+            uuid2.clone(),
             VaultConfig {
                 name: "Vault 2".to_string(),
                 backend: Backend::Gocryptfs.into(),

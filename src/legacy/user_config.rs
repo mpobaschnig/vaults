@@ -17,12 +17,12 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use crate::util::Uuid;
 use crate::{backend::Backend, util, vault_config::VaultConfig};
 use gtk::glib::user_config_dir;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use toml::de::Error;
-use uuid::Uuid;
 
 #[derive(Debug, Deserialize, Clone, Serialize)]
 pub struct LegacyVaultConfig {

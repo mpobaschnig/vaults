@@ -36,13 +36,13 @@ mod tests {
     use super::read_config;
     use super::write_config;
     use crate::backend::Backend;
+    use crate::util::Uuid;
     use crate::vault_config::VaultConfig;
     use std::collections::HashMap;
     use tempfile::TempDir;
-    use uuid::Uuid;
 
     /// Helper function to create a test vault configuration with the given name and backend.
-    fn create_test_vault(_uuid: Uuid, name: &str, backend: Backend) -> VaultConfig {
+    fn create_test_vault(_uuid: &Uuid, name: &str, backend: Backend) -> VaultConfig {
         VaultConfig {
             name: name.to_string(),
             backend: backend.into(),
@@ -65,16 +65,16 @@ mod tests {
         let uuid3 = Uuid::parse_str("c39c941c-505a-4b46-86c0-abf39bcdc2e3").unwrap();
 
         vaults.insert(
-            uuid1,
-            create_test_vault(uuid1, "cryfs_vault", Backend::Cryfs),
+            uuid1.clone(),
+            create_test_vault(&uuid1, "cryfs_vault", Backend::Cryfs),
         );
         vaults.insert(
-            uuid2,
-            create_test_vault(uuid2, "gocryptfs_vault", Backend::Gocryptfs),
+            uuid2.clone(),
+            create_test_vault(&uuid2, "gocryptfs_vault", Backend::Gocryptfs),
         );
         vaults.insert(
-            uuid3,
-            create_test_vault(uuid3, "another_cryfs", Backend::Cryfs),
+            uuid3.clone(),
+            create_test_vault(&uuid3, "another_cryfs", Backend::Cryfs),
         );
 
         // Write config
