@@ -24,6 +24,8 @@ pub mod gocryptfs;
 use gettextrs::gettext;
 use gtk::glib;
 use serde::{Deserialize, Serialize};
+use std::path::Path;
+use std::process::Command;
 use std::string::String;
 use strum_macros::EnumIter;
 
@@ -79,6 +81,37 @@ pub fn get_backend_from_ui_string(backend: &str) -> Option<Backend> {
         Some(Backend::Gocryptfs)
     } else {
         None
+    }
+}
+
+/// Returns whether the application is running inside a Flatpak sandbox.
+///
+/// Detects the Flatpak environment by checking for the existence of the
+/// `/.flatpak-info` file, which is present in every Flatpak sandbox.
+pub fn is_flatpak() -> bool {
+    log::trace!("is_flatpak()");
+
+    Path::new("/.flatpak-info").exists()
+}
+
+/// Creates a command running `binary` on the host system.
+///
+/// When running inside a Flatpak sandbox, the command is wrapped in
+/// `flatpak-spawn --host` so the binary runs on the host. When running
+/// natively, the binary is executed directly.
+///
+/// * `binary`: Path to or name of the binary to run.
+///
+/// Returns the command to which further arguments can be added.
+pub fn host_command(binary: &str) -> Command {
+    log::trace!("host_command({:?})", binary);
+
+    if is_flatpak() {
+        let mut command = Command::new("flatpak-spawn");
+        command.arg("--host").arg(binary);
+        command
+    } else {
+        Command::new(binary)
     }
 }
 

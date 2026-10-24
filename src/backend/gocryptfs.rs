@@ -19,14 +19,13 @@
 
 use super::BackendError;
 use super::backend::BackendImpl;
-use crate::backend::{Backend, create_directories};
+use crate::backend::{Backend, create_directories, host_command};
 use crate::config::APP_ID;
 use crate::global_config_manager::GlobalConfigManager;
 use crate::vault_config::VaultConfig;
 use gettextrs::gettext;
 use gtk::gio::Settings;
 use gtk::gio::prelude::SettingsExt;
-use std::process::Command;
 use std::{io::Write, process::Stdio};
 
 #[derive(Debug, Clone, Default)]
@@ -89,9 +88,7 @@ fn is_available(settings: &Settings) -> Result<bool, BackendError> {
         )));
     }
 
-    let output = Command::new("flatpak-spawn")
-        .arg("--host")
-        .arg(binary_path.unwrap())
+    let output = host_command(&binary_path.unwrap())
         .arg("--version")
         .output()?;
     log::debug!("gocryptfs output: {:?}", output);
@@ -116,9 +113,7 @@ fn init(
         )));
     }
 
-    let mut child = Command::new("flatpak-spawn")
-        .arg("--host")
-        .arg(binary_path.unwrap())
+    let mut child = host_command(&binary_path.unwrap())
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .arg("--init")
@@ -168,9 +163,7 @@ fn open(
         )));
     }
 
-    let mut child = Command::new("flatpak-spawn")
-        .arg("--host")
-        .arg(binary_path.unwrap())
+    let mut child = host_command(&binary_path.unwrap())
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
         .arg("-q")
@@ -207,9 +200,7 @@ fn close(_settings: &Settings, vault_config: &VaultConfig) -> Result<(), Backend
     log::trace!("close({:?}, password: <redacted>)", vault_config);
 
     // First, try a normal unmount
-    let child = Command::new("flatpak-spawn")
-        .arg("--host")
-        .arg("umount")
+    let child = host_command("umount")
         .stdout(Stdio::piped())
         .arg(&vault_config.mount_directory)
         .spawn()?;
@@ -230,9 +221,7 @@ fn close(_settings: &Settings, vault_config: &VaultConfig) -> Result<(), Backend
         std::io::stdout().write_all(&output.stdout)?;
         std::io::stderr().write_all(&output.stderr)?;
 
-        let child = Command::new("flatpak-spawn")
-            .arg("--host")
-            .arg("umount")
+        let child = host_command("umount")
             .arg("-l")
             .stdout(Stdio::piped())
             .arg(&vault_config.mount_directory)
