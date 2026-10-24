@@ -19,14 +19,13 @@
 
 use super::BackendError;
 use super::backend::BackendImpl;
-use crate::backend::{Backend, create_directories};
+use crate::backend::{Backend, create_directories, host_command};
 use crate::config::APP_ID;
 use crate::global_config_manager::GlobalConfigManager;
 use crate::vault_config::VaultConfig;
 use gettextrs::gettext;
 use gtk::gio::Settings;
 use gtk::gio::prelude::SettingsExt;
-use std::process::Command;
 use std::{self, io::Write, process::Stdio};
 
 #[derive(Debug, Clone, Default)]
@@ -87,9 +86,7 @@ fn is_available(settings: &Settings) -> Result<bool, BackendError> {
         return Err(BackendError::ToUser(gettext("No CryFs binary path set")));
     }
 
-    let output = Command::new("flatpak-spawn")
-        .arg("--host")
-        .arg(binary_path.unwrap())
+    let output = host_command(&binary_path.unwrap())
         .arg("--version")
         .output()?;
     log::debug!("CryFS output: {:?}", output);
@@ -112,9 +109,7 @@ fn init(
         return Err(BackendError::ToUser(gettext("No CryFs binary path set")));
     }
 
-    let mut child = Command::new("flatpak-spawn")
-        .arg("--host")
-        .arg(binary_path.unwrap())
+    let mut child = host_command(&binary_path.unwrap())
         .env("CRYFS_FRONTEND", "noninteractive")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -164,9 +159,7 @@ fn open(
         return Err(BackendError::ToUser(gettext("No CryFs binary path set")));
     }
 
-    let mut child = Command::new("flatpak-spawn")
-        .arg("--host")
-        .arg(binary_path.unwrap())
+    let mut child = host_command(&binary_path.unwrap())
         .env("CRYFS_FRONTEND", "noninteractive")
         .stdin(Stdio::piped())
         .stdout(Stdio::piped())
@@ -201,9 +194,7 @@ fn open(
 fn close(_settings: &Settings, vault_config: &VaultConfig) -> Result<(), BackendError> {
     log::trace!("close({:?})", vault_config);
 
-    let child = Command::new("flatpak-spawn")
-        .arg("--host")
-        .arg("fusermount")
+    let child = host_command("fusermount")
         .arg("-u")
         .stdout(Stdio::piped())
         .arg(&vault_config.mount_directory)
@@ -225,9 +216,7 @@ fn close(_settings: &Settings, vault_config: &VaultConfig) -> Result<(), Backend
         std::io::stdout().write_all(&output.stdout)?;
         std::io::stderr().write_all(&output.stderr)?;
 
-        let child = Command::new("flatpak-spawn")
-            .arg("--host")
-            .arg("fusermount")
+        let child = host_command("fusermount")
             .arg("-u")
             .arg("-z")
             .stdout(Stdio::piped())
