@@ -70,7 +70,7 @@ pub fn get_ui_string_from_backend(backend: &Backend) -> String {
     }
 }
 
-pub fn get_backend_from_ui_string(backend: &String) -> Option<Backend> {
+pub fn get_backend_from_ui_string(backend: &str) -> Option<Backend> {
     log::trace!("get_backend_from_ui_string({:?})", backend);
 
     if backend == "CryFS" {
@@ -90,7 +90,7 @@ pub fn create_directories(
     create_md_if_not_exists(&vault_config.mount_directory)
 }
 
-fn create_edd_if_not_exists(encrypted_data_directory: &String) -> Result<(), BackendError> {
+fn create_edd_if_not_exists(encrypted_data_directory: &str) -> Result<(), BackendError> {
     log::trace!("create_edd_if_not_exists({:?}", encrypted_data_directory);
 
     match std::fs::create_dir_all(encrypted_data_directory) {
@@ -122,13 +122,13 @@ fn create_edd_if_not_exists(encrypted_data_directory: &String) -> Result<(), Bac
     }
 }
 
-fn create_md_if_not_exists(mount_directory: &String) -> Result<(), BackendError> {
+fn create_md_if_not_exists(mount_directory: &str) -> Result<(), BackendError> {
     log::trace!("create_md_if_not_exists({:?}", mount_directory);
 
     match std::fs::create_dir_all(mount_directory) {
         Ok(_) => Ok(()),
         Err(e) => {
-            log::error!("Failed to create encrypted data directory: {}", e);
+            log::error!("Failed to create mount directory: {}", e);
 
             match e.kind() {
                 std::io::ErrorKind::PermissionDenied => Err(BackendError::ToUser(gettext(
