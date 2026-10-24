@@ -83,7 +83,7 @@ impl Clone for Box<dyn BackendImpl> {
 
 impl Default for Box<dyn BackendImpl> {
     fn default() -> Self {
-        Box::new(super::cryfs::CryFs::default())
+        Backend::default().into()
     }
 }
 
@@ -106,6 +106,7 @@ pub mod serde_backend {
     use super::*;
 
     /// Serializes a backend implementation as its stable enum representation.
+    #[allow(clippy::borrowed_box)]
     pub fn serialize<S>(backend: &Box<dyn BackendImpl>, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: Serializer,
