@@ -17,6 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+use crate::backend::BackendError;
 use crate::backend::backend::BackendImpl;
 use crate::backend::cryfs::CryFs;
 use crate::config::APP_ID;
@@ -582,32 +583,67 @@ impl ApplicationWindow {
                 move |dialog: AddNewVaultWindow| {
                     let vault = dialog.get_vault();
                     let password = dialog.get_password();
-                    match vault.init(password) {
-                        Ok(_) => {
-                            UserConfigManager::instance().add_vault(vault);
-                            obj.refresh_model();
-                            obj.set_view(View::Vaults);
-                        }
-                        Err(e) => {
-                            log::error!("Could not init vault: {}", e);
-                            glib::MainContext::default().spawn_local(async move {
-                                let window = gio::Application::default()
-                                    .unwrap()
-                                    .downcast_ref::<VApplication>()
-                                    .unwrap()
-                                    .active_window()
-                                    .unwrap()
-                                    .clone();
-                                let info_dialog = gtk::AlertDialog::builder()
-                                    .message(vault.name())
-                                    .detail(format!("{}", e))
-                                    .modal(true)
-                                    .build();
 
-                                info_dialog.show(Some(&window));
-                            });
-                        }
+                    enum Message {
+                        Finished,
+                        Error(BackendError),
                     }
+
+                    let (sender, receiver) = async_channel::unbounded();
+                    let vault_config = vault.config().clone();
+                    let vault_name = vault.name().to_string();
+                    let vault = vault.clone();
+                    glib::spawn_future_local(clone!(
+                        #[strong]
+                        obj,
+                        async move {
+                            while let Ok(message) = receiver.recv().await {
+                                match message {
+                                    Message::Finished => {
+                                        UserConfigManager::instance().add_vault(vault.clone());
+                                        obj.refresh_model();
+                                        obj.set_view(View::Vaults);
+                                    }
+                                    Message::Error(e) => {
+                                        log::error!("Could not init vault: {}", e);
+                                        let vault_name = vault_name.clone();
+                                        glib::MainContext::default().spawn_local(async move {
+                                            let window = gio::Application::default()
+                                                .unwrap()
+                                                .downcast_ref::<VApplication>()
+                                                .unwrap()
+                                                .active_window()
+                                                .unwrap()
+                                                .clone();
+                                            let info_dialog = gtk::AlertDialog::builder()
+                                                .message(&vault_name)
+                                                .detail(format!("{}", e))
+                                                .modal(true)
+                                                .build();
+
+                                            info_dialog.show(Some(&window));
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                    ));
+
+                    std::thread::spawn(move || {
+                        match vault_config.backend.init(&vault_config, &password) {
+                            Ok(_) => gio::spawn_blocking(move || {
+                                sender
+                                    .send_blocking(Message::Finished)
+                                    .expect("Channel needs to be open");
+                            }),
+                            Err(e) => gio::spawn_blocking(move || {
+                                sender
+                                    .send_blocking(Message::Error(e))
+                                    .expect("Channel needs to be open");
+                            }),
+                        }
+                    });
+
                     AdwDialogExt::close(&dialog);
                 }
             ),
