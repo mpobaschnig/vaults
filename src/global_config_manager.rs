@@ -168,7 +168,7 @@ impl GlobalConfigManager {
                             log::info!("Got user data directory: {}", user_data_directory);
 
                             *global_config.encrypted_data_directory.borrow_mut() =
-                                Some(user_data_directory.to_owned() + "/");
+                                Some(user_data_directory.to_owned() + "/Vaults");
                         }
                         None => {
                             log::error!("Could not get user data directory");
