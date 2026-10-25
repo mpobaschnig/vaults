@@ -358,12 +358,12 @@ mod tests {
         let read_v1 = read_result.vaults.get(&uuid1).unwrap();
         assert_eq!(read_v1.name, "Vault 1");
         assert_eq!(read_v1.backend.kind(), Backend::Cryfs);
-        assert_eq!(read_v1.session_lock, false);
+        assert!(!read_v1.session_lock);
 
         let read_v2 = read_result.vaults.get(&uuid2).unwrap();
         assert_eq!(read_v2.name, "Vault 2");
         assert_eq!(read_v2.backend.kind(), Backend::Gocryptfs);
-        assert_eq!(read_v2.session_lock, true);
+        assert!(read_v2.session_lock);
     }
 
     #[test]

@@ -18,7 +18,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::backend::BackendError;
-use crate::backend::backend::BackendImpl;
+use crate::backend::backend_impl::BackendImpl;
 use crate::backend::cryfs::CryFs;
 use crate::config::APP_ID;
 use crate::ui::pages::*;

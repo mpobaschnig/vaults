@@ -352,15 +352,14 @@ impl GlobalConfigManager {
     }
 
     pub fn get_cryfs_binary_path(&self) -> Option<String> {
-        if let Some(flatpak_info) = self.get_flatpak_info() {
-            if let Some(instance_path) = flatpak_info
+        if let Some(flatpak_info) = self.get_flatpak_info()
+            && let Some(instance_path) = flatpak_info
                 .section(Some("Instance"))
                 .and_then(|s| s.get("app-path"))
-            {
-                let cryfs_instance_path = instance_path.to_owned() + "/bin/cryfs";
-                log::info!("CryFS binary path (Flatpak): {}", cryfs_instance_path);
-                return Some(cryfs_instance_path);
-            }
+        {
+            let cryfs_instance_path = instance_path.to_owned() + "/bin/cryfs";
+            log::info!("CryFS binary path (Flatpak): {}", cryfs_instance_path);
+            return Some(cryfs_instance_path);
         }
 
         log::info!("Not running in Flatpak, checking system PATH for cryfs");
@@ -368,18 +367,17 @@ impl GlobalConfigManager {
     }
 
     pub fn get_gocryptfs_binary_path(&self) -> Option<String> {
-        if let Some(flatpak_info) = self.get_flatpak_info() {
-            if let Some(instance_path) = flatpak_info
+        if let Some(flatpak_info) = self.get_flatpak_info()
+            && let Some(instance_path) = flatpak_info
                 .section(Some("Instance"))
                 .and_then(|s| s.get("app-path"))
-            {
-                let gocryptfs_instance_path = instance_path.to_owned() + "/bin/gocryptfs";
-                log::info!(
-                    "gocryptfs binary path (Flatpak): {}",
-                    gocryptfs_instance_path
-                );
-                return Some(gocryptfs_instance_path);
-            }
+        {
+            let gocryptfs_instance_path = instance_path.to_owned() + "/bin/gocryptfs";
+            log::info!(
+                "gocryptfs binary path (Flatpak): {}",
+                gocryptfs_instance_path
+            );
+            return Some(gocryptfs_instance_path);
         }
 
         log::info!("Not running in Flatpak, checking system PATH for gocryptfs");
