@@ -83,12 +83,20 @@ pub fn get_ui_string_from_backend(backend: &Backend) -> String {
 pub fn get_backend_from_ui_string(backend: &str) -> Option<Backend> {
     log::trace!("get_backend_from_ui_string({:?})", backend);
 
-    if backend == "CryFS" {
-        Some(Backend::Cryfs)
-    } else if backend == "gocryptfs" {
-        Some(Backend::Gocryptfs)
-    } else {
-        None
+    match backend {
+        "CryFS" => Some(Backend::Cryfs),
+        "gocryptfs" => Some(Backend::Gocryptfs),
+        "mock" => {
+            #[cfg(any(test, debug_assertions))]
+            {
+                Some(Backend::Mock)
+            }
+            #[cfg(not(any(test, debug_assertions)))]
+            {
+                return None;
+            }
+        }
+        _ => None,
     }
 }
 
