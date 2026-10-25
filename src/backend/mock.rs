@@ -19,7 +19,7 @@
 //
 
 use super::BackendError;
-use super::backend::BackendImpl;
+use super::backend_impl::BackendImpl;
 use crate::backend::Backend;
 use crate::vault_config::VaultConfig;
 use gettextrs::gettext;

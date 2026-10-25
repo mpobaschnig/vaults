@@ -163,7 +163,7 @@ session_lock = false
         assert_eq!(vault.backend.kind(), Backend::Cryfs);
         assert_eq!(vault.encrypted_data_directory, "/var/home/user/edd/test");
         assert_eq!(vault.mount_directory, "/var/home/user/md/test");
-        assert_eq!(vault.session_lock, false);
+        assert!(!vault.session_lock);
     }
 
     #[test]
@@ -190,7 +190,7 @@ session_lock = false
         assert_eq!(vault.backend.kind(), Backend::Gocryptfs);
         assert_eq!(vault.encrypted_data_directory, "/var/home/user/edd/test");
         assert_eq!(vault.mount_directory, "/var/home/user/md/test");
-        assert_eq!(vault.session_lock, false);
+        assert!(!vault.session_lock);
     }
 
     #[test]

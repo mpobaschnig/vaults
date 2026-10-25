@@ -580,15 +580,14 @@ impl ImportVaultDialog {
             util::generate_uuid(),
             String::from(self.imp().name_entry_row.text().as_str()),
             backend::get_backend_from_ui_string(
-                &self
-                    .imp()
+                self.imp()
                     .combo_row_backend
                     .selected_item()
                     .unwrap()
                     .downcast::<gtk::StringObject>()
                     .unwrap()
                     .string()
-                    .to_string(),
+                    .as_ref(),
             )
             .unwrap()
             .into(),

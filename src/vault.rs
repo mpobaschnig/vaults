@@ -17,7 +17,7 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-use crate::backend::{Backend, BackendError, backend::BackendImpl};
+use crate::backend::{Backend, BackendError, backend_impl::BackendImpl};
 use crate::util::Uuid;
 use crate::vault_config::VaultConfig;
 use gio::VolumeMonitor;

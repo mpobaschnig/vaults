@@ -18,7 +18,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use super::BackendError;
-use super::backend::BackendImpl;
+use super::backend_impl::BackendImpl;
 use crate::backend::{Backend, create_directories, host_command};
 use crate::config::APP_ID;
 use crate::global_config_manager::GlobalConfigManager;

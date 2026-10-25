@@ -362,15 +362,14 @@ impl AddNewVaultWindow {
 
     pub fn combo_box_changed(&self) {
         let backend = backend::get_backend_from_ui_string(
-            &self
-                .imp()
+            self.imp()
                 .combo_row_backend
                 .selected_item()
                 .unwrap()
                 .downcast::<gtk::StringObject>()
                 .unwrap()
                 .string()
-                .to_string(),
+                .as_ref(),
         )
         .unwrap();
 
@@ -683,15 +682,14 @@ impl AddNewVaultWindow {
 
     pub fn get_vault(&self) -> Vault {
         let backend = backend::get_backend_from_ui_string(
-            &self
-                .imp()
+            self.imp()
                 .combo_row_backend
                 .selected_item()
                 .unwrap()
                 .downcast::<gtk::StringObject>()
                 .unwrap()
                 .string()
-                .to_string(),
+                .as_ref(),
         )
         .unwrap();
 

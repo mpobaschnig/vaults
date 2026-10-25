@@ -19,7 +19,7 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-use crate::backend::backend::{BackendImpl, serde_backend};
+use crate::backend::backend_impl::{BackendImpl, serde_backend};
 use gtk::glib;
 use serde::{Deserialize, Serialize};
 
