@@ -50,7 +50,6 @@ sources = files(
   'config.rs',
   'global_config_manager.rs',
   'main.rs',
-  'mod.rs',
   'user_config_manager.rs',
   'util.rs',
   'vault.rs',
