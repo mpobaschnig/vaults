@@ -709,10 +709,19 @@ impl AddNewVaultWindow {
     fn setup_combo_box(&self) {
         let list = gtk::StringList::new(&[]);
 
-        for backend in backend::Backend::iter() {
-            list.append(&backend.to_string());
+        // Keep gocryptfs selected to preserve the previous default selection.
+        let mut gocryptfs_position = u32::MAX;
+        for (position, backend) in backend::Backend::iter().enumerate() {
+            if backend == backend::Backend::Gocryptfs {
+                gocryptfs_position = position as u32;
+            }
+            list.append(&backend::get_ui_string_from_backend(&backend));
         }
 
+        self.imp().combo_row_backend.set_model(Some(&list));
+        self.imp()
+            .combo_row_backend
+            .set_selected(gocryptfs_position);
         self.combo_box_changed();
     }
 

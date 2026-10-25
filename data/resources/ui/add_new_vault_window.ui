@@ -105,14 +105,6 @@
                                 <child>
                                   <object class="AdwComboRow" id="combo_row_backend">
                                     <property name="title" translatable="yes">Backend</property>
-                                    <property name="model">
-                                      <object class="GtkStringList">
-                                        <items>
-                                          <item translatable="yes">gocryptfs</item>
-                                          <item translatable="yes">CryFS</item>
-                                        </items>
-                                      </object>
-                                    </property>
                                   </object>
                                 </child>
                                 <child>
