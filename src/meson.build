@@ -27,6 +27,7 @@ sources = files(
   'backend/backend.rs',
   'backend/cryfs.rs',
   'backend/gocryptfs.rs',
+  'backend/mock.rs',
   'backend/mod.rs',
 
   'legacy/global_config.rs',

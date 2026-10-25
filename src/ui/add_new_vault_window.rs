@@ -380,6 +380,10 @@ impl AddNewVaultWindow {
             },
             backend::Backend::Gocryptfs => {
                 self.imp().info_label.set_text(&gettext("Fast and robust, gocryptfs works well in general cases where third-parties do not always have access to the encrypted data directory (e.g. file hosting services). It exposes directory structure, number of files and file sizes. A security audit in 2017 verified gocryptfs is safe against third-parties that can read or write to encrypted data."));
+            },
+            #[cfg(any(test, debug_assertions))]
+            backend::Backend::Mock => {
+                self.imp().info_label.set_text(&gettext("Mock backend for development and testing. Simulates vault operations without encrypting any data."));
             }
         }
     }

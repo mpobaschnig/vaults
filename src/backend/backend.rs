@@ -98,6 +98,8 @@ impl From<Backend> for Box<dyn BackendImpl> {
         match backend {
             Backend::Cryfs => Box::new(super::cryfs::CryFs::default()),
             Backend::Gocryptfs => Box::new(super::gocryptfs::Gocryptfs::default()),
+            #[cfg(any(test, debug_assertions))]
+            Backend::Mock => Box::new(super::mock::Mock::default()),
         }
     }
 }

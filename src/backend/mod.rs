@@ -20,6 +20,8 @@
 pub mod backend;
 pub mod cryfs;
 pub mod gocryptfs;
+#[cfg(any(test, debug_assertions))]
+pub mod mock;
 
 use gettextrs::gettext;
 use gtk::glib;
@@ -61,6 +63,10 @@ pub enum Backend {
     Cryfs,
     #[enum_value(name = "gocryptfs")]
     Gocryptfs,
+    /// Mock backend, only available in debug and test builds.
+    #[cfg(any(test, debug_assertions))]
+    #[enum_value(name = "mock")]
+    Mock,
 }
 
 pub fn get_ui_string_from_backend(backend: &Backend) -> String {
@@ -69,6 +75,8 @@ pub fn get_ui_string_from_backend(backend: &Backend) -> String {
     match backend {
         Backend::Cryfs => String::from("CryFS"),
         Backend::Gocryptfs => String::from("gocryptfs"),
+        #[cfg(any(test, debug_assertions))]
+        Backend::Mock => String::from("mock"),
     }
 }
 
