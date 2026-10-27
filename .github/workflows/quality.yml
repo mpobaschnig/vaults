@@ -12,9 +12,10 @@ jobs:
           - arch: aarch64
             runner: ubuntu-24.04-arm
     runs-on: ${{ matrix.variant.runner }}
-    container: fedora:latest
+    # Pinned to a specific release instead of the mutable "latest" tag
+    container: fedora:43
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Install dependencies
         run: sudo dnf install -y gtk4-devel libadwaita-devel meson gettext cargo rust clippy rustfmt
       - name: Run meson setup
