@@ -204,7 +204,7 @@ impl ApplicationWindow {
             #[weak(rename_to = obj)]
             self,
             move |_| {
-                if obj.get_view().unwrap() != "search" {
+                if obj.get_view().as_deref() != Some("search") {
                     obj.set_view(View::Search);
                 }
 
@@ -405,7 +405,7 @@ impl ApplicationWindow {
             #[weak(rename_to = obj)]
             self,
             move |_| {
-                if obj.get_view().unwrap() == "vaults" {
+                if obj.get_view().as_deref() == Some("vaults") {
                     for row in obj.imp().list_store.into_iter() {
                         let vault_row = row.unwrap();
                         let vault_row = vault_row.downcast_ref::<VaultsPageRow>().unwrap();
@@ -415,7 +415,7 @@ impl ApplicationWindow {
                         }
                     }
                     obj.refresh_model();
-                } else if obj.get_view().unwrap() == "search" {
+                } else if obj.get_view().as_deref() == Some("search") {
                     for row in obj.imp().search_list_store.into_iter() {
                         let vault_row = row.unwrap();
                         let vault_row = vault_row.downcast_ref::<VaultsPageRow>().unwrap();
@@ -499,7 +499,7 @@ impl ApplicationWindow {
                             obj_.search_entry.set_text("");
                             return;
                         }
-                        if obj.get_view().unwrap() != "search" {
+                        if obj.get_view().as_deref() != Some("search") {
                             obj.set_view(View::Search);
                         }
                         obj_.search_stack.set_visible_child_name("no-results");
