@@ -616,8 +616,13 @@ impl VaultsPageRow {
                     match config_mount_directory_file_name.to_str() {
                         Some(file_name) => {
                             let eq_name = mount.name() == file_name;
-                            let eq_path = mount.default_location().path().unwrap()
-                                == canonicalized_config_mount_directory_path;
+                            let eq_path = mount
+                                .default_location()
+                                .path()
+                                .map(|mount_path| {
+                                    mount_path == canonicalized_config_mount_directory_path
+                                })
+                                .unwrap_or(false);
                             if eq_name && eq_path {
                                 log::debug!(
                                     "Setting row state opened for mount with name: \"{}\", and path \"{}\"",
@@ -658,8 +663,13 @@ impl VaultsPageRow {
                     match config_mount_directory_file_name.to_str() {
                         Some(file_name) => {
                             let eq_name = mount.name() == file_name;
-                            let eq_path = mount.default_location().path().unwrap()
-                                == canonicalized_config_mount_directory_path;
+                            let eq_path = mount
+                                .default_location()
+                                .path()
+                                .map(|mount_path| {
+                                    mount_path == canonicalized_config_mount_directory_path
+                                })
+                                .unwrap_or(false);
                             if eq_name && eq_path {
                                 log::debug!(
                                     "Setting row state closed for mount with name: \"{}\", and path \"{}\"",
