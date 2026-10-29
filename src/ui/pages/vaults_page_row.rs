@@ -161,6 +161,14 @@ impl VaultsPageRow {
         object
     }
 
+    fn default_application() -> Option<VApplication> {
+        gio::Application::default().and_downcast::<VApplication>()
+    }
+
+    fn active_window() -> Option<gtk::Window> {
+        Self::default_application()?.active_window()
+    }
+
     pub fn setup_connect_handlers(&self) {
         self.imp().open_folder_button.connect_clicked(clone!(
             #[weak(rename_to = obj)]
@@ -208,39 +216,46 @@ impl VaultsPageRow {
                 }
             ));
 
-        let window = gio::Application::default()
-            .unwrap()
-            .downcast_ref::<VApplication>()
-            .unwrap()
-            .clone();
-        window.connect_screensaver_active_notify(clone!(
-            #[weak(rename_to = obj)]
-            self,
-            move |_| {
-                let config = obj.imp().config.borrow().clone().unwrap();
-                if config.session_lock {
-                    let vault = obj.get_vault();
-
-                    if !vault.is_backend_available() {
-                        obj.set_vault_row_state_backend_unavailable();
+        if let Some(application) = Self::default_application() {
+            application.connect_screensaver_active_notify(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    let Some(config) = obj.imp().config.borrow().clone() else {
+                        log::error!("Vault not initialized!");
                         return;
-                    } else {
-                        obj.set_vault_row_state_backend_available();
-                    }
+                    };
+                    if config.session_lock {
+                        let vault = obj.get_vault();
 
-                    if obj.is_mounted() {
-                        obj.locker_button_clicked_is_mounted(vault);
+                        if !vault.is_backend_available() {
+                            obj.set_vault_row_state_backend_unavailable();
+                            return;
+                        } else {
+                            obj.set_vault_row_state_backend_available();
+                        }
+
+                        if obj.is_mounted() {
+                            obj.locker_button_clicked_is_mounted(vault);
+                        }
                     }
                 }
-            }
-        ));
+            ));
+        } else {
+            log::error!("Could not connect screensaver handler: no default application");
+        }
     }
 
     fn open_folder_button_clicked(&self) {
         log::trace!("open_folder_button_clicked");
 
+        let Some(config) = self.imp().config.borrow().clone() else {
+            log::error!("Vault not initialized!");
+            return;
+        };
+
         let output_res = Command::new("xdg-open")
-            .arg(&self.imp().config.borrow().as_ref().unwrap().mount_directory)
+            .arg(&config.mount_directory)
             .output();
 
         if let Err(e) = output_res {
@@ -300,20 +315,17 @@ impl VaultsPageRow {
 
                         let vault_name = vaults_page_row.title().to_string();
                         glib::MainContext::default().spawn_local(async move {
-                            let window = gio::Application::default()
-                                .unwrap()
-                                .downcast_ref::<VApplication>()
-                                .unwrap()
-                                .active_window()
-                                .unwrap()
-                                .clone();
                             let info_dialog = gtk::AlertDialog::builder()
                                 .message(&vault_name)
                                 .detail(format!("{}", e))
                                 .modal(true)
                                 .build();
 
-                            info_dialog.show(Some(&window));
+                            if let Some(window) = Self::active_window() {
+                                info_dialog.show(Some(&window));
+                            } else {
+                                log::error!("Could not show error dialog: no active window");
+                            }
                         });
                     }
                 }
@@ -400,21 +412,19 @@ impl VaultsPageRow {
 
                                     let vault_name = vaults_page_row.title().to_string();
                                     glib::MainContext::default().spawn_local(async move {
-                                        let window = gio::Application::default()
-                                            .unwrap()
-                                            .downcast_ref::<VApplication>()
-                                            .unwrap()
-                                            .active_window()
-                                            .unwrap()
-                                            .clone();
-
                                         let info_dialog = gtk::AlertDialog::builder()
                                             .modal(true)
                                             .message(&vault_name)
                                             .detail(format!("{}", e))
                                             .build();
 
-                                        info_dialog.show(Some(&window));
+                                        if let Some(window) = Self::active_window() {
+                                            info_dialog.show(Some(&window));
+                                        } else {
+                                            log::error!(
+                                                "Could not show error dialog: no active window"
+                                            );
+                                        }
                                     });
                                 }
                             }
@@ -441,15 +451,11 @@ impl VaultsPageRow {
             ),
         );
 
-        let window = gio::Application::default()
-            .unwrap()
-            .downcast_ref::<VApplication>()
-            .unwrap()
-            .active_window()
-            .unwrap()
-            .clone();
-
-        AdwDialogExt::present(&dialog, Some(&window));
+        if let Some(window) = Self::active_window() {
+            AdwDialogExt::present(&dialog, Some(&window));
+        } else {
+            log::error!("Could not present password prompt window: no active window");
+        }
     }
 
     fn locker_button_clicked(&self) {
@@ -510,14 +516,11 @@ impl VaultsPageRow {
             ),
         );
 
-        let window = gio::Application::default()
-            .unwrap()
-            .downcast_ref::<VApplication>()
-            .unwrap()
-            .active_window()
-            .unwrap()
-            .clone();
-        AdwDialogExt::present(&dialog, Some(&window));
+        if let Some(window) = Self::active_window() {
+            AdwDialogExt::present(&dialog, Some(&window));
+        } else {
+            log::error!("Could not present settings window: no active window");
+        }
     }
 
     pub fn get_vault(&self) -> Vault {
@@ -606,7 +609,11 @@ impl VaultsPageRow {
     fn mount_added_triggered(&self, mount: &Mount) {
         log::trace!("mount_added_triggered({:?})", mount.name());
 
-        let config_mount_directory = self.imp().config.borrow().clone().unwrap().mount_directory;
+        let Some(config) = self.imp().config.borrow().clone() else {
+            log::error!("Vault not initialized!");
+            return;
+        };
+        let config_mount_directory = config.mount_directory;
 
         let config_mount_directory_path =
             std::path::Path::new(&config_mount_directory).canonicalize();
@@ -652,7 +659,11 @@ impl VaultsPageRow {
     fn mount_removed_triggered(&self, mount: &Mount) {
         log::trace!("mount_removed_triggered({:?})", mount.name());
 
-        let config_mount_directory = self.imp().config.borrow().clone().unwrap().mount_directory;
+        let Some(config) = self.imp().config.borrow().clone() else {
+            log::error!("Vault not initialized!");
+            return;
+        };
+        let config_mount_directory = config.mount_directory;
 
         let config_mount_directory_path =
             std::path::Path::new(&config_mount_directory).canonicalize();
