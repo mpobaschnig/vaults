@@ -3,7 +3,7 @@
 # From: https://gitlab.gnome.org/GNOME/gnome-builder/-/blob/main/build-aux/flatpak/fusermount-wrapper.sh
 
 if [ -z "$_FUSE_COMMFD" ]; then
-    FD_ARGS=
+    FD_ARGS=""
 else
     FD_ARGS="--env=_FUSE_COMMFD=${_FUSE_COMMFD} --forward-fd=${_FUSE_COMMFD}"
 fi
