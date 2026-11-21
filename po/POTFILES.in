@@ -10,6 +10,7 @@ data/resources/ui/preferences.ui
 data/resources/ui/shortcuts.ui
 data/resources/ui/start_page.ui
 data/resources/ui/vaults_page_row_password_prompt_window.ui
+data/resources/ui/vaults_page_row_change_password_window.ui
 data/resources/ui/vaults_page_row_settings_window.ui
 data/resources/ui/vaults_page_row.ui
 data/resources/ui/vaults_page.ui
@@ -24,6 +25,7 @@ src/backend/mod.rs
 src/ui/pages/mod.rs
 src/ui/pages/vaults_page_row.rs
 src/ui/pages/vaults_page_row_password_prompt_window.rs
+src/ui/pages/vaults_page_row_change_password_window.rs
 src/ui/pages/vaults_page_row_settings_window.rs
 
 # src/ui/

@@ -54,6 +54,21 @@ impl BackendImpl for Gocryptfs {
         close(&settings, vault_config)
     }
 
+    fn change_password(
+        &self,
+        vault_config: &VaultConfig,
+        old_password: &str,
+        new_password: &str,
+    ) -> Result<(), BackendError> {
+        let settings = Settings::new(APP_ID);
+        change_password(
+            &settings,
+            vault_config,
+            old_password.to_owned(),
+            new_password.to_owned(),
+        )
+    }
+
     fn name(&self) -> String {
         String::from("gocryptfs")
     }
@@ -192,6 +207,62 @@ fn open(
 
         let err_code = output.status.code();
         log::error!("gocryptfs open failed: {:?}", err_code);
+        Err(gocryptfs_ret_status_to_err(err_code))
+    }
+}
+
+fn change_password(
+    settings: &Settings,
+    vault_config: &VaultConfig,
+    old_password: String,
+    new_password: String,
+) -> Result<(), BackendError> {
+    log::trace!(
+        "change_password({:?}, old_password: <redacted>, new_password: <redacted>)",
+        vault_config
+    );
+
+    let binary_path = get_binary_path(settings);
+    if binary_path.is_none() {
+        log::error!("gocryptfs binary path is not set");
+        return Err(BackendError::ToUser(gettext(
+            "No gocryptfs binary path set",
+        )));
+    }
+
+    let mut child = host_command(&binary_path.unwrap())
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .arg("-passwd")
+        .arg("-q")
+        .arg("--")
+        .arg(&vault_config.encrypted_data_directory)
+        .spawn()?;
+
+    let mut pw = String::from(&old_password);
+    pw.push('\n');
+    pw.push_str(&new_password);
+    pw.push('\n');
+    pw.push_str(&new_password);
+    pw.push('\n');
+
+    child
+        .stdin
+        .as_mut()
+        .ok_or(BackendError::Generic)?
+        .write_all(pw.as_bytes())?;
+
+    let output = child.wait_with_output()?;
+    log::debug!("gocryptfs passwd output: {:?}", output);
+    if output.status.success() {
+        log::info!("gocryptfs password change successful");
+        Ok(())
+    } else {
+        std::io::stdout().write_all(&output.stdout)?;
+        std::io::stderr().write_all(&output.stderr)?;
+
+        let err_code = output.status.code();
+        log::error!("gocryptfs password change failed: {:?}", err_code);
         Err(gocryptfs_ret_status_to_err(err_code))
     }
 }

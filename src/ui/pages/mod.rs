@@ -1,4 +1,5 @@
 mod vaults_page_row;
+mod vaults_page_row_change_password_window;
 mod vaults_page_row_password_prompt_window;
 mod vaults_page_row_settings_window;
 

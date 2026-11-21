@@ -115,6 +115,18 @@ impl Vault {
         config.backend.close(&config)
     }
 
+    pub fn change_password(
+        &self,
+        old_password: &str,
+        new_password: &str,
+    ) -> Result<(), BackendError> {
+        log::trace!("change_password(old_password: <redacted>, new_password: <redacted>)");
+        let config = self.config();
+        config
+            .backend
+            .change_password(&config, old_password, new_password)
+    }
+
     pub fn is_mounted(&self) -> bool {
         log::trace!("is_mounted");
 
@@ -287,5 +299,48 @@ mod tests {
             session_lock: false,
         });
         assert!(vault.is_mount_hidden());
+    }
+
+    #[test]
+    fn change_password_delegates_to_backend() {
+        let vault = Vault::new(
+            Uuid::nil(),
+            "test-vault".to_string(),
+            Backend::Mock.into(),
+            "/tmp/vaults-test-change-pw-delegate/encrypted".to_string(),
+            "/tmp/vaults-test-change-pw-delegate/mount".to_string(),
+            false,
+        );
+
+        let _ = std::fs::remove_dir_all("/tmp/vaults-test-change-pw-delegate");
+        vault.init("oldpw".to_string()).unwrap();
+
+        let result = vault.change_password("oldpw", "newpw");
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn change_password_cryfs_not_supported() {
+        let vault = Vault::new(
+            Uuid::nil(),
+            "test-vault-cryfs".to_string(),
+            Backend::Cryfs.into(),
+            "/tmp/vaults-test-change-pw-cryfs/encrypted".to_string(),
+            "/tmp/vaults-test-change-pw-cryfs/mount".to_string(),
+            false,
+        );
+
+        let result = vault.change_password("oldpw", "newpw");
+        assert!(result.is_err());
+        match result.unwrap_err() {
+            BackendError::ToUser(msg) => {
+                assert!(
+                    msg.contains("not supported"),
+                    "Expected 'not supported' message, got: {}",
+                    msg
+                );
+            }
+            other => panic!("Expected ToUser error, got: {:?}", other),
+        }
     }
 }

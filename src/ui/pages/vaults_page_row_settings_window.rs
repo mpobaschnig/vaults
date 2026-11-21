@@ -18,17 +18,17 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 use crate::application::VApplication;
-use crate::ui::pages::vaults_page_row_settings_window;
+use crate::ui::pages::{vaults_page_row_change_password_window, vaults_page_row_settings_window};
 use crate::vault::Vault;
 use crate::{backend, backend::Backend, user_config_manager::UserConfigManager};
 use adw::{
-    prelude::{ComboRowExt, EntryRowExt},
+    prelude::{AdwDialogExt, ComboRowExt, EntryRowExt},
     subclass::{dialog::AdwDialogImpl, prelude::*},
 };
 use gettextrs::gettext;
 use gtk::{
     self, CompositeTemplate, gio,
-    glib::{self, Properties, clone, subclass::Signal},
+    glib::{self, Properties, clone, closure_local, subclass::Signal},
     prelude::*,
 };
 use once_cell::sync::Lazy;
@@ -56,6 +56,10 @@ mod imp {
         pub mount_directory_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub lock_screen_switch_row: TemplateChild<adw::SwitchRow>,
+        #[template_child]
+        pub change_password_group: TemplateChild<adw::PreferencesGroup>,
+        #[template_child]
+        pub change_password_button: TemplateChild<gtk::Button>,
         #[property(get, set, name = "vault", construct)]
         pub vault: RefCell<Option<Vault>>,
     }
@@ -157,6 +161,16 @@ mod imp {
                     s.obj().apply_changes();
                 }
             ));
+
+            self.change_password_button.connect_clicked(clone!(
+                #[weak(rename_to = s)]
+                self,
+                move |_| {
+                    s.obj().change_password_button_clicked();
+                }
+            ));
+
+            self.obj().update_change_password_visibility();
         }
 
         fn signals() -> &'static [Signal] {
@@ -327,5 +341,107 @@ impl VaultsPageRowSettingsWindow {
             String::from(self.imp().mount_directory_entry_row.text().as_str()),
             self.imp().lock_screen_switch_row.is_active(),
         )
+    }
+
+    fn update_change_password_visibility(&self) {
+        let vault = self.vault().unwrap();
+        let is_gocryptfs = vault.backend() == Backend::Gocryptfs;
+        self.imp().change_password_group.set_visible(is_gocryptfs);
+    }
+
+    fn change_password_button_clicked(&self) {
+        let vault = self.vault().unwrap();
+        let dialog =
+            vaults_page_row_change_password_window::VaultsPageRowChangePasswordWindow::new();
+        dialog.set_name(&vault.name());
+
+        dialog.connect_closure(
+            "change",
+            false,
+            closure_local!(
+                #[strong(rename_to = obj)]
+                self,
+                move |dialog: vaults_page_row_change_password_window::VaultsPageRowChangePasswordWindow| {
+                    let old_password = dialog.get_old_password();
+                    let new_password = dialog.get_new_password();
+                    obj.perform_change_password(old_password, new_password);
+                }
+            ),
+        );
+
+        let window = gio::Application::default()
+            .unwrap()
+            .downcast_ref::<VApplication>()
+            .unwrap()
+            .active_window()
+            .unwrap();
+        AdwDialogExt::present(&dialog, Some(&window));
+    }
+
+    fn perform_change_password(&self, old_password: String, new_password: String) {
+        let vault = self.vault().unwrap();
+        let vault_config = vault.config().clone();
+
+        enum Message {
+            Finished,
+            Error(backend::BackendError),
+        }
+
+        let (sender, receiver) = async_channel::unbounded();
+
+        glib::spawn_future_local(async move {
+            while let Ok(message) = receiver.recv().await {
+                match message {
+                    Message::Finished => {
+                        let alert = gtk::AlertDialog::builder()
+                            .message(gettext("Password Changed"))
+                            .detail(gettext("The vault password has been changed successfully."))
+                            .modal(true)
+                            .build();
+                        if let Some(window) = Self::get_active_window() {
+                            alert.show(Some(&window));
+                        }
+                    }
+                    Message::Error(e) => {
+                        let error_msg = match &e {
+                            backend::BackendError::ToUser(msg) => msg.clone(),
+                            _ => gettext("An unknown error occurred.").to_string(),
+                        };
+                        let alert = gtk::AlertDialog::builder()
+                            .message(gettext("Password Change Failed"))
+                            .detail(&error_msg)
+                            .modal(true)
+                            .build();
+                        if let Some(window) = Self::get_active_window() {
+                            alert.show(Some(&window));
+                        }
+                    }
+                }
+            }
+        });
+
+        std::thread::spawn(move || {
+            let result =
+                vault_config
+                    .backend
+                    .change_password(&vault_config, &old_password, &new_password);
+            match result {
+                Ok(_) => gio::spawn_blocking(move || {
+                    sender
+                        .send_blocking(Message::Finished)
+                        .expect("Channel needs to be open");
+                }),
+                Err(e) => gio::spawn_blocking(move || {
+                    sender
+                        .send_blocking(Message::Error(e))
+                        .expect("Channel needs to be open");
+                }),
+            }
+        });
+    }
+
+    fn get_active_window() -> Option<gtk::Window> {
+        let app = gio::Application::default()?;
+        app.downcast_ref::<VApplication>()?.active_window()
     }
 }

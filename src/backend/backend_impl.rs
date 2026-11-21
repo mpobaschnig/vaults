@@ -67,6 +67,30 @@ pub trait BackendImpl: Debug + Send + Sync {
     /// A string identifying the backend (e.g., "CryFS", "gocryptfs").
     fn name(&self) -> String;
 
+    /// Changes the password of an existing encrypted vault.
+    ///
+    /// # Arguments
+    /// * `vault_config` - The configuration for the vault whose password should be changed.
+    /// * `old_password` - The current password for decrypting the vault.
+    /// * `new_password` - The new password to set for the vault.
+    ///
+    /// # Returns
+    /// `Ok(())` if the password change succeeds, or a `BackendError` describing the failure.
+    ///
+    /// # Default Behavior
+    /// Returns a `BackendError::ToUser` indicating that password change is not supported.
+    /// Backends that support this operation should override this method.
+    fn change_password(
+        &self,
+        _vault_config: &VaultConfig,
+        _old_password: &str,
+        _new_password: &str,
+    ) -> Result<(), BackendError> {
+        Err(BackendError::ToUser(
+            "Password change is not supported for this backend.".to_string(),
+        ))
+    }
+
     /// Returns the enum representation used for serialization and UI selection.
     fn kind(&self) -> Backend;
 
