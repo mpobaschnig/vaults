@@ -102,6 +102,13 @@ can be launched with `vaults` or from the applications menu.
 
 ## Testing Instructions
 
+The test suite consists of two types of tests:
+
+1. **Pure logic tests** — Test backend logic, configuration handling, utilities, and vault operations. These run without any display server.
+2. **UI tests** — Test GTK4 widget signals and state using `#[gtk::test]` macro. These require a headless Wayland display server (Weston).
+
+### CI Checks
+
 CI (`.github/workflows/quality.yml`) runs these commands; all three must pass with zero warnings:
 
 ```bash
@@ -110,8 +117,85 @@ cargo clippy --all-targets --all-features -- -D warnings
 cargo test
 ```
 
-- Run unit tests with `cargo test` from the repository root. This requires the GTK4 and libadwaita development
-  packages to be installed.
+### Running Tests Locally
+
+#### Prerequisites
+
+Install the Weston headless compositor:
+
+```bash
+# Fedora
+sudo dnf install -y weston
+
+# Arch Linux
+sudo pacman -S weston
+
+# Debian/Ubuntu
+sudo apt install weston
+```
+
+GTK4 and libadwaita development packages are also required to compile the tests.
+
+#### Full Test Suite (with UI tests)
+
+Start the Weston headless compositor, then run all tests:
+
+```bash
+# Start Weston headless
+mkdir -p /tmp/weston-runtime
+chmod 700 /tmp/weston-runtime
+XDG_RUNTIME_DIR=/tmp/weston-runtime weston --backend=headless --renderer=pixman --no-config &
+
+# Wait for the Wayland socket to appear
+for i in $(seq 1 30); do
+  [ -S /tmp/weston-runtime/wayland-0 ] && break
+  [ -S /tmp/weston-runtime/wayland-1 ] && break
+  sleep 1
+done
+
+# Run all tests
+export XDG_RUNTIME_DIR=/tmp/weston-runtime
+export WAYLAND_DISPLAY=wayland-0  # or wayland-1
+export GDK_BACKEND=wayland
+export XDG_SESSION_TYPE=wayland
+cargo test
+
+# Stop Weston when done
+pkill weston
+```
+
+**Important:** The Wayland socket may be `wayland-0` or `wayland-1` depending on the system. The `test_utils::check_wayland_display()` function verifies the socket exists before each UI test and provides setup instructions if it's missing.
+
+#### Pure Logic Tests Only (without Weston)
+
+To run only tests that don't require a display server:
+
+```bash
+cargo test backend
+cargo test configuration
+cargo test util
+cargo test vault
+```
+
+### UI Test Infrastructure
+
+- UI tests use the `#[gtk::test]` macro from GTK4, which runs tests serially on the GTK main thread.
+- The `src/test_utils.rs` module provides `init_gtk()` for test initialization (GTK init, type registration, and resource loading).
+- UI tests are co-located with their source files in `#[cfg(test)] mod tests` blocks.
+- Tests use `Backend::Mock` vaults to avoid depending on real encryption backends.
+- Widget state is verified through public accessor methods (e.g., `locker_button_icon_name()`, `is_selected()`).
+- Signal tests connect to custom signals, emit actions programmatically, and assert the callbacks were invoked.
+
+### CI Workflow
+
+The CI workflow automatically sets up Weston headless in the Fedora 43 container:
+1. Installs the `weston` package
+2. Creates `XDG_RUNTIME_DIR` with proper permissions
+3. Starts Weston with `--backend=headless --renderer=pixman --no-config`
+4. Waits for the Wayland socket and auto-detects `wayland-0` or `wayland-1`
+5. Sets `WAYLAND_DISPLAY`, `GDK_BACKEND=wayland`, and `XDG_SESSION_TYPE=wayland`
+6. Runs `cargo test`
+7. Cleans up Weston after tests
 
 ## Code Style Guidelines
 
