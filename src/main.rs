@@ -31,6 +31,9 @@ pub mod vault_config;
 mod backend;
 mod ui;
 
+#[cfg(test)]
+mod test_utils;
+
 #[macro_use]
 extern crate quick_error;
 extern crate ini;

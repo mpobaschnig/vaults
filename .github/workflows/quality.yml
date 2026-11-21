@@ -17,12 +17,35 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Install dependencies
-        run: sudo dnf install -y gtk4-devel libadwaita-devel meson gettext cargo rust clippy rustfmt
+        run: sudo dnf install -y gtk4-devel libadwaita-devel meson gettext cargo rust clippy rustfmt weston
       - name: Run meson setup
         run: meson setup build
       - name: Run clippy
         run: cargo clippy --all-targets --all-features -- -D warnings
       - name: Run fmt
         run:  cargo fmt --all -- --check
+      - name: Start Weston headless compositor
+        run: |
+          mkdir -p /tmp/weston-runtime
+          chmod 700 /tmp/weston-runtime
+          XDG_RUNTIME_DIR=/tmp/weston-runtime weston --backend=headless --renderer=pixman --no-config &
+          for i in $(seq 1 30); do
+            [ -S /tmp/weston-runtime/wayland-0 ] && break
+            [ -S /tmp/weston-runtime/wayland-1 ] && break
+            sleep 1
+          done
       - name: Run tests
-        run: cargo test
+        run: |
+          export XDG_RUNTIME_DIR=/tmp/weston-runtime
+          if [ -S /tmp/weston-runtime/wayland-0 ]; then
+            export WAYLAND_DISPLAY=wayland-0
+          else
+            export WAYLAND_DISPLAY=wayland-1
+          fi
+          export GDK_BACKEND=wayland
+          export XDG_SESSION_TYPE=wayland
+          cargo test
+      - name: Stop Weston
+        if: always()
+        run: |
+          pkill weston || true
