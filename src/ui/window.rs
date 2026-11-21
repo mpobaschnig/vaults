@@ -443,15 +443,12 @@ impl ApplicationWindow {
 
         let dialog = MissingLibsWindow::new();
 
-        let window = gio::Application::default()
-            .unwrap()
-            .downcast_ref::<VApplication>()
-            .unwrap()
-            .active_window()
-            .unwrap()
-            .clone();
-
-        AdwDialogExt::present(&dialog, Some(&window));
+        if let Some(app) = gio::Application::default()
+            && let Some(vapp) = app.downcast_ref::<VApplication>()
+            && let Some(window) = vapp.active_window()
+        {
+            AdwDialogExt::present(&dialog, Some(&window));
+        }
     }
 
     fn fill_list_store(&self) {
