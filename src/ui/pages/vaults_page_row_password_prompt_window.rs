@@ -162,4 +162,43 @@ impl VaultsPageRowPasswordPromptWindow {
     pub fn get_password(&self) -> String {
         self.imp().password_entry_row.text().to_string()
     }
+
+    /// Returns whether the unlock button is sensitive (clickable).
+    pub fn unlock_button_sensitive(&self) -> bool {
+        self.imp().unlock_button.is_sensitive()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::test_utils;
+    use std::rc::Rc;
+
+    #[gtk::test]
+    fn test_unlock_signal_fires() {
+        test_utils::init_gtk();
+        let dialog = VaultsPageRowPasswordPromptWindow::new();
+
+        let unlocked = Rc::new(std::cell::RefCell::new(false));
+        let unlocked_clone = unlocked.clone();
+        let _handler = dialog.connect_local("unlock", false, move |_| {
+            *unlocked_clone.borrow_mut() = true;
+            None
+        });
+
+        dialog.emit_by_name::<()>("unlock", &[]);
+        assert!(*unlocked.borrow(), "unlock signal should have fired");
+    }
+
+    #[gtk::test]
+    fn test_get_password() {
+        test_utils::init_gtk();
+        let dialog = VaultsPageRowPasswordPromptWindow::new();
+        assert_eq!(
+            dialog.get_password(),
+            "",
+            "password should be empty initially"
+        );
+    }
 }

@@ -697,4 +697,64 @@ impl ImportVaultDialog {
 
         false
     }
+
+    /// Returns the current page index of the carousel.
+    pub fn current_page(&self) -> u32 {
+        *self.imp().current_page.borrow()
+    }
+
+    /// Returns whether the import button is sensitive (clickable).
+    pub fn import_button_sensitive(&self) -> bool {
+        self.imp().import_button.is_sensitive()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::test_utils;
+    use std::rc::Rc;
+
+    #[gtk::test]
+    fn test_import_signal_fires() {
+        test_utils::init_gtk();
+        let dialog = ImportVaultDialog::new();
+
+        let imported = Rc::new(std::cell::RefCell::new(false));
+        let imported_clone = imported.clone();
+        let _handler = dialog.connect_local("import", false, move |_| {
+            *imported_clone.borrow_mut() = true;
+            None
+        });
+
+        dialog.emit_by_name::<()>("import", &[]);
+        assert!(*imported.borrow(), "import signal should have fired");
+    }
+
+    #[gtk::test]
+    fn test_close_signal_fires() {
+        test_utils::init_gtk();
+        let dialog = ImportVaultDialog::new();
+
+        let closed = Rc::new(std::cell::RefCell::new(false));
+        let closed_clone = closed.clone();
+        let _handler = dialog.connect_local("close", false, move |_| {
+            *closed_clone.borrow_mut() = true;
+            None
+        });
+
+        dialog.emit_by_name::<()>("close", &[]);
+        assert!(*closed.borrow(), "close signal should have fired");
+    }
+
+    #[gtk::test]
+    fn test_current_page_initially_zero() {
+        test_utils::init_gtk();
+        let dialog = ImportVaultDialog::new();
+        assert_eq!(
+            dialog.current_page(),
+            0,
+            "current page should be 0 initially"
+        );
+    }
 }
