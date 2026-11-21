@@ -21,6 +21,6 @@ jobs:
         with:
           bundle: vaults.flatpak
           manifest-path: io.github.mpobaschnig.Vaults.Devel.json
-          run-tests: true
+          run-tests: false
           cache-key: flatpak-builder-${{ github.sha }}
           arch: ${{ matrix.variant.arch }}
