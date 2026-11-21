@@ -746,4 +746,109 @@ impl ApplicationWindow {
     pub fn get_view(&self) -> Option<GString> {
         self.imp().window_stack.visible_child_name()
     }
+
+    /// Returns the number of search results currently displayed.
+    pub fn search_results_count(&self) -> u32 {
+        *self.imp().search_results.borrow()
+    }
+
+    /// Returns whether the select mode is currently active.
+    pub fn is_selected_mode(&self) -> bool {
+        self.imp().select_toggle_button.is_active()
+    }
+
+    /// Returns whether the remove button is currently visible.
+    pub fn remove_button_visible(&self) -> bool {
+        self.imp().remove_button.is_visible()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::application::VApplication;
+    use crate::test_utils;
+
+    fn create_test_app() -> VApplication {
+        VApplication::new()
+    }
+
+    fn create_test_window(app: &VApplication) -> ApplicationWindow {
+        ApplicationWindow::new(app)
+    }
+
+    #[gtk::test]
+    fn test_search_toggle_action() {
+        test_utils::init_gtk();
+        let app = create_test_app();
+        let window = create_test_window(&app);
+
+        // Search toggle should be insensitive initially (no vaults)
+        assert!(
+            !window.imp().search_toggle_button.is_sensitive(),
+            "search toggle should be insensitive without vaults"
+        );
+    }
+
+    #[gtk::test]
+    fn test_select_mode_initially_off() {
+        test_utils::init_gtk();
+        let app = create_test_app();
+        let window = create_test_window(&app);
+
+        assert!(
+            !window.is_selected_mode(),
+            "select mode should be off initially"
+        );
+        assert!(
+            !window.remove_button_visible(),
+            "remove button should not be visible initially"
+        );
+    }
+
+    #[gtk::test]
+    fn test_view_switching() {
+        test_utils::init_gtk();
+        let app = create_test_app();
+        let window = create_test_window(&app);
+
+        // Initially shows start page (no vaults)
+        let initial_view = window.get_view();
+        assert_eq!(
+            initial_view.as_deref(),
+            Some("start"),
+            "should show start page initially"
+        );
+
+        // Switch to vaults view
+        window.set_view(View::Vaults);
+        let vaults_view = window.get_view();
+        assert_eq!(
+            vaults_view.as_deref(),
+            Some("vaults"),
+            "should show vaults view"
+        );
+
+        // Switch to search view
+        window.set_view(View::Search);
+        let search_view = window.get_view();
+        assert_eq!(
+            search_view.as_deref(),
+            Some("search"),
+            "should show search view"
+        );
+    }
+
+    #[gtk::test]
+    fn test_search_results_count_initially_zero() {
+        test_utils::init_gtk();
+        let app = create_test_app();
+        let window = create_test_window(&app);
+
+        assert_eq!(
+            window.search_results_count(),
+            0,
+            "search results should be 0 initially"
+        );
+    }
 }
