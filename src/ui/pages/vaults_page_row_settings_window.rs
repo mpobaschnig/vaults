@@ -444,4 +444,75 @@ impl VaultsPageRowSettingsWindow {
         let app = gio::Application::default()?;
         app.downcast_ref::<VApplication>()?.active_window()
     }
+
+    /// Returns whether the lock screen switch is currently active.
+    pub fn lock_screen_active(&self) -> bool {
+        self.imp().lock_screen_switch_row.is_active()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::backend::Backend;
+    use crate::test_utils;
+    use crate::util::Uuid;
+    use std::rc::Rc;
+
+    fn create_test_vault() -> Vault {
+        let uuid = Uuid::new_v4();
+        Vault::new(
+            uuid,
+            "TestVault".to_string(),
+            Backend::Mock.into(),
+            "/tmp/test_vault_encrypted".to_string(),
+            "/tmp/test_vault_mount".to_string(),
+            false,
+        )
+    }
+
+    #[gtk::test]
+    fn test_save_signal_fires() {
+        test_utils::init_gtk();
+        let vault = create_test_vault();
+        let dialog = VaultsPageRowSettingsWindow::new(vault);
+
+        let saved = Rc::new(std::cell::RefCell::new(false));
+        let saved_clone = saved.clone();
+        let _handler = dialog.connect_local("save", false, move |_| {
+            *saved_clone.borrow_mut() = true;
+            None
+        });
+
+        dialog.emit_by_name::<()>("save", &[]);
+        assert!(*saved.borrow(), "save signal should have fired");
+    }
+
+    #[gtk::test]
+    fn test_remove_signal_fires() {
+        test_utils::init_gtk();
+        let vault = create_test_vault();
+        let dialog = VaultsPageRowSettingsWindow::new(vault);
+
+        let removed = Rc::new(std::cell::RefCell::new(false));
+        let removed_clone = removed.clone();
+        let _handler = dialog.connect_local("remove", false, move |_| {
+            *removed_clone.borrow_mut() = true;
+            None
+        });
+
+        dialog.emit_by_name::<()>("remove", &[]);
+        assert!(*removed.borrow(), "remove signal should have fired");
+    }
+
+    #[gtk::test]
+    fn test_lock_screen_initially_inactive() {
+        test_utils::init_gtk();
+        let vault = create_test_vault();
+        let dialog = VaultsPageRowSettingsWindow::new(vault);
+        assert!(
+            !dialog.lock_screen_active(),
+            "lock screen should be inactive initially"
+        );
+    }
 }

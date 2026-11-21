@@ -755,4 +755,80 @@ impl AddNewVaultWindow {
 
         self.validate_directories();
     }
+
+    /// Returns the current page index of the carousel.
+    pub fn current_page(&self) -> u32 {
+        *self.imp().current_page.borrow()
+    }
+
+    /// Returns whether the next button is sensitive (clickable).
+    pub fn next_button_sensitive(&self) -> bool {
+        self.imp().next_button.is_sensitive()
+    }
+
+    /// Returns whether the add button is sensitive (clickable).
+    pub fn add_button_sensitive(&self) -> bool {
+        self.imp().add_button.is_sensitive()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::test_utils;
+    use std::rc::Rc;
+
+    #[gtk::test]
+    fn test_add_signal_fires() {
+        test_utils::init_gtk();
+        let dialog = AddNewVaultWindow::new();
+
+        let added = Rc::new(std::cell::RefCell::new(false));
+        let added_clone = added.clone();
+        let _handler = dialog.connect_local("add", false, move |_| {
+            *added_clone.borrow_mut() = true;
+            None
+        });
+
+        dialog.emit_by_name::<()>("add", &[]);
+        assert!(*added.borrow(), "add signal should have fired");
+    }
+
+    #[gtk::test]
+    fn test_close_signal_fires() {
+        test_utils::init_gtk();
+        let dialog = AddNewVaultWindow::new();
+
+        let closed = Rc::new(std::cell::RefCell::new(false));
+        let closed_clone = closed.clone();
+        let _handler = dialog.connect_local("close", false, move |_| {
+            *closed_clone.borrow_mut() = true;
+            None
+        });
+
+        dialog.emit_by_name::<()>("close", &[]);
+        assert!(*closed.borrow(), "close signal should have fired");
+    }
+
+    #[gtk::test]
+    fn test_current_page_initially_zero() {
+        test_utils::init_gtk();
+        let dialog = AddNewVaultWindow::new();
+        assert_eq!(
+            dialog.current_page(),
+            0,
+            "current page should be 0 initially"
+        );
+    }
+
+    #[gtk::test]
+    fn test_next_button_initially_insensitive() {
+        test_utils::init_gtk();
+        let dialog = AddNewVaultWindow::new();
+        // Next button is insensitive until name is entered
+        assert!(
+            !dialog.next_button_sensitive(),
+            "next button should be insensitive initially"
+        );
+    }
 }
