@@ -707,4 +707,123 @@ impl VaultsPageRow {
     pub fn selected(&self) -> bool {
         self.imp().select_vault_button.is_active()
     }
+
+    /// Returns the current icon name of the locker button.
+    pub fn locker_button_icon_name(&self) -> String {
+        self.imp()
+            .locker_button
+            .icon_name()
+            .map(|s| s.to_string())
+            .unwrap_or_default()
+    }
+
+    /// Returns whether the select checkbox is currently active.
+    pub fn is_selected(&self) -> bool {
+        self.imp().select_vault_button.is_active()
+    }
+
+    /// Returns whether the locker button is sensitive (clickable).
+    pub fn locker_button_sensitive(&self) -> bool {
+        self.imp().locker_button.is_sensitive()
+    }
+
+    /// Returns whether the settings button is sensitive (clickable).
+    pub fn settings_button_sensitive(&self) -> bool {
+        self.imp().settings_button.is_sensitive()
+    }
+
+    /// Returns whether the select button is visible.
+    pub fn select_button_visible(&self) -> bool {
+        self.imp().select_vault_button.is_visible()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::backend::Backend;
+    use crate::test_utils;
+    use crate::util::Uuid;
+    use std::rc::Rc;
+
+    fn create_test_vault() -> Vault {
+        let uuid = Uuid::new_v4();
+        Vault::new(
+            uuid,
+            "TestVault".to_string(),
+            Backend::Mock.into(),
+            "/tmp/test_vault_encrypted".to_string(),
+            "/tmp/test_vault_mount".to_string(),
+            false,
+        )
+    }
+
+    #[gtk::test]
+    fn test_remove_signal_fires() {
+        test_utils::init_gtk();
+        let vault = create_test_vault();
+        let row = VaultsPageRow::new(vault);
+
+        let removed = Rc::new(std::cell::RefCell::new(false));
+        let removed_clone = removed.clone();
+        row.connect_remove(move || {
+            *removed_clone.borrow_mut() = true;
+        });
+
+        row.emit_by_name::<()>("remove", &[]);
+        assert!(*removed.borrow(), "remove signal should have fired");
+    }
+
+    #[gtk::test]
+    fn test_save_signal_fires() {
+        test_utils::init_gtk();
+        let vault = create_test_vault();
+        let row = VaultsPageRow::new(vault);
+
+        let saved = Rc::new(std::cell::RefCell::new(false));
+        let saved_clone = saved.clone();
+        row.connect_save(move || {
+            *saved_clone.borrow_mut() = true;
+        });
+
+        row.emit_by_name::<()>("save", &[]);
+        assert!(*saved.borrow(), "save signal should have fired");
+    }
+
+    #[gtk::test]
+    fn test_locker_button_initial_state() {
+        test_utils::init_gtk();
+        let vault = create_test_vault();
+        let row = VaultsPageRow::new(vault);
+
+        // Initial state should be "changes-prevent-symbolic" (locked)
+        let icon = row.locker_button_icon_name();
+        assert_eq!(
+            icon, "changes-prevent-symbolic",
+            "locker button should show locked icon initially"
+        );
+
+        // Locker button should be sensitive for mock backend
+        assert!(
+            row.locker_button_sensitive(),
+            "locker button should be sensitive"
+        );
+    }
+
+    #[gtk::test]
+    fn test_select_button_visibility() {
+        test_utils::init_gtk();
+        let vault = create_test_vault();
+        let row = VaultsPageRow::new(vault);
+
+        // Select button should be invisible by default
+        assert!(
+            !row.select_button_visible(),
+            "select button should be invisible by default"
+        );
+        assert!(
+            !row.is_selected(),
+            "vault should not be selected by default"
+        );
+    }
 }
