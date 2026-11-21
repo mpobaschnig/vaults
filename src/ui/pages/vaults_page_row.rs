@@ -46,8 +46,6 @@ mod imp {
     #[template(resource = "/io/github/mpobaschnig/Vaults/vaults_page_row.ui")]
     pub struct VaultsPageRow {
         #[template_child]
-        pub vaults_page_row: TemplateChild<adw::ActionRow>,
-        #[template_child]
         pub select_vault_button: TemplateChild<gtk::CheckButton>,
         #[template_child]
         pub open_folder_button: TemplateChild<gtk::Button>,
@@ -69,12 +67,11 @@ mod imp {
     #[glib::object_subclass]
     impl ObjectSubclass for VaultsPageRow {
         const NAME: &'static str = "VaultsPageRow";
-        type ParentType = gtk::ListBoxRow;
+        type ParentType = adw::ActionRow;
         type Type = super::VaultsPageRow;
 
         fn new() -> Self {
             Self {
-                vaults_page_row: TemplateChild::default(),
                 select_vault_button: TemplateChild::default(),
                 open_folder_button: TemplateChild::default(),
                 locker_button: TemplateChild::default(),
@@ -120,11 +117,13 @@ mod imp {
 
     impl WidgetImpl for VaultsPageRow {}
     impl ListBoxRowImpl for VaultsPageRow {}
+    impl PreferencesRowImpl for VaultsPageRow {}
+    impl ActionRowImpl for VaultsPageRow {}
 }
 
 glib::wrapper! {
     pub struct VaultsPageRow(ObjectSubclass<imp::VaultsPageRow>)
-        @extends gtk::Widget, gtk::ListBoxRow,
+        @extends gtk::Widget, gtk::ListBoxRow, adw::PreferencesRow, adw::ActionRow,
         @implements gtk::Actionable, gtk::Accessible, gtk::Native, gtk::Root, gtk::ShortcutManager, gtk::Buildable, gtk::ConstraintTarget;
 }
 
@@ -146,7 +145,7 @@ impl VaultsPageRow {
     pub fn new(vault: Vault) -> Self {
         let object: Self = glib::Object::new();
 
-        object.imp().vaults_page_row.set_title(&vault.name());
+        object.set_title(&vault.name());
         object.imp().uuid.replace(Some(vault.get_uuid()));
         object.imp().config.replace(Some(vault.config()));
 
@@ -293,7 +292,7 @@ impl VaultsPageRow {
         let locker_button = self.imp().locker_button.clone();
         let open_folder_button = self.imp().open_folder_button.clone();
         let settings_button = self.imp().settings_button.clone();
-        let vaults_page_row = self.imp().vaults_page_row.clone();
+        let action_row = self.clone();
         glib::spawn_future_local(clone!(async move {
             while let Ok(message) = receiver.recv().await {
                 match message {
@@ -313,7 +312,7 @@ impl VaultsPageRow {
                         open_folder_button.set_sensitive(true);
                         settings_button.set_sensitive(false);
 
-                        let vault_name = vaults_page_row.title().to_string();
+                        let vault_name = action_row.title().to_string();
                         glib::MainContext::default().spawn_local(async move {
                             let info_dialog = gtk::AlertDialog::builder()
                                 .message(&vault_name)
@@ -390,7 +389,7 @@ impl VaultsPageRow {
                     let locker_button = obj.imp().locker_button.clone();
                     let open_folder_button = obj.imp().open_folder_button.clone();
                     let settings_button = obj.imp().settings_button.clone();
-                    let vaults_page_row = obj.imp().vaults_page_row.clone();
+                    let action_row = obj.clone();
                     glib::spawn_future_local(clone!(async move {
                         while let Ok(message) = receiver.recv().await {
                             match message {
@@ -410,7 +409,7 @@ impl VaultsPageRow {
                                     open_folder_button.set_sensitive(false);
                                     settings_button.set_sensitive(true);
 
-                                    let vault_name = vaults_page_row.title().to_string();
+                                    let vault_name = action_row.title().to_string();
                                     glib::MainContext::default().spawn_local(async move {
                                         let info_dialog = gtk::AlertDialog::builder()
                                             .modal(true)
@@ -551,12 +550,12 @@ impl VaultsPageRow {
         let name = vault.name();
         let config = vault.config();
         self.imp().uuid.replace(Some(uuid));
-        self.imp().vaults_page_row.set_title(&name);
+        self.set_title(&name);
         self.imp().config.replace(Some(config));
     }
 
     pub fn get_name(&self) -> String {
-        self.imp().vaults_page_row.title().to_string()
+        self.title().to_string()
     }
 
     fn is_mounted(&self) -> bool {
@@ -594,15 +593,13 @@ impl VaultsPageRow {
 
     fn set_vault_row_state_backend_unavailable(&self) {
         log::trace!("set_vault_row_state_backend_unavailable");
-        self.imp()
-            .vaults_page_row
-            .set_subtitle(&gettext("Backend is not installed."));
+        self.set_subtitle(&gettext("Backend is not installed."));
         self.imp().locker_button.set_sensitive(false);
     }
 
     fn set_vault_row_state_backend_available(&self) {
         log::trace!("set_vault_row_state_backend_available");
-        self.imp().vaults_page_row.set_subtitle("");
+        self.set_subtitle("");
         self.imp().locker_button.set_sensitive(true);
     }
 
