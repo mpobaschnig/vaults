@@ -2,52 +2,48 @@
 <!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
-  <template class="VaultsPageRow" parent="GtkListBoxRow">
+  <template class="VaultsPageRow" parent="AdwActionRow">
     <property name="visible">True</property>
     <property name="selectable">False</property>
+    <property name="title" translatable="yes">Vault X</property>
+    <property name="activatable_widget">select_vault_button</property>
+    <child type="prefix">
+      <object class="GtkCheckButton" id="select_vault_button">
+        <property name="valign">center</property>
+        <property name="tooltip-text" translatable="yes">Select Vault</property>
+        <style>
+          <class name="selection-mode"/>
+        </style>
+      </object>
+    </child>
     <child>
-      <object class="AdwActionRow" id="vaults_page_row">
-        <property name="title" translatable="yes">Vault X</property>
-        <property name="activatable_widget">select_vault_button</property>
-        <child type="prefix">
-          <object class="GtkCheckButton" id="select_vault_button">
-            <property name="valign">center</property>
-            <property name="tooltip-text" translatable="yes">Select Vault</property>
-            <style>
-              <class name="selection-mode"/>
-            </style>
-          </object>
-        </child>
-        <child>
-          <object class="GtkButton" id="open_folder_button">
-            <property name="valign">center</property>
-            <property name="icon_name">folder-symbolic</property>
-            <property name="tooltip-text" translatable="yes">Open Folder</property>
-            <style>
-              <class name="flat"/>
-            </style>
-          </object>
-        </child>
-        <child>
-          <object class="GtkButton" id="locker_button">
-            <property name="valign">center</property>
-            <property name="icon_name">changes-prevent-symbolic</property>
-            <property name="tooltip-text" translatable="yes">Open Vault</property>
-            <style>
-              <class name="flat"/>
-            </style>
-          </object>
-        </child>
-        <child>
-          <object class="GtkButton" id="settings_button">
-            <property name="valign">center</property>
-            <property name="icon_name">emblem-system-symbolic</property>
-            <property name="tooltip-text" translatable="yes">Open Settings</property>
-            <style>
-              <class name="flat"/>
-            </style>
-          </object>
-        </child>
+      <object class="GtkButton" id="open_folder_button">
+        <property name="valign">center</property>
+        <property name="icon_name">folder-symbolic</property>
+        <property name="tooltip-text" translatable="yes">Open Folder</property>
+        <style>
+          <class name="flat"/>
+        </style>
+      </object>
+    </child>
+    <child>
+      <object class="GtkButton" id="locker_button">
+        <property name="valign">center</property>
+        <property name="icon_name">changes-prevent-symbolic</property>
+        <property name="tooltip-text" translatable="yes">Open Vault</property>
+        <style>
+          <class name="flat"/>
+        </style>
+      </object>
+    </child>
+    <child>
+      <object class="GtkButton" id="settings_button">
+        <property name="valign">center</property>
+        <property name="icon_name">emblem-system-symbolic</property>
+        <property name="tooltip-text" translatable="yes">Open Settings</property>
+        <style>
+          <class name="flat"/>
+        </style>
       </object>
     </child>
   </template>
