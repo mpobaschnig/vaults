@@ -70,6 +70,12 @@ pub struct MockSettings {
     /// When set, `init` and `open` only succeed with exactly this password,
     /// simulating a wrong password error otherwise.
     pub password: Option<String>,
+
+    /// Makes `change_password` fail with an error.
+    pub change_password_fails: bool,
+
+    /// Milliseconds `change_password` sleeps before returning, simulating a slow password change.
+    pub change_password_delay_ms: u64,
 }
 
 // The builder and accessor methods are part of the testing API of the mock
@@ -161,6 +167,27 @@ impl MockSettings {
         self
     }
 
+    /// Makes `change_password` fail.
+    ///
+    /// # Returns
+    /// The modified settings.
+    pub fn change_password_fails(mut self) -> Self {
+        self.change_password_fails = true;
+        self
+    }
+
+    /// Makes `change_password` sleep for the given duration.
+    ///
+    /// # Arguments
+    /// * `ms`: Number of milliseconds `change_password` sleeps.
+    ///
+    /// # Returns
+    /// The modified settings.
+    pub fn with_change_password_delay(mut self, ms: u64) -> Self {
+        self.change_password_delay_ms = ms;
+        self
+    }
+
     /// Reads the mock settings from the `VAULTS_MOCK_*` environment variables.
     ///
     /// Boolean variables are enabled by any of `1`, `true` or `yes`
@@ -215,6 +242,14 @@ impl MockSettings {
         }
         if let Some(value) = lookup(&format!("{ENV_PREFIX}PASSWORD")) {
             settings.password = Some(value);
+        }
+        if let Some(value) = lookup(&format!("{ENV_PREFIX}CHANGE_PASSWORD_FAILS")) {
+            settings.change_password_fails = parse_bool(&value);
+        }
+        if let Some(value) = lookup(&format!("{ENV_PREFIX}CHANGE_PASSWORD_DELAY_MS"))
+            && let Ok(ms) = value.parse::<u64>()
+        {
+            settings.change_password_delay_ms = ms;
         }
 
         settings
@@ -485,6 +520,38 @@ impl BackendImpl for Mock {
         })
     }
 
+    fn change_password(
+        &self,
+        vault_config: &VaultConfig,
+        old_password: &str,
+        _new_password: &str,
+    ) -> Result<(), BackendError> {
+        log::trace!(
+            "Mock::change_password({:?}, old_password: <redacted>, new_password: <redacted>)",
+            vault_config
+        );
+
+        Self::delay(self.settings.change_password_delay_ms);
+
+        if self.settings.change_password_fails {
+            log::error!("Mock change_password failed (configured)");
+            return Err(BackendError::ToUser(gettext(
+                "The mock backend failed to change the password (as configured).",
+            )));
+        }
+
+        self.check_password(old_password)?;
+
+        let edd = vault_config.encrypted_data_directory.clone();
+        if !is_initialized(&edd) {
+            return Err(BackendError::ToUser(gettext(
+                "The encrypted data directory is not an initialized vault.",
+            )));
+        }
+
+        Ok(())
+    }
+
     fn name(&self) -> String {
         String::from("mock")
     }
@@ -661,6 +728,14 @@ mod tests {
             (format!("{ENV_PREFIX}OPEN_DELAY_MS"), String::from("150")),
             (format!("{ENV_PREFIX}CLOSE_FAILS"), String::from("no")),
             (format!("{ENV_PREFIX}PASSWORD"), String::from("secret")),
+            (
+                format!("{ENV_PREFIX}CHANGE_PASSWORD_FAILS"),
+                String::from("true"),
+            ),
+            (
+                format!("{ENV_PREFIX}CHANGE_PASSWORD_DELAY_MS"),
+                String::from("75"),
+            ),
         ]
         .into_iter()
         .collect();
@@ -676,6 +751,8 @@ mod tests {
                 .open_fails()
                 .with_open_delay(150)
                 .with_password("secret")
+                .change_password_fails()
+                .with_change_password_delay(75)
         );
         assert!(!settings.close_fails);
     }
@@ -696,12 +773,65 @@ mod tests {
             .with_open_delay(43)
             .close_fails()
             .with_close_delay(44)
-            .with_password("secret");
+            .with_password("secret")
+            .change_password_fails()
+            .with_change_password_delay(45);
 
         let json = serde_json::to_string(&settings).unwrap();
         assert_eq!(
             serde_json::from_str::<MockSettings>(&json).unwrap(),
             settings
         );
+    }
+
+    #[test]
+    fn change_password_succeeds() {
+        let mock = Mock::new(MockSettings::default());
+        let vault_config = test_vault_config("change_password_succeeds");
+
+        mock.init(&vault_config, "oldpw").unwrap();
+        mock.change_password(&vault_config, "oldpw", "newpw")
+            .unwrap();
+    }
+
+    #[test]
+    fn change_password_fails_when_configured() {
+        let mock = Mock::new(MockSettings::default().change_password_fails());
+        let vault_config = test_vault_config("change_password_fails_when_configured");
+
+        mock.init(&vault_config, "pw").unwrap();
+        assert!(mock.change_password(&vault_config, "pw", "newpw").is_err());
+    }
+
+    #[test]
+    fn change_password_wrong_old_password() {
+        let mock = Mock::new(MockSettings::default().with_password("secret"));
+        let vault_config = test_vault_config("change_password_wrong_old_password");
+
+        mock.init(&vault_config, "secret").unwrap();
+        assert!(
+            mock.change_password(&vault_config, "wrong", "newpw")
+                .is_err()
+        );
+    }
+
+    #[test]
+    fn change_password_uninitialized_vault() {
+        let mock = Mock::new(MockSettings::default());
+        let vault_config = test_vault_config("change_password_uninitialized_vault");
+
+        assert!(mock.change_password(&vault_config, "pw", "newpw").is_err());
+    }
+
+    #[test]
+    fn change_password_delay() {
+        let mock = Mock::new(MockSettings::default().with_change_password_delay(100));
+        let vault_config = test_vault_config("change_password_delay");
+
+        mock.init(&vault_config, "pw").unwrap();
+
+        let start = Instant::now();
+        mock.change_password(&vault_config, "pw", "newpw").unwrap();
+        assert!(start.elapsed() >= Duration::from_millis(100));
     }
 }
