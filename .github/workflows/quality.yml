@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
       - name: Install dependencies
-        run: sudo dnf install -y gtk4-devel libadwaita-devel meson gettext cargo rust clippy rustfmt weston
+        run: sudo dnf install -y desktop-file-utils gtk4-devel libadwaita-devel meson gettext cargo rust clippy rustfmt weston
       - name: Run meson setup
         run: meson setup build
       - name: Compile and install resources
