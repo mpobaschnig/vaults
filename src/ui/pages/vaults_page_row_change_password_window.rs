@@ -35,7 +35,7 @@ mod imp {
     )]
     pub struct VaultsPageRowChangePasswordWindow {
         #[template_child]
-        pub change_password_row: TemplateChild<adw::ButtonRow>,
+        pub change_password_button: TemplateChild<gtk::Button>,
         #[template_child]
         pub old_password_entry_row: TemplateChild<adw::PasswordEntryRow>,
         #[template_child]
@@ -56,7 +56,7 @@ mod imp {
 
         fn new() -> Self {
             Self {
-                change_password_row: TemplateChild::default(),
+                change_password_button: TemplateChild::default(),
                 old_password_entry_row: TemplateChild::default(),
                 new_password_entry_row: TemplateChild::default(),
                 confirm_password_entry_row: TemplateChild::default(),
@@ -116,7 +116,7 @@ impl VaultsPageRowChangePasswordWindow {
     }
 
     fn setup_signals(&self) {
-        self.imp().change_password_row.connect_activated(clone!(
+        self.imp().change_password_button.connect_clicked(clone!(
             #[weak(rename_to = obj)]
             self,
             move |_| {
@@ -201,9 +201,9 @@ impl VaultsPageRowChangePasswordWindow {
         }
 
         if !old_password.is_empty() && passwords_match {
-            self.imp().change_password_row.set_sensitive(true);
+            self.imp().change_password_button.set_sensitive(true);
         } else {
-            self.imp().change_password_row.set_sensitive(false);
+            self.imp().change_password_button.set_sensitive(false);
         }
     }
 
