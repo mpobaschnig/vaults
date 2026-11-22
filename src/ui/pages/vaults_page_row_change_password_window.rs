@@ -43,6 +43,10 @@ mod imp {
         #[template_child]
         pub new_password_entry_row: TemplateChild<adw::PasswordEntryRow>,
         #[template_child]
+        pub confirm_password_entry_row: TemplateChild<adw::PasswordEntryRow>,
+        #[template_child]
+        pub password_mismatch_label: TemplateChild<gtk::Label>,
+        #[template_child]
         pub status_page: TemplateChild<adw::StatusPage>,
     }
 
@@ -58,6 +62,8 @@ mod imp {
                 change_password_row: TemplateChild::default(),
                 old_password_entry_row: TemplateChild::default(),
                 new_password_entry_row: TemplateChild::default(),
+                confirm_password_entry_row: TemplateChild::default(),
+                password_mismatch_label: TemplateChild::default(),
                 status_page: TemplateChild::default(),
             }
         }
@@ -150,7 +156,27 @@ impl VaultsPageRowChangePasswordWindow {
             ));
 
         self.imp()
+            .confirm_password_entry_row
+            .connect_text_notify(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.check_change_button_enable_conditions();
+                }
+            ));
+
+        self.imp()
             .new_password_entry_row
+            .connect_entry_activated(clone!(
+                #[weak(rename_to = obj)]
+                self,
+                move |_| {
+                    obj.connect_activate();
+                }
+            ));
+
+        self.imp()
+            .confirm_password_entry_row
             .connect_entry_activated(clone!(
                 #[weak(rename_to = obj)]
                 self,
@@ -172,8 +198,20 @@ impl VaultsPageRowChangePasswordWindow {
     fn check_change_button_enable_conditions(&self) {
         let old_password = self.imp().old_password_entry_row.text();
         let new_password = self.imp().new_password_entry_row.text();
+        let confirm_password = self.imp().confirm_password_entry_row.text();
 
-        if !old_password.is_empty() && !new_password.is_empty() {
+        let passwords_match = new_password == confirm_password && !new_password.is_empty();
+
+        // Show/hide mismatch error label
+        if !new_password.is_empty() || !confirm_password.is_empty() {
+            self.imp()
+                .password_mismatch_label
+                .set_visible(!passwords_match);
+        } else {
+            self.imp().password_mismatch_label.set_visible(false);
+        }
+
+        if !old_password.is_empty() && passwords_match {
             self.imp().change_button.set_sensitive(true);
             self.imp().change_password_row.set_sensitive(true);
         } else {
@@ -185,7 +223,12 @@ impl VaultsPageRowChangePasswordWindow {
     fn connect_activate(&self) {
         let old_password = self.imp().old_password_entry_row.text();
         let new_password = self.imp().new_password_entry_row.text();
-        if !old_password.is_empty() && !new_password.is_empty() {
+        let confirm_password = self.imp().confirm_password_entry_row.text();
+        if !old_password.is_empty()
+            && !new_password.is_empty()
+            && !confirm_password.is_empty()
+            && new_password == confirm_password
+        {
             self.change_button_clicked();
         }
     }
