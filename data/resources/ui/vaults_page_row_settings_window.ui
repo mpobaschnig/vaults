@@ -123,19 +123,15 @@
                                     <property name="subtitle" translatable="yes">Automatically lock when screen is locked and screen saver is activated</property>
                                   </object>
                                 </child>
-                              </object>
-                            </child>
-                            <child>
-                              <object class="AdwPreferencesGroup" id="change_password_group">
                                 <child>
-                                  <object class="GtkButton" id="change_password_button">
-                                    <property name="name">change_password_button</property>
-                                    <property name="halign">center</property>
-                                    <property name="hexpand">true</property>
-                                    <property name="label" translatable="yes">Change Password</property>
-                                    <style>
-                                      <class name="pill"/>
-                                    </style>
+                                  <object class="AdwActionRow" id="change_password_row">
+                                    <property name="title" translatable="yes">Change Password</property>
+                                    <property name="activatable">True</property>
+                                    <child type="suffix">
+                                      <object class="GtkImage">
+                                        <property name="icon-name">go-next-symbolic</property>
+                                      </object>
+                                    </child>
                                   </object>
                                 </child>
                               </object>

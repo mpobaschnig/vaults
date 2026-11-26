@@ -22,7 +22,7 @@ use crate::ui::pages::{vaults_page_row_change_password_window, vaults_page_row_s
 use crate::vault::Vault;
 use crate::{backend, backend::Backend, user_config_manager::UserConfigManager};
 use adw::{
-    prelude::{AdwDialogExt, ComboRowExt, EntryRowExt},
+    prelude::{ActionRowExt, AdwDialogExt, ComboRowExt, EntryRowExt},
     subclass::{dialog::AdwDialogImpl, prelude::*},
 };
 use gettextrs::gettext;
@@ -57,9 +57,7 @@ mod imp {
         #[template_child]
         pub lock_screen_switch_row: TemplateChild<adw::SwitchRow>,
         #[template_child]
-        pub change_password_group: TemplateChild<adw::PreferencesGroup>,
-        #[template_child]
-        pub change_password_button: TemplateChild<gtk::Button>,
+        pub change_password_row: TemplateChild<adw::ActionRow>,
         #[property(get, set, name = "vault", construct)]
         pub vault: RefCell<Option<Vault>>,
     }
@@ -162,11 +160,11 @@ mod imp {
                 }
             ));
 
-            self.change_password_button.connect_clicked(clone!(
+            self.change_password_row.connect_activated(clone!(
                 #[weak(rename_to = s)]
                 self,
                 move |_| {
-                    s.obj().change_password_button_clicked();
+                    s.obj().change_password_row_activated();
                 }
             ));
 
@@ -346,10 +344,10 @@ impl VaultsPageRowSettingsWindow {
     fn update_change_password_visibility(&self) {
         let vault = self.vault().unwrap();
         let is_gocryptfs = vault.backend() == Backend::Gocryptfs;
-        self.imp().change_password_group.set_visible(is_gocryptfs);
+        self.imp().change_password_row.set_visible(is_gocryptfs);
     }
 
-    fn change_password_button_clicked(&self) {
+    fn change_password_row_activated(&self) {
         let vault = self.vault().unwrap();
         let dialog =
             vaults_page_row_change_password_window::VaultsPageRowChangePasswordWindow::new();
